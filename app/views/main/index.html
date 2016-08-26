@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <link href="../../assets/css/unsemantic.css" rel="stylesheet">
+    <link href="../../assets/css/base.css" rel="stylesheet">
+    <link href="../../assets/css/main.css" rel="stylesheet">
+</head>
+<body>
+    <div class="grid-container">
+        <!--Top nav-->
+        <div id="top-nav" class="grid-100 border-bottom border-color-dark-pink">
+            <!--controles-->
+            <div class="grid-10 mobile-grid-20">
+                <div class="grid-70 mobile-grid-70">
+                    <div class="btn-controlls" id="play-pause">
+                        <!-- play -->
+                        <svg id="play-icon" preserveAspectRatio="xMidYMid meet" viewBox="0 0 125.10303 177.45114" height="100%" width="100%">
+                            <path style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z">
+                                <animate class="anim-play" begin="" dur="400ms" attributeName="d" fill="freeze"/>
+                            </path>
+                            <path style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z">
+                                <animate class="anim-play" begin="" dur="400ms" attributeName="d" fill="freeze"/>
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="grid-30 mobile-grid-30 border-left border-right border-color-dark-pink">
+                    <!-- siguiente -->
+                    <div class="grid-100 border-bottom border-color-dark-pink">
+                        <div class="btn-controlls prev-next" id="next"> 
+                            <img class="music-controlls" id="next-icon" src="../../assets/img/next.svg" height="100%" width="100%">
+                        </div>
+                    </div>
+                    <!-- previo -->
+                    <div class="grid-100 border-bottom border-color-dark-pink">
+                        <div class="btn-controlls prev-next" id="prev">
+                            <img class="music-controlls" id="prev-icon" src="../../assets/img/prev.svg" height="100%" width="100%">
+                        </div>
+                    </div>
+                    <!-- shuffle -->
+                    <div class="grid-100">
+                        <div class="btn-controlls prev-next" id="shuffle">
+                            <svg class="music-controlls" id="shuffle-icon" preserveAspectRatio="xMidYMid meet" viewBox="0 0 59.000001 59.000001" height="100%" width="100%">
+                                <defs>
+                                    <filter id="filter4206" style="color-interpolation-filters:sRGB;">
+                                    <feFlood result="flood" flood-color="rgb(214,214,214)" flood-opacity="0.705882" />
+                                    <feComposite result="composite1" operator="in" in2="SourceGraphic" in="flood" />
+                                    <feGaussianBlur result="blur" stdDeviation="0.6" in="composite1" />
+                                    <feOffset result="offset" dy="0" dx="0" />
+                                    <feComposite result="composite2" operator="over" in2="offset" in="SourceGraphic" />
+                                    </filter>
+                                </defs>
+                                <g transform="matrix(0.13968372,0,0,0.13968372,1,1.0090401)">
+                                    <g>
+                                        <path style="filter:url(#filter4206)" d="M 168.3,132.6 35.7,0 0,35.7 132.6,168.3 168.3,132.6 Z M 267.75,0 318.75,51 0,372.3 35.7,408 357,89.25 l 51,51 L 408,0 267.75,0 Z m 7.65,239.7 -35.7,35.7 79.05,79.05 -51,51 140.25,0 0,-140.25 -51,51 -81.6,-76.5 z" />
+                                    </g>
+                                </g>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                                <g transform="translate(1,-350)"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-80 mobile-grid-80">
+                <div class="grid-100">
+                    <!-- Info de la canción-->
+                    <div class="grid-30">
+                        <div id="info-song">
+                            <div id="song-title" class="grid-100">
+                                <h1>&nbsp;</h1>
+                            </div>
+                            <div id="artist" class="grid-100 mobile-grid-50">
+                                <h2>&nbsp;</h2>
+                            </div>
+                            <div id="album" class="grid-100 mobile-grid-50">
+                                <h3>&nbsp;</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-70">
+                        <div id="time" class="grid-100">
+                            <span id="time-start">00:00</span>&nbsp;-&nbsp;<span id="time-end">00:00</span>
+                        </div>
+                        <div id="total-progress-bar" class="grid-100">
+                            <div id="progress-bar">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="config-container" class="grid-10">
+                <!-- configuración -->
+                <div id="config">
+                    <img src="../../assets/img/config.svg" height="100%" width="100%">
+                </div>
+            </div>
+        </div>
+        <!-- Listado de canciones -->
+        <div class="grid-100">
+            <div id="list-songs">
+            </div>
+        </div>
+    </div>
+    <!-- Buscador de canciones-->
+    <div id="search-container" class="hide">
+        <div id="search-wrapper">
+            <input id="input-search" class="grid-100" type="text"/>
+            <div id="input-search-result"></div>
+        </div>
+    </div>
+    <!-- Pop up alerta de canciones nuevas -->
+    <div id="new-songs-pop-up-container" class="hide">
+        <div id="new-songs-pop-up"></div>
+    </div>
+    <!--fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Hind:300,400,500&subset=latin-ext" rel="stylesheet"> 
+    <!--scripts-->
+    <script>require('../../assets/js/main.js')</script>
+</body>
+</html>

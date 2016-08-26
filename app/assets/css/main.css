@@ -1,0 +1,328 @@
+/* ------------------------ TOP NAV ------------------------*/
+#top-nav {
+    background:  var(--pinkColor)
+}
+
+#config {
+    margin-top: 1.6em;
+    height: 2em
+}
+
+#config > img {
+    cursor: pointer
+}
+
+/* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
+.btn-controlls {
+    cursor: pointer;
+    float: left
+}
+
+.btn-controlls::after {
+    border-radius: 50%;
+    background: var(--darkPinkColor);
+    position: absolute;
+    opacity: 0;
+    content: '';
+}
+
+#play-pause {
+    text-align: center;
+    margin: 1.33em 1em;
+    height: 3em
+}
+
+.prev-next {
+    text-align: center;
+    margin: .3em;
+    height: 1.3em
+}
+
+#shuffle-icon {
+    fill: var(--lightPinkColor)
+}
+
+#play-pause::after {
+    height: 4em;
+    width: 4em;
+    top: 15px;
+    left: .8%
+}
+
+.prev-next::after {
+    height: 1.9em;
+    width: 1.9em;
+    left: 7.4%
+}
+
+#next::after {
+    top: 0px
+}
+
+#shuffle::after {
+    top: 64px
+}
+
+#prev::after {
+    top: 32px
+}
+
+.click-controlls::after {
+    animation: clickControllsEffect .3s ease-out forwards
+}
+
+#total-progress-bar,
+#progress-bar {
+    height:  .36em
+}
+
+#total-progress-bar {
+    background: var(--lightPinkColor)
+}
+
+#progress-bar {
+    background: var(--whiteColor);
+    box-shadow: 1px 0 3px 0 #fff;
+    float: left;
+    width: 0
+}
+
+/* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
+#info-song {
+    text-align: left;
+    margin: .3em 1.2em;
+}
+
+#song-title > h1 {
+    font-size: 1.6em;
+    font-weight: 500;
+    color: var(--whiteColor)
+}
+
+#artist > h2 {
+    font-weight: 400;
+    font-size: 1.3em;
+    color: var(--whiteColor)
+}
+
+#album > h3 {
+    font-weight: 300;
+    font-size: 1em;
+    color: var(--whiteColor)
+}
+
+#time {
+    text-align: center;
+    font-size: 1.16em;
+    margin: .5em 0;
+    color: var(--whiteColor)
+}
+
+#time > span {
+    font-weight: 400;
+    color: var(--whiteColor)
+}
+
+/* ------------------------ LISTADO DE CANCIONES ------------------------ */
+#list-songs {
+    background: linear-gradient(var(--whiteColor) 30%, transparent),
+               radial-gradient(at 50% 0, rgba(66,73,73, .3), transparent 80%);
+    background-repeat: no-repeat;
+    background-size: 100% 50px, 100% 15px;
+    background-attachment: local, scroll;
+    overflow-y: scroll;
+    position: absolute;
+    height: calc(100% - 95px);
+    width: 100%;
+}
+
+#list-songs > div:nth-child(odd) {
+    background: var(--lightGreyColor)
+}
+
+#list-songs > div::nth-child(even) {
+    background: var(--whiteColor)
+}
+
+.song-info {
+    padding-left: .6em;
+    font-weight: 300;
+    line-height: 2em;
+    font-size: .906em;
+    cursor: pointer;
+}
+
+.miscelaneo {
+    margin-right: .6em;
+    color: var(--darkGreyColor)
+}
+
+
+/* ------------------------ INPUT SEARCH DE CANCIONES ------------------------ */
+#search-container {
+    background: rgba(229, 232, 232, .3);
+    position: fixed;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    top: 0
+}
+
+#search-wrapper {
+    position: relative;
+    padding: 10em 0;
+    margin: auto;
+    width: 11%;
+    height: auto;
+}
+
+#input-search {
+    background-image: url(../../assets/img/search.svg);
+    background-repeat: no-repeat;
+    background-color: transparent;
+    background-size: 1.6em;
+    border-bottom: .03em solid var(--darkGreyColor);
+    line-height: 0;
+    transform: scale(0);
+    padding: .2em .2em .2em 1.6em;
+    margin: 0;
+    color: var(--blackColor)
+}
+
+#input-search,
+#input-search-result {
+    font-weight: 300;
+    font-size: 6em
+}
+
+#input-search-result {
+    position: absolute;
+    color: rgba(182, 182, 182, .4);
+    left: 1.6em;
+    top: 2em
+}
+
+.input-search-anim {
+    animation: showInputUp .5s ease-in forwards
+}
+
+.search-wrapper-anim {
+    animation: displayInputSearch .5s .6s ease-in-out forwards 
+}
+
+/* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
+#init-message {
+    background: white !important;
+    margin-top: 4em;
+    text-align: center;
+    font-size: 2em;
+    color: var(--darkGreyColor)
+}
+
+/* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
+#new-songs-pop-up-container {
+    position: absolute;
+    height: auto;
+    width: 100%;
+    top: 6.6em
+}
+
+#new-songs-pop-up {
+    border-radius: 21px;
+    background: var(--darkGreyColor);
+    font-weight: 500;
+    transform: scale(0);
+    text-align: center;
+    font-size: .94em;
+    padding: .6em;
+    margin: auto;
+    width: 17em;
+    color:  var(--whiteColor)
+}
+
+.new-songs-pop-up-anim {
+    animation:  showPopUp .6s ease-in-out forwards
+}
+/* ------------------------ ANIMACIONES ------------------------ */
+@keyframes showPopUp {
+    100% {
+        transform: scale(1)
+    }
+}
+
+@keyframes displayInputSearch {
+    100% {
+        width: 75%
+    }
+}
+
+@keyframes showInputUp {
+    100% {
+        transform: scale(1)
+    }
+}
+
+@keyframes clickControllsEffect {
+	0% {
+		transform: scale3d(.3, .3, 1)
+	}
+	25%, 50% {
+		opacity: .8
+	}
+	100% {
+		transform: scale3d(1.2, 1.2, 1);
+        opacity: 0
+	}
+}
+
+/* ------------------------ MEDIA QUERIES ------------------------ */
+@media only screen and (max-width: 750px) {
+/* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
+    #total-progress-bar{
+        margin: .1em 1.3em .5em
+    }
+
+    .prev-next::after {
+        left: 14.7%
+    }
+
+/* ------------------------ TOP NAV ------------------------*/
+    #config-container {
+        border-radius: 50%;
+        background: var(--pinkColor);
+        position: fixed;
+        padding: .46em;
+        bottom: 45px;
+        z-index: 4;
+        height: 3em;
+        width: 3em;
+        right: 16px
+    }
+
+    #config {
+        margin: 0;
+        height: 100%;   
+        width: 100%;
+        float: left
+    }
+
+/* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
+    #info-song {
+        text-align: left;
+        margin: .3em 1.2em;
+    }
+
+    #song-title > h1 {
+        font-size: 1.16em
+    }
+
+    #artist > h2,
+    #album > h3 {
+        font-size: 1em
+    }
+
+    #time {
+        font-size: 1em;
+        margin-bottom: 0
+    }
+}

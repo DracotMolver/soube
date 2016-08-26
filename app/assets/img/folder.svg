@@ -1,0 +1,22 @@
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 59.000001 59.000001" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <filter style="color-interpolation-filters:sRGB" id="filter4179" x="-0.019318091" width="1.0386362" y="-0.019083432" height="1.0381669">
+      <feGaussianBlur stdDeviation="0.43624965"/>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB;" id="filter7096">
+      <feFlood flood-opacity="0.627451" flood-color="rgb(213,213,213)" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="0.6" result="blur"/>
+      <feOffset dx="0" dy="0" result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" operator="over" result="composite2"/>
+    </filter>
+  </defs>
+  <g transform="translate(0,-993.36216)" style="filter:url(#filter7096)">
+    <g transform="matrix(1.0269767,0,0,1.027736,-44.937289,-37.202896)" style="fill:#f2f2f2;fill-opacity:1;stroke:none;filter:url(#filter4179);opacity:0.8">
+      <path style="fill:#f2f2f2;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" d="m 46.255575,1057.3665 52.748903,0"/>
+    </g>
+    <path style="fill:#fce65a;fill-rule:evenodd;stroke:#fcca21;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" d="m 3.0304576,1009.6832 53.2539794,0 0,-9.407 -26.611206,0 -1.216777,-4.5411 -25.4575636,0 z"/>
+    <path style="fill:#ffc544;fill-rule:evenodd;stroke:#fc9f4c;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" d="m 2.6555729,1050.5994 54.1531771,0 0,-46.3535 -32.48447,0 -2.634668,4.6273 -19.0787199,0.014 z"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#fc9f4c;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" d="m 3.2198612,1048.7951 52.7489028,0"/>
+  </g>
+</svg>

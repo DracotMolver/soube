@@ -1,0 +1,14 @@
+{
+    "name": "soube",
+    "version": "0.0.1",
+    "description": "Simple music player",
+    "main": "index.js",
+    "license": "MIT",
+    "author": {
+        "email": "dracotm25@gmail.com",
+        "name": "Diego Molina Vera"
+    },
+    "dependencies": {
+        "musicmetadata": "^2.0.4"
+    }
+}
