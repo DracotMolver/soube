@@ -1,3 +1,5 @@
+/** -------------------------- Módulos ------------------------ **/
+// Generales
 const {
   ipcRenderer,
   metaData,
@@ -6,34 +8,34 @@ const {
   fs
 } = require('./commons')
 
-// Varibles
+/** -------------------------- Variables ------------------------ **/
 let metaDataSongs = [] // Contendrá los metadatas de las canciones
+let songsSize = 0
 let configFile = jread(CONFIG_FILE)
 let iterator = {} // Resultado del iterador sobre las canciones
-let count = 0 // Contador de archivos parseados para obtener los metadata
 let songs = []  // Array con las rutas de los archivos de audio
 let lang = jread(LANG_FILE)[configFile.lang]
 let alerts = lang.alerts
-let songsSize = 0
+let count = 0 // Contador de archivos parseados para obtener los metadata
 
+/** -------------------------- Funciones ------------------------ **/
 /**
  * Texto a modificar en la ventana de configuraciones
  */
-function updateTextContet () {
+;(function updateTextContet () {
   $('#_addsongfolder', {addText: lang.config.addSongFolder})
   $('#_statussongfolder', {addText: lang.config.statusSongFolder})
   $('#_changelanguage', {addText: lang.config.changeLanguage})
   $('#_statuslanguage', {addText: lang.config.statusLanguage})
   $('#_titleconfig', {addText: lang.config.titleConfig})
-//   $('#_addaccounts', {addText: c.addAccounts})
-//   $('#_equalizersetting', {addText: c.equalizerSetting})
-}
-updateTextContet()
+  $('#_equalizersetting', {addText: lang.config.equalizerSetting})
+  $('#_infoequalizer', {addText: alerts.infoEqualizer})
+})()
 
 // Refrescar la ventana
 $('#_titleconfig', {
-  click: () => {
-    window.location.reload(false)
+  on: {
+    'click': () => {window.location.reload(false)}
   }
 })
 
@@ -43,9 +45,11 @@ $('#_titleconfig', {
 function animConfigPanel () {
   $('#config-container-options', {
     addClass: 'config-opt-anim',
-    animEnd: function animPanelEnd () {
-      $('#config-container-values', {rmClass: 'hide'})
-      $(this, {addClass: 'hide'})
+    on:{
+      'animationend': function animPanelEnd () {
+        $('#config-container-values', {rmClass: 'hide'})
+        $(this, {addClass: 'hide'})
+      }
     }
   })
 }
@@ -62,16 +66,22 @@ function onClickChangeLang () {
 
   $('.lang-option').forEach(v => {
     $(v, {
-      click: function onClickLangOption () {
-        configFile.lang = $(this, {getData: ['lang', 'string']})
-        configFile = jsave(CONFIG_FILE, configFile)
+      on: {
+        'click': function onClickLangOption () {
+          configFile.lang = $(this, {getData: ['lang', 'string']})
+          configFile = jsave(CONFIG_FILE, configFile)
+        }
       }
     })
   })
 }
 
 // Cambiar idioma
-$('#change-lang', {click: onClickChangeLang})
+$('#change-lang', {
+  on: {
+    'click': onClickChangeLang
+  }
+})
 
 /**
  * Función iteradora que retorna la ruta de la canción
@@ -99,21 +109,19 @@ function getMetadata (iter) {
     // Extraer metadatas de los archivos de audio
     metaData(fs.createReadStream(iterator.value), function metaDataExtract (error, data) {
       // En caso de error, generar atributos de la canción con un valor en el idioma correspondiente
-      if (error) {
-        metaDataSongs.push({
+      metaDataSongs.push(
+        error ? {
           artist: lang.artist.replace(/\s+/ig, '&nbsp;'),
           album: lang.album.replace(/\s+/ig, '&nbsp;'),
           title: lang.title.replace(/\s+/ig, '&nbsp;'),
           filename: iterator.value
-        })
-      } else {
-        metaDataSongs.push({
+        } : {
           artist: (data.artist[0] !== undefined || data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s+/ig, '&nbsp;'),
-          album: (data.album !== undefined || data.album !== '' ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
-          title: (data.title !== undefined || data.title !== '' ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
+          album: (data.album !== undefined || data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
+          title: (data.title !== undefined || data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
           filename: iterator.value
-        })
-      }
+        }
+      )
       getMetadata(iter)
     })
   } else {
@@ -167,150 +175,81 @@ function saveSongList (parentFolder = '') {
 
 // Acción para agregar el listado de canciones
 $('#add-songs', {
-  click: () => {
-    dialog.showOpenDialog({
-      title: 'Add music folder',
-      properties: ['openDirectory']
-    }, parentFolder => {
-      if (parentFolder !== undefined) saveSongList(parentFolder[0]) // home/usuario/Música  - Ejemplo de la ruta de la carpeta padre
-    })
+  on: {
+    'click': () => {
+      dialog.showOpenDialog({
+        title: 'Add music folder',
+        properties: ['openDirectory']
+      }, parentFolder => {
+        if (parentFolder !== undefined) saveSongList(parentFolder[0]) // home/usuario/Música  - Ejemplo de la ruta de la carpeta padre
+      })
+    }
   }
 })
 
-// Panel equalizador
-// function onEqualizerPanel (e) {
-//   $(`#${$(this, {getData: ['action', 'string']})}`, {removeClass: 'hide'})
+// Animación de los botones sobre el panel ecualizador
+function onEqualizerPanel (e) {
+  $(`#${$(this, {getData: ['action', 'string']})}`, {rmClass: 'hide'})
 
-//   animConfigPanel()
-//   $('#_titlesubconfig', {addText: `> ${langFile[configFile.config.lang].config.equalizerSetting}`})
+  animConfigPanel()
+  $('#_titlesubconfig', {addText: `> ${lang.config.equalizerSetting}`})
 
+  let y = 0
+  let pos = 0
+  let hrzGain = configFile.equalizer
+  let range = null
+  let plus = 0
+  let db = 0
 
-//   let offset = 0
-//   let _drag = 0
-//   let count = 0
-//   let pos
-//   let _hrzGain = configFile.config.equalizer
+  let onDragMove = e => {
+    if (range !== null) {
+      y = parseInt(window.getComputedStyle(range).getPropertyValue('top'), 10)
+      plus = (e.clientY - range.offsetTop) + y
+      if (plus > 0 && plus < 261) {
+        db = plus
+        $(range, {css: `top: ${(e.clientY - range.offsetTop) + y}px;`})
+      }
+      ipcRenderer.send('equalizer-filter', [
+        $(range, {getData: ['position', 'int']}),
+        parseFloat(db / 20 > 130 ? -(7 - db / 20) : (7 - db / 20) + 1.6).toFixed(3)
+      ])
+    }
+  }
 
-//   function onDragMove (e) {
-//     offset = parseInt(window.getComputedStyle(this).getPropertyValue('top'), 10)
-//     _drag = $(this)
+  let onDragStart = function onDragStart (e) {
+    range = this
+    pos = $(range, {getData: ['position', 'int']})
+  }
 
-//     if (e.offsetY < 0) {
-//       if (count < 120) {
-//         $(_drag, {css: `top: ${--offset}px`})
-//         ++count
-//       }
-//     } else if (e.offsetY > 0) {
-//       if (count > -120) {
-//         $(_drag, {css: `top: ${++offset}px`})
-//         --count
-//       }
-//     }
+  let onDragEnd = () => {
+    hrzGain[pos] = db
+    configFile.equalizer = hrzGain
+    configFile = jsave(CONFIG_FILE, configFile)
+    range = null
+  }
 
-//     ipcRenderer.send('equalizer-filter', [$(this, {getData: ['position', 'int']}), count / 10])
-//   }
+  // Necesario para tener un drag más suave
+  $(document, {
+    on: {
+      'mouseup': onDragEnd,
+      'mousemove': onDragMove
+    }
+  })
 
-//   function onDragStart () {
-//     pos = $(this, {getData: ['position', 'int']})
-//     _hrzGain = configFile.config.equalizer
-//     count = _hrzGain[pos]
-//   }
+  // El evento es solo registrado sobre los botones redondos
+  $('.range-circle').forEach((v, i) => {
+    $(v, {
+      on: {
+        'mousedown': onDragStart
+      },
+      css: `top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;` // Setear la configuración establecida
+    })
+  })
+}
 
-//   function onDragEnd () {
-//     _hrzGain[pos] = count
-//     configFile.config.equalizer = _hrzGain
-//     configFile = jsave(__CONFIG_FILE, configFile)
-//   }
-
-//   $('.range-circle').forEach((v, i) => {
-//     $(v, {
-//       css: `top:${120 - _hrzGain[i]}px`,
-//       drag: onDragMove,
-//       dragstart: onDragStart,
-//       dragend: onDragEnd
-//     })
-//   })
-// }
-// $('#equalizer-panel', {click: onEqualizerPanel})
-
-/**
- * Cargar Google API
- */
-// function getAuth2 () {
-//   let url = 'https://accounts.google.com/o/oauth2/v2/auth?'
-//   let params = {
-//     response_type: 'code',
-//     client_id: '864249708998-sufqf8t3m5f1mmkimu6tl8pp5r0ns5bq.apps.googleusercontent.com',
-//     redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-//     scope: 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.stream.write https://www.googleapis.com/auth/plus.login',
-//     access_type: 'offline'
-//   }
-//   Object.keys(params).forEach(v => {
-//     url += `${v}=${params[v]}&`
-//   }, url)
-//   window.open(encodeURI(url.slice(0, url.length - 1)), 'width=400,height=780,resizable=yes')
-// }
-// function getToken (authCode = '', callback) {
-//   let url = 'https://accounts.google.com/o/oauth2/token'
-//   let params = {
-//     code: authCode,
-//     client_id: '864249708998-sufqf8t3m5f1mmkimu6tl8pp5r0ns5bq.apps.googleusercontent.com',
-//     client_secret: 'Oysb7G118CNZdNSIolILYK1u',
-//     redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-//     grant_type: 'authorization_code'
-//   }
-//   let uri = ''
-//   Object.keys(params).forEach(v => {
-//     uri += `${v}=${encodeURIComponent(params[v])}&`
-//   })
-//   uri = uri.slice(0, uri.length - 1)
-//   let xhr = new XMLHttpRequest()
-//   xhr.open('POST', url, !0)
-//   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-//   xhr.responseType = 'json'
-//   xhr.onload = () => {
-//     callback(xhr.response)
-//   }
-//   xhr.send(uri)
-// }
-// function onAPILoaded (token = {}) {
-//   let url = 'https://www.googleapis.com/oauth2/v2/userinfo'
-//   let xhr = new XMLHttpRequest()
-//   xhr.open('GET', url, !0)
-//   xhr.setRequestHeader('Authorization', `Bearer ${token.access_token}`)
-//   xhr.responseType = 'json'
-//   xhr.onload = () => {
-//     console.log(xhr.response)
-//   }
-//   xhr.send(null)
-// }
-// /**
-//  * Agregar cuentas de redes sociales y cuentas de música
-//  */
-// document.getElementById('add-accounts').onclick = function (e) {
-//   e.stopImmediatePropagation()
-//   document.getElementById(this.dataset.action).className = 'grid-100'
-//   animConfigPanel()
-// }
-// /**
-//  * Desplegar pasos a seguir para guardar cuentas
-//  */
-// Array.from(document.getElementsByClassName('save-accounts-action')).forEach(v => {
-//   v.onclick = function (e) {
-//     e.stopImmediatePropagation()
-//     document.getElementById(this.dataset.action).className = 'steps'
-//   }
-// })
-// /**
-//  * Google plus account
-//  */
-// document.getElementById('g-action-btn').onclick = e => {
-//   e.stopImmediatePropagation()
-//   getAuth2()
-// }
-// document.getElementById('g-guardar').onclick = e => {
-//   e.stopImmediatePropagation()
-//   getToken(document.getElementById('g-code').value.toString(), res => {
-//     onAPILoaded(res)
-//   })
-// }
+// Mostrar ecualizador
+$('#equalizer-panel', {
+  on: {
+    'click': onEqualizerPanel
+  }
+})

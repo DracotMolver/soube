@@ -8,22 +8,17 @@
 module.exports = (function (_) {
   const o = Object.freeze({
     addClass,
-    dragstart,
-    animEnd,
     rmClass,
     getData,
     addText,
     getChild,
-    dragend,
     setData,
     rmAttr,
     addTo,
-    keyup,
     clone,
-    click,
-    drag,
     attr,
-    css
+    css,
+    on
   })
 
   /**
@@ -58,33 +53,10 @@ module.exports = (function (_) {
   }
 
   /* -------------------------- Funciones -------------------------- */
-  function click (e, fn, o) {
-    e.onclick = fn
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function drag (e, fn, o) {
-    e.ondrag = fn
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function dragstart (e, fn, o) {
-    e.ondragstart = fn
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function dragend (e, fn, o) {
-    e.ondragend = fn
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function keyup (e, fn, o) {
-    e.onkeyup = fn
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function animEnd (e, fn, o) {
-    e.addEventListener('animationend', fn)
+  function on (e, fn, o) {
+    Object.keys(fn).forEach(v => {
+      /animation/.test(v) ? e.addEventListener(v.toLowerCase(), fn[v]) : e[`on${v.toLowerCase()}`] = fn[v]
+    })
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
@@ -112,7 +84,9 @@ module.exports = (function (_) {
   }
 
   function attr (e, a, o) {
-    if (typeof a === 'object') e.setAttribute(a[0], a[1])
+    if (typeof a === 'object')
+      for (let i = 0, size = a.length / 2; i < size; i++)
+        e.setAttribute(a[(i + 1) * i], a[((i + 1) * i) + 1])
     else e = e.getAttribute(a)
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }

@@ -15,7 +15,7 @@ global.CONFIG_FILE = `${__dirname}/../files/config.json`
 global.SONG_FILE = `${__dirname}/../files/listSong.json`
 global.LANG_FILE = `${__dirname}/../files/lang.json`
 
-global.jread = (data) => JSON.parse(fs.readFileSync(data, {encoding: 'utf8', flag: 'r'}))
+global.jread = data => JSON.parse(fs.readFileSync(data, {encoding: 'utf8', flag: 'r'}))
 global.jsave = (data, c) => {
   fs.writeFileSync(data, JSON.stringify(c, null, 4))
   return jread(data)

@@ -1,6 +1,6 @@
 {
     "es": {
-        "title": "Desconocido",
+        "title": "Desconocida",
         "artist": "Desconocido",
         "album": "Desconocido",
         "config": {
@@ -20,6 +20,7 @@
         },
         "alerts": {
             "newSongsFound": "Agregando nuevas canciones<br>",
+            "infoEqualizer": "No usar el equalizador si estás usando uno en tu sistema operativo",
             "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música &#127926;",
             "error_001": "Falta un archivo necesario para que funcione el reproductor. Ir a:  https://github.com/DracotMolver/Soube y reportar el error. Gracias",
             "error_002": "No hay archivos para reproducir. Por favor, ir al icono de configuración y agregar tu carpeta de música",
@@ -47,6 +48,7 @@
         },
         "alerts": {
             "newSongsFound": "Adding new songs<br>",
+            "infoEqualizer": "Don't use the equalizer if you're using one in your operative system",
             "welcome": "There is no music folder added.<br>Please, add your music folder &#127926;",
             "error_001": "It missed a file needed to use the music player. Go to:  https://github.com/DracotMolver/Soube and report the error. Thanks.",
             "error_002": "There's no files to play. Please, go to the config icon and add your music folder.",

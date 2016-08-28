@@ -1,6 +1,19 @@
-// Módulos
-const ListSongs = require('./listSongs')()
-const PlayFile = require('./playFile')()
+/** -------------------------- Módulos ------------------------ **/
+// Funciones para reproducir las canciones
+const {
+  playSong,
+  nextSong,
+  setSongs,
+  setFilterVal
+} = require('./playFile')
+
+// funciones para crear el listado de canciones
+const {
+  setNextSongFunction,
+  createDefaultListView
+} = require('./listSongs')
+
+// Generales
 const {
   ipcRenderer,
   metaData,
@@ -9,42 +22,35 @@ const {
   fs
 } = require('./commons')
 
-// Funciones para reproducir las canciones
-const playSong = PlayFile('playSong')
-const nextSong = PlayFile('nextSong')
-const setSongs = PlayFile('setSongs')
-// let setEqualizer = PlayFile('setFilterVal')
-
-// funciones para crear el listado de canciones
-const setNextSongFunction = ListSongs('setNextSongFunction')
-const createDefaultListView = ListSongs('createDefaultListView')
-
-// Variables
+/** -------------------------- Variables ------------------------ **/
 let isInputSearchDisplayed = false // Validar si se ha pulsado (ctrl | cmd) + f
 let inputRegexSearch = null // Nombre de la canción a buscar
-let _songs = null // Canciones cargadas
-let _listTotal = null // Listado html de las canciones desplegadas en el front
-let _list = null // Listado html de las canciones desplegadas en el front
-let _p = '' // Recibe el valor devuelto por la función playSong
-let newSongs = [] // Posibles nuevas canciones agregadas
-let iterator = {} // Resultado del iterador sobre las canciones
-let count = 0
-let newSongsSize = 0
 let inputSearchValue = ''
+let newSongsSize = 0
+let newSongs = [] // Posibles nuevas canciones agregadas
+let _listTotal = null // Listado html de las canciones desplegadas en el front
+let iterator = {} // Resultado del iterador sobre las canciones
+let _songs = null // Canciones cargadas
+let count = 0
+let _list = null // Listado html de las canciones desplegadas en el front
 
 // Para generar la animación del botón play
 const anim = {
-  from: ['M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
-        'm 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z'],
-  to: ['M 5.827315,6.7672041 39.949651,6.9753863 39.92649,170.36386 5.8743095,170.58995 Z',
-      'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z']
+  from: [
+    'M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
+    'm 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z'
+  ],
+  to: [
+    'M 5.827315,6.7672041 39.949651,6.9753863 39.92649,170.36386 5.8743095,170.58995 Z',
+    'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
+  ]
 }
+// Archivos de configuraciones
+let configFile = jread(CONFIG_FILE) // Configuraciones básicas
+let lang = jread(LANG_FILE)[configFile.lang] // Textos en idiomas
+let alerts = lang.alerts // Mensajes de alertas
 
-// Configuraciones
-let configFile = jread(CONFIG_FILE)
-let lang = jread(LANG_FILE)[configFile.lang]
-let alerts = lang.alerts
-
+/** -------------------------- Funciones ------------------------ **/
 // Activar shuffle
 if (configFile.shuffle) $('#shuffle-icon', {css: 'fill: #FBFCFC'})
 
@@ -60,8 +66,8 @@ function loadSongStuffs () {
       addText: `<div id="init-message">${alerts.welcome}</div>`
     })
   } else {
-    checkNewSongs()
-    setSongs(_songs)
+    checkNewSongs() // Revisa si hay nuevas canciones en la carpeta previamente ingresada
+    setSongs(_songs) // Pasamos el listado total de canciones a playFile.js
     setNextSongFunction(nextSong) // Compartimos la función nextSong para el evento onclick en el listado de canciones
     createDefaultListView() // Desplegamos el listado de canciones con el estilo por defecto de tipo lista
   }
@@ -70,7 +76,7 @@ function loadSongStuffs () {
 /**
  * Función iteradora que retorna la ruta de la canción
  *
- * @return objeto iteratodr {object} -  {value: 'nombre de la canción', done: true | false}
+ * @return objeto iterador {object} - {value: 'nombre de la canción', done: true | false}
  */
 function * readSongs () {
   while (newSongsSize--) yield newSongs[newSongsSize]
@@ -93,21 +99,19 @@ function getMetadata (iter) {
     metaData(fs.createReadStream(iterator.value), function metaDataExtract (error, data) {
       // Agregar las nuevas canciones al objeto _songs
       // En caso de error, generar atributos de la canción con un valor en el idioma correspondiente
-      if (error) {
-        _songs.push({
+      _songs.push(
+        error ? {
           artist: lang.artist.replace(/\s+/ig, '&nbsp;'),
           album: lang.album.replace(/\s+/ig, '&nbsp;'),
           title: lang.title.replace(/\s+/ig, '&nbsp;'),
           filename: iterator.value
-        })
-      } else {
-        _songs.push({
+        } : {
           artist: (data.artist[0] !== undefined || data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s+/ig, '&nbsp;'),
-          album: (data.album !== undefined || data.album !== '' ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
-          title: (data.title !== undefined || data.title !== '' ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
+          album: (data.album !== undefined || data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
+          title: (data.title !== undefined || data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
           filename: iterator.value
-        })
-      }
+        }
+      )
       getMetadata(iter)
     })
   } else {
@@ -138,7 +142,6 @@ function checkNewSongs () {
         // Desplegar pop-up
         $('#new-songs-pop-up-container', {rmClass: 'hide'})
         $('#new-songs-pop-up', {addClass: 'new-songs-pop-up-anim'})
-
         getMetadata(readSongs())
       }
     }
@@ -166,8 +169,10 @@ ipcRenderer.on('order-display-list', () => {
 
 // Abrir ventana de configuración
 $('#config', {
-  click: () => {
-    ipcRenderer.send('show-config')
+  on: {
+    'click': () => {
+      ipcRenderer.send('show-config')
+    }
   }
 })
 
@@ -176,27 +181,21 @@ $('#config', {
 function clickBtnControls () {
   $(this, {addClass: 'click-controlls'})
 
-  if (_songs !== null) {
+  if (_songs.length !== 0) {
     switch (this.id) {
       case 'play-pause':
-        _p = playSong()
-        if (_p === 'resume')
-          $('.anim-play').forEach((v, i) => {
-            $(v, {attr: ['from', anim.from[i]]})
-            $(v, {attr: ['to', anim.to[i]]})
-            v.beginElement()
-          })
-        else if (_p === 'paused')
-          $('.anim-play').forEach((v, i) => {
-            $(v, {attr: ['from', anim.to[i]]})
-            $(v, {attr: ['to', anim.from[i]]})
-            v.beginElement()
-          })
+        playSong() === 'resume' ? $('.anim-play').forEach((v, i) => {
+          $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
+        }) : $('.anim-play').forEach((v, i) => {
+          $(v, {attr: ['from', anim.to[i], 'to', anim.from[i]]}).beginElement()
+        })
         break
       case 'next': nextSong(); break
       case 'shuffle':
-        $('#shuffle-icon', {css: (configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292')})
         configFile.shuffle = !configFile.shuffle
+        $('#shuffle-icon', {
+          css: (configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292')
+        })
         configFile = jsave(CONFIG_FILE, configFile)
         break
     }
@@ -215,13 +214,18 @@ function endAnimBtnControlls () {
 }
 
 $('.btn-controlls').forEach(v => {
-  $(v, {click: clickBtnControls, animEnd: endAnimBtnControlls})
+  $(v, {
+    on:{
+      'click': clickBtnControls,
+      'animationend': endAnimBtnControlls
+    }
+  })
 })
 
 // Configurar el equalizador.
-// ipcRenderer.on('get-equalizer-filter', (e, a) => {
-//   setEqualizer(...a)
-// })
+ipcRenderer.on('get-equalizer-filter', (e, a) => {
+  setFilterVal(...a)
+})
 
 // Desplegar input search para buscar canciones, artistas, o album
 // Registrar un shorcut
@@ -236,9 +240,7 @@ function searchInputData (e) {
     nextSong($(_list[0], {getData: ['position', 'int']}))
     // Anima el botón play
     $('.anim-play').forEach((v, i) => {
-      $(v, {attr: ['from', anim.from[i]]})
-      $(v, {attr: ['to', anim.to[i]]})
-      v.beginElement()
+      $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
     })
     $('#input-search-result', {addText: ''})
     $('#search-container', {addClass: 'hide'})
@@ -262,7 +264,23 @@ ipcRenderer.on('input-search-song', () => {
     $('#search-container', {rmClass: 'hide'})
     $('#search-wrapper', {addClass: 'search-wrapper-anim'})
     $('.grid-container', {css: '-webkit-filter: blur(2px)'})
-    $('#input-search', {addClass: 'input-search-anim', keyup: searchInputData}).focus()
+    $('#input-search', {
+      addClass: 'input-search-anim',
+      on: {
+        'keyup': searchInputData
+      }
+    }).focus()
+
     isInputSearchDisplayed = true
+  }
+})
+
+// Adelantar o retroceder la canción usando la barra de progreso
+$('#total-progress-bar', {
+  on: {
+    'click': function (e) {
+      //e.offsetX -> donde se hizo click
+      console.log(e.offsetX)
+    }
   }
 })

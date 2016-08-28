@@ -51,11 +51,11 @@ html{
 :root {
     --lightGreyColor: #F4F6F6;
     --darkGreyColor: #979A9A;
+    --darkPinkColor: #d81b60;
+    --lightPinkColor: #f06292;
     --whiteColor: #FBFCFC;
     --blackColor: #424949;
-    --darkPinkColor: #d81b60;
-    --pinkColor: #e91e63;
-    --lightPinkColor: #f06292
+    --pinkColor: #e91e63
 }
 
 /* ------------------------ GENERALES ------------------------ */

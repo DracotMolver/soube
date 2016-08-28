@@ -25,22 +25,19 @@ h4 {
 .config-icons {
     position: relative;
     margin: 1.6em auto auto 0;
-    height: 4.6em;
+    height: 4.6em
 }
-/*#_titlesubconfig {
-    padding-left: .4em !important
-}
-*/
+
 .config-icons > img:hover {
     cursor: pointer
 }
 
 .config-option p {
     margin-bottom: .5em;
+    font-weight: 500;
     margin-top: .5em;
-    font-size: .95em;
     text-align: center;
-    font-weight: 500
+    font-size: .95em
 }
 
 .config-option h4 {
@@ -48,15 +45,8 @@ h4 {
     text-align: center;
     color: var(--darkGreyColor)
 }
+
 /*
-.config-opt li,
-.config-opt .li-equa{
-    margin-bottom: 1.6em;
-       margin-top: 1.6em;
-           height: auto;
-           cursor: pointer;
-            float: left
-}
 .config-opt li {
     width: 100%
 }
@@ -82,14 +72,15 @@ h4 {
     z-index: 3;
     height: 100%;
     width: 100%;
+    cursor: wait;
     top: 0
 }
 
 #loading-info {
     margin-top: 25%;
     text-align: center;
-    color: var(--blackColor);
     width: 100%;
+    color: var(--blackColor);
     float: left
 }
 
@@ -109,81 +100,79 @@ h4 {
     font-size: 2em
 }
 
-/* -------------- configuración de redes sociales y de cuentas de músicas --------------- */ 
-/* Pasos a seguir */
-/*.steps {
-    border-radius: 16px;
-       box-shadow: 0px 0px 3px 0px rgba(107,107,107, .45);
-          padding: .5em;
-           height: auto;
-           margin: 1em;
-            width: 93%;
-            float: left
-}
-
-.steps h4 {
-    font-weight: 400;
-          color: #B6B6B6
-}
-
-.steps button {
-    letter-spacing: .03em;
-     margin-bottom: 1.6em;
-     padding-right: 2.5em;
-      padding-left: 2.5em;
-       font-weight: 700;
-       line-height: 2.5em;
-        background: #03A9F4;
-        margin-top: 1.6em;
-            cursor: pointer;
-             color: #fff
-}
-*/
 /* ----------------------------- EQUALIZADOR ---------------------------- */
-/*.range-container {
-    float: left;
-    width: .6em;
-    height: 15;
-    margin: 1.2em;
-    background: rgba(3, 169, 244, .2);
-    padding: 0;
+#_infoequalizer {
+    font-size: .9em;
+    font-weight: 100;
+    color: currentColor
 }
 
-.range-percent {
-    background: #0097A7;
-    float: left;
-    width: 100%;
-    height: 7.5em;
-    margin-top: 9em;
+.range-container {
+    background: var(--darkGreyColor);
+    padding: 0;
+    margin: 3.6em 1.235em 1.4em;
+    opacity: .5;
+    height: 18em;
+    width: .6em;
+    float: left
+}
+
+.range-container:hover{
+    opacity: 1
 }
 
 .range-circle {
-    width: 1.4em;
-    height: 1.4em;
-    background: white;
-    border: .1em solid rgba(182, 182, 182, .14);
+    background: rgba(233,30,99, .14);
     border-radius: 50%;
-    -webkit-filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.16));
     position: relative;
-    left: -8px;
-    top: 120px;
-    opacity: 0;
+    border: .1em solid var(--lightPinkColor);
+    height: 1.5em;
+    width: 1.5em;
+    left: -9px;
+    top: 130px
+}
+
+.range-circle::before {
+    border-radius: 50%;
+    box-shadow: 0px 1px 2px 1px rgba(0,0,0,.14);
+    background: var(--darkPinkColor);
+    position: absolute;
+    content: '';
+    border: .1em solid var(--pinkColor);
+    height: .7em;
+    width: .7em;
+    left: 5px;
+    top: 5px
+}
+
+.range-circle:hover{
+    cursor: pointer;
 }
 
 #equalizer-container {
-    width: auto;
+    margin-top: 1.6em;
     height: 100%;
-    display: inline-block;
+    width: 100%
+}
+
+#equalizer-container > div ~ div {
+    padding-right: 1.2em;
+    padding-left: 1.2em
 }
 
 #equalizer-container ul {
+    padding-right: 1.6em;
+    padding-left: 1.6em;
+    width: 100%;
     float: left
 }
 
 #equalizer-container ul > li {
-    display: inline
+    text-align: center;
+    display: inline-block;
+    width: 2.8em
 }
-
+/*
 #equalizer-container .range-circle {
     animation: fadeOut .3s linear forwards;
 }

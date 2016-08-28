@@ -1,0 +1,30 @@
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 59.000001 59.000001" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient>
+      <stop style="stop-color:#777777;stop-opacity:1;" offset="0" />
+    </linearGradient>
+    <filter style="color-interpolation-filters:sRGB;" id="filter4201">
+      <feFlood flood-opacity="0.705882" flood-color="rgb(214,214,214)" result="flood" />
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1" />
+      <feGaussianBlur in="composite1" stdDeviation="0.6" result="blur" />
+      <feOffset dx="0" dy="0" result="offset" />
+      <feComposite in="SourceGraphic" in2="offset" operator="over" result="composite2" />
+    </filter>
+    <filter style="color-interpolation-filters:sRGB;" id="filter4244">
+      <feFlood flood-opacity="0.705882" flood-color="rgb(214,214,214)" result="flood" />
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1" />
+      <feGaussianBlur in="composite1" stdDeviation="0.6" result="blur" />
+      <feOffset dx="0" dy="0" result="offset" />
+      <feComposite in="SourceGraphic" in2="offset" operator="over" result="composite2" />
+    </filter>
+  </defs>
+  <g transform="matrix(0.27019096,0,0,0.27058088,1.4784811,-226.95491)">
+    <rect style="opacity:1;fill:#ececec;fill-opacity:1;fill-rule:nonzero;stroke:#777777;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4201)" width="197.85715" height="197.85715" x="5.7142859" y="848.79077" />
+    <rect y="862.86652" x="26.263968" height="169.70563" width="14.142136" style="opacity:1;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:#0a0a0a;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect style="opacity:1;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:#0a0a0a;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" width="14.142136" height="169.70563" x="168.67517" y="862.86652" />
+    <rect y="862.86652" x="97.5718" height="169.70563" width="14.142136" style="opacity:1;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:#0a0a0a;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <circle style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#dbdbdb;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4244)" cx="175.74623" cy="939.98267" r="16.414978" />
+    <circle r="16.414978" cy="990.99536" cx="104.64287" style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#dbdbdb;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4244)" />
+    <circle style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#dbdbdb;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4244)" cx="33.335033" cy="884.92938" r="16.414978" />
+  </g>
+</svg>

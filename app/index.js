@@ -72,9 +72,13 @@ app.on('ready', () => {
   // Se debe usar el proceso principal para comunicar entre distintos renders.
   /* ---------------------------------------------/ / /-------------------------------------------- */
   // Despliega la lista al actualizarla o al sobre escribir la carpeta de las canciones
-  ipcMain.on('display-list', () => { mainWindow.webContents.send('order-display-list') })
+  ipcMain.on('display-list', () => {
+    mainWindow.webContents.send('order-display-list')
+  })
 
   // Comunica la ventana de configuraciones con la ventana principal.
   // Envío de datos desde el equalizador al AudioContext
-  // ipcMain.on('equalizer-filter', (e, a) => { mainWindow.webContents.send('get-equalizer-filter', a) })
+  ipcMain.on('equalizer-filter', (e, a) => {
+    mainWindow.webContents.send('get-equalizer-filter', a)
+  })
 })
