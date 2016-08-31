@@ -9,7 +9,7 @@
             "statusLanguage": "Español",
             "titleConfig": "Configuración",
             "addAccounts": "Cuentas",
-            "equalizerSetting": "Equalizador",
+            "equalizerSetting": "Ecualizador",
             "statusSongFolder": "/home/dmolina/Música",
             "loadingSongFolder": "Cargando canciones: "
         },
@@ -20,7 +20,7 @@
         },
         "alerts": {
             "newSongsFound": "Agregando nuevas canciones<br>",
-            "infoEqualizer": "No usar el equalizador si estás usando uno en tu sistema operativo",
+            "infoEqualizer": "No usar el ecualizador si estás usando uno en tu sistema operativo",
             "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música &#127926;",
             "error_001": "Falta un archivo necesario para que funcione el reproductor. Ir a:  https://github.com/DracotMolver/Soube y reportar el error. Gracias",
             "error_002": "No hay archivos para reproducir. Por favor, ir al icono de configuración y agregar tu carpeta de música",

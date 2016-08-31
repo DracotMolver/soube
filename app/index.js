@@ -13,17 +13,15 @@ app.on('window-all-closed', () => {
 })
 
 app.on('ready', () => {
-  let isShortcutRegistered = !0
-
   // Reproductor
   let mainWindow = new BrowserWindow({
-    autoHideMenuBar: !0,
+    autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
-    useContentSize: !0,
+    useContentSize: true,
     minHeight: 600,
     minWidth: 600,
     height: 600,
-    center: !0,
+    center: true,
     width: 1200,
     title: 'Soube',
     icon: `${__dirname}/assets/img/icon.png`
@@ -33,16 +31,25 @@ app.on('ready', () => {
   mainWindow.setMenu(null)
   mainWindow.loadURL(`file://${__dirname}/views/main/index.html`)
   mainWindow.on('closed', () => {
+    // Cerrar los keys registrados
+    globalShortcut.unregister('CommandOrControl+F')
+    globalShortcut.unregister('Esc')
+
     BrowserWindow.getAllWindows().forEach(v => { v.close() })
-    if (isShortcutRegistered) globalShortcut.unregister('CommandOrControl+F')
   }).on('focus', () => {
-    if (isShortcutRegistered) {
-      isShortcutRegistered = globalShortcut.register('CommandOrControl+F', () => {
-        mainWindow.webContents.send('input-search-song')
-      })
-    }
+    // Abrir inputsearch
+    globalShortcut.register('CommandOrControl+F', () => {
+      mainWindow.webContents.send('input-search-song')
+    })
+
+    // Cerrar inputsearch
+    globalShortcut.register('Esc', () => {
+      mainWindow.webContents.send('close-input-search-song')
+    })
   }).on('blur', () => {
-    if (isShortcutRegistered) globalShortcut.unregister('CommandOrControl+F')
+    // Cerrar los keys registrados
+    globalShortcut.unregister('CommandOrControl+F')
+    globalShortcut.unregister('Esc')
   })
 
   // Despliega la ventana para configurar varias cosas :P

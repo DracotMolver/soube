@@ -50,9 +50,9 @@ function createDefaultListView () {
   // 4.- div -> Album
   const elements = $(['div', 'div', 'div', 'div']) // Crear los elementos a usar
   const parent = elements.shift()
-  let childs = elements
-  let f = document.createDocumentFragment()
   let childsAttr = null
+  let childs = elements
+  const f = document.createDocumentFragment()
 
   // Se inicia la estructura <li> con los datos de las canciones
   const _f = jread(SONG_FILE).map((v, i) => {
@@ -63,7 +63,7 @@ function createDefaultListView () {
       {clone: 'div', addText: `<span class="miscelaneo">from</span>${v.album}`, addClass: 'grid-33 mobile-grid-33 song-info'}
     ]
 
-    f.appendChild(
+    return f.appendChild(
       $(parent, {
         clone: 'div',
         addClass: 'grid-100',
@@ -81,7 +81,6 @@ function createDefaultListView () {
         }
       })
     )
-    return f
   })
   $('#list-songs', {addTo: _f})
 }

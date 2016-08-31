@@ -4,7 +4,8 @@ const {
   playSong,
   nextSong,
   setSongs,
-  setFilterVal
+  setFilterVal,
+  moveForward
 } = require('./playFile')
 
 // funciones para crear el listado de canciones
@@ -24,6 +25,7 @@ const {
 
 /** -------------------------- Variables ------------------------ **/
 let isInputSearchDisplayed = false // Validar si se ha pulsado (ctrl | cmd) + f
+let searchResultsElements = $(['div', 'div'])
 let inputRegexSearch = null // Nombre de la canción a buscar
 let inputSearchValue = ''
 let newSongsSize = 0
@@ -227,6 +229,15 @@ ipcRenderer.on('get-equalizer-filter', (e, a) => {
   setFilterVal(...a)
 })
 
+function hideSearchInputData () {
+  $('#input-search-result', {addText: ''})
+  $('#search-container', {addClass: 'hide'})
+  $('#search-wrapper', {rmClass: 'search-wrapper-anim'})
+  $('.grid-container', {rmAttr: 'style'})
+  $('#input-search', {rmClass: 'input-search-anim'})
+  isInputSearchDisplayed = false
+}
+
 // Desplegar input search para buscar canciones, artistas, o album
 // Registrar un shorcut
 function searchInputData (e) {
@@ -242,22 +253,38 @@ function searchInputData (e) {
     $('.anim-play').forEach((v, i) => {
       $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
     })
-    $('#input-search-result', {addText: ''})
-    $('#search-container', {addClass: 'hide'})
-    $('#search-wrapper', {rmClass: 'search-wrapper-anim'})
-    $('.grid-container', {rmAttr: 'style'})
-    $('#input-search', {rmClass: 'input-search-anim'})
-    isInputSearchDisplayed = false
+    hideSearchInputData()
   }
 
   inputRegexSearch = new RegExp(`^${inputSearchValue.replace(/\s/g, '&nbsp;')}`, 'img')
   _list = _listTotal.filter(v => inputRegexSearch.test($(v, {getData: ['title', 'string']})))
+
+  // Posibles resultados
+  const f = document.createDocumentFragment()
+  const _f = _list.map(v => {
+    return f.appendChild(
+      $(searchResultsElements[0], {
+        clone: 'div',
+        addClass: 'grid-25',
+        addTo: [
+          $(searchResultsElements[1], {
+            clone: 'div',
+            addClass: 'search-results',
+            addText: $(v, {getData: ['title', 'string']})
+          })
+        ]
+      })
+    )
+  })
+  $('#possibles-results', {addText: '', addTo: _f})
 
   $('#input-search-result', {
     addText: _list.length > 0 && inputSearchValue.length > 0 ? $(_list[0], {getData: ['title', 'string']}) : ''
   })
 }
 
+// Se detecta el registro de la combinación de teclas (ctrl|cmd) + F
+// Para desplegar la busqueda de canciones
 ipcRenderer.on('input-search-song', () => {
   if (!isInputSearchDisplayed) {
     _listTotal = $('#list-songs', {getChild: 'all'})
@@ -275,12 +302,20 @@ ipcRenderer.on('input-search-song', () => {
   }
 })
 
+// Se detecta el cierre del inputsearch con la tecla Esc
+ipcRenderer.on('close-input-search-song', () => {
+  if (isInputSearchDisplayed) hideSearchInputData()
+})
+
 // Adelantar o retroceder la canción usando la barra de progreso
 $('#total-progress-bar', {
   on: {
     'click': function (e) {
-      //e.offsetX -> donde se hizo click
-      console.log(e.offsetX)
+      moveForward(e, this)
+      // e.offsetX -> donde se hizo click
+      // this.clientWidth -> hancho
+      // _duration
+      // move
     }
   }
 })

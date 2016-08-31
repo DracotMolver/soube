@@ -25,7 +25,7 @@
     background: var(--darkPinkColor);
     position: absolute;
     opacity: 0;
-    content: '';
+    content: ''
 }
 
 #play-pause {
@@ -75,7 +75,8 @@
 
 #total-progress-bar,
 #progress-bar {
-    height:  .36em
+    height:  .36em;
+    cursor: e-resize
 }
 
 #total-progress-bar {
@@ -92,12 +93,15 @@
 /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
 #info-song {
     text-align: left;
+    overflow: hidden;
     margin: .3em 1.2em;
+    width: 85%;
+    float: left
 }
 
 #song-title > h1 {
-    font-size: 1.6em;
     font-weight: 500;
+    font-size: 1.6em;
     color: var(--whiteColor)
 }
 
@@ -132,10 +136,10 @@
     background-repeat: no-repeat;
     background-size: 100% 50px, 100% 15px;
     background-attachment: local, scroll;
+    overflow: hidden;
     overflow-y: scroll;
-    position: absolute;
     height: calc(100% - 95px);
-    width: 100%;
+    width: 100%
 }
 
 #list-songs > div:nth-child(odd) {
@@ -151,7 +155,7 @@
     font-weight: 300;
     line-height: 2em;
     font-size: .906em;
-    cursor: pointer;
+    cursor: pointer
 }
 
 .miscelaneo {
@@ -159,8 +163,16 @@
     color: var(--darkGreyColor)
 }
 
-
 /* ------------------------ INPUT SEARCH DE CANCIONES ------------------------ */
+.search-results {
+    border-radius: 25px;
+    background: rgba(151,154,154, .5);
+    line-height: 2.6em;
+    text-align: center;
+    margin: 1em;
+    color: var(--lightGreyColor)
+}
+
 #search-container {
     background: rgba(229, 232, 232, .3);
     position: fixed;
@@ -172,10 +184,10 @@
 
 #search-wrapper {
     position: relative;
-    padding: 10em 0;
+    padding: 7em 0 3.5em 0;
     margin: auto;
-    width: 11%;
     height: auto;
+    width: 11%
 }
 
 #input-search {
@@ -194,14 +206,14 @@
 #input-search,
 #input-search-result {
     font-weight: 300;
-    font-size: 6em
+    font-size: 1.6em
 }
 
 #input-search-result {
     position: absolute;
     color: rgba(182, 182, 182, .4);
     left: 1.6em;
-    top: 2em
+    top: 4.7em
 }
 
 .input-search-anim {
@@ -302,8 +314,9 @@
     }
 
     #config {
+        padding: 0;
         margin: 0;
-        height: 100%;   
+        height: 100%;
         width: 100%;
         float: left
     }
@@ -312,6 +325,11 @@
     #info-song {
         text-align: left;
         margin: .3em 1.2em;
+        width: 93%
+    }
+
+    #info-song > div {
+        overflow: hidden
     }
 
     #song-title > h1 {
@@ -325,6 +343,6 @@
 
     #time {
         font-size: 1em;
-        margin-bottom: 0
+        margin: 0
     }
 }

@@ -9,24 +9,27 @@ const {dialog} = require('./commons')
 
 /** ---------------------------- Varibles ---------------------------- **/
 let isSongPlaying = false // Se ejecutó play sobre el AudioNode
+let isMovingForward = false // Se se está tratando de adelantar la cación a un tiempo determinado
 let isNexAble = false // Se puede reproducir la siguiente canción
 let position = 0 // Posición de la canción actual
 let filePath = '' // Ruta de la canción
 let songs = {} // Listado de canciones
 
-// Variables necesarios para el AudioContext
+// Variables necesarios para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext() // Contendrá el objeto AudioContext
 let _duration = 0 // Duración máxima de la canción
 const gain = audioContext.createGain() // Gain a usar sobre el AudioNode
   gain.gain.value = 1.05
 let source = null // Contendrá el objeto AudioNode
 let xhtr = new XMLHttpRequest() // Contendrá el objeto XMLHttpRequest
+let _buffer = {}
 
 // Variables para generar el calculo del tiempo transcurrido
 let millisecond = 1
 let _minute = 0 // Final
 let _second = 0 // Final
 let interval = null // Función interval para crear el tiempo de reproducción
+let forward = 0 // tiempo estimado dónde debería de seguir correindo la canción al adelantarla
 let percent = 0
 let minute = 0 // Inicial
 let second = 0 // Iinicial
@@ -72,6 +75,7 @@ function playSong () {
     return 'paused'
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true
+    ++millisecond
     startTimer()
     audioContext.resume()
     return 'resume'
@@ -84,7 +88,7 @@ function playSong () {
 function startTimer () {
   const pb = $('#progress-bar')
   const lapse = 100 / _duration
-  
+
   interval = setInterval(() => {
     ++millisecond
     if (millisecond / 100 > second + (60 * minute)) { // Segundos
@@ -106,11 +110,36 @@ function startTimer () {
  * Limpiará el tiempo transcurrido y liberará a la función setInterval
  */
 function stopTimer () {
-  isSongPlaying = false
-  clearInterval(interval)
-  $('#time-start', {addText: '00:00'})
-  millisecond = second = minute = percent =
-  _duration = _minute = _second = time = 0
+  if (!isMovingForward) {
+    isSongPlaying = false
+    clearInterval(interval)
+    $('#time-start', {addText: '00:00'})
+    millisecond = second = minute = percent =
+    _duration = _minute = _second = time = 0
+    if (isNexAble && !isMovingForward) nextSong()
+  } else if (isMovingForward) {
+    /** ----------------------------------- / / / ----------------------------------- **/
+    /** La función stop tarda unos milesegundos más que ejecutar la función moveForward
+     * Por lo tanto lo que continua después de detener la canción deberá ser ejecutado
+     * dentro de la función onended
+      */
+    // Se debe crear un nuevo AudioNode, ya que al dar stop el nodo se eliminia
+    source = audioContext.createBufferSource()
+
+    // Evento que se gatilla al terminar la canción
+    source.onended = stopTimer
+
+    // Conectar todos los nodos
+    source.buffer = _buffer
+    source.connect(gain)
+      .connect(filter[0])
+      .connect(audioContext.destination)
+
+    startTimer()
+    source.start(0, forward)
+    isMovingForward = false
+    isSongPlaying = true
+  }
 }
 
 /**
@@ -145,29 +174,29 @@ function play () {
   xhtr.responseType = 'arraybuffer'
   xhtr.onload = () => {
     audioContext.decodeAudioData(xhtr.response).then(buffer => {
+      // Para ser usado al momento de querer adelantar la canción
+      _buffer = buffer
       // El buffer nos entrega la duración de la canción.
       // La duración de la cación está en segundos, por ende hay que pasarla a minutos.
-      time = ((_duration = buffer.duration) / 60).toString()
+      time = ((_duration = _buffer.duration) / 60).toString()
       _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10)
-      _second = Math.floor(time.slice(time.lastIndexOf('.')) * 60)
+      _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60)
       $('#time-end', {
         addText: `${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`
       })
 
+      // Evento que se gatilla al terminar la canción
+      source.onended = stopTimer
+
       // Conectar todos los nodos
-      source.buffer = buffer
-      source
-      .connect(gain)
+      source.buffer = _buffer
+      source.connect(gain)
         .connect(filter[0])
         .connect(audioContext.destination)
 
       startTimer()
       source.start(0)
       isNexAble = isSongPlaying = true
-      source.onended = () => {
-        stopTimer()
-        if (isNexAble) nextSong()
-      }
     }, reason => {
       dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong} ${reason}`)
       return
@@ -236,9 +265,24 @@ function filters () {
   filter.reduce((p, c) => p.connect(c))
 }
 
+function moveForward (event, element) {
+  forward = (_duration * event.offsetX) / element.clientWidth
+  let time_m = (forward / 60).toString()
+  // Recalcular el tiempo
+  minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10)
+  second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60)
+  millisecond = Math.floor(forward * 100) + 1
+  clearInterval(interval)
+  // Recalcular el porcentaje de la barra de tiempo
+  // percent = (parseInt(event.offsetX, 10) / 16) * 3
+  isMovingForward = true
+  source.stop(0)
+}
+
 module.exports = Object.freeze({
   setSongs,
   playSong,
   nextSong,
-  setFilterVal
+  setFilterVal,
+  moveForward
 })
