@@ -72,7 +72,6 @@ function createDefaultListView () {
           title: v.title,
           artist: v.artist,
           album: v.album,
-          duration: v.duration,
           position: i
         },
         addTo: childs.map((t, i) => $(t, childsAttr[i])),

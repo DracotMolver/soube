@@ -39,12 +39,12 @@ app.on('ready', () => {
   }).on('focus', () => {
     // Abrir inputsearch
     globalShortcut.register('CommandOrControl+F', () => {
-      mainWindow.webContents.send('input-search-song')
+      mainWindow.webContents.send('search-song')
     })
 
     // Cerrar inputsearch
     globalShortcut.register('Esc', () => {
-      mainWindow.webContents.send('close-input-search-song')
+      mainWindow.webContents.send('close-search-song')
     })
   }).on('blur', () => {
     // Cerrar los keys registrados

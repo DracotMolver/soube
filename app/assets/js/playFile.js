@@ -18,24 +18,33 @@ let songs = {} // Listado de canciones
 // Variables necesarios para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext() // Contendrá el objeto AudioContext
 let _duration = 0 // Duración máxima de la canción
+let _buffer = {}
+let source = null // Contendrá el objeto AudioNode
 const gain = audioContext.createGain() // Gain a usar sobre el AudioNode
   gain.gain.value = 1.05
-let source = null // Contendrá el objeto AudioNode
 let xhtr = new XMLHttpRequest() // Contendrá el objeto XMLHttpRequest
-let _buffer = {}
 
 // Variables para generar el calculo del tiempo transcurrido
 let millisecond = 1
+let interval = null // Función interval para crear el tiempo de reproducción
 let _minute = 0 // Final
 let _second = 0 // Final
-let interval = null // Función interval para crear el tiempo de reproducción
 let forward = 0 // tiempo estimado dónde debería de seguir correindo la canción al adelantarla
 let percent = 0
 let minute = 0 // Inicial
 let second = 0 // Iinicial
-let time = 0 // Tiempo total final
 let filter = [] // Almancenará un array con el filtro a usar en distintas frecuencias
+let lapse = 0
+let time = 0 // Tiempo total final
 let hrz = [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
+
+// DOM a usar
+const dom_progress_bar = $('#progress-bar')
+const dom_song_artist = $('#artist')
+const dom_time_start = $('#time-start')
+const dom_song_title = $('#song-title')
+const dom_song_album = $('#album')
+const dom_time_end = $('#time-end')
 
 /** ---------------------------- Funciones ---------------------------- **/
 /**
@@ -86,9 +95,6 @@ function playSong () {
  * Generará el tiempo que lleva reproduciendose la canción
  */
 function startTimer () {
-  const pb = $('#progress-bar')
-  const lapse = 100 / _duration
-
   interval = setInterval(() => {
     ++millisecond
     if (millisecond / 100 > second + (60 * minute)) { // Segundos
@@ -97,11 +103,11 @@ function startTimer () {
         second = 0
       }
       // Tiempo transcurrido
-      $('#time-start', {
+      $(dom_time_start, {
         addText: `${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`
       })
       ++second
-      $(pb, {css: `width:${percent += lapse}%`}) // Barra de carga
+      $(dom_progress_bar, {css: `width:${percent += lapse}%`}) // Barra de carga
     }
   }, 10)
 }
@@ -113,7 +119,7 @@ function stopTimer () {
   if (!isMovingForward) {
     isSongPlaying = false
     clearInterval(interval)
-    $('#time-start', {addText: '00:00'})
+    $(dom_time_start, {addText: '00:00'})
     millisecond = second = minute = percent =
     _duration = _minute = _second = time = 0
     if (isNexAble && !isMovingForward) nextSong()
@@ -153,13 +159,13 @@ function dataSong (_position) {
   filePath = infoSong.filename // Ruta donde se encuentra el archivo a reproducir
 
   // Título de la canción
-  $('#song-title', {getChild: 0, addText: infoSong.title})
+  $(dom_song_title, {getChild: 0, addText: infoSong.title})
 
   // Artista
-  $('#artist', {getChild: 0, addText: infoSong.artist})
+  $(dom_song_artist, {getChild: 0, addText: infoSong.artist})
 
   // Album
-  $('#album', {getChild: 0, addText: infoSong.album})
+  $(dom_song_album, {getChild: 0, addText: infoSong.album})
 }
 
 /**
@@ -181,10 +187,10 @@ function play () {
       time = ((_duration = _buffer.duration) / 60).toString()
       _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10)
       _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60)
-      $('#time-end', {
+      lapse = 100 / _duration // Porcentaje a usar por cada segundo en la barra de progreso
+      $(dom_time_end, {
         addText: `${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`
       })
-
       // Evento que se gatilla al terminar la canción
       source.onended = stopTimer
 
@@ -244,7 +250,7 @@ function nextSong (_position = -1) {
  * Cambia los valores en la frecuencia específica
  */
 function setFilterVal (a, b) {
-  filter[a].gain.setValueAtTime(b, audioContext.currentTime + 1)
+  filter[a].gain.setValueAtTime(b, audioContext.currentTime)
 }
 
 /**
@@ -252,16 +258,15 @@ function setFilterVal (a, b) {
  * [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
  */
 function filters () {
-  let hrzGain = jread(CONFIG_FILE).equalizer
-
-  filter = hrz.map((v, i) => {
-    return (f = audioContext.createBiquadFilter(),
-      f.type = 'peaking',
-      f.frequency.value = v,
-      f.Q.value = 1,
-      f.gain.value = hrzGain[i] / 20,
-      f)
-  })
+  const hrzGain = jread(CONFIG_FILE).equalizer
+  let f = null
+  filter = hrz.map((v, i) =>
+    (f = audioContext.createBiquadFilter(),
+    f.type = 'peaking',
+    f.frequency.value = v,
+    f.Q.value = 1,
+    f.gain.value = hrzGain[i] / 20, f)
+  )
   filter.reduce((p, c) => p.connect(c))
 }
 
@@ -274,6 +279,7 @@ function moveForward (event, element) {
   millisecond = Math.floor(forward * 100) + 1
   clearInterval(interval)
   // Recalcular el porcentaje de la barra de tiempo
+  console.log(lapse * time_m)
   // percent = (parseInt(event.offsetX, 10) / 16) * 3
   isMovingForward = true
   source.stop(0)

@@ -18,6 +18,14 @@ let lang = jread(LANG_FILE)[configFile.lang]
 let alerts = lang.alerts
 let count = 0 // Contador de archivos parseados para obtener los metadata
 
+// Equalizador
+let y = 0
+let pos = 0
+let hrzGain = configFile.equalizer
+let range = null
+let plus = 0
+let db = 0
+
 /** -------------------------- Funciones ------------------------ **/
 /**
  * Texto a modificar en la ventana de configuraciones
@@ -35,7 +43,7 @@ let count = 0 // Contador de archivos parseados para obtener los metadata
 // Refrescar la ventana
 $('#_titleconfig', {
   on: {
-    'click': () => {window.location.reload(false)}
+    'click': () => { window.location.reload(false) }
   }
 })
 
@@ -45,7 +53,7 @@ $('#_titleconfig', {
 function animConfigPanel () {
   $('#config-container-options', {
     addClass: 'config-opt-anim',
-    on:{
+    on: {
       'animationend': function animPanelEnd () {
         $('#config-container-values', {rmClass: 'hide'})
         $(this, {addClass: 'hide'})
@@ -78,9 +86,7 @@ function onClickChangeLang () {
 
 // Cambiar idioma
 $('#change-lang', {
-  on: {
-    'click': onClickChangeLang
-  }
+  on: {'click': onClickChangeLang}
 })
 
 /**
@@ -194,14 +200,13 @@ function onEqualizerPanel (e) {
   animConfigPanel()
   $('#_titlesubconfig', {addText: `> ${lang.config.equalizerSetting}`})
 
-  let y = 0
-  let pos = 0
-  let hrzGain = configFile.equalizer
-  let range = null
-  let plus = 0
-  let db = 0
+  y = 0
+  pos = 0
+  range = null
+  plus = 0
+  db = 0
 
-  let onDragMove = e => {
+  const onDragMove = e => {
     if (range !== null) {
       y = parseInt(window.getComputedStyle(range).getPropertyValue('top'), 10)
       plus = (e.clientY - range.offsetTop) + y
@@ -211,17 +216,17 @@ function onEqualizerPanel (e) {
       }
       ipcRenderer.send('equalizer-filter', [
         $(range, {getData: ['position', 'int']}),
-        parseFloat(db / 20 > 130 ? -(7 - db / 20) : (7 - db / 20) + 1.6).toFixed(3)
+        parseFloat(db / 20 > 130 ? -(7 - db / 20) : (7 - db / 20) + 1.8).toFixed(3)
       ])
     }
   }
 
-  let onDragStart = function onDragStart (e) {
+  const onDragStart = function onDragStart (e) {
     range = this
     pos = $(range, {getData: ['position', 'int']})
   }
 
-  let onDragEnd = () => {
+  const onDragEnd = () => {
     hrzGain[pos] = db
     configFile.equalizer = hrzGain
     configFile = jsave(CONFIG_FILE, configFile)

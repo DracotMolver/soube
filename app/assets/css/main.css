@@ -190,7 +190,7 @@
     width: 11%
 }
 
-#input-search {
+#search {
     background-image: url(../../assets/img/search.svg);
     background-repeat: no-repeat;
     background-color: transparent;
@@ -200,28 +200,41 @@
     transform: scale(0);
     padding: .2em .2em .2em 1.6em;
     margin: 0;
+    cursor: text;
+    width: 100%;
     color: var(--blackColor)
 }
 
-#input-search,
-#input-search-result {
+#search,
+#search-result {
     font-weight: 300;
     font-size: 1.6em
 }
 
-#input-search-result {
+#search-result {
     position: absolute;
     color: rgba(182, 182, 182, .4);
     left: 1.6em;
     top: 4.7em
 }
 
-.input-search-anim {
+.search-anim {
     animation: showInputUp .5s ease-in forwards
 }
 
 .search-wrapper-anim {
     animation: displayInputSearch .5s .6s ease-in-out forwards 
+}
+
+#container-results {
+    overflow: hidden;
+    height: 370px
+}
+
+.results,
+#wrapper-results{
+    height: 100%;
+    float: left
 }
 
 /* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
@@ -234,14 +247,14 @@
 }
 
 /* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
-#new-songs-pop-up-container {
+#pop-up-container {
     position: absolute;
     height: auto;
     width: 100%;
     top: 6.6em
 }
 
-#new-songs-pop-up {
+#pop-up {
     border-radius: 21px;
     background: var(--darkGreyColor);
     font-weight: 500;
@@ -254,7 +267,7 @@
     color:  var(--whiteColor)
 }
 
-.new-songs-pop-up-anim {
+.pop-up-anim {
     animation:  showPopUp .6s ease-in-out forwards
 }
 /* ------------------------ ANIMACIONES ------------------------ */
@@ -287,6 +300,12 @@
 		transform: scale3d(1.2, 1.2, 1);
         opacity: 0
 	}
+}
+
+@keyframes scrollLeft {
+    100% {
+        transform: translateX(-100%)
+    }
 }
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
@@ -330,6 +349,10 @@
 
     #info-song > div {
         overflow: hidden
+    }
+
+    #song-title {
+        animation: scrollLeft 5s linear infinite
     }
 
     #song-title > h1 {
