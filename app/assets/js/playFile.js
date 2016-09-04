@@ -14,6 +14,7 @@ let isNexAble = false // Se puede reproducir la siguiente canción
 let position = 0 // Posición de la canción actual
 let filePath = '' // Ruta de la canción
 let songs = {} // Listado de canciones
+let animLapse = null // Settimeout de la animación cuando el texto de la canción es muy largo
 
 // Variables necesarios para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext() // Contendrá el objeto AudioContext
@@ -92,6 +93,32 @@ function playSong () {
 }
 
 /**
+ * Generará una animación sobre la información de una canción que sea demasiado largo
+ * NOTA - Se usa la Web API Animation - Aún está en draft
+ * Se debe espeficicar la unidad a usar, aunque el valor sea 0
+ */
+function setAnimation () {
+  const width = $(dom_song_title, {getChild: 0}).scrollWidth
+  if (width > $(dom_song_title).clientWidth) {
+    // Buscar otra manera - alto consumo de cpu :/
+    const update = () => {
+      $(dom_song_title).animate(
+        [
+          {transform: 'translateX(0px)'},
+          {transform: `translateX(-${width}px)`}
+        ],
+        {
+          iterations: 1,
+          duration: 3600
+        }
+      )
+      animLapse
+    }
+    animLapse = setTimeout(update, 3000)
+  }
+}
+
+/**
  * Generará el tiempo que lleva reproduciendose la canción
  */
 function startTimer () {
@@ -119,6 +146,7 @@ function stopTimer () {
   if (!isMovingForward) {
     isSongPlaying = false
     clearInterval(interval)
+    clearTimeout(animLapse)
     $(dom_time_start, {addText: '00:00'})
     millisecond = second = minute = percent =
     _duration = _minute = _second = time = 0
@@ -191,6 +219,7 @@ function play () {
       $(dom_time_end, {
         addText: `${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`
       })
+      setAnimation()
       // Evento que se gatilla al terminar la canción
       source.onended = stopTimer
 

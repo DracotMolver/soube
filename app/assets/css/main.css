@@ -302,12 +302,6 @@
 	}
 }
 
-@keyframes scrollLeft {
-    100% {
-        transform: translateX(-100%)
-    }
-}
-
 /* ------------------------ MEDIA QUERIES ------------------------ */
 @media only screen and (max-width: 750px) {
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
@@ -349,10 +343,6 @@
 
     #info-song > div {
         overflow: hidden
-    }
-
-    #song-title {
-        animation: scrollLeft 5s linear infinite
     }
 
     #song-title > h1 {

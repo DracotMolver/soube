@@ -8,10 +8,10 @@
 module.exports = (function (_) {
   const o = Object.freeze({
     addClass,
+    getChild,
     rmClass,
     getData,
     addText,
-    getChild,
     setData,
     rmAttr,
     addTo,
