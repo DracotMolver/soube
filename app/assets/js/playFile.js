@@ -1,4 +1,7 @@
 /**
+ * @author Diego Alberto Molina Vera
+ */
+/**
  * -------------------------- Módulo PlayFile -------------------------- *
  *
  * Encargada de reproducir la canción, tocar la siguiente canción o la anterior.
@@ -14,7 +17,6 @@ let isNexAble = false // Se puede reproducir la siguiente canción
 let position = 0 // Posición de la canción actual
 let filePath = '' // Ruta de la canción
 let songs = {} // Listado de canciones
-let animLapse = null // Settimeout de la animación cuando el texto de la canción es muy largo
 
 // Variables necesarios para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext() // Contendrá el objeto AudioContext
@@ -22,7 +24,7 @@ let _duration = 0 // Duración máxima de la canción
 let _buffer = {}
 let source = null // Contendrá el objeto AudioNode
 const gain = audioContext.createGain() // Gain a usar sobre el AudioNode
-  gain.gain.value = 1.05
+gain.gain.value = 1.05
 let xhtr = new XMLHttpRequest() // Contendrá el objeto XMLHttpRequest
 
 // Variables para generar el calculo del tiempo transcurrido
@@ -53,7 +55,7 @@ const dom_time_end = $('#time-end')
  *
  * @var _songs {Object} - Objeto contenedor del listado total de canciones
  */
-function setSongs (_songs) {
+function setSongs(_songs) {
   songs = _songs
   filters()
 }
@@ -63,7 +65,7 @@ function setSongs (_songs) {
  *
  * @return random {Number}
  */
-function shuffle () {
+function shuffle() {
   return Math.floor(Math.random() * songs.length).toString()
 }
 
@@ -72,7 +74,7 @@ function shuffle () {
  *
  * @return estado actual del reproductor {String}
  */
-function playSong () {
+function playSong() {
   if (!isSongPlaying && audioContext.state === 'running') { // Primera vez
     dataSong(shuffle())
     play()
@@ -93,35 +95,47 @@ function playSong () {
 }
 
 /**
- * Generará una animación sobre la información de una canción que sea demasiado largo
- * NOTA - Se usa la Web API Animation - Aún está en draft
- * Se debe espeficicar la unidad a usar, aunque el valor sea 0
+ * Generará una animación sobre la información de una canción que sea demasiado larga
  */
-function setAnimation () {
-  const width = $(dom_song_title, {getChild: 0}).scrollWidth
+function setAnimation() {
+  const width = $(dom_song_title, { getChild: 0 }).scrollWidth
   if (width > $(dom_song_title).clientWidth) {
-    // Buscar otra manera - alto consumo de cpu :/
-    const update = () => {
-      $(dom_song_title).animate(
-        [
-          {transform: 'translateX(0px)'},
-          {transform: `translateX(-${width}px)`}
-        ],
-        {
-          iterations: 1,
-          duration: 3600
-        }
-      )
-      animLapse
+    let scrollStart = $(dom_song_title).animate(
+      [
+        { transform: 'translateX(0px)' },
+        { transform: `translateX(-${width}px)` },
+      ],
+      {
+        iterations: 1,
+        duration: 3600,
+        delay: 6600
+      }
+    )
+
+    let scrollEnd = $(dom_song_title).animate(
+      [
+        { transform: `translateX(${width}px)` },
+        { transform: 'translateX(0px)' },
+      ],
+      {
+        iterations: 1,
+        duration: 3600
+      }
+    )
+
+    scrollStart.onfinish = () => {
+      scrollEnd.play()
     }
-    animLapse = setTimeout(update, 3000)
+    scrollEnd.onfinish = () => {
+      scrollStart.play()
+    }
   }
 }
 
 /**
  * Generará el tiempo que lleva reproduciendose la canción
  */
-function startTimer () {
+function startTimer() {
   interval = setInterval(() => {
     ++millisecond
     if (millisecond / 100 > second + (60 * minute)) { // Segundos
@@ -134,7 +148,7 @@ function startTimer () {
         addText: `${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`
       })
       ++second
-      $(dom_progress_bar, {css: `width:${percent += lapse}%`}) // Barra de carga
+      $(dom_progress_bar, { css: `width:${percent += lapse}%` }) // Barra de carga
     }
   }, 10)
 }
@@ -142,14 +156,13 @@ function startTimer () {
 /**
  * Limpiará el tiempo transcurrido y liberará a la función setInterval
  */
-function stopTimer () {
+function stopTimer() {
   if (!isMovingForward) {
     isSongPlaying = false
     clearInterval(interval)
-    clearTimeout(animLapse)
-    $(dom_time_start, {addText: '00:00'})
+    $(dom_time_start, { addText: '00:00' })
     millisecond = second = minute = percent =
-    _duration = _minute = _second = time = 0
+      _duration = _minute = _second = time = 0
     if (isNexAble && !isMovingForward) nextSong()
   } else if (isMovingForward) {
     /** ----------------------------------- / / / ----------------------------------- **/
@@ -182,25 +195,25 @@ function stopTimer () {
  *
  * @var _position {Number} - Posición de la canción a reproducir
  */
-function dataSong (_position) {
+function dataSong(_position) {
   const infoSong = songs[(position = parseInt(_position, 10))]
   filePath = infoSong.filename // Ruta donde se encuentra el archivo a reproducir
 
   // Título de la canción
-  $(dom_song_title, {getChild: 0, addText: infoSong.title})
+  $(dom_song_title, { getChild: 0, addText: infoSong.title })
 
   // Artista
-  $(dom_song_artist, {getChild: 0, addText: infoSong.artist})
+  $(dom_song_artist, { getChild: 0, addText: infoSong.artist })
 
   // Album
-  $(dom_song_album, {getChild: 0, addText: infoSong.album})
+  $(dom_song_album, { getChild: 0, addText: infoSong.album })
 }
 
 /**
  * EJecuta, por medio de la Audio Web API, la canción.
  * Se obtiene un array buffer con info útil para usar
  */
-function play () {
+function play() {
   // Creamos un Buffer que contendrá la canción
   source = audioContext.createBufferSource()
 
@@ -241,11 +254,13 @@ function play () {
 }
 
 /**
- * Reproducirá la siguiente canción
+ * Reproducirá la siguiente canción.
+ * Esta función se comparte cuando se genera la lista de cacniones
+ * ya que al dar click sobre una cación la que se reproduce es otra "siguiente"
  *
  * @var _position {Number} - Posición de la canción a reproducir
  */
-function nextSong (_position = -1) {
+function nextSong(_position = -1) {
   if (_position !== -1) {
     // ver si está reproduciendose o no
     if (isSongPlaying && audioContext.state === 'running') {
@@ -276,9 +291,28 @@ function nextSong (_position = -1) {
 }
 
 /**
+ * Reproducirá la canción anterior
+ */
+function prevSong(_position) {
+  if (isNexAble) {
+    isNexAble = false
+    dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position - 1 : 0))
+    // si está sonando la canción, esta se debe detener para tocar la nueva
+      if (isSongPlaying && audioContext.state === 'running') {
+        source.stop(0)
+        source = null
+      }
+      // Verificar si el contexto está pausado o no.
+      // Si está pausado no se reproducirá una nueva pista
+      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
+      play()
+  }
+}
+
+/**
  * Cambia los valores en la frecuencia específica
  */
-function setFilterVal (a, b) {
+function setFilterVal(a, b) {
   filter[a].gain.setValueAtTime(b, audioContext.currentTime)
 }
 
@@ -286,20 +320,20 @@ function setFilterVal (a, b) {
  * Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
  * [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
  */
-function filters () {
+function filters() {
   const hrzGain = jread(CONFIG_FILE).equalizer
   let f = null
   filter = hrz.map((v, i) =>
     (f = audioContext.createBiquadFilter(),
-    f.type = 'peaking',
-    f.frequency.value = v,
-    f.Q.value = 1,
-    f.gain.value = hrzGain[i] / 20, f)
+      f.type = 'peaking',
+      f.frequency.value = v,
+      f.Q.value = 1,
+      f.gain.value = hrzGain[i] / 20, f)
   )
   filter.reduce((p, c) => p.connect(c))
 }
 
-function moveForward (event, element) {
+function moveForward(event, element) {
   forward = (_duration * event.offsetX) / element.clientWidth
   let time_m = (forward / 60).toString()
   // Recalcular el tiempo
@@ -308,7 +342,7 @@ function moveForward (event, element) {
   millisecond = Math.floor(forward * 100) + 1
   clearInterval(interval)
   // Recalcular el porcentaje de la barra de tiempo
-  console.log(lapse * time_m)
+  percent = forward * (100 / _duration)
   // percent = (parseInt(event.offsetX, 10) / 16) * 3
   isMovingForward = true
   source.stop(0)

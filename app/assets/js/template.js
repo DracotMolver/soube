@@ -1,4 +1,7 @@
 /**
+ * @author Diego Alberto Molina Vera
+ */
+/**
  * -------------------------- Módulo template -------------------------- *
  *
  * Se ha desarrollado este módulo para no depender de jQuery.
@@ -28,11 +31,11 @@ module.exports = (function (_) {
    * @var obj {Object} - Objeto con los nombres de las funciones a ejecutar
    * @return factory {Function}
    */
-  _.$ = function DOM (e, obj = {}) {
+  _.$ = function DOM(e, obj = {}) {
     if (/^\./.test(e)) e = Array.from(document.getElementsByClassName(e.replace('.', '')))
     else if (/^#/.test(e)) e = document.getElementById(e.replace('#', ''))
     else if (typeof e === 'object' && e.length > 0) e = e.map(v => document.createElement(v))
-    if (e.length !== undefined) e = (e.length == 1 ? e[0] : e)
+    if (e.length !== undefined) e = (e.length === 1 ? e[0] : e)
     return Object.keys(obj).length > 0 ? factory(e, obj) : e
   }
 
@@ -42,7 +45,7 @@ module.exports = (function (_) {
    * @var e {Object} - Objeto del elemento html rescatado
    * @var obj {Object} - Objeto con los nombres de las funciones a ejecutar
    */
-  function factory (e, obj) {
+  function factory(e, obj) {
     const _obj = obj
     const k = Object.keys(_obj).shift()
     const v = _obj[k]
@@ -53,37 +56,37 @@ module.exports = (function (_) {
   }
 
   /* -------------------------- Funciones -------------------------- */
-  function on (e, fn, o) {
+  function on(e, fn, o) {
     Object.keys(fn).forEach(v => {
       /animation/.test(v) ? e.addEventListener(v.toLowerCase(), fn[v]) : e[`on${v.toLowerCase()}`] = fn[v]
     })
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function addText (e, t, o) {
+  function addText(e, t, o) {
     e.innerHTML = `${t}`
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function addClass (e, c, o) {
+  function addClass(e, c, o) {
     let rgx = new RegExp(c, 'g')
     if (!rgx.test(e.className)) e.className += e.className === '' ? `${c}` : ` ${c}`
 
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function rmClass (e, c, o) {
+  function rmClass(e, c, o) {
     const rgx = new RegExp(c, 'g')
     if (rgx.test(e.className)) e.className = e.className.replace(c.toString(), '').trim()
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function getChild (e, p, o) {
+  function getChild(e, p, o) {
     e = (p === 'all') ? Array.from(e.children) : e.children[p]
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function attr (e, a, o) {
+  function attr(e, a, o) {
     if (typeof a === 'object')
       for (let i = 0, size = a.length / 2; i < size; i++)
         e.setAttribute(a[(i + 1) * i], a[((i + 1) * i) + 1])
@@ -91,12 +94,12 @@ module.exports = (function (_) {
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function rmAttr (e, a, o) {
+  function rmAttr(e, a, o) {
     e.removeAttribute(a)
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function getData (e, d, o) {
+  function getData(e, d, o) {
     const data = e.dataset
     switch (d[1]) {
       case 'string': e = data[d[0]].toString(); break
@@ -105,7 +108,7 @@ module.exports = (function (_) {
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function setData (e, d, o) {
+  function setData(e, d, o) {
     if (typeof d === 'object') {
       Object.keys(d).forEach(v => { e.dataset[v] = d[v] })
     } else {
@@ -115,17 +118,17 @@ module.exports = (function (_) {
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function addTo (e, a, o) {
+  function addTo(e, a, o) {
     a.forEach(v => { e.appendChild(v) })
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function css (e, s, o) {
+  function css(e, s, o) {
     e.style.cssText = s
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function clone (e, v, o) {
+  function clone(e, v, o) {
     if (e.nodeName === v.toUpperCase()) e = e.cloneNode(false)
     return Object.keys(o).length >= 1 ? factory(e, o) : e
   }

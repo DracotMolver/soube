@@ -1,3 +1,6 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
 /** -------------------------- Módulos ------------------------ **/
 // Funciones para reproducir las canciones
 const {
@@ -77,14 +80,14 @@ const dom_search = $('#search')
 
 /** -------------------------- Funciones ------------------------ **/
 // Activar shuffle
-if (configFile.shuffle) $(dom_shuffle_icon, {css: 'fill: #FBFCFC'})
+if (configFile.shuffle) $(dom_shuffle_icon, { css: 'fill: #FBFCFC' })
 
 /**
  * Una de las funciones importantes.
  * Se encarga de verificar si hay canciones que mostrar y arma lo
  * necesario para que el reproductor funciones
  */
-function loadSongs () {
+function loadSongs() {
   _songs = jread(SONG_FILE)
   if (Object.keys(_songs).length === 0) {
     $(dom_list_songs, {
@@ -103,7 +106,7 @@ function loadSongs () {
  *
  * @return objeto iterador {object} - {value: 'nombre de la canción', done: true | false}
  */
-function * readSongs () {
+function* readSongs() {
   while (newSongsSize--) yield newSongs[newSongsSize]
 }
 
@@ -112,7 +115,7 @@ function * readSongs () {
  *
  * @var iter {Objet} - Objeto iterador de la función generadora readSongs
  */
-function getMetadata (iter) {
+function getMetadata(iter) {
   $(dom_pop_up, {
     addText: `${alerts.newSongsFound}${count++} / ${newSongs.length}`
   })
@@ -121,7 +124,7 @@ function getMetadata (iter) {
   iterator = iter.next()
   if (!iterator.done && iterator.value !== undefined) {
     // Extraer metadatas de los archivos de audio
-    metaData(fs.createReadStream(iterator.value), function metaDataExtract (error, data) {
+    metaData(fs.createReadStream(iterator.value), function metaDataExtract(error, data) {
       // Agregar las nuevas canciones al objeto _songs
       // En caso de error, generar atributos de la canción con un valor en el idioma correspondiente
       _songs.push(
@@ -131,18 +134,18 @@ function getMetadata (iter) {
           title: lang.title.replace(/\s+/ig, '&nbsp;'),
           filename: iterator.value
         } : {
-          artist: (data.artist[0] !== undefined || data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s+/ig, '&nbsp;'),
-          album: (data.album !== undefined || data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
-          title: (data.title !== undefined || data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
-          filename: iterator.value
-        }
+            artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s+/ig, '&nbsp;'),
+            album: (data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
+            title: (data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
+            filename: iterator.value
+          }
       )
       getMetadata(iter)
     })
   } else {
     _songs = jsave(SONG_FILE, _songs)
     // Ocultar pop-up
-    $(dom_pop_up_container, {addClass: 'hide'})
+    $(dom_pop_up_container, { addClass: 'hide' })
     return
   }
 }
@@ -150,7 +153,7 @@ function getMetadata (iter) {
 /**
  * Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
  */
-function checkNewSongs () {
+function checkNewSongs() {
   execFile('find', [lang.config.statusSongFolder], (error, stdout, stderr) => {
     if (error) {
       dialog.showErrorBox('Error [003]', `${alerts.error_003} ${lang.config.statusSongFolder} :: ${stderr}`)
@@ -165,8 +168,8 @@ function checkNewSongs () {
 
       if ((newSongsSize = newSongs.length) > 0) {
         // Desplegar pop-up
-        $(dom_pop_up_container, {rmClass: 'hide'})
-        $(dom_pop_up, {addClass: 'pop-up-anim'})
+        $(dom_pop_up_container, { rmClass: 'hide' })
+        $(dom_pop_up, { addClass: 'pop-up-anim' })
         getMetadata(readSongs())
       }
     }
@@ -180,7 +183,7 @@ fs.access(SONG_FILE, fs.F_OK | fs.R_OK, error => {
     dialog.showErrorBox('Error [001]', `${alerts.error_001}`)
     return
   } else {
-    $(dom_list_songs, {addText: ''})
+    $(dom_list_songs, { addText: '' })
     loadSongs()
   }
 })
@@ -188,7 +191,7 @@ fs.access(SONG_FILE, fs.F_OK | fs.R_OK, error => {
 // Generar el listado de canciones cuando se han cargado desde el panel de configuraciones
 // El llamdo se hace desde el main.js
 ipcRenderer.on('order-display-list', () => {
-  $(dom_list_songs, {addText: ''})
+  $(dom_list_songs, { addText: '' })
   loadSongs()
 })
 
@@ -201,18 +204,18 @@ $(dom_config, {
   }
 })
 
- // Acciones sobre los botones del menú superior.
- // play, prev, next & shuffles
-function clickBtnControls () {
-  $(this, {addClass: 'click-controlls'})
+// Acciones sobre los botones del menú superior.
+// play, prev, next & shuffles
+function clickBtnControls() {
+  $(this, { addClass: 'click-controlls' })
 
   if (_songs.length !== 0) {
     switch (this.id) {
       case 'play-pause':
         playSong() === 'resume' ? dom_anim_play.forEach((v, i) => {
-          $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
+          $(v, { attr: ['from', anim.from[i], 'to', anim.to[i]] }).beginElement()
         }) : dom_anim_play.forEach((v, i) => {
-          $(v, {attr: ['from', anim.to[i], 'to', anim.from[i]]}).beginElement()
+          $(v, { attr: ['from', anim.to[i], 'to', anim.from[i]] }).beginElement()
         })
         break
       case 'next': nextSong(); break
@@ -234,8 +237,8 @@ function clickBtnControls () {
 }
 
 // Detectar terminio de la animación al haber dado click sobre un icono
-function endAnimBtnControlls () {
-  $(this, {rmClass: 'click-controlls'})
+function endAnimBtnControlls() {
+  $(this, { rmClass: 'click-controlls' })
 }
 
 dom_btn_controlls.forEach(v => {
@@ -252,18 +255,18 @@ ipcRenderer.on('get-equalizer-filter', (e, a) => {
   setFilterVal(...a)
 })
 
-function hideSearchInputData () {
-  $(dom_search_result, {addText: ''})
-  $(dom_search_container, {addClass: 'hide'})
-  $(dom_search_wrapper, {rmClass: 'search-wrapper-anim'})
-  $(dom_grid_container, {rmAttr: 'style'})
-  $(dom_search, {rmClass: 'input-search-anim'})
+function hideSearchInputData() {
+  $(dom_search_result, { addText: '' })
+  $(dom_search_container, { addClass: 'hide' })
+  $(dom_search_wrapper, { rmClass: 'search-wrapper-anim' })
+  $(dom_grid_container, { rmAttr: 'style' })
+  $(dom_search, { rmClass: 'input-search-anim' })
   isSearchDisplayed = false
 }
 
 // Desplegar input search para buscar canciones, artistas, o album
 // Registrar un shorcut
-function searchInputData (e) {
+function searchInputData(e) {
   searchValue = this.value
 
   if (e.key === 'ArrowRight' && searchValue.length > 1)
@@ -271,16 +274,16 @@ function searchInputData (e) {
 
   if (e.key === 'Enter') {
     // Reproduce la canción buscada
-    nextSong($(_list[0], {getData: ['position', 'int']}))
+    nextSong($(_list[0], { getData: ['position', 'int'] }))
     // Anima el botón play
     dom_anim_play.forEach((v, i) => {
-      $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
+      $(v, { attr: ['from', anim.from[i], 'to', anim.to[i]] }).beginElement()
     })
     hideSearchInputData()
   }
 
   searchRgx = new RegExp(`^${searchValue.replace(/\s/g, '&nbsp;')}`, 'img')
-  _list = _listTotal.filter(v => searchRgx.test($(v, {getData: ['title', 'string']})))
+  _list = _listTotal.filter(v => searchRgx.test($(v, { getData: ['title', 'string'] })))
 
   // Posibles resultados
   if (searchValue.length > 0) {
@@ -294,7 +297,7 @@ function searchInputData (e) {
     // Genera slide con listado total de las coincidencias
     while (slide--) {
       for (var i = 0; i < (total < 20 ? total : 20); i++) {
-        textFound = $(_list[countSearch], {getData: ['title', 'string']}).replace(/\&nbsp;/g, ' ')
+        textFound = $(_list[countSearch], { getData: ['title', 'string'] }).replace(/\&nbsp;/g, ' ')
         // Se generan los items dentro del slide
         fragRes.appendChild(
           $(searchResultsElements[1], {
@@ -308,15 +311,15 @@ function searchInputData (e) {
               })
             ],
             setData: {
-              position: $(_list[countSearch], {getData: ['position', 'int']})
+              position: $(_list[countSearch], { getData: ['position', 'int'] })
             },
             on: {
-              'click': function onClickResults () {
+              'click': function onClickResults() {
                 // Reproduce la canción buscada
-                nextSong($(this, {getData: ['position', 'int']}))
+                nextSong($(this, { getData: ['position', 'int'] }))
                 // Anima el botón play
                 dom_anim_play.forEach((v, i) => {
-                  $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
+                  $(v, { attr: ['from', anim.from[i], 'to', anim.to[i]] }).beginElement()
                 })
                 hideSearchInputData()
               }
@@ -344,12 +347,12 @@ function searchInputData (e) {
     })
   } else {
     // Limpiar cuando no haya coincidencia
-    $(dom_wrapper_results, {addText: ''})
+    $(dom_wrapper_results, { addText: '' })
   }
 
   // Mustra la primera coincidencia como opción a buscar
   $(dom_search_result, {
-    addText: _list.length > 0 && searchValue.length > 0 ? $(_list[0], {getData: ['title', 'string']}) : ''
+    addText: _list.length > 0 && searchValue.length > 0 ? $(_list[0], { getData: ['title', 'string'] }) : ''
   })
 }
 
@@ -357,10 +360,10 @@ function searchInputData (e) {
 // Para desplegar la busqueda de canciones
 ipcRenderer.on('search-song', () => {
   if (!isSearchDisplayed) {
-    _listTotal = $(dom_list_songs, {getChild: 'all'})
-    $(dom_search_container, {rmClass: 'hide'})
-    $(dom_search_wrapper, {addClass: 'search-wrapper-anim'})
-    $(dom_grid_container, {css: '-webkit-filter: blur(2px)'})
+    _listTotal = $(dom_list_songs, { getChild: 'all' })
+    $(dom_search_container, { rmClass: 'hide' })
+    $(dom_search_wrapper, { addClass: 'search-wrapper-anim' })
+    $(dom_grid_container, { css: '-webkit-filter: blur(2px)' })
     $(dom_search, {
       addClass: 'search-anim',
       on: {
@@ -380,7 +383,7 @@ ipcRenderer.on('close-search-song', () => {
 // Adelantar o retroceder la canción usando la barra de progreso
 $('#total-progress-bar', {
   on: {
-    'click': function onClickProgressBar (e) {
+    'click': function onClickProgressBar(e) {
       moveForward(e, this)
       // e.offsetX -> donde se hizo click
       // this.clientWidth -> hancho

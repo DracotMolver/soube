@@ -1,3 +1,6 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
 require('./commons')
 /**
  * -------------------------- Módulo ListSongs -------------------------- *
@@ -15,15 +18,15 @@ let clickNextSong = null // Almacena la función nextSong del archivo playFile.j
  *
  * @var _function {Function} - Recibe función nextSong
  */
-function setNextSongFunction (_function) {
+function setNextSongFunction(_function) {
   clickNextSong = _function
 }
 
 /**
  * Obtiene la posición de la canción seleccionada de la lista
  */
-function getDataSongAtPosition () {
-  clickNextSong($(this, {getData: ['position', 'int']}))
+function getDataSongAtPosition() {
+  clickNextSong($(this, { getData: ['position', 'int'] }))
   const anim = {
     from: [
       'M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
@@ -36,14 +39,14 @@ function getDataSongAtPosition () {
   }
 
   $('.anim-play').forEach((v, i) => {
-    $(v, {attr: ['from', anim.from[i], 'to', anim.to[i]]}).beginElement()
+    $(v, { attr: ['from', anim.from[i], 'to', anim.to[i]] }).beginElement()
   })
 }
 
 /**
  * Generará la vista del listado de canciones por defecto
  */
-function createDefaultListView () {
+function createDefaultListView() {
   // 1.- div -> Contenedor
   // 2.- div -> Canción
   // 4.- div -> Artista
@@ -58,9 +61,24 @@ function createDefaultListView () {
   const _f = jread(SONG_FILE).map((v, i) => {
     // Preparar el contenedo de los elementos <h4> y <h5>
     childsAttr = [
-      {clone: 'div', addText: v.title, addClass: 'grid-33 mobile-grid-33 song-info'},
-      {clone: 'div', addText: `<span class="miscelaneo">by</span>${v.artist}`, addClass: 'grid-33 mobile-grid-33 song-info'},
-      {clone: 'div', addText: `<span class="miscelaneo">from</span>${v.album}`, addClass: 'grid-33 mobile-grid-33 song-info'}
+      {
+        clone: 'div',
+        addText: v.title,
+        addClass: 'grid-33 mobile-grid-33 song-info',
+        css: 'overflow:hidden;'
+      },
+      {
+        clone: 'div',
+        addText: `<span class="miscelaneo">by</span>${v.artist}`,
+        addClass: 'grid-33 mobile-grid-33 song-info',
+        css: 'overflow:hidden;'
+      },
+      {
+        clone: 'div',
+        addText: `<span class="miscelaneo">from</span>${v.album}`,
+        addClass: 'grid-33 mobile-grid-33 song-info',
+        css: 'overflow:hidden;'
+      }
     ]
 
     return f.appendChild(
@@ -81,7 +99,7 @@ function createDefaultListView () {
       })
     )
   })
-  $('#list-songs', {addTo: _f})
+  $('#list-songs', { addTo: _f })
 }
 
 module.exports = Object.freeze({
