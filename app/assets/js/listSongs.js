@@ -72,8 +72,9 @@ function createDefaultListView() {
   let artist = null
   let parentContainer = $.clone('div', false)
     .addClass('grid-100')
+  const f = document.createDocumentFragment()
 
-  const _f = jread(SONG_FILE).map((v, i) => {
+  jread(SONG_FILE).forEach((v, i) => {
     // Título de la canción
     title = $.clone(child, true)
       .text(v.title)
@@ -84,20 +85,22 @@ function createDefaultListView() {
     album = $.clone(child, true)
       .text(`<span class="miscelaneo">from</span>${v.album}`)
 
-    return $.clone(parentContainer, true)
-      .data({
-        position: i,
-        artist: v.artist,
-        title: v.title,
-        album: v.album,
-        url: v.filename
-      })
-      .insert([title, artist, album])
-      .on({
-        'click': getDataSongAtPosition
-      })
+    f.appendChild(
+      $.clone(parentContainer, true)
+        .data({
+          position: i,
+          artist: v.artist,
+          title: v.title,
+          album: v.album,
+          url: v.filename
+        })
+        .insert(title, artist, album)
+        .on({
+          'click': getDataSongAtPosition
+        }).element
+    )
   })
-  $('#list-songs').insert(_f)
+  $('#list-songs').insert(f)
 }
 
 function* getSongs() {
@@ -132,7 +135,7 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
         fnStart()
         extractMetadata(getSongs())
       } else {
-        fnEnd()
+        fnEnd(songs)
       }
     }
   })
@@ -156,21 +159,20 @@ function extractMetadata(iter) {
             album: lang.album.replace(/\s+/ig, '&nbsp;'),
             title: lang.title.replace(/\s+/ig, '&nbsp;'),
             filename: iterator.value,
-            position: songSize
+            position: metaDataSongs.length
           } :
           {
             artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s+/ig, '&nbsp;'),
             album: (data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
             title: (data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
             filename: iterator.value,
-            position: songSize
+            position: metaDataSongs.length
           }
       )
       extractMetadata(iter)
     })
   } else {
-    jsave(SONG_FILE, metaDataSongs)
-    fnEnd()
+    fnEnd(jsave(SONG_FILE, metaDataSongs))
     return
   }
 }

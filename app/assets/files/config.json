@@ -1,6 +1,6 @@
 {
     "lang": "us",
-    "shuffle": true,
+    "shuffle": false,
     "equalizer": [
         6,
         5,

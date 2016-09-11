@@ -13,7 +13,8 @@
     height: 2em
 }
 
-#config > img {
+#config > img:hover,
+.search-results:hover {
     cursor: pointer
 }
 

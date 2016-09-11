@@ -114,7 +114,7 @@ function saveSongList(parentFolder = '') {
   getMetadata(parentFolder, () => { // Función inicial del proceso
     $('#loading').rmClass('hide')
     $($('.grid-container').element[0]).css('-webkit-filter: blur(2px)')
-  },() => { // Función final del proceso
+  },(_s) => { // Función final del proceso
     ipcRenderer.send('display-list')
     // Ocultar loading
     $('#loading').addClass('hide')

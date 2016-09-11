@@ -54,8 +54,15 @@ module.exports = (function (_) {
         return (p === 'all') ? Array.from(this.element.children) : this.element.children[p]
       },
       // Agregar o remover texto - innerHTML
-      text: function (s) {
-        this.element.innerHTML = `${s}`
+      text: function (s = null) {
+        if (s !== null) this.element.innerHTML = `${s}`
+        else return this.element.textContent
+
+        return this
+      },
+      // Focus...necesario? depende la utilidad.
+      focus: function () {
+        this.element.focus()
         return this
       },
       // Agregar/retornar o remover atributo
@@ -72,8 +79,8 @@ module.exports = (function (_) {
         return this
       },
       // appendChild
-      insert: function (a) {
-        a.forEach(v => { this.element.appendChild(v.element) })
+      insert: function (...a) {
+        a.forEach(v => { this.element.appendChild('element' in v ? v.element : v) })
         return this
       },
       // Editar estilos css

@@ -100,11 +100,7 @@ function setAnimation() {
         { transform: 'translateX(0px)' },
         { transform: `translateX(-${width}px)` },
       ],
-      {
-        iterations: 1,
-        duration: 4600,
-        delay: 8600
-      }
+      { iterations: 1, duration: 4600, delay: 8600 }
     )
 
     scrollStart.onfinish = () => {
@@ -112,12 +108,9 @@ function setAnimation() {
         scrollEnd = $('#song-title').element.animate(
           [
             { transform: `translateX(${width}px)` },
-            { transform: 'translateX(0px)' },
+            { transform: 'translateX(0px)' }
           ],
-          {
-            iterations: 1,
-            duration: 4600
-          }
+          { iterations: 1, duration: 4600 }
         )
         scrollEnd.onfinish = () => {
           scrollStart.play()
@@ -220,15 +213,16 @@ function play() {
   xhtr.onload = () => {
     audioContext.decodeAudioData(xhtr.response).then(buffer => {
       // Para ser usado al momento de querer adelantar la canción
-      _buffer = buffer
       // El buffer nos entrega la duración de la canción.
       // La duración de la cación está en segundos, por ende hay que pasarla a minutos.
+      _buffer = buffer
       time = ((_duration = _buffer.duration) / 60).toString()
       _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10)
       _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60)
       lapse = 100 / _duration // Porcentaje a usar por cada segundo en la barra de progreso
       $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`)
       setAnimation()
+
       // Evento que se gatilla al terminar la canción
       source.onended = stopTimer
 
