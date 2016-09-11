@@ -1,8 +1,6 @@
 /**
- * @author Diego Alberto Molina Vera
- */
-/**
  * -------------------------- Módulo PlayFile -------------------------- *
+ * @author Diego Alberto Molina Vera
  *
  * Encargada de reproducir la canción, tocar la siguiente canción o la anterior.
  * Acá se usa la Audio Web API para reproducir la canción y también usar datos
@@ -41,13 +39,9 @@ let lapse = 0
 let time = 0 // Tiempo total final
 let hrz = [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 
-// DOM a usar
-const dom_progress_bar = $('#progress-bar')
-const dom_song_artist = $('#artist')
-const dom_time_start = $('#time-start')
-const dom_song_title = $('#song-title')
-const dom_song_album = $('#album')
-const dom_time_end = $('#time-end')
+// Variables de animción del la información muy larga
+let scrollStart = null
+let scrollEnd = null
 
 /** ---------------------------- Funciones ---------------------------- **/
 /**
@@ -98,37 +92,43 @@ function playSong() {
  * Generará una animación sobre la información de una canción que sea demasiado larga
  */
 function setAnimation() {
-  const width = $(dom_song_title, { getChild: 0 }).scrollWidth
-  if (width > $(dom_song_title).clientWidth) {
-    let scrollStart = $(dom_song_title).animate(
+  const width = $('#song-title').child(0).scrollWidth
+  let enableScrollEnd = true
+  if (width > $('#song-title').element.clientWidth) {
+    scrollStart = $('#song-title').element.animate(
       [
         { transform: 'translateX(0px)' },
         { transform: `translateX(-${width}px)` },
       ],
       {
         iterations: 1,
-        duration: 3600,
-        delay: 6600
-      }
-    )
-
-    let scrollEnd = $(dom_song_title).animate(
-      [
-        { transform: `translateX(${width}px)` },
-        { transform: 'translateX(0px)' },
-      ],
-      {
-        iterations: 1,
-        duration: 3600
+        duration: 4600,
+        delay: 8600
       }
     )
 
     scrollStart.onfinish = () => {
+      if (enableScrollEnd) {
+        scrollEnd = $('#song-title').element.animate(
+          [
+            { transform: `translateX(${width}px)` },
+            { transform: 'translateX(0px)' },
+          ],
+          {
+            iterations: 1,
+            duration: 4600
+          }
+        )
+        scrollEnd.onfinish = () => {
+          scrollStart.play()
+        }
+        enableScrollEnd = false
+      }
       scrollEnd.play()
     }
-    scrollEnd.onfinish = () => {
-      scrollStart.play()
-    }
+  } else if (scrollStart !== null) {
+    if (scrollStart.playState === 'running') scrollStart.cancel()
+    if (scrollEnd.playState === 'running') scrollEnd.cancel()
   }
 }
 
@@ -136,7 +136,7 @@ function setAnimation() {
  * Generará el tiempo que lleva reproduciendose la canción
  */
 function startTimer() {
-  interval = setInterval(() => {
+  const iter = () => {
     ++millisecond
     if (millisecond / 100 > second + (60 * minute)) { // Segundos
       if (second > 59) {
@@ -144,13 +144,12 @@ function startTimer() {
         second = 0
       }
       // Tiempo transcurrido
-      $(dom_time_start, {
-        addText: `${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`
-      })
+      $('#time-start').text(`${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`)
       ++second
-      $(dom_progress_bar, { css: `width:${percent += lapse}%` }) // Barra de carga
+      $('#progress-bar').css(`width:${percent += lapse}%`) // Barra de carga
     }
-  }, 10)
+  }
+  interval = setInterval(iter, 10)
 }
 
 /**
@@ -160,12 +159,11 @@ function stopTimer() {
   if (!isMovingForward) {
     isSongPlaying = false
     clearInterval(interval)
-    $(dom_time_start, { addText: '00:00' })
+    $('#time-start').text('00:00')
     millisecond = second = minute = percent =
       _duration = _minute = _second = time = 0
     if (isNexAble && !isMovingForward) nextSong()
   } else if (isMovingForward) {
-    /** ----------------------------------- / / / ----------------------------------- **/
     /** La función stop tarda unos milesegundos más que ejecutar la función moveForward
      * Por lo tanto lo que continua después de detener la canción deberá ser ejecutado
      * dentro de la función onended
@@ -200,13 +198,13 @@ function dataSong(_position) {
   filePath = infoSong.filename // Ruta donde se encuentra el archivo a reproducir
 
   // Título de la canción
-  $(dom_song_title, { getChild: 0, addText: infoSong.title })
+  $($('#song-title').child(0)).text(infoSong.title)
 
   // Artista
-  $(dom_song_artist, { getChild: 0, addText: infoSong.artist })
+  $($('#artist').child(0)).text(infoSong.artist)
 
   // Album
-  $(dom_song_album, { getChild: 0, addText: infoSong.album })
+  $($('#album').child(0)).text(infoSong.album)
 }
 
 /**
@@ -229,9 +227,7 @@ function play() {
       _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10)
       _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60)
       lapse = 100 / _duration // Porcentaje a usar por cada segundo en la barra de progreso
-      $(dom_time_end, {
-        addText: `${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`
-      })
+      $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`)
       setAnimation()
       // Evento que se gatilla al terminar la canción
       source.onended = stopTimer
@@ -263,11 +259,16 @@ function play() {
 function nextSong(_position = -1) {
   if (_position !== -1) {
     // ver si está reproduciendose o no
-    if (isSongPlaying && audioContext.state === 'running') {
+    if (isSongPlaying && audioContext.state === 'running' ||
+      !isSongPlaying && audioContext.state === 'suspended') {
+      if (!isSongPlaying && audioContext.state === 'suspended')
+        audioContext.resume()
+
       isNexAble = false
       source.stop(0)
       source = null
     }
+
     dataSong(_position)
     play()
   } else {
@@ -278,13 +279,17 @@ function nextSong(_position = -1) {
       isNexAble = false
       dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0))
       // si está sonando la canción, esta se debe detener para tocar la nueva
-      if (isSongPlaying && audioContext.state === 'running') {
+      if (isSongPlaying && audioContext.state === 'running' ||
+        !isSongPlaying && audioContext.state === 'suspended') {
+        // Verificar si el contexto está pausado o no.
+        // Si está pausado no se reproducirá una nueva pista
+        if (!isSongPlaying && audioContext.state === 'suspended')
+          audioContext.resume()
+
         source.stop(0)
         source = null
       }
-      // Verificar si el contexto está pausado o no.
-      // Si está pausado no se reproducirá una nueva pista
-      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
+
       play()
     }
   }
@@ -298,14 +303,14 @@ function prevSong(_position) {
     isNexAble = false
     dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position - 1 : 0))
     // si está sonando la canción, esta se debe detener para tocar la nueva
-      if (isSongPlaying && audioContext.state === 'running') {
-        source.stop(0)
-        source = null
-      }
-      // Verificar si el contexto está pausado o no.
-      // Si está pausado no se reproducirá una nueva pista
-      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
-      play()
+    if (isSongPlaying && audioContext.state === 'running') {
+      source.stop(0)
+      source = null
+    }
+    // Verificar si el contexto está pausado o no.
+    // Si está pausado no se reproducirá una nueva pista
+    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
+    play()
   }
 }
 
@@ -343,7 +348,6 @@ function moveForward(event, element) {
   clearInterval(interval)
   // Recalcular el porcentaje de la barra de tiempo
   percent = forward * (100 / _duration)
-  // percent = (parseInt(event.offsetX, 10) / 16) * 3
   isMovingForward = true
   source.stop(0)
 }
@@ -351,6 +355,7 @@ function moveForward(event, element) {
 module.exports = Object.freeze({
   setSongs,
   playSong,
+  prevSong,
   nextSong,
   setFilterVal,
   moveForward

@@ -1,135 +1,102 @@
 /**
+ * -------------------------- Módulo template -------------------------- *
+ * Framework pequeño para manipular el DOM
  * @author Diego Alberto Molina Vera
  */
-/**
- * -------------------------- Módulo template -------------------------- *
- *
- * Se ha desarrollado este módulo para no depender de jQuery.
- * No uso un patrón conocido como orientado a objetos. Pero funciona
- * bien para no repetir tanto código.
- */
 module.exports = (function (_) {
-  const o = Object.freeze({
-    addClass,
-    getChild,
-    rmClass,
-    getData,
-    addText,
-    setData,
-    rmAttr,
-    addTo,
-    clone,
-    attr,
-    css,
-    on
-  })
-
+  const createdElements = {
+    div: document.createElement('div')
+  }
   /**
-   * Recibe un string para buscar el elemento en el DOM y retornar la función factory
+   * Recibe un string para buscar el elemento en el DOM y retornar un objeto
+   * con todasl a funciones necesarias para ser usados sobre este proyecto
    *
    * @var e {String} - Nombre del id o la clase por la cual buscar
-   * @var obj {Object} - Objeto con los nombres de las funciones a ejecutar
-   * @return factory {Function}
+   * @return o {Object} - Objeto con las funciones
    */
-  _.$ = function DOM(e, obj = {}) {
-    if (/^\./.test(e)) e = Array.from(document.getElementsByClassName(e.replace('.', '')))
-    else if (/^#/.test(e)) e = document.getElementById(e.replace('#', ''))
-    else if (typeof e === 'object' && e.length > 0) e = e.map(v => document.createElement(v))
-    if (e.length !== undefined) e = (e.length === 1 ? e[0] : e)
-    return Object.keys(obj).length > 0 ? factory(e, obj) : e
-  }
+  _.$ = function DOM(e) {
+    if (/^\./.test(e)) // Por Clases
+      e = Array.from(document.getElementsByClassName(e.replace('.', '')))
+    else if (/^#/.test(e)) // Por ID
+      e = document.getElementById(e.replace('#', ''))
 
-  /**
-   * Recibe el elemento a usar y las funciones que se usarán sobre este
-   *
-   * @var e {Object} - Objeto del elemento html rescatado
-   * @var obj {Object} - Objeto con los nombres de las funciones a ejecutar
-   */
-  function factory(e, obj) {
-    const _obj = obj
-    const k = Object.keys(_obj).shift()
-    const v = _obj[k]
-    // Cada vez que recorre el objeto con las funciones a usar
-    // se borran las que que ya se usaron
-    if (Object.keys(_obj).length >= 1) delete _obj[k]
-    return o[k](e, v, _obj)
-  }
+    return {
+      element: e,
+      // Agregar o remover clases
+      addClass: function (s) {
+        const rgx = new RegExp(s, 'g')
+        if (!rgx.test(this.className))
+          this.element.className += this.element.className === '' ? `${s}` : ` ${s}`
 
-  /* -------------------------- Funciones -------------------------- */
-  function on(e, fn, o) {
-    Object.keys(fn).forEach(v => {
-      /animation/.test(v) ? e.addEventListener(v.toLowerCase(), fn[v]) : e[`on${v.toLowerCase()}`] = fn[v]
-    })
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
+        return this
+      },
+      rmClass: function (c) {
+        const rgx = new RegExp(c, 'g')
+        if (rgx.test(this.element.className))
+          this.element.className = this.element.className.replace(c.toString(), '').trim()
+        return this
+      },
+      // Agregar o rescatar datos - dataset
+      data: function (...s) {
+        // Verificar si se agregan o extraen datos - dataset
+        if (s.length === 1) { // Agregar datos
+          Object.keys(s[0]).forEach(v => { this.element.dataset[v] = s[0][v] })
+          return this
+        } else { // Extraer datos
+          switch (s[1]) {
+            case 'string': return this.element.dataset[s[0]].toString()
+            case 'int': return parseInt(this.element.dataset[s[0]], 10)
+          }
+        }
+      },
+      // Buscar hijos
+      child: function (p) {
+        return (p === 'all') ? Array.from(this.element.children) : this.element.children[p]
+      },
+      // Agregar o remover texto - innerHTML
+      text: function (s) {
+        this.element.innerHTML = `${s}`
+        return this
+      },
+      // Agregar/retornar o remover atributo
+      rmAttr: function (a) {
+        this.element.removeAttribute(a)
+        return this
+      },
+      attr: function (o) {
+        if (typeof o === 'object')
+          Object.keys(o).forEach(v => {/**/ this.element.setAttribute(v, o[v]) })
+        else if (typeof o == 'string')
+          return this.element.getAttribute(o)
 
-  function addText(e, t, o) {
-    e.innerHTML = `${t}`
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function addClass(e, c, o) {
-    let rgx = new RegExp(c, 'g')
-    if (!rgx.test(e.className)) e.className += e.className === '' ? `${c}` : ` ${c}`
-
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function rmClass(e, c, o) {
-    const rgx = new RegExp(c, 'g')
-    if (rgx.test(e.className)) e.className = e.className.replace(c.toString(), '').trim()
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function getChild(e, p, o) {
-    e = (p === 'all') ? Array.from(e.children) : e.children[p]
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function attr(e, a, o) {
-    if (typeof a === 'object')
-      for (let i = 0, size = a.length / 2; i < size; i++)
-        e.setAttribute(a[(i + 1) * i], a[((i + 1) * i) + 1])
-    else e = e.getAttribute(a)
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function rmAttr(e, a, o) {
-    e.removeAttribute(a)
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function getData(e, d, o) {
-    const data = e.dataset
-    switch (d[1]) {
-      case 'string': e = data[d[0]].toString(); break
-      case 'int': e = parseInt(data[d[0]], 10); break
+        return this
+      },
+      // appendChild
+      insert: function (a) {
+        a.forEach(v => { this.element.appendChild(v.element) })
+        return this
+      },
+      // Editar estilos css
+      css: function (s) {
+        this.element.style.cssText = s
+        return this
+      },
+      // Agregar funciones
+      on: function (fn) {
+        Object.keys(fn).forEach(v => {
+          /animation/.test(v) ?
+            this.element.addEventListener(v.toLowerCase(), fn[v]) :
+            this.element[`on${v.toLowerCase()}`] = fn[v]
+        })
+        return this
+      }
     }
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
   }
 
-  function setData(e, d, o) {
-    if (typeof d === 'object') {
-      Object.keys(d).forEach(v => { e.dataset[v] = d[v] })
-    } else {
-      const k = Object.keys(d)[0]
-      e.dataset[k] = d[k]
-    }
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function addTo(e, a, o) {
-    a.forEach(v => { e.appendChild(v) })
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function css(e, s, o) {
-    e.style.cssText = s
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
-  }
-
-  function clone(e, v, o) {
-    if (e.nodeName === v.toUpperCase()) e = e.cloneNode(false)
-    return Object.keys(o).length >= 1 ? factory(e, o) : e
+  _.$.clone = function clone(s, b = false) {
+    return this(
+      (typeof s === 'string' ? createdElements[s] : s.element)
+        .cloneNode(b)
+    )
   }
 })(global)
