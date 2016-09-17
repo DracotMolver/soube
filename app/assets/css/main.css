@@ -219,7 +219,7 @@
     position: absolute;
     color: rgba(182, 182, 182, .4);
     left: 1.6em;
-    top: 4.7em
+    top: 4.1em
 }
 
 .search-anim {
@@ -241,6 +241,13 @@
     float: left
 }
 
+#pagination {
+    position: relative;
+    height: 30px;
+    margin: 0 auto;
+    width: 400px
+}
+
 /* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
 #init-message {
     background: white !important;
@@ -250,7 +257,7 @@
     color: var(--darkGreyColor)
 }
 
-/* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
+/* ------------------------ MENSAJE DE CANCIONES NUEVAS ------------------------ */
 #pop-up-container {
     position: absolute;
     height: auto;
@@ -262,8 +269,8 @@
     border-radius: 21px;
     background: var(--darkGreyColor);
     font-weight: 500;
-    transform: scale(0);
     text-align: center;
+    transform: scale(0);
     font-size: .94em;
     padding: .6em;
     margin: auto;

@@ -6,15 +6,23 @@
  * Acá se usa la Audio Web API para reproducir la canción y también usar datos
  * obtenidos mediante el buffer. también la API nos permite manipular el archivo de audio
  */
+const {Animation} = require('./animation')
 const {dialog} = require('./commons')
 
-/** ---------------------------- Varibles ---------------------------- **/
-let isSongPlaying = false // Se ejecutó play sobre el AudioNode
+/***********************************************************************************************/
+/** --------------------------------------- Variables --------------------------------------- **/
 let isMovingForward = false // Se se está tratando de adelantar la cación a un tiempo determinado
+let isSongPlaying = false // Se ejecutó play sobre el AudioNode
 let isNexAble = false // Se puede reproducir la siguiente canción
 let position = 0 // Posición de la canción actual
 let filePath = '' // Ruta de la canción
 let songs = {} // Listado de canciones
+let notification = null // Despliega una notificación de la canción que se va a reproducir
+
+// Animación de los textos superiores (título, artista, album)
+let animArtist = Animation($('#album'))
+let animTitle = Animation($('#song-title'))
+let animAlbum = Animation($('#artist'))
 
 // Variables necesarios para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext() // Contendrá el objeto AudioContext
@@ -39,11 +47,9 @@ let lapse = 0
 let time = 0 // Tiempo total final
 let hrz = [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 
-// Variables de animción del la información muy larga
-let scrollStart = null
-let scrollEnd = null
 
-/** ---------------------------- Funciones ---------------------------- **/
+/***********************************************************************************************/
+/** --------------------------------------- Funciones --------------------------------------- **/
 /**
  * Listado de canciones desde el archivo listSongs.js
  *
@@ -89,43 +95,6 @@ function playSong() {
 }
 
 /**
- * Generará una animación sobre la información de una canción que sea demasiado larga
- */
-function setAnimation() {
-  const width = $('#song-title').child(0).scrollWidth
-  let enableScrollEnd = true
-  if (width > $('#song-title').element.clientWidth) {
-    scrollStart = $('#song-title').element.animate(
-      [
-        { transform: 'translateX(0px)' },
-        { transform: `translateX(-${width}px)` },
-      ],
-      { iterations: 1, duration: 4600, delay: 8600 }
-    )
-
-    scrollStart.onfinish = () => {
-      if (enableScrollEnd) {
-        scrollEnd = $('#song-title').element.animate(
-          [
-            { transform: `translateX(${width}px)` },
-            { transform: 'translateX(0px)' }
-          ],
-          { iterations: 1, duration: 4600 }
-        )
-        scrollEnd.onfinish = () => {
-          scrollStart.play()
-        }
-        enableScrollEnd = false
-      }
-      scrollEnd.play()
-    }
-  } else if (scrollStart !== null) {
-    if (scrollStart.playState === 'running') scrollStart.cancel()
-    if (scrollEnd.playState === 'running') scrollEnd.cancel()
-  }
-}
-
-/**
  * Generará el tiempo que lleva reproduciendose la canción
  */
 function startTimer() {
@@ -160,7 +129,7 @@ function stopTimer() {
     /** La función stop tarda unos milesegundos más que ejecutar la función moveForward
      * Por lo tanto lo que continua después de detener la canción deberá ser ejecutado
      * dentro de la función onended
-      */
+     */
     // Se debe crear un nuevo AudioNode, ya que al dar stop el nodo se eliminia
     source = audioContext.createBufferSource()
 
@@ -198,6 +167,12 @@ function dataSong(_position) {
 
   // Album
   $($('#album').child(0)).text(infoSong.album)
+
+  // Mostrar notificación
+  notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
+    body: `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`,
+    icon: `${__dirname}/../img/play.png`
+  })
 }
 
 /**
@@ -205,6 +180,9 @@ function dataSong(_position) {
  * Se obtiene un array buffer con info útil para usar
  */
 function play() {
+  animAlbum.start()
+  animArtist.start()
+  animTitle.start()
   // Creamos un Buffer que contendrá la canción
   source = audioContext.createBufferSource()
 
@@ -221,7 +199,6 @@ function play() {
       _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60)
       lapse = 100 / _duration // Porcentaje a usar por cada segundo en la barra de progreso
       $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`)
-      setAnimation()
 
       // Evento que se gatilla al terminar la canción
       source.onended = stopTimer
@@ -295,7 +272,7 @@ function nextSong(_position = -1) {
 function prevSong(_position) {
   if (isNexAble) {
     isNexAble = false
-    dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position - 1 : 0))
+    dataSong(songs.length - 1 > position ? position - 1 : 0)
     // si está sonando la canción, esta se debe detener para tocar la nueva
     if (isSongPlaying && audioContext.state === 'running') {
       source.stop(0)

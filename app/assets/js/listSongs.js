@@ -1,32 +1,35 @@
 /**
- * @author Diego Alberto Molina Vera
- */
-const {
-  execFile,
-  metaData,
-  fs,
-  dialog
-} = require('./commons')
-/**
  * -------------------------- Módulo ListSongs -------------------------- *
+ * @author Diego Alberto Molina Vera
  *
  * Se encarga de generar el listado de canciones en HTML
  * en dos formatos. El formato por default es por lista y el otro es por
  * artista/albunes
  */
 /** ---------------------------- Varibles ---------------------------- **/
+// Generales
+const {
+  execFile,
+  metaData,
+  dialog,
+  fs
+} = require('./commons')
+
+
 let clickNextSong = null // Almacena la función nextSong del archivo playFile.js
-let configFile = jread(CONFIG_FILE) // Archivo de configuraciones
-let lang = jread(LANG_FILE)[configFile.lang] // Archivo de mensajes en disintos idiomas
+let metaDataSongs = []
+let iterator = {}
 let songSize = 0
+let fnStart = null
+let fnIter = null
 let files = []
 let count = 0
-let max = 0
-let fnStart = null
 let fnEnd = null
-let fnIter = null
-let iterator = {}
-let metaDataSongs = []
+let max = 0
+
+// Archivos de configuraciones
+let configFile = jread(CONFIG_FILE) // Archivo de configuraciones
+let lang = jread(LANG_FILE)[configFile.lang] // Archivo de mensajes en disintos idiomas
 
 /** ---------------------------- Funciones ---------------------------- **/
 /**
@@ -40,6 +43,7 @@ function setNextSongFunction(_function) {
 
 /**
  * Obtiene la posición de la canción seleccionada de la lista
+ * Se negera la animación del botón play
  */
 function getDataSongAtPosition() {
   clickNextSong($(this).data('position', 'int'))
@@ -103,12 +107,22 @@ function createDefaultListView() {
   $('#list-songs').insert(f)
 }
 
+/**
+ * Función generadora que retorna el la ruta del archivo a leer
+ */
 function* getSongs() {
   while (songSize--) yield files[songSize]
 }
 
 /**
- * Revisa si hay nuevas canciones para ingresar
+ * Revisa si hay nuevas canciones para ingresar.
+ * Para saber qué sucede dentro de la ejecución de esta función,
+ * se resiven tres funciones como parámetros
+ * 
+ * @var folder {String} - Nombre de la carpeta a revisar
+ * @var _fnStart {Function} - Función que se ejecutará previo a la lectura de metadatos
+ * @var _fnEnd {Function} - Retorna un valor al final de la ejecución de este función
+ * @var _fnIter {Function} - Solo se ejecuta cuando hay archivos de los cuales extraer metadatos
  */
 function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   fnStart = _fnStart
@@ -142,8 +156,10 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
 }
 
 /**
- * Extrae los datos de las canciones
- * Usamos MUSICMETADATA de @leetreveil npm
+ * Extrae los datos de las canciones.
+ * Usamos MUSICMETADATA de @leetreveil - npm
+ *
+ * @var iter {Iterador} - Iterador devuelto por la funcion generador
  */
 function extractMetadata(iter) {
   fnIter(++count, max)

@@ -1,5 +1,4 @@
 /**
- * -------------------------- Módulo template -------------------------- *
  * Framework pequeño para manipular el DOM
  * @author Diego Alberto Molina Vera
  */
@@ -21,23 +20,21 @@ module.exports = (function (_) {
       e = document.getElementById(e.replace('#', ''))
 
     return {
-      element: e,
-      // Agregar o remover clases
-      addClass: function (s) {
+      element: e, // Contendrá el elemento del DOM
+      addClass: function (s) { // Agregar clases
         const rgx = new RegExp(s, 'g')
         if (!rgx.test(this.className))
           this.element.className += this.element.className === '' ? `${s}` : ` ${s}`
 
         return this
       },
-      rmClass: function (c) {
+      rmClass: function (c) { // Remover clases
         const rgx = new RegExp(c, 'g')
         if (rgx.test(this.element.className))
           this.element.className = this.element.className.replace(c.toString(), '').trim()
         return this
       },
-      // Agregar o rescatar datos - dataset
-      data: function (...s) {
+      data: function (...s) { // Agregar o rescatar datos - dataset
         // Verificar si se agregan o extraen datos - dataset
         if (s.length === 1) { // Agregar datos
           Object.keys(s[0]).forEach(v => { this.element.dataset[v] = s[0][v] })
@@ -49,28 +46,24 @@ module.exports = (function (_) {
           }
         }
       },
-      // Buscar hijos
-      child: function (p) {
+      child: function (p) { // Buscar hijos
         return (p === 'all') ? Array.from(this.element.children) : this.element.children[p]
       },
-      // Agregar o remover texto - innerHTML
-      text: function (s = null) {
+      text: function (s = null) { // Agregar o remover texto - innerHTML
         if (s !== null) this.element.innerHTML = `${s}`
         else return this.element.textContent
 
         return this
       },
-      // Focus...necesario? depende la utilidad.
-      focus: function () {
+      focus: function () { // Focus...necesario? depende la necesidad :).
         this.element.focus()
         return this
       },
-      // Agregar/retornar o remover atributo
-      rmAttr: function (a) {
+      rmAttr: function (a) { // Remueve un atributo
         this.element.removeAttribute(a)
         return this
       },
-      attr: function (o) {
+      attr: function (o) { // Agrega un atributo
         if (typeof o === 'object')
           Object.keys(o).forEach(v => {/**/ this.element.setAttribute(v, o[v]) })
         else if (typeof o == 'string')
@@ -78,18 +71,15 @@ module.exports = (function (_) {
 
         return this
       },
-      // appendChild
-      insert: function (...a) {
+      insert: function (...a) { // appendChild
         a.forEach(v => { this.element.appendChild('element' in v ? v.element : v) })
         return this
       },
-      // Editar estilos css
-      css: function (s) {
+      css: function (s) { // Editar estilos css
         this.element.style.cssText = s
         return this
       },
-      // Agregar funciones
-      on: function (fn) {
+      on: function (fn) { // Agrega eventos
         Object.keys(fn).forEach(v => {
           /animation/.test(v) ?
             this.element.addEventListener(v.toLowerCase(), fn[v]) :

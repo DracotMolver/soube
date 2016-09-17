@@ -1,7 +1,8 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-/** -------------------------- Módulos ------------------------ **/
+/*********************************************************************************************/
+/** --------------------------------------- Módulos --------------------------------------- **/
 // Generales
 const {
   ipcRenderer,
@@ -15,25 +16,24 @@ const {
   getMetadata
 } = require('./listSongs')
 
-/** -------------------------- Variables ------------------------ **/
-let metaDataSongs = [] // Contendrá los metadatas de las canciones
-let songsSize = 0
+
+/***********************************************************************************************/
+/** --------------------------------------- Variables --------------------------------------- **/
+// Archivos de configuraciones
 let configFile = jread(CONFIG_FILE)
-let iterator = {} // Resultado del iterador sobre las canciones
-let songs = []  // Array con las rutas de los archivos de audio
 let lang = jread(LANG_FILE)[configFile.lang]
-let alerts = lang.alerts
-let count = 0 // Contador de archivos parseados para obtener los metadata
 
 // Equalizador
-let y = 0
-let pos = 0
 let hrzGain = configFile.equalizer
 let range = null
 let plus = 0
-let db = 0;
+let pos = 0
+let db = 0
+let y = 0;
 
-/** -------------------------- Funciones ------------------------ **/
+
+/***********************************************************************************************/
+/** --------------------------------------- Funciones --------------------------------------- **/
 /**
  * Texto a modificar en la ventana de configuraciones
  */
@@ -44,13 +44,8 @@ let db = 0;
   $('#_statuslanguage').text(lang.config.statusLanguage)
   $('#_titleconfig').text(lang.config.titleConfig)
   $('#_equalizersetting').text(lang.config.equalizerSetting)
-  $('#_infoequalizer').text(alerts.infoEqualizer)
+  $('#_infoequalizer').text(lang.alerts.infoEqualizer)
 })()
-
-// Refrescar la ventana
-$('#_titleconfig').on({
-  'click': () => { window.location.reload(false) }
-})
 
 /**
  * Animación del panel cuando se selecciona una opción para configurar
@@ -87,12 +82,6 @@ function onClickChangeLang() {
   })
 }
 
-// Cambiar idioma
-$('#change-lang').on({
-  'click': onClickChangeLang
-})
-
-
 /**
  * Obtenemos las canciones
  *
@@ -114,28 +103,18 @@ function saveSongList(parentFolder = '') {
   getMetadata(parentFolder, () => { // Función inicial del proceso
     $('#loading').rmClass('hide')
     $($('.grid-container').element[0]).css('-webkit-filter: blur(2px)')
-  },(_s) => { // Función final del proceso
+
+  }, (_s) => { // Función final del proceso
     ipcRenderer.send('display-list')
     // Ocultar loading
     $('#loading').addClass('hide')
     $($('.grid-container').element[0]).rmAttr('style')
-  }, (count, maxLengt) => { // Función iteradora
+
+  }, (count, maxLength) => { // Función iteradora
     // Pop-up con la cantidad de canciones cargandose
-    $('#_loading-info').text(`${lang.config.loadingSongFolder} ${count++} / ${maxLengt}`)
+    $('#_loading-info').text(`${lang.config.loadingSongFolder} ${count} / ${maxLength}`)
   })
 }
-
-// Acción para agregar el listado de canciones
-$('#add-songs').on({
-  'click': () => {
-    dialog.showOpenDialog({
-      title: 'Add music folder',
-      properties: ['openDirectory']
-    }, parentFolder => {
-      if (parentFolder !== undefined) saveSongList(parentFolder[0]) // home/usuario/Música  - Ejemplo de la ruta de la carpeta padre
-    })
-  }
-})
 
 // Animación de los botones sobre el panel ecualizador
 function onEqualizerPanel(e) {
@@ -144,11 +123,8 @@ function onEqualizerPanel(e) {
   animConfigPanel()
   $('#_titlesubconfig').text(` > ${lang.config.equalizerSetting}`)
 
-  y = 0
-  pos = 0
+  y = pos = plus = db = 0
   range = null
-  plus = 0
-  db = 0
 
   const onDragMove = e => {
     if (range !== null) {
@@ -191,6 +167,31 @@ function onEqualizerPanel(e) {
       .css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`) // Setear la configuración establecida
   })
 }
+
+
+/*********************************************************************************************/
+/** --------------------------------------- Eventos --------------------------------------- **/
+// Refrescar la ventana
+$('#_titleconfig').on({
+  'click': () => { window.location.reload(false) }
+})
+
+// Cambiar idioma
+$('#change-lang').on({
+  'click': onClickChangeLang
+})
+
+// Acción para agregar el listado de canciones
+$('#add-songs').on({
+  'click': () => {
+    dialog.showOpenDialog({
+      title: 'Add music folder',
+      properties: ['openDirectory']
+    }, parentFolder => {
+      if (parentFolder !== undefined) saveSongList(parentFolder[0]) // home/usuario/Música  - Ejemplo de la ruta de la carpeta padre
+    })
+  }
+})
 
 // Mostrar ecualizador
 $('#equalizer-panel').on({
