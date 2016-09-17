@@ -1,12 +1,12 @@
 {
     "lang": "us",
-    "shuffle": false,
+    "shuffle": true,
     "equalizer": [
         1,
         5,
         21,
         44,
-        72,
+        42,
         3,
         107,
         104,

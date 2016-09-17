@@ -169,6 +169,8 @@ function dataSong(_position) {
   $($('#album').child(0)).text(infoSong.album)
 
   // Mostrar notificación
+  if (notification !== null) notification.close()
+
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     body: `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`,
     icon: `${__dirname}/../img/play.png`

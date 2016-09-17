@@ -167,7 +167,6 @@
     color: var(--darkGreyColor)
 }
 
-/* ------------------------ INPUT SEARCH DE CANCIONES ------------------------ */
 .search-results {
     border-radius: 25px;
     background: rgba(151,154,154, .5);
@@ -241,11 +240,64 @@
     float: left
 }
 
+/* ------------------------ PAGINACIÓN DEL INPUT SEARCH ------------------------ */
 #pagination {
     position: relative;
     height: 30px;
     margin: 0 auto;
-    width: 400px
+    width: 400px;
+    top: 1em
+}
+
+.arrow::after,
+.arrow::before {
+    border-radius: 25px;
+    background: var(--blackColor);
+    position: absolute;
+    content: '';
+    opacity: .2;
+    height:.3em;
+    width: 10%
+}
+
+.arrow-open-anim::after {
+    animation: openArrowDown 1s ease-out forwards
+}
+
+.arrow-open-anim::before {
+    animation: openArrowUp 1s ease-out forwards
+}
+
+#left-arrow {
+    cursor: pointer;
+    float: left
+}
+
+#left-arrow::before,
+#left-arrow::after {
+    transform-origin: left
+}
+
+#right-arrow::before,
+#right-arrow::after {
+    transform-origin: right
+}
+
+/* -------------------------------------- */
+#right-arrow::after,
+#left-arrow::after { /* Para obtener una mejor simetría en los ejes que se unen */
+    top: 2px
+}
+
+#right-arrow::before,
+#left-arrow::before { /* Para obtener una mejor simetría en los ejes que se unen */
+    top: 0
+}
+/* -------------------------------------- */
+
+#right-arrow {
+    cursor: pointer;
+    float: right
 }
 
 /* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
@@ -313,6 +365,27 @@
         opacity: 0
 	}
 }
+
+@keyframes openArrowDown {
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(40deg);
+    opacity: 1
+  }
+}
+
+@keyframes openArrowUp {
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(-40deg);
+    opacity: 1
+  }
+}
+
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
 @media only screen and (max-width: 750px) {

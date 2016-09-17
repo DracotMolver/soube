@@ -23,7 +23,7 @@ module.exports = (function (_) {
       element: e, // Contendrá el elemento del DOM
       addClass: function (s) { // Agregar clases
         const rgx = new RegExp(s, 'g')
-        if (!rgx.test(this.className))
+        if (!rgx.test(this.element.className))
           this.element.className += this.element.className === '' ? `${s}` : ` ${s}`
 
         return this
@@ -85,6 +85,10 @@ module.exports = (function (_) {
             this.element.addEventListener(v.toLowerCase(), fn[v]) :
             this.element[`on${v.toLowerCase()}`] = fn[v]
         })
+        return this
+      },
+      val: function (v = '') { // Ingresar value
+        this.element.value = v.toString()
         return this
       }
     }

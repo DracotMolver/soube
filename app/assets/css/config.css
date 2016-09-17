@@ -49,21 +49,6 @@ h4 {
     color: var(--darkGreyColor)
 }
 
-/*
-.config-opt li {
-    width: 100%
-}
-
-.config-opt .li-equa{
-    width: 3em
-}
-
-.config-opt h4,
-#equalizer-container ul > li > h4{
-    font-weight: 100;
-          color: #B6B6B6
-}
-*/
 .config-opt-anim {
     animation: confSlide 1s ease-in-out forwards
 }
@@ -175,34 +160,11 @@ h4 {
     display: inline-block;
     width: 2.8em
 }
-/*
-#equalizer-container .range-circle {
-    animation: fadeOut .3s linear forwards;
-}
 
-#equalizer-container:hover .range-circle {
-    animation: fadeIn .3s linear forwards;
-}
-*/
 /*---------------------------------- ANIMACIONES ----------------------------------*/
 @keyframes confSlide {
     100% {
         transform: translateX(-100%);
           opacity: 0
-    }
-}
-
-@keyframes fadeIn {
-    100% {
-        opacity: 1
-    }
-}
-
-@keyframes fadeOut {
-    0% {
-        opacity: 1
-    }
-    100% {
-        opacity: 0
     }
 }

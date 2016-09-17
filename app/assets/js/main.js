@@ -161,7 +161,13 @@ function searchInputData(e) {
 
     // Agregar paginación en caso de haber más de un slide
     if (tempSlide > 1) {
-
+      // Como hay más canciones de las que se muestran
+      // se crea la paginación y siempre empieza en el primer slide
+      // generando así la animación de la flecha del lado derecho para avanzar al siguiente slide
+      $($('#pagination').rmClass('hide')
+        .child(1)).addClass('arrow-open-anim')
+    } else {
+      $('#pagination').addClass('hide')
     }
 
     // Despliega el total de canciones
@@ -171,6 +177,7 @@ function searchInputData(e) {
   } else {
     // Limpiar cuando no haya coincidencia
     $('#wrapper-results').text('')
+    $('#pagination').addClass('hide')
   }
 
   // Mustra la primera coincidencia como opción a buscar
@@ -270,6 +277,21 @@ $('#total-progress-bar').on({
   'click': function (e) { moveForward(e, this) }
 })
 
+// Acción sobre los botones de paginación
+$('.arrow').element.forEach(v => {
+  $(v).on({
+    'click': function () {
+      if (/arrow-open-anim/g.test(this.className)) {
+        if (this.id === 'right-arrow') { // Paginación a la izquierda
+
+        } else { // Paginación a la derecha
+
+        }
+      }
+    }
+  })
+})
+
 
 /**************************************************************************************************/
 /** --------------------------------------- Ipc Renderer --------------------------------------- **/
@@ -287,6 +309,7 @@ ipcRenderer.on('search-song', () => {
     $($('.grid-container').element[0]).css('-webkit-filter: blur(2px)')
     $('#search').addClass('search-anim')
       .on({ 'keyup': searchInputData })
+      .val()
       .focus()
 
     isSearchDisplayed = true
