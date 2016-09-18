@@ -10,7 +10,7 @@
             "titleConfig": "Configuración",
             "addAccounts": "Cuentas",
             "equalizerSetting": "Ecualizador",
-            "statusSongFolder": "/home/dmolina/Música",
+            "statusSongFolder": "No hay carpeta de música",
             "loadingSongFolder": "Cargando canciones: "
         },
         "orderBy": {
@@ -38,7 +38,7 @@
             "titleConfig": "Configuration",
             "addAccounts": "Accounts",
             "equalizerSetting": "Equalizer",
-            "statusSongFolder": "/home/dmolina/Música",
+            "statusSongFolder": "No music folder",
             "loadingSongFolder": "Loading songs: "
         },
         "orderBy": {
@@ -52,7 +52,7 @@
             "welcome": "There is no music folder added.<br>Please, add your music folder &#127926;",
             "error_001": "It missed a file needed to use the music player. Go to:  https://github.com/DracotMolver/Soube and report the error. Thanks.",
             "error_002": "There's no files to play. Please, go to the config icon and add your music folder.",
-            "error_003": "An error happened trying reading the folder: "
+            "error_003": "An error happened trying to read the folder: "
         }
     }
 }

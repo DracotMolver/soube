@@ -1,16 +1,14 @@
 /**
- * -------------------------- Módulo PlayFile -------------------------- *
+ * -------------------------- Módulo PlayFile --------------------------------------------------
  * @author Diego Alberto Molina Vera
  *
  * Encargada de reproducir la canción, tocar la siguiente canción o la anterior.
  * Acá se usa la Audio Web API para reproducir la canción y también usar datos
  * obtenidos mediante el buffer. también la API nos permite manipular el archivo de audio
  */
-const {Animation} = require('./animation')
-const {dialog} = require('./commons')
+const {dialog, path} = require('./commons')
 
-/***********************************************************************************************/
-/** --------------------------------------- Variables --------------------------------------- **/
+/* --------------------------------------- Variables ------------------------------------------- */
 let isMovingForward = false // Se se está tratando de adelantar la cación a un tiempo determinado
 let isSongPlaying = false // Se ejecutó play sobre el AudioNode
 let isNexAble = false // Se puede reproducir la siguiente canción
@@ -19,18 +17,13 @@ let filePath = '' // Ruta de la canción
 let songs = {} // Listado de canciones
 let notification = null // Despliega una notificación de la canción que se va a reproducir
 
-// Animación de los textos superiores (título, artista, album)
-let animArtist = Animation($('#album'))
-let animTitle = Animation($('#song-title'))
-let animAlbum = Animation($('#artist'))
-
 // Variables necesarios para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext() // Contendrá el objeto AudioContext
 let _duration = 0 // Duración máxima de la canción
 let _buffer = {}
 let source = null // Contendrá el objeto AudioNode
 const gain = audioContext.createGain() // Gain a usar sobre el AudioNode
-gain.gain.value = 1.05
+  gain.gain.value = 1.05
 let xhtr = new XMLHttpRequest() // Contendrá el objeto XMLHttpRequest
 
 // Variables para generar el calculo del tiempo transcurrido
@@ -47,8 +40,6 @@ let lapse = 0
 let time = 0 // Tiempo total final
 let hrz = [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 
-
-/***********************************************************************************************/
 /** --------------------------------------- Funciones --------------------------------------- **/
 /**
  * Listado de canciones desde el archivo listSongs.js
@@ -107,8 +98,8 @@ function startTimer() {
       }
       // Tiempo transcurrido
       $('#time-start').text(`${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`)
-      ++second
       $('#progress-bar').css(`width:${percent += lapse}%`) // Barra de carga
+      ++second
     }
   }
   interval = setInterval(iter, 10)
@@ -123,10 +114,11 @@ function stopTimer() {
     clearInterval(interval)
     $('#time-start').text('00:00')
     millisecond = second = minute = percent =
-      _duration = _minute = _second = time = 0
+    _duration = _minute = _second = time = 0
     if (isNexAble && !isMovingForward) nextSong()
   } else if (isMovingForward) {
-    /** La función stop tarda unos milesegundos más que ejecutar la función moveForward
+    /**
+     * La función stop tarda unos milesegundos más que ejecutar la función moveForward
      * Por lo tanto lo que continua después de detener la canción deberá ser ejecutado
      * dentro de la función onended
      */
@@ -138,9 +130,7 @@ function stopTimer() {
 
     // Conectar todos los nodos
     source.buffer = _buffer
-    source.connect(gain)
-      .connect(filter[0])
-      .connect(audioContext.destination)
+    source.connect(gain).connect(filter[0]).connect(audioContext.destination)
 
     startTimer()
     source.start(0, forward)
@@ -173,7 +163,7 @@ function dataSong(_position) {
 
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     body: `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`,
-    icon: `${__dirname}/../img/play.png`
+    icon: path.join(__dirname, '..', 'img', 'play.png')
   })
 }
 
@@ -182,9 +172,6 @@ function dataSong(_position) {
  * Se obtiene un array buffer con info útil para usar
  */
 function play() {
-  animAlbum.start()
-  animArtist.start()
-  animTitle.start()
   // Creamos un Buffer que contendrá la canción
   source = audioContext.createBufferSource()
 
@@ -207,9 +194,7 @@ function play() {
 
       // Conectar todos los nodos
       source.buffer = _buffer
-      source.connect(gain)
-        .connect(filter[0])
-        .connect(audioContext.destination)
+      source.connect(gain).connect(filter[0]).connect(audioContext.destination)
 
       startTimer()
       source.start(0)
@@ -253,7 +238,7 @@ function nextSong(_position = -1) {
       dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0))
       // si está sonando la canción, esta se debe detener para tocar la nueva
       if (isSongPlaying && audioContext.state === 'running' ||
-        !isSongPlaying && audioContext.state === 'suspended') {
+         !isSongPlaying && audioContext.state === 'suspended') {
         // Verificar si el contexto está pausado o no.
         // Si está pausado no se reproducirá una nueva pista
         if (!isSongPlaying && audioContext.state === 'suspended')
@@ -271,7 +256,7 @@ function nextSong(_position = -1) {
 /**
  * Reproducirá la canción anterior
  */
-function prevSong(_position) {
+function prevSong() {
   if (isNexAble) {
     isNexAble = false
     dataSong(songs.length - 1 > position ? position - 1 : 0)
@@ -303,17 +288,17 @@ function filters() {
   let f = null
   filter = hrz.map((v, i) =>
     (f = audioContext.createBiquadFilter(),
-      f.type = 'peaking',
-      f.frequency.value = v,
-      f.Q.value = 1,
-      f.gain.value = hrzGain[i] / 20, f)
+    f.type = 'peaking',
+    f.frequency.value = v,
+    f.Q.value = 1,
+    f.gain.value = hrzGain[i] / 20, f)
   )
   filter.reduce((p, c) => p.connect(c))
 }
 
 function moveForward(event, element) {
   forward = (_duration * event.offsetX) / element.clientWidth
-  let time_m = (forward / 60).toString()
+  const time_m = (forward / 60).toString()
   // Recalcular el tiempo
   minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10)
   second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60)

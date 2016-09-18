@@ -1,7 +1,6 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-/*********************************************************************************************/
 /** --------------------------------------- Módulos --------------------------------------- **/
 // Generales
 const {
@@ -17,7 +16,6 @@ const {
 } = require('./listSongs')
 
 
-/***********************************************************************************************/
 /** --------------------------------------- Variables --------------------------------------- **/
 // Archivos de configuraciones
 let configFile = jread(CONFIG_FILE)
@@ -31,15 +29,13 @@ let pos = 0
 let db = 0
 let y = 0;
 
-
-/***********************************************************************************************/
 /** --------------------------------------- Funciones --------------------------------------- **/
 /**
  * Texto a modificar en la ventana de configuraciones
  */
 (function updateTextContet() {
   $('#_addsongfolder').text(lang.config.addSongFolder)
-  $('#_statussongfolder').text(lang.config.statusSongFolder)
+  $('#_statussongfolder').text(configFile.musicFolder === '' ? lang.config.statusSongFolder : configFile.musicFolder)
   $('#_changelanguage').text(lang.config.changeLanguage)
   $('#_statuslanguage').text(lang.config.statusLanguage)
   $('#_titleconfig').text(lang.config.titleConfig)
@@ -52,13 +48,13 @@ let y = 0;
  */
 function animConfigPanel() {
   $('#config-container-options')
-    .addClass('config-opt-anim')
-    .on({
-      'animationend': function () {
-        $('#config-container-values').rmClass('hide')
-        $(this).addClass('hide')
-      }
-    })
+  .addClass('config-opt-anim')
+  .on({
+    'animationend': function () {
+      $('#config-container-values').rmClass('hide')
+      $(this).addClass('hide')
+    }
+  })
 }
 
 /**
@@ -93,10 +89,8 @@ function saveSongList(parentFolder = '') {
 
   // Actualizar status de la carpeta
   $($('#folder-status').child(0)).text(parentFolder)
-  const langFile = jread(LANG_FILE)
-  langFile['es'].config.statusSongFolder = parentFolder
-  langFile['us'].config.statusSongFolder = parentFolder
-  lang = jsave(LANG_FILE, langFile)[configFile.lang]
+  configFile.musicFolder = parentFolder
+  configFile = jsave(CONFIG_FILE, configFile)
 
   // Leer el contenido de la carpeta padre
   // Desplegar loading
@@ -164,12 +158,10 @@ function onEqualizerPanel(e) {
     $(v).on({
       'mousedown': onDragStart
     })
-      .css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`) // Setear la configuración establecida
+    .css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`) // Setear la configuración establecida
   })
 }
 
-
-/*********************************************************************************************/
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Refrescar la ventana
 $('#_titleconfig').on({
@@ -177,9 +169,7 @@ $('#_titleconfig').on({
 })
 
 // Cambiar idioma
-$('#change-lang').on({
-  'click': onClickChangeLang
-})
+$('#change-lang').on({ 'click': onClickChangeLang })
 
 // Acción para agregar el listado de canciones
 $('#add-songs').on({
@@ -188,12 +178,9 @@ $('#add-songs').on({
       title: 'Add music folder',
       properties: ['openDirectory']
     }, parentFolder => {
-      if (parentFolder !== undefined) saveSongList(parentFolder[0]) // home/usuario/Música  - Ejemplo de la ruta de la carpeta padre
-    })
+      if (parentFolder !== undefined) saveSongList(parentFolder[0])})
   }
 })
 
 // Mostrar ecualizador
-$('#equalizer-panel').on({
-  'click': onEqualizerPanel
-})
+$('#equalizer-panel').on({ 'click': onEqualizerPanel })

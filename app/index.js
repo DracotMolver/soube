@@ -2,12 +2,14 @@ process.env.NODE_ENV = 'production'
 
 /** ---------------------------- Módulos ---------------------------- **/
 const {
-  ipcMain,
-  app,
-  BrowserWindow,
   globalShortcut,
-  Tray
+  BrowserWindow,
+  ipcMain,
+  Tray,
+  app
 } = require('electron')
+
+const path = require('path') // Crear la ruta usando el separador por defecto del SO
 
 /** ---------------------------- Variables ---------------------------- **/
 let configWindow = null
@@ -51,26 +53,25 @@ function registre_keys() {
 
 function ready() {
   // Mostrará el icono de notificación
-  const appIcon = new Tray(`${__dirname}/assets/img/icon.png`)
+  const appIcon = new Tray(path.join(__dirname, 'assets', 'img', 'icon.png'))
 
   // Reproductor
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
-    minHeight: 600,
+    titleBarStyle: 'hidden',
+    minHeight: 640,
     minWidth: 600,
     height: 600,
     center: true,
     width: 1200,
-    titleBarStyle: 'hidden',
-    show: false,
-    icon: `${__dirname}/assets/img/icon.png`
+    show: false
   })
 
   mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
-  mainWindow.loadURL(`file://${__dirname}/views/main/index.html`)
+  mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'))
   mainWindow.on('closed', () => {
     close_registred_keys()
     appIcon.destroy()
@@ -78,8 +79,8 @@ function ready() {
     BrowserWindow.getAllWindows().forEach(v => { v.close() })
     mainWindow = configWindow = null
   })
-    .on('focus', registre_keys)
-    .on('blur', close_registred_keys)
+  .on('focus', registre_keys)
+  .on('blur', close_registred_keys)
 
   // Deslegar la ventana una vez esté cargado todo el contenido del DOM
   mainWindow.once('ready-to-show', () => {
@@ -90,22 +91,17 @@ function ready() {
   configWindow = new BrowserWindow({
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
-    useContentSize: false,
-    maxHeight: 500,
-    minHeight: 500,
-    minWidth: 780,
-    maxWidth: 780,
+    useContentSize: true,
+    titleBarStyle: 'hidden',
+    resizable: false,
     height: 500,
     center: true,
     width: 780,
-    titleBarStyle: 'hidden',
-    show: false,
-    icon: `${__dirname}/assets/img/icon.png`
+    show: false
   })
 
-  configWindow.webContents.openDevTools()
   configWindow.setMenu(null)
-  configWindow.loadURL(`file://${__dirname}/views/config-panel/config.html`)
+  configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'))
   configWindow.on('close', e => {
     if (!isCloseAble && configWindow.isVisible()) {
       e.preventDefault()

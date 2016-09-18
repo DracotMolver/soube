@@ -12,6 +12,7 @@ const {
   execFile,
   metaData,
   dialog,
+  path,
   fs
 } = require('./commons')
 
@@ -128,21 +129,21 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   fnStart = _fnStart
   fnIter = _fnIter
   fnEnd = _fnEnd
+
   // Rescatar el objeto que contiene el archivo listsong.json
   let songs = Object.keys(jread(SONG_FILE)).length === 0 ? [] : jread(SONG_FILE)
   if (songs.length > 0) metaDataSongs = songs
+ 
   files = []
   execFile('find', [folder], (error, stdout, stderr) => {
     if (error) {
-      dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder} :: ${stderr}`)
+      dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`)
       return
     } else {
-      files = stdout
-        .split('\n')
-        .filter(f => {
-          if (/(\.mp3|\.wav|\.wave|\/)/.test(f.slice(f.lastIndexOf('.'), f.length)))
-            if (songs.find(v => v.filename === f) === undefined) return f
-        })
+      files = stdout.split('\n').filter(f => {
+        if (/(\.mp3|\.wav|\.wave|\/)/.test(f.slice(f.lastIndexOf('.'), f.length)))
+          if (songs.find(v => v.filename === f) === undefined) return path.normalize(f)
+      })
 
       songSize = max = files.length
       if (songSize > 0) {
@@ -165,22 +166,24 @@ function extractMetadata(iter) {
   fnIter(++count, max)
   iterator = iter.next()
   if (!iterator.done && iterator.value !== undefined) {
+ 
     // Extraer metadatas de los archivos de audio
     metaData(fs.createReadStream(iterator.value), (error, data) => {
+ 
       // En caso de error, generar atributos de la canción con un valor en el idioma correspondiente
       metaDataSongs.push(
         error ?
           {
-            artist: lang.artist.replace(/\s+/ig, '&nbsp;'),
-            album: lang.album.replace(/\s+/ig, '&nbsp;'),
-            title: lang.title.replace(/\s+/ig, '&nbsp;'),
+            artist: lang.artist.replace(/\s/g, '&nbsp;'),
+            album: lang.album.replace(/\s/g, '&nbsp;'),
+            title: lang.title.replace(/\s/g, '&nbsp;'),
             filename: iterator.value,
             position: metaDataSongs.length
           } :
           {
-            artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s+/ig, '&nbsp;'),
-            album: (data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s+/ig, '&nbsp;'),
-            title: (data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s+/ig, '&nbsp;'),
+            artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).replace(/\s/g, '&nbsp;'),
+            album: (data.album.trim().length !== 0 ? data.album : lang.album).replace(/\s/g, '&nbsp;'),
+            title: (data.title.trim().length !== 0 ? data.title : lang.title).replace(/\s/g, '&nbsp;'),
             filename: iterator.value,
             position: metaDataSongs.length
           }

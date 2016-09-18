@@ -261,11 +261,11 @@
 }
 
 .arrow-open-anim::after {
-    animation: openArrowDown 1s ease-out forwards
+    animation: openArrowDown .6s ease-out forwards
 }
 
 .arrow-open-anim::before {
-    animation: openArrowUp 1s ease-out forwards
+    animation: openArrowUp .6s ease-out forwards
 }
 
 #left-arrow {
@@ -285,12 +285,12 @@
 
 /* -------------------------------------- */
 #right-arrow::after,
-#left-arrow::after { /* Para obtener una mejor simetría en los ejes que se unen */
+#left-arrow::before { /* Para obtener una mejor simetría en los ejes que se unen */
     top: 2px
 }
 
 #right-arrow::before,
-#left-arrow::before { /* Para obtener una mejor simetría en los ejes que se unen */
+#left-arrow::after { /* Para obtener una mejor simetría en los ejes que se unen */
     top: 0
 }
 /* -------------------------------------- */

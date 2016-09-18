@@ -1,7 +1,6 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-/**********************************************************************************************/
 /** --------------------------------------- Módulos --------------------------------------- **/
 // Funciones para reproducir las canciones
 const {
@@ -29,8 +28,6 @@ const {
   fs
 } = require('./commons')
 
-
-/***********************************************************************************************/
 /** --------------------------------------- Variables --------------------------------------- **/
 let _songs = [] // Canciones cargadas
 
@@ -42,6 +39,7 @@ let fragContRes = null
 let searchRgx = null // Nombre de la canción a buscar
 let textFound = ''
 let tempSlide = 0
+let countSlide = 0
 let fragRes = null
 let items = [
   $.clone('div', false).addClass('grid-25 mobile-grid-25'),
@@ -67,8 +65,6 @@ const anim = {
 let configFile = jread(CONFIG_FILE) // Configuraciones básicas
 let lang = jread(LANG_FILE)[configFile.lang] // Textos en idiomas
 
-
-/***********************************************************************************************/
 /** --------------------------------------- Funciones --------------------------------------- **/
 /**
  * Una de las funciones importantes.
@@ -112,7 +108,7 @@ function searchInputData(e) {
     hideSearchInputData()
   }
 
-  searchRgx = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig')
+  searchRgx = new RegExp(`^${searchValue.replace(/\s/g, '&nbsp;')}`, 'ig')
   _list = _songs.filter(v => searchRgx.test(v.title))
 
   // Posibles resultados
@@ -129,33 +125,29 @@ function searchInputData(e) {
         textFound = _list[totalResults - 1].title.replace(/\&nbsp;/g, ' ')
         // Se generan los items dentro del slide
         fragRes.appendChild(
-          $.clone(items[0], true)
-            .insert(
-            $.clone(items[1], true)
-              .text(textFound.length > 25 ? `${textFound.slice(0, 25)}...` : textFound)
-            )
-            .data({
-              position: _list[totalResults - 1].position
-            })
-            .on({
-              'click': function () {
-                // Reproduce la canción buscada
-                nextSong($(this).data('position', 'int'))
-                // Anima el botón play
-                $('.anim-play').element.forEach((v, i) => {
-                  $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement()
-                })
-                hideSearchInputData()
-              }
-            }).element
+          $.clone(items[0], true).insert(
+            $.clone(items[1], true).text(textFound.length > 25 ? `${textFound.slice(0, 25)}...` : textFound)
+          )
+          .data({ position: _list[totalResults - 1].position })
+          .on({
+            'click': function () {
+              // Reproduce la canción buscada
+              nextSong($(this).data('position', 'int'))
+              // Anima el botón play
+              $('.anim-play').element.forEach((v, i) => {
+                $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement()
+              })
+              hideSearchInputData()
+            }
+          }).element
         )
       }
 
       // Agregar los items al slide
       fragContRes.appendChild(
         $.clone(items[2], true)
-          .insert(fragRes)
-          .css(`width:${document.body.clientWidth}px;`).element
+        .insert(fragRes)
+        .css(`width:${document.body.clientWidth}px;`).element
       )
     }
 
@@ -164,8 +156,7 @@ function searchInputData(e) {
       // Como hay más canciones de las que se muestran
       // se crea la paginación y siempre empieza en el primer slide
       // generando así la animación de la flecha del lado derecho para avanzar al siguiente slide
-      $($('#pagination').rmClass('hide')
-        .child(1)).addClass('arrow-open-anim')
+      $($('#pagination').rmClass('hide').child(1)).addClass('arrow-open-anim')
     } else {
       $('#pagination').addClass('hide')
     }
@@ -188,7 +179,7 @@ function searchInputData(e) {
  * Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
  */
 function checkNewSongs() {
-  getMetadata(lang.config.statusSongFolder, () => {
+  getMetadata(configFile.musicFolder, () => {
     // Desplegar pop-up
     $('#pop-up-container').rmClass('hide')
     $('#pop-up').addClass('pop-up-anim')
@@ -213,14 +204,10 @@ function clickBtnControls() {
       case 'play-pause':
         playSong() === 'resume' ?
           $('.anim-play').element.forEach((v, i) => {
-            $(v).attr(
-              { 'from': anim.from[i], 'to': anim.to[i] }
-            ).element.beginElement()
+            $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement()
           }) :
           $('.anim-play').element.forEach((v, i) => {
-            $(v).attr(
-              { 'from': anim.to[i], 'to': anim.from[i] }
-            ).element.beginElement()
+            $(v).attr({ 'from': anim.to[i], 'to': anim.from[i] }).element.beginElement()
           })
         break
       case 'next': nextSong(); break
@@ -240,8 +227,6 @@ function clickBtnControls() {
   }
 }
 
-
-/***********************************************************************************************/
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Activar shuffle
 if (configFile.shuffle) $('#shuffle-icon').css('fill: #FBFCFC')
@@ -254,7 +239,7 @@ $('#config').on({
 // Vendría siendo el método init
 fs.access(SONG_FILE, fs.F_OK | fs.R_OK, error => {
   if (error) {
-    dialog.showErrorBox('Error [001]', `${lang.alerts.error_001}`)
+    dialog.showErrorBox('Error [001]', `${lang.alerts.error_001}\n${error}`)
     return
   } else {
     // Iniciar todo lo necesario para desplegar en la interfaz
@@ -281,19 +266,34 @@ $('#total-progress-bar').on({
 $('.arrow').element.forEach(v => {
   $(v).on({
     'click': function () {
-      if (/arrow-open-anim/g.test(this.className)) {
-        if (this.id === 'right-arrow') { // Paginación a la izquierda
+      if (!$('#pagination').has('hide')) {
+        if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
+          if (countSlide < tempSlide) {
+            // c = countSlide !== 0 ? * ++countSlide : 
+            ++countSlide
+          }
+        } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
+          if (countSlide > 0) {
+            // c = countSlide !== 0 ? -1 * --countSlide : 
+            --countSlide
+          }
+        }
+        console.log(countSlide)
 
-        } else { // Paginación a la derecha
-
+        if (countSlide === tempSlide) $('#right-arrow').rmClass('arrow-open-anim')
+        if (countSlide === 1) $('#left-arrow').addClass('arrow-open-anim')
+        if (countSlide === 0) $('#left-arrow').rmClass('arrow-open-anim')
+        if (countSlide === tempSlide - 1) $('#right-arrow').addClass('arrow-open-anim')
+        if (countSlide < tempSlide && countSlide > 0) {
+          $('#wrapper-results').child('all').forEach(v => {
+            $(v).css(`transform: translateX(${-1 * (countSlide * document.body.clientWidth)}px)`)
+          })
         }
       }
     }
   })
 })
 
-
-/**************************************************************************************************/
 /** --------------------------------------- Ipc Renderer --------------------------------------- **/
 // Se detecta el cierre del inputsearch con la tecla Esc
 ipcRenderer.on('close-search-song', () => {
@@ -308,9 +308,7 @@ ipcRenderer.on('search-song', () => {
     $('#search-wrapper').addClass('search-wrapper-anim')
     $($('.grid-container').element[0]).css('-webkit-filter: blur(2px)')
     $('#search').addClass('search-anim')
-      .on({ 'keyup': searchInputData })
-      .val()
-      .focus()
+    .on({ 'keyup': searchInputData }).val().focus()
 
     isSearchDisplayed = true
   }
@@ -332,23 +330,15 @@ ipcRenderer.on('order-display-list', () => {
 ipcRenderer.on('play-and-pause-song', () => {
   playSong() === 'resume' ?
     $('.anim-play').element.forEach((v, i) => {
-      $(v).attr(
-        { 'from': anim.from[i], 'to': anim.to[i] }
-      ).element.beginElement()
+      $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement()
     }) :
     $('.anim-play').element.forEach((v, i) => {
-      $(v).attr(
-        { 'from': anim.to[i], 'to': anim.from[i] }
-      ).element.beginElement()
+      $(v).attr({ 'from': anim.to[i], 'to': anim.from[i] }).element.beginElement()
     })
 })
 
 // Siguiente canción con la combinación Ctrl + Right
-ipcRenderer.on('next-song', () => {
-  nextSong()
-})
+ipcRenderer.on('next-song', () => { nextSong() })
 
 // Canción anterior con la combinación Ctrl + Left
-ipcRenderer.on('prev-song', () => {
-  prevSong()
-})
+ipcRenderer.on('prev-song', () => { prevSong() })

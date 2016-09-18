@@ -3,9 +3,6 @@
  * @author Diego Alberto Molina Vera
  */
 module.exports = (function (_) {
-  const createdElements = {
-    div: document.createElement('div')
-  }
   /**
    * Recibe un string para buscar el elemento en el DOM y retornar un objeto
    * con todasl a funciones necesarias para ser usados sobre este proyecto
@@ -63,9 +60,12 @@ module.exports = (function (_) {
         this.element.removeAttribute(a)
         return this
       },
+      has: function (s) {
+        return (new RegExp(s, 'g')).test(this.element.className)
+      },
       attr: function (o) { // Agrega un atributo
         if (typeof o === 'object')
-          Object.keys(o).forEach(v => {/**/ this.element.setAttribute(v, o[v]) })
+          Object.keys(o).forEach(v => { this.element.setAttribute(v, o[v]) })
         else if (typeof o == 'string')
           return this.element.getAttribute(o)
 
@@ -76,14 +76,17 @@ module.exports = (function (_) {
         return this
       },
       css: function (s) { // Editar estilos css
-        this.element.style.cssText = s
+        const rgx = new RegExp(s, 'g')
+        if (!rgx.test(this.element.style.cssText))
+          this.element.style.cssText += this.element.style.cssText === '' ? `${s}` : ` ${s}`
+
         return this
       },
       on: function (fn) { // Agrega eventos
         Object.keys(fn).forEach(v => {
           /animation/.test(v) ?
-            this.element.addEventListener(v.toLowerCase(), fn[v]) :
-            this.element[`on${v.toLowerCase()}`] = fn[v]
+          this.element.addEventListener(v.toLowerCase(), fn[v]) :
+          this.element[`on${v.toLowerCase()}`] = fn[v]
         })
         return this
       },
@@ -96,8 +99,8 @@ module.exports = (function (_) {
 
   _.$.clone = function clone(s, b = false) {
     return this(
-      (typeof s === 'string' ? createdElements[s] : s.element)
-        .cloneNode(b)
+      (typeof s === 'string' ? document.createElement(s) : s.element)
+      .cloneNode(b)
     )
   }
 })(global)
