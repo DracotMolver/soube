@@ -2,7 +2,7 @@
  * Framework pequeño para manipular el DOM
  * @author Diego Alberto Molina Vera
  */
-module.exports = (function (_) {
+module.exports = (_ => {
   /**
    * Recibe un string para buscar el elemento en el DOM y retornar un objeto
    * con todasl a funciones necesarias para ser usados sobre este proyecto
@@ -10,13 +10,14 @@ module.exports = (function (_) {
    * @var e {String} - Nombre del id o la clase por la cual buscar
    * @return o {Object} - Objeto con las funciones
    */
-  _.$ = function DOM(e) {
+  _.$ = e => {
     if (/^\./.test(e)) // Por Clases
       e = Array.from(document.getElementsByClassName(e.replace('.', '')))
     else if (/^#/.test(e)) // Por ID
       e = document.getElementById(e.replace('#', ''))
 
     return {
+      0: e,
       element: e, // Contendrá el elemento del DOM
       addClass: function (s) { // Agregar clases
         const rgx = new RegExp(s, 'g')
@@ -52,10 +53,10 @@ module.exports = (function (_) {
 
         return this
       },
-      focus: function () { // Focus...necesario? depende la necesidad :).
-        this.element.focus()
-        return this
-      },
+      // focus: function () { // Focus...necesario? depende la necesidad :).
+      //   this.element.focus()
+      //   return this
+      // },
       rmAttr: function (a) { // Remueve un atributo
         this.element.removeAttribute(a)
         return this
@@ -93,14 +94,18 @@ module.exports = (function (_) {
       val: function (v = '') { // Ingresar value
         this.element.value = v.toString()
         return this
+      },
+      each: function (fn) {
+        this.element.forEach(fn)
+        return this
+      },
+      get: function (p = 0) {
+        return this.element[p]
       }
     }
   }
 
   _.$.clone = function clone(s, b = false) {
-    return this(
-      (typeof s === 'string' ? document.createElement(s) : s.element)
-      .cloneNode(b)
-    )
+    return this((typeof s === 'string' ? document.createElement(s) : s.element).cloneNode(b))
   }
 })(global)

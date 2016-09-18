@@ -56,9 +56,7 @@ function setSongs(_songs) {
  *
  * @return random {Number}
  */
-function shuffle() {
-  return Math.floor(Math.random() * songs.length).toString()
-}
+function shuffle() { return Math.floor(Math.random() * songs.length).toString() }
 
 /**
  * Reproducirá una cancione o la pausará de estar ya reproduciendose
@@ -69,18 +67,23 @@ function playSong() {
   if (!isSongPlaying && audioContext.state === 'running') { // Primera vez
     dataSong(shuffle())
     play()
+
     return 'resume'
+
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
     audioContext.suspend().then(() => {
       isSongPlaying = false
       clearInterval(interval)
     })
+
     return 'paused'
+
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true
     ++millisecond
     startTimer()
     audioContext.resume()
+
     return 'resume'
   }
 }
@@ -96,6 +99,7 @@ function startTimer() {
         ++minute
         second = 0
       }
+
       // Tiempo transcurrido
       $('#time-start').text(`${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`)
       $('#progress-bar').css(`width:${percent += lapse}%`) // Barra de carga
@@ -131,7 +135,6 @@ function stopTimer() {
     // Conectar todos los nodos
     source.buffer = _buffer
     source.connect(gain).connect(filter[0]).connect(audioContext.destination)
-
     startTimer()
     source.start(0, forward)
     isMovingForward = false
@@ -149,14 +152,9 @@ function dataSong(_position) {
   const infoSong = songs[(position = parseInt(_position, 10))]
   filePath = infoSong.filename // Ruta donde se encuentra el archivo a reproducir
 
-  // Título de la canción
-  $($('#song-title').child(0)).text(infoSong.title)
-
-  // Artista
-  $($('#artist').child(0)).text(infoSong.artist)
-
-  // Album
-  $($('#album').child(0)).text(infoSong.album)
+  $($('#song-title').child(0)).text(infoSong.title) // Título de la canción
+  $($('#artist').child(0)).text(infoSong.artist) // Artista
+  $($('#album').child(0)).text(infoSong.album) // Album
 
   // Mostrar notificación
   if (notification !== null) notification.close()
@@ -175,6 +173,7 @@ function play() {
   // Creamos un Buffer que contendrá la canción
   source = audioContext.createBufferSource()
 
+  // Leer erl achivo de audio
   xhtr.open('GET', `file://${filePath}`, true)
   xhtr.responseType = 'arraybuffer'
   xhtr.onload = () => {
@@ -196,11 +195,12 @@ function play() {
       source.buffer = _buffer
       source.connect(gain).connect(filter[0]).connect(audioContext.destination)
 
+      // Inicializar el tiempo y la canción
       startTimer()
       source.start(0)
       isNexAble = isSongPlaying = true
     }, reason => {
-      dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong} ${reason}`)
+      dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong}\n${reason}`)
       return
     })
   }
@@ -219,8 +219,7 @@ function nextSong(_position = -1) {
     // ver si está reproduciendose o no
     if (isSongPlaying && audioContext.state === 'running' ||
       !isSongPlaying && audioContext.state === 'suspended') {
-      if (!isSongPlaying && audioContext.state === 'suspended')
-        audioContext.resume()
+      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
 
       isNexAble = false
       source.stop(0)
@@ -241,8 +240,7 @@ function nextSong(_position = -1) {
          !isSongPlaying && audioContext.state === 'suspended') {
         // Verificar si el contexto está pausado o no.
         // Si está pausado no se reproducirá una nueva pista
-        if (!isSongPlaying && audioContext.state === 'suspended')
-          audioContext.resume()
+        if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
 
         source.stop(0)
         source = null
@@ -275,9 +273,7 @@ function prevSong() {
 /**
  * Cambia los valores en la frecuencia específica
  */
-function setFilterVal(a, b) {
-  filter[a].gain.setValueAtTime(b, audioContext.currentTime)
-}
+function setFilterVal(a, b) { filter[a].gain.setValueAtTime(b, audioContext.currentTime) }
 
 /**
  * Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
@@ -297,13 +293,15 @@ function filters() {
 }
 
 function moveForward(event, element) {
-  forward = (_duration * event.offsetX) / element.clientWidth
+  forward = _duration * event.offsetX / element.clientWidth
   const time_m = (forward / 60).toString()
+
   // Recalcular el tiempo
   minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10)
   second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60)
   millisecond = Math.floor(forward * 100) + 1
   clearInterval(interval)
+
   // Recalcular el porcentaje de la barra de tiempo
   percent = forward * (100 / _duration)
   isMovingForward = true

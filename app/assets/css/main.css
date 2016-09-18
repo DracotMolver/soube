@@ -7,7 +7,7 @@
 }
 
 #config {
-    margin-top: 1.6em;
+    margin-top: 1.9em;
     padding-right: 35%;
     padding-left: 35%;
     height: 2em
@@ -218,7 +218,8 @@
     position: absolute;
     color: rgba(182, 182, 182, .4);
     left: 1.6em;
-    top: 4.1em
+    top: 4.1em;
+    z-index: -1
 }
 
 .search-anim {

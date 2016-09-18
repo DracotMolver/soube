@@ -2,7 +2,6 @@
  * @author Diego Alberto Molina Vera
  */
 /** --------------------------------------- Módulos --------------------------------------- **/
-// Generales
 const {
   ipcRenderer,
   metaData,
@@ -67,7 +66,7 @@ function onClickChangeLang() {
   // configuraciones > ventana de configuración actual
   $('#_titlesubconfig').text(` > ${lang.config.changeLanguage}`)
 
-  $('.lang-option').element.forEach(v => {
+  $('.lang-option').each(v => {
     $(v).on({
       'click': function () {
         configFile.lang = $(this).data('lang', 'string')
@@ -96,13 +95,14 @@ function saveSongList(parentFolder = '') {
   // Desplegar loading
   getMetadata(parentFolder, () => { // Función inicial del proceso
     $('#loading').rmClass('hide')
-    $($('.grid-container').element[0]).css('-webkit-filter: blur(2px)')
+    $($('.grid-container').get(0)).css('-webkit-filter: blur(2px)')
 
   }, (_s) => { // Función final del proceso
     ipcRenderer.send('display-list')
+
     // Ocultar loading
     $('#loading').addClass('hide')
-    $($('.grid-container').element[0]).rmAttr('style')
+    $($('.grid-container').get(0)).rmAttr('style')
 
   }, (count, maxLength) => { // Función iteradora
     // Pop-up con la cantidad de canciones cargandose
@@ -148,25 +148,18 @@ function onEqualizerPanel(e) {
   }
 
   // Necesario para tener un drag más suave
-  $(document).on({
-    'mouseup': onDragEnd,
-    'mousemove': onDragMove
-  })
+  $(document).on({ 'mouseup': onDragEnd, 'mousemove': onDragMove })
 
   // El evento es solo registrado sobre los botones redondos
-  $('.range-circle').element.forEach((v, i) => {
-    $(v).on({
-      'mousedown': onDragStart
-    })
-    .css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`) // Setear la configuración establecida
+  $('.range-circle').each((v, i) => {
+    // Setear la configuración establecida
+    $(v).on({ 'mousedown': onDragStart }).css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`)
   })
 }
 
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Refrescar la ventana
-$('#_titleconfig').on({
-  'click': () => { window.location.reload(false) }
-})
+$('#_titleconfig').on({ 'click': () => { window.location.reload(false) }})
 
 // Cambiar idioma
 $('#change-lang').on({ 'click': onClickChangeLang })

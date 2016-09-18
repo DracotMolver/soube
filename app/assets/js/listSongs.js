@@ -7,7 +7,6 @@
  * artista/albunes
  */
 /** ---------------------------- Varibles ---------------------------- **/
-// Generales
 const {
   execFile,
   metaData,
@@ -15,7 +14,6 @@ const {
   path,
   fs
 } = require('./commons')
-
 
 let clickNextSong = null // Almacena la función nextSong del archivo playFile.js
 let metaDataSongs = []
@@ -59,8 +57,8 @@ function getDataSongAtPosition() {
     ]
   }
 
-  $('.anim-play').element.forEach((v, i) => {
-    $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement()
+  $('.anim-play').each((v, i) => {
+    $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement()
   })
 }
 
@@ -69,51 +67,37 @@ function getDataSongAtPosition() {
  */
 function createDefaultListView() {
   // Contenedor que se reptite para el títutlo, artista y album
-  let child = $.clone('div', false)
-    .addClass('grid-33 mobile-grid-33 song-info')
-    .css('overflow:hidden;')
+  let child = $.clone('div', false).addClass('grid-33 mobile-grid-33 song-info').css('overflow:hidden;')
   let title = null
   let album = null
   let artist = null
-  let parentContainer = $.clone('div', false)
-    .addClass('grid-100')
+  let parentContainer = $.clone('div', false).addClass('grid-100')
   const f = document.createDocumentFragment()
 
   jread(SONG_FILE).forEach((v, i) => {
-    // Título de la canción
-    title = $.clone(child, true)
-      .text(v.title)
-    // Artista
-    artist = $.clone(child, true)
-      .text(`<span class="miscelaneo">by</span>${v.artist}`)
-    // Album
-    album = $.clone(child, true)
-      .text(`<span class="miscelaneo">from</span>${v.album}`)
+    title = $.clone(child, true).text(v.title) // Título de la canción
+    artist = $.clone(child, true).text(`<span class="miscelaneo">by</span>${v.artist}`) // Artista
+    album = $.clone(child, true).text(`<span class="miscelaneo">from</span>${v.album}`) // Album
 
     f.appendChild(
       $.clone(parentContainer, true)
-        .data({
-          position: i,
-          artist: v.artist,
-          title: v.title,
-          album: v.album,
-          url: v.filename
-        })
-        .insert(title, artist, album)
-        .on({
-          'click': getDataSongAtPosition
-        }).element
+      .data({
+        position: i,
+        artist: v.artist,
+        title: v.title,
+        album: v.album,
+        url: v.filename
+      }).insert(title, artist, album).on({ 'click': getDataSongAtPosition })[0]
     )
   })
+
   $('#list-songs').insert(f)
 }
 
 /**
  * Función generadora que retorna el la ruta del archivo a leer
  */
-function* getSongs() {
-  while (songSize--) yield files[songSize]
-}
+function* getSongs() { while (songSize--) yield files[songSize] }
 
 /**
  * Revisa si hay nuevas canciones para ingresar.
@@ -166,10 +150,8 @@ function extractMetadata(iter) {
   fnIter(++count, max)
   iterator = iter.next()
   if (!iterator.done && iterator.value !== undefined) {
- 
     // Extraer metadatas de los archivos de audio
     metaData(fs.createReadStream(iterator.value), (error, data) => {
- 
       // En caso de error, generar atributos de la canción con un valor en el idioma correspondiente
       metaDataSongs.push(
         error ?

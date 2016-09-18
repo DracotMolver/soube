@@ -14,7 +14,6 @@ const path = require('path') // Crear la ruta usando el separador por defecto de
 /** ---------------------------- Variables ---------------------------- **/
 let configWindow = null
 let mainWindow = null
-let isCloseAble = false
 
 /** ---------------------------- Funciones ---------------------------- **/
 function window_all_closed() {
@@ -27,6 +26,7 @@ function close_registred_keys() {
   globalShortcut.unregister('CommandOrControl+Up') // Play & Pause
   globalShortcut.unregister('CommandOrControl+Right') // Next
   globalShortcut.unregister('CommandOrControl+Left') // Prev
+  globalShortcut.unregister('CommandOrControl+Down') // Shuffle
 }
 
 function registre_keys() {
@@ -48,6 +48,10 @@ function registre_keys() {
 
   globalShortcut.register('CommandOrControl+Left', () => {
     mainWindow.webContents.send('prev-song')
+  })
+
+  globalShortcut.register('CommandOrControl+Down', () => {
+    mainWindow.webContents.send('shuffle')
   })
 }
 
@@ -75,7 +79,6 @@ function ready() {
   mainWindow.on('closed', () => {
     close_registred_keys()
     appIcon.destroy()
-    isCloseAble = true
     BrowserWindow.getAllWindows().forEach(v => { v.close() })
     mainWindow = configWindow = null
   })
@@ -85,28 +88,6 @@ function ready() {
   // Deslegar la ventana una vez esté cargado todo el contenido del DOM
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
-  })
-
-  // Ventana de configuraciones
-  configWindow = new BrowserWindow({
-    autoHideMenuBar: true,
-    defaultEncoding: 'utf-8',
-    useContentSize: true,
-    titleBarStyle: 'hidden',
-    resizable: false,
-    height: 500,
-    center: true,
-    width: 780,
-    show: false
-  })
-
-  configWindow.setMenu(null)
-  configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'))
-  configWindow.on('close', e => {
-    if (!isCloseAble && configWindow.isVisible()) {
-      e.preventDefault()
-      configWindow.hide()
-    }
   })
 }
 
@@ -119,7 +100,21 @@ app.on('ready', ready)
 /** ---------------------------- Ipc Main ---------------------------- **/
 // Desplegar la ventana de configuraciones
 ipcMain.on('show-config', () => {
-  configWindow.show()
+  // Ventana de configuraciones
+  configWindow = new BrowserWindow({
+    autoHideMenuBar: true,
+    defaultEncoding: 'utf-8',
+    useContentSize: true,
+    titleBarStyle: 'hidden',
+    resizable: false,
+    height: 500,
+    center: true,
+    width: 780
+  })
+
+  configWindow.setMenu(null)
+  configWindow.webContents.openDevTools()
+  configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'))
 })
 
 // Despliega la lista al actualizarla o al sobre escribir la carpeta de las canciones
