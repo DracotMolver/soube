@@ -275,9 +275,6 @@ $('.arrow').each(v => {
           if (countSlide < tempSlide && countSlide > 0) --countSlide
         }
 
-        console.log(countSlide, tempSlide,
-        countSlide === tempSlide - 1)
-
         if (countSlide === tempSlide - 1) $('#right-arrow').rmClass('arrow-open-anim')
         if (countSlide === 1) $('#left-arrow').addClass('arrow-open-anim')
         if (countSlide === 0) $('#left-arrow').rmClass('arrow-open-anim')

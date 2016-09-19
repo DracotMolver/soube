@@ -15,6 +15,8 @@ module.exports = (_ => {
       e = Array.from(document.getElementsByClassName(e.replace('.', '')))
     else if (/^#/.test(e)) // Por ID
       e = document.getElementById(e.replace('#', ''))
+    else if (/^:/.test(e)) // Por el nombre del tag
+      e = Array.from(document.getElementsByTagName(e.replace(':', '')))
 
     return {
       0: e,

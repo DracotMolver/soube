@@ -10,6 +10,10 @@ h4 {
     font-size: .9em
 }
 
+h5 {
+    font-size: .5625em
+}
+
 #nav {
     background: var(--pinkColor)
 }
@@ -21,7 +25,11 @@ h4 {
     color:  var(--whiteColor)
 }
 
-#_titleconfig {
+#_titleconfig,
+.range-circle:hover,
+.config-icons > img:hover,
+#legal > h5,
+#legal-popup a {
     cursor:  pointer
 }
 
@@ -29,10 +37,6 @@ h4 {
     position: relative;
     margin: 1.6em auto auto 0;
     height: 4.6em
-}
-
-.config-icons > img:hover {
-    cursor: pointer
 }
 
 .config-option p {
@@ -51,6 +55,57 @@ h4 {
 
 .config-opt-anim {
     animation: confSlide 1s ease-in-out forwards
+}
+
+/* ----------------------------- LEGAL ---------------------------- */
+#legal {
+    padding-bottom: .5em;
+    padding-top: .5em;
+    text-align: center
+}
+
+#legal-popup {
+    background: var(--whiteColor);
+    position: absolute;
+    padding: 1em;
+    z-index: 4;
+    border: .01em solid var(--lightGreyColor);
+    margin: 0 auto;
+    height: auto;
+    width: 43em;
+    right: 0;
+    left: 0;
+    top: 4em;
+    transform-origin: top;
+    transform: scale(0);
+}
+
+.legal-anim {
+    animation: legalDisplay .6s ease-in forwards
+}
+
+#legal-popup > p {
+    line-height: 2em;
+    font-size: .8em;
+    color: var(--darkGreyColor)
+}
+
+#legal-popup::before {
+    border-style: solid;
+    border-width: 0 15px 15px 15px;
+    border-color: transparent transparent var(--whiteColor) transparent;
+    position: absolute;
+    content: '';
+    height: 0;
+    margin: 0 auto;
+    width: 0;
+    right: 0;
+    left: 0;
+    top: -15px
+}
+
+#legal > h5 {
+    color: var(--darkGreyColor)
 }
 
 /* ------------------------ CONFIGURACIÓN CARPETA DE MÚSICA ------------------------*/
@@ -91,8 +146,7 @@ h4 {
 /* ----------------------------- EQUALIZADOR ---------------------------- */
 #_infoequalizer {
     font-size: .9em;
-    font-weight: 100;
-    color: currentColor
+    font-weight: 100
 }
 
 .range-container {
@@ -133,10 +187,6 @@ h4 {
     top: 5px
 }
 
-.range-circle:hover{
-    cursor: pointer;
-}
-
 #equalizer-container {
     margin-top: 1.6em;
     height: 100%;
@@ -166,5 +216,24 @@ h4 {
     100% {
         transform: translateX(-100%);
           opacity: 0
+    }
+}
+
+@keyframes legalDisplay {
+    0% {
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    60% {
+        border-radius: 0 0 25% 25%;
+    }
+    80% {
+        border-radius: 0 0 15% 15%;
+    }
+    100% {
+        -webkit-filter: drop-shadow(0 0 2px rgba(151,154,154, .3));
+        border-radius: 5px;
+        transform: scale(1);
+        overflow: none !important
     }
 }

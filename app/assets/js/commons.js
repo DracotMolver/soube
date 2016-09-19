@@ -6,8 +6,9 @@ require('./template')
 
 // Módulos
 const {
+  ipcRenderer,
   remote,
-  ipcRenderer
+  shell
 } = require('electron')
 
 const metaData = require('musicmetadata')
@@ -31,6 +32,7 @@ module.exports = {
   ipcRenderer,
   metaData,
   execFile,
+  shell,
   path,
   fs
 }

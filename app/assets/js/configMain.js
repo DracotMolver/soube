@@ -7,6 +7,7 @@ const {
   metaData,
   execFile,
   dialog,
+  shell,
   fs
 } = require('./commons')
 
@@ -177,3 +178,23 @@ $('#add-songs').on({
 
 // Mostrar ecualizador
 $('#equalizer-panel').on({ 'click': onEqualizerPanel })
+
+// Abrir en el navegador por defecto sel SO
+$(':a').each(v => {
+  $(v).on({
+    'click': function (e) {
+      e.preventDefault()
+      shell.openExternal(this.href)
+    }
+  })
+})
+
+// Abrir popup del legal
+$($('#legal').child(0)).on({
+  'click': () => { $('#legal-popup').addClass('legal-anim')}
+})
+
+// Cerrar popup del legal
+$('#close-legal').on({
+  'click': () => { $('#legal-popup').rmClass('legal-anim')}
+})
