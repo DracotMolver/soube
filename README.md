@@ -37,7 +37,8 @@ Soube is a simple music player based on Electronjs. It's simeple and minimalist 
  sudo gedit soube.desktop 
  ```
  * copy and paste the next
- ```
+
+```
  [Desktop Entry]
  Version=1.0.0
  Name=Soube
