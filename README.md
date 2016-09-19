@@ -49,3 +49,11 @@ Soube is a simple music player based on Electronjs. It's simeple and minimalist 
  Categories=Application;MusicPlayer
  ```
  * And then just save it
+
+## Shortcuts
+
+ * Ctrl + F      // Display the searching option
+ * Ctrl + Up     // Set Play/Pause the song
+ * Ctrl + Left   // Prev song
+ * Ctrl + Right  // Next song
+ * Ctrl + Down // Switch shuffle
