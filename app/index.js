@@ -73,7 +73,6 @@ function ready() {
     show: false
   })
 
-  mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
   mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'))
   mainWindow.on('closed', () => {
