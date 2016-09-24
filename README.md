@@ -11,7 +11,7 @@ Soube is a simple music player based on Electronjs. It's simeple and minimalist 
  * Searching by song.
 
 ## How to install
- * (Note: Don't get me wrong, but people that is new in linux can be afraid of command lines)
+ * (Note: Don't get me wrong, but people that are new to linux can be afraid of command lines)
 
 #### Step 1
  ```
