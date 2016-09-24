@@ -70,9 +70,11 @@ function ready() {
     height: 600,
     center: true,
     width: 1200,
-    show: false
+    show: false,
+    icon: `${__dirname}/assets/img/icon.png`
   })
 
+  mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
   mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'))
   mainWindow.on('closed', () => {
@@ -108,7 +110,8 @@ ipcMain.on('show-config', () => {
     resizable: false,
     height: 500,
     center: true,
-    width: 780
+    width: 780,
+    icon: `${__dirname}/assets/img/icon.png`
   })
 
   configWindow.setMenu(null)

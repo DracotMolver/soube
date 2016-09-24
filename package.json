@@ -1,6 +1,6 @@
 {
   "name": "soube",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple music player",
   "author": {
     "email": "dracotm25@gmail.com",
@@ -13,6 +13,7 @@
     "electron-prebuilt": "^1.4.1"
   },
   "build": {
+    "asar": false,
     "linux": {
       "category": "Audio",
       "packageCategory": "sound",
@@ -27,7 +28,7 @@
         "Name": "Soube",
         "Exec": "soube",
         "Terminal": false,
-        "Version": "1.0.0",
+        "Version": "1.0.1",
         "Categories": "Application;MusicPlayer"
       }
     }

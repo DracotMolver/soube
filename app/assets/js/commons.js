@@ -23,7 +23,7 @@ global.LANG_FILE = path.join(__dirname, '..', 'files', 'lang.json')
 
 global.jread = data => JSON.parse(fs.readFileSync(data, { encoding: 'utf8', flag: 'r' }))
 global.jsave = (data, c) => {
-  fs.writeFileSync(data, JSON.stringify(c, null, 4))
+  fs.writeFileSync(data, JSON.stringify(c, null), { encoding: 'utf8', mode: 511, flag: 'w' })
   return jread(data)
 }
 
