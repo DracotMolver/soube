@@ -28,7 +28,7 @@
         "Name": "Soube",
         "Exec": "soube",
         "Terminal": false,
-        "Version": "1.0.1",
+        "Version": "1.1.0",
         "Categories": "Application;MusicPlayer"
       }
     }
