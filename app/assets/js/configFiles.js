@@ -18,7 +18,6 @@ function makeFiles () {
 
             fs.open(configPath, 'w', (err, fd) => {
                 if (err) {
-                    console.log(err)
                     return
                 }
 
@@ -34,7 +33,6 @@ function makeFiles () {
         if (err) {
             fs.open(listSongPath, 'w', (err, fd) => {
                 if (err) {
-                    console.log(err)
                     return
                 }
 
