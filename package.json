@@ -6,6 +6,7 @@
     "email": "dracotm25@gmail.com",
     "name": "Diego Molina Vera"
   },
+  "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
     "electron": "^1.4.1",
     "electron-builder": "^6.7.7",
@@ -36,6 +37,6 @@
   "scripts": {
     "pack": "build --dir",
     "dist": "build",
-    "build": "electron-packager ./app soube --platform=linux --arch=all --prune"
+    "build": "electron-packager ./app soube --out=dist --platform=linux --ignore='^/dist$' --arch=all --prune --icon='./app/assets/img/icon.png'"
   }
 }
