@@ -77,7 +77,7 @@ function ready() {
   })
 
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
   mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'))
   mainWindow.on('closed', () => {
@@ -122,7 +122,7 @@ ipcMain.on('show-config', () => {
   })
 
   configWindow.setMenu(null)
-  configWindow.webContents.openDevTools()
+  // configWindow.webContents.openDevTools()
   configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'))
 })
 
