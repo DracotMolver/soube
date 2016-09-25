@@ -40,7 +40,7 @@ Soube is a simple music player based on Electronjs. It's simeple and minimalist 
 
 ```
  [Desktop Entry]
- Version=1.0.0
+ Version=1.1.0
  Name=Soube
  Exec=/opt/soube/soube
  Terminal=false
@@ -57,3 +57,10 @@ Soube is a simple music player based on Electronjs. It's simeple and minimalist 
  * Ctrl + Left   // Prev song
  * Ctrl + Right  // Next song
  * Ctrl + Down // Switch shuffle
+
+ ## Changes!
+ * 1.1.0
+    * Finally Soube is rpm and deb.
+    * Fixed the lost of the songs that have been loaded. This behavior was happening when you installed a new version. Now that won't happen anymore.
+      Sorry for this :(.
+    * I will keep the bin files for people that cannot use rpm or deb.
