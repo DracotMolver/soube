@@ -19,7 +19,6 @@
       "category": "Audio",
       "packageCategory": "sound",
       "target": [
-        "deb",
         "rpm"
       ],
       "synopsis": "Soube — Simple music player",

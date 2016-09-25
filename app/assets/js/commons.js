@@ -17,8 +17,8 @@ const fs = require('fs')
 const path = require('path')
 
 // Globales
-global.CONFIG_FILE = path.join(__dirname, '..', 'files', 'config.json')
-global.SONG_FILE = path.join(__dirname, '..', 'files', 'listSong.json')
+global.CONFIG_FILE = `${remote.app.getPath('userData')}/config.json`
+global.SONG_FILE = `${remote.app.getPath('userData')}/listSong.json`
 global.LANG_FILE = path.join(__dirname, '..', 'files', 'lang.json')
 
 global.jread = data => JSON.parse(fs.readFileSync(data, { encoding: 'utf8', flag: 'r' }))

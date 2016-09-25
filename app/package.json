@@ -8,6 +8,7 @@
         "email": "dracotm25@gmail.com",
         "name": "Diego Molina Vera"
     },
+    "homepage": "http://soube.diegomolina.cl",
     "dependencies": {
         "musicmetadata": "^2.0.4"
     }

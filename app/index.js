@@ -4,12 +4,14 @@ process.env.NODE_ENV = 'production'
 const {
   globalShortcut,
   BrowserWindow,
+  nativeImage,
   ipcMain,
   Tray,
   app
 } = require('electron')
 
 const path = require('path') // Crear la ruta usando el separador por defecto del SO
+const configFiles = require('./../app/assets/js/configFiles.js')
 
 /** ---------------------------- Variables ---------------------------- **/
 let configWindow = null
@@ -71,8 +73,9 @@ function ready() {
     center: true,
     width: 1200,
     show: false,
-    icon: `${__dirname}/assets/img/icon.png`
+    icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.ico'))
   })
+
 
   mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
@@ -90,6 +93,10 @@ function ready() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
   })
+
+  // Crear archivos de configuración
+  configFiles.setPath(app.getPath('userData'))
+  configFiles.makeFiles()
 }
 
 /** ---------------------------- Electronjs Cosas O_o ---------------------------- **/
@@ -111,7 +118,7 @@ ipcMain.on('show-config', () => {
     height: 500,
     center: true,
     width: 780,
-    icon: `${__dirname}/assets/img/icon.png`
+    icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.ico'))
   })
 
   configWindow.setMenu(null)
