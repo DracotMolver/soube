@@ -66,7 +66,6 @@ function ready() {
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
-    titleBarStyle: 'hidden',
     minHeight: 640,
     minWidth: 600,
     height: 600,
@@ -77,7 +76,7 @@ function ready() {
   })
 
 
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
   mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'))
   mainWindow.on('closed', () => {
@@ -113,7 +112,6 @@ ipcMain.on('show-config', () => {
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
-    titleBarStyle: 'hidden',
     resizable: false,
     height: 500,
     center: true,
@@ -122,7 +120,7 @@ ipcMain.on('show-config', () => {
   })
 
   configWindow.setMenu(null)
-  // configWindow.webContents.openDevTools()
+  configWindow.webContents.openDevTools()
   configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'))
 })
 
