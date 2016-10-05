@@ -2,6 +2,11 @@
  * @author Diego Alberto Molina Vera
  */
 /* ------------------------ GENERALES ------------------------ */
+@font-face {
+    font-family: 'Hind';
+    src: url(../files/Hind-Regular.ttf)
+}
+
 /**
  * Se realizan reset pero de los atributos más importantes
  * que vamos a usar en Chromium.

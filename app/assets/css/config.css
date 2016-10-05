@@ -61,13 +61,9 @@ h5 {
 #legal {
     padding-bottom: .5em;
     padding-top: .5em;
-    text-align: center
-}
-
-#legal-popup {
+    text-align: center;
     background: var(--whiteColor);
     position: absolute;
-    padding: 1em;
     z-index: 4;
     border: .01em solid var(--lightGreyColor);
     margin: 0 auto;
@@ -75,33 +71,7 @@ h5 {
     width: 43em;
     right: 0;
     left: 0;
-    top: 4em;
-    transform-origin: top;
-    transform: scale(0);
-}
-
-.legal-anim {
-    animation: legalDisplay .6s ease-in forwards
-}
-
-#legal-popup > p {
-    line-height: 2em;
-    font-size: .8em;
-    color: var(--darkGreyColor)
-}
-
-#legal-popup::before {
-    border-style: solid;
-    border-width: 0 15px 15px 15px;
-    border-color: transparent transparent var(--whiteColor) transparent;
-    position: absolute;
-    content: '';
-    height: 0;
-    margin: 0 auto;
-    width: 0;
-    right: 0;
-    left: 0;
-    top: -15px
+    top: 4em
 }
 
 #legal > h5 {
@@ -219,7 +189,7 @@ h5 {
     }
 }
 
-@keyframes legalDisplay {
+/*@keyframes legalDisplay {
     0% {
         border-radius: 50%;
         overflow: hidden;
@@ -236,4 +206,4 @@ h5 {
         transform: scale(1);
         overflow: none !important
     }
-}
+}*/

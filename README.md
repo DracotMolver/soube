@@ -1,6 +1,8 @@
 # Soube
 Soube is a simple music player based on Electronjs. It's simeple and minimalist with a beautiful design.
 
+**(Now you can installe it by rpm and deb package. If so, don't follow the steps listed bellow)**
+
 ## Features
  * Notifications showing what song is played.
  * Auto detection of new songs.
