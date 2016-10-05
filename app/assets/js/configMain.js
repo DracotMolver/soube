@@ -41,6 +41,7 @@ let y = 0;
   $('#_titleconfig').text(lang.config.titleConfig)
   $('#_equalizersetting').text(lang.config.equalizerSetting)
   $('#_infoequalizer').text(lang.alerts.infoEqualizer)
+  $('#_legal').text(lang.config.legal)
 })()
 
 /**
@@ -158,6 +159,17 @@ function onEqualizerPanel(e) {
   })
 }
 
+/**
+ * Mostrar los términos legales
+ */
+function onClickLegal() {
+  $(`#${$(this).data('action', 'string')}`).rmClass('hide')
+
+  animConfigPanel()
+  // configuraciones > ventana de configuración actual
+  $('#_titlesubconfig').text(` > ${lang.config.legal}`)
+}
+
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Refrescar la ventana
 $('#_titleconfig').on({ 'click': () => { window.location.reload(false) }})
@@ -189,12 +201,5 @@ $(':a').each(v => {
   })
 })
 
-// Abrir popup del legal
-$($('#legal').child(0)).on({
-  'click': () => { $('#legal-popup').addClass('legal-anim')}
-})
-
-// Cerrar popup del legal
-$('#close-legal').on({
-  'click': () => { $('#legal-popup').rmClass('legal-anim')}
-})
+// Mostrar legal
+$('#terms').on({ 'click': onClickLegal })
