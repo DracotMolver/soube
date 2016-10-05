@@ -11,7 +11,8 @@
             "addAccounts": "Cuentas",
             "equalizerSetting": "Ecualizador",
             "statusSongFolder": "No hay carpeta de música",
-            "loadingSongFolder": "Cargando canciones: "
+            "loadingSongFolder": "Cargando canciones: ",
+            "legal": "Términos legales"
         },
         "orderBy": {
             "artist": "Artista",
@@ -39,7 +40,8 @@
             "addAccounts": "Accounts",
             "equalizerSetting": "Equalizer",
             "statusSongFolder": "No music folder",
-            "loadingSongFolder": "Loading songs: "
+            "loadingSongFolder": "Loading songs: ",
+            "legal": "Legal terms"
         },
         "orderBy": {
             "artist": "Artist",
