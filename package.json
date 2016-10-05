@@ -9,7 +9,7 @@
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
     "electron": "^1.4.1",
-    "electron-builder": "^6.7.7",
+    "electron-builder": "^7.9.0",
     "electron-packager": "^8.0.0",
     "electron-prebuilt": "^1.4.1"
   },
