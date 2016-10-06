@@ -125,11 +125,7 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
       return
     } else {
       files = stdout.split('\n').filter(f => {
-<<<<<<< HEAD
         if (/(\.mp3|\.wav|\.wave|\.wma|\.wmv|\.ogg|\.m4a)/.test(f.slice(f.lastIndexOf('.'), f.length)))
-=======
-        if (/(\.mp3|\.wav|\.wave|\.m4a|\.ogg|\.wma|\.wmv)/.test(f.slice(f.lastIndexOf('.'), f.length)))
->>>>>>> cc27e3864d28299891e54eb0b58502b55eb37372
           if (songs.find(v => v.filename === f) === undefined) return path.normalize(f)
       })
 

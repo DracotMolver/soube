@@ -1,20 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "soube",
-  "version": "1.1.0",
-  "description": "Simple music player",
-  "main": "index.js",
-  "license": "MIT",
-  "author": {
-    "email": "dracotm25@gmail.com",
-    "name": "Diego Molina Vera"
-  },
-  "homepage": "http://soube.diegomolina.cl",
-  "dependencies": {
-    "musicmetadata": "^2.0.4"
-  }
-}
-=======
     "name": "soube",
     "version": "1.2.1",
     "description": "Simple music player",
@@ -29,4 +13,3 @@
         "musicmetadata": "^2.0.4"
     }
 }
->>>>>>> cc27e3864d28299891e54eb0b58502b55eb37372

@@ -66,10 +66,6 @@ function ready() {
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
-<<<<<<< HEAD
-    // titleBarStyle: 'hidden',
-=======
->>>>>>> 8d3b68edf920cb3636f748b1b98c8e7fbc78d339
     minHeight: 640,
     minWidth: 600,
     height: 600,
@@ -114,10 +110,6 @@ ipcMain.on('show-config', () => {
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
-<<<<<<< HEAD
-    // titleBarStyle: 'hidden',
-=======
->>>>>>> 8d3b68edf920cb3636f748b1b98c8e7fbc78d339
     resizable: false,
     height: 500,
     center: true,

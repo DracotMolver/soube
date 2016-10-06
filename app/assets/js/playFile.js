@@ -153,9 +153,12 @@ function dataSong(_position) {
   const infoSong = songs[(position = parseInt(_position, 10))]
   filePath = infoSong.filename // Ruta donde se encuentra el archivo a reproducir
 
-  $($('#song-title').child(0)).text(infoSong.title) // Título de la canción
-  $($('#artist').child(0)).text(infoSong.artist) // Artista
-  $($('#album').child(0)).text(infoSong.album) // Album
+  // Título de la canción
+  $('#song-title').child('all').forEach(v => { $(v).text(infoSong.title) })
+  // Artista
+  $('#artist').child('all').forEach(v => { $(v).text(infoSong.artist) })
+  // Album
+  $('#album').child('all').forEach(v => { $(v).text(infoSong.album) })
 
   // Mostrar notificación
   if (notification !== null) notification.close()
