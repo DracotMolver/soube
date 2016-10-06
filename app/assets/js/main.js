@@ -289,6 +289,31 @@ $('.arrow').each(v => {
   })
 })
 
+// Hover para desplegar tooltips sobre el título de la canción,
+// artista y album
+let tooltip = $.clone('div', false).addClass('tooltip')
+$('.text-container').each(v => {
+  $(v).on({
+    'mouseenter': function(e) {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+
+      let t = ''
+      if ((t = $($(this).child(0)).text().trim()) !== '') {
+        tooltip.text(t)
+        $(this).insert(tooltip)
+      }
+    },
+    'mouseleave': function(e) {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+
+      $(this).rmChild(2)
+    }
+  })
+})
+
+
 /** --------------------------------------- Ipc Renderer --------------------------------------- **/
 // Se detecta el cierre del inputsearch con la tecla Esc
 ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData() })
