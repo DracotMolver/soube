@@ -61,6 +61,10 @@ Soube is a simple music player based on Electronjs. It's simeple and minimalist 
  * Ctrl + Down // Switch shuffle
 
 ## Changes!
+ * 1.2.1
+    * I added a tooltip when you set your mouse hover the Title, Artist or Song, to display the full text.
+    * Changed the way I show the legal terms.
+
  * 1.1.0
     * Finally Soube is rpm and deb.
     * Fixed the lost of the songs that have been loaded. This behavior was happening when you installed a new version. Now that won't happen anymore.
