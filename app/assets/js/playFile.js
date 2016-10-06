@@ -117,7 +117,8 @@ function stopTimer() {
     isSongPlaying = false
     clearInterval(interval)
     $('#time-start').text('00:00')
-    millisecond = second = minute = percent =
+    millisecond = 1
+    second = minute = percent =
     _duration = _minute = _second = time = 0
     if (isNexAble && !isMovingForward) nextSong()
   } else if (isMovingForward) {

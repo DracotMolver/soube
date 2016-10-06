@@ -79,8 +79,6 @@ function ready() {
     icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.ico'))
   })
 
-
-  mainWindow.webContents.openDevTools()
   mainWindow.setMenu(null)
   mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'))
   mainWindow.on('closed', () => {
@@ -128,7 +126,6 @@ ipcMain.on('show-config', () => {
   })
 
   configWindow.setMenu(null)
-  configWindow.webContents.openDevTools()
   configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'))
 })
 

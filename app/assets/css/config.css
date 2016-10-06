@@ -188,22 +188,3 @@ h5 {
           opacity: 0
     }
 }
-
-/*@keyframes legalDisplay {
-    0% {
-        border-radius: 50%;
-        overflow: hidden;
-    }
-    60% {
-        border-radius: 0 0 25% 25%;
-    }
-    80% {
-        border-radius: 0 0 15% 15%;
-    }
-    100% {
-        -webkit-filter: drop-shadow(0 0 2px rgba(151,154,154, .3));
-        border-radius: 5px;
-        transform: scale(1);
-        overflow: none !important
-    }
-}*/

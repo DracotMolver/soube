@@ -49,16 +49,16 @@ module.exports = (_ => {
       child: function (p) { // Buscar hijos
         return (p === 'all') ? Array.from(this.element.children) : this.element.children[p]
       },
+      rmChild: function (c) { // Remover hijo específico
+        const ch = this.element.children[c - 1]
+        this.element.removeChild(ch)
+      },
       text: function (s = null) { // Agregar o remover texto - innerHTML
         if (s !== null) this.element.innerHTML = `${s}`
         else return this.element.textContent
 
         return this
       },
-      // focus: function () { // Focus...necesario? depende la necesidad :).
-      //   this.element.focus()
-      //   return this
-      // },
       rmAttr: function (a) { // Remueve un atributo
         this.element.removeAttribute(a)
         return this
