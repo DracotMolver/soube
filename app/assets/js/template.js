@@ -48,9 +48,8 @@ module.exports = (_ => {
         }
       },
       child: function (p = 'all') { // Buscar hijos
-        if (p !== 'all' && typeof p === 'number')
-          this.element = this.element.children[p];
-
+        this[0] = this.element = (p !== 'all' && typeof p === 'number') ?
+        this.element.children[p] : Array.from(this.element.children);
         return this;
       },
       rmChild: function (c) { // Remover hijo específico
@@ -119,7 +118,15 @@ module.exports = (_ => {
         return this;
       },
       each: function (fn) {
-        this.element.forEach(fn);
+        let _self = Object.assign({}, this);
+        for (var i = 0, size = this.element.length; i < size; i++) {
+          _self[0] = this.element[i];
+          _self.element = this.element[i];
+
+          if (fn.length === 1) fn(_self);
+          else if (fn.length === 2) fn(_self, i);
+        }
+
         return this;
       },
       get: function (p = 0) { return this.element[p]; }

@@ -52,7 +52,7 @@ function getDataSongAtPosition() {
   };
 
   $('.anim-play').each((v, i) => {
-    $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
+    v.attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
   });
 }
 

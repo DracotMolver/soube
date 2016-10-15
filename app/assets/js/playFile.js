@@ -130,7 +130,6 @@ function stopTimer() {
     source.buffer = _buffer;
     source.connect(gain).connect(filter[0]).connect(audioContext.destination);
     startTimer();
-    console.log(forward);
     source.start(0, forward);
     isMovingForward = false;
     isSongPlaying = true;
@@ -144,11 +143,11 @@ function dataSong(_position) {
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
 
   // Título de la canción
-  $('#song-title').child().text(infoSong.title);
+  $('#song-title').child().each(v => { v.text(infoSong.title); });
   // Artista
-  $('#artist').child().text(infoSong.artist);
+  $('#artist').child().each(v => { v.text(infoSong.artist); });
   // Album
-  $('#album').child().text(infoSong.album);
+  $('#album').child().each(v => { v.text(infoSong.album); });
 
   // Mostrar notificación
   if (notification !== null) notification.close();
