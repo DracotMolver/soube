@@ -86,8 +86,8 @@ function saveSongList(parentFolder = '') {
   // Desplegar loading
   getMetadata(parentFolder, () => { // Función inicial del proceso
     $('#loading').rmClass('hide');
-    $($('.grid-container').get(0)).css('-webkit-filter: blur(2px)');
-  }, (_s) => { // Función final del proceso
+    $($('.grid-container').get(0)).css('-webkit-filter:blur(2px);');
+  }, _s => { // Función final del proceso
     ipcRenderer.send('display-list');
 
     // Ocultar loading
@@ -116,7 +116,7 @@ function onEqualizerPanel(e) {
       plus = (e.clientY - range.offsetTop) + y;
       if (plus > 0 && plus < 261) {
         db = plus;
-        $(range).css(`top: ${(e.clientY - range.offsetTop) + y}px;`);
+        $(range).css(`top:${(e.clientY - range.offsetTop) + y}px;`);
       }
       // Se modifican las ondas
       ipcRenderer.send('equalizer-filter', [
@@ -143,7 +143,7 @@ function onEqualizerPanel(e) {
   // El evento es solo registrado sobre los botones redondos
   $('.range-circle').each((v, i) => {
     // Setear la configuración establecida
-    $(v).on({
+    v.on({
       'mousedown': onDragStart
     })
     .css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`);
