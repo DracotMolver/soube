@@ -1,0 +1,190 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
+/* ------------------------ GENERALES ------------------------*/
+h1 {
+    font-size: 1.1em
+}
+
+h4 {
+    font-size: .9em
+}
+
+h5 {
+    font-size: .5625em
+}
+
+#nav {
+    background: var(--pinkColor)
+}
+
+#nav > h1 {
+    font-weight: 400;
+    padding: .2em .34em;
+    float: left;
+    color:  var(--whiteColor)
+}
+
+#_titleconfig,
+.range-circle:hover,
+.config-icons > img:hover,
+#legal > h5,
+#legal-popup a {
+    cursor:  pointer
+}
+
+.config-icons {
+    position: relative;
+    margin: 1.6em auto auto 0;
+    height: 4.6em
+}
+
+.config-option p {
+    margin-bottom: .5em;
+    font-weight: 500;
+    margin-top: .5em;
+    text-align: center;
+    font-size: .95em
+}
+
+.config-option h4 {
+    font-weight: 300;
+    text-align: center;
+    color: var(--darkGreyColor)
+}
+
+.config-opt-anim {
+    animation: confSlide 1s ease-in-out forwards
+}
+
+/* ----------------------------- LEGAL ---------------------------- */
+#legal {
+    padding-bottom: .5em;
+    padding-top: .5em;
+    text-align: center;
+    background: var(--whiteColor);
+    position: absolute;
+    z-index: 4;
+    border: .01em solid var(--lightGreyColor);
+    margin: 0 auto;
+    height: auto;
+    width: 43em;
+    right: 0;
+    left: 0;
+    top: 4em
+}
+
+#legal > h5 {
+    color: var(--darkGreyColor)
+}
+
+/* ------------------------ CONFIGURACIÓN CARPETA DE MÚSICA ------------------------*/
+#loading {
+    background: rgba(229, 232, 232, .3);
+    position: fixed;
+    z-index: 3;
+    height: 100%;
+    width: 100%;
+    cursor: wait;
+    top: 0
+}
+
+#loading-info {
+    margin-top: 25%;
+    text-align: center;
+    width: 100%;
+    color: var(--blackColor);
+    float: left
+}
+
+/* ------------------------ CONFIGURACIÓN DEL IDIOMA ------------------------*/
+#lang {
+    box-sizing: border-box
+}
+
+.lang-option:hover {
+    border-bottom: .1em solid #0277bd;
+    cursor: pointer
+}
+
+.lang-option {
+    margin-top: .6em;
+    text-align: center;
+    font-size: 2em
+}
+
+/* ----------------------------- EQUALIZADOR ---------------------------- */
+#_infoequalizer {
+    font-size: .9em;
+    font-weight: 100
+}
+
+.range-container {
+    background: var(--darkGreyColor);
+    padding: 0;
+    margin: 3.6em 1.235em 1.4em;
+    opacity: .5;
+    height: 18em;
+    width: .6em;
+    float: left
+}
+
+.range-container:hover{
+    opacity: 1
+}
+
+.range-circle {
+    background: rgba(233,30,99, .14);
+    border-radius: 50%;
+    position: relative;
+    border: .1em solid var(--lightPinkColor);
+    height: 1.5em;
+    width: 1.5em;
+    left: -9px;
+    top: 130px
+}
+
+.range-circle::before {
+    border-radius: 50%;
+    box-shadow: 0px 1px 2px 1px rgba(0,0,0,.14);
+    background: var(--darkPinkColor);
+    position: absolute;
+    content: '';
+    border: .1em solid var(--pinkColor);
+    height: .7em;
+    width: .7em;
+    left: 5px;
+    top: 5px
+}
+
+#equalizer-container {
+    margin-top: 1.6em;
+    height: 100%;
+    width: 100%
+}
+
+#equalizer-container > div ~ div {
+    padding-right: 1.2em;
+    padding-left: 1.2em
+}
+
+#equalizer-container ul {
+    padding-right: 1.6em;
+    padding-left: 1.6em;
+    width: 100%;
+    float: left
+}
+
+#equalizer-container ul > li {
+    text-align: center;
+    display: inline-block;
+    width: 2.8em
+}
+
+/*---------------------------------- ANIMACIONES ----------------------------------*/
+@keyframes confSlide {
+    100% {
+        transform: translateX(-100%);
+          opacity: 0
+    }
+}

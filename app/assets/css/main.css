@@ -1,0 +1,489 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
+/* ------------------------ TOP NAV ------------------------*/
+#top-nav {
+    background:  var(--pinkColor)
+}
+
+#config {
+    margin-top: 1.9em;
+    padding-right: 35%;
+    padding-left: 35%;
+    height: 2em
+}
+
+#config > img:hover,
+.search-results:hover {
+    cursor: pointer
+}
+
+/* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
+.btn-controlls {
+    cursor: pointer;
+    float: left
+}
+
+.btn-controlls::after {
+    border-radius: 50%;
+    background: var(--darkPinkColor);
+    position: absolute;
+    opacity: 0;
+    content: ''
+}
+
+#play-pause {
+    text-align: center;
+    margin: 1.33em 1em;
+    height: 3em
+}
+
+.prev-next {
+    text-align: center;
+    margin: .3em;
+    height: 1.3em
+}
+
+#shuffle-icon {
+    fill: var(--lightPinkColor)
+}
+
+#play-pause::after {
+    height: 4em;
+    width: 4em;
+    top: 15px;
+    left: .8%
+}
+
+.prev-next::after {
+    height: 1.9em;
+    width: 1.9em;
+    left: 7.4%
+}
+
+#next::after {
+    top: 0px
+}
+
+#shuffle::after {
+    top: 64px
+}
+
+#prev::after {
+    top: 32px
+}
+
+.click-controlls::after {
+    animation: clickControllsEffect .3s ease-out forwards
+}
+
+#total-progress-bar,
+#progress-bar {
+    height:  .36em;
+    cursor: e-resize
+}
+
+#total-progress-bar {
+    background: var(--lightPinkColor)
+}
+
+#progress-bar {
+    background: var(--whiteColor);
+    box-shadow: 1px 0 3px 0 #fff;
+    float: left;
+    width: 0
+}
+
+/* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
+#info-song {
+    text-align: left;
+    overflow: hidden;
+    margin: .3em 1.2em;
+    width: 85%;
+    float: left
+}
+
+#song-title > h1 {
+    font-weight: 500;
+    font-size: 1.6em;
+    color: var(--whiteColor)
+}
+
+#artist > h2 {
+    font-weight: 400;
+    font-size: 1.3em;
+    color: var(--whiteColor)
+}
+
+#album > h3 {
+    font-weight: 300;
+    font-size: 1em;
+    color: var(--whiteColor)
+}
+
+#time {
+    text-align: center;
+    font-size: 1.16em;
+    margin: .5em 0;
+    color: var(--whiteColor)
+}
+
+#time > span {
+    font-weight: 400;
+    color: var(--whiteColor)
+}
+
+/* ------------------------ LISTADO DE CANCIONES ------------------------ */
+#list-songs {
+    background: linear-gradient(var(--whiteColor) 30%, transparent),
+               radial-gradient(at 50% 0, rgba(66,73,73, .3), transparent 80%);
+    background-repeat: no-repeat;
+    background-size: 100% 50px, 100% 15px;
+    background-attachment: local, scroll;
+    overflow: hidden;
+    overflow-y: scroll;
+    height: calc(100% - 95px);
+    width: 100%
+}
+
+#list-songs > div:nth-child(odd) {
+    background: var(--lightGreyColor)
+}
+
+#list-songs > div::nth-child(even) {
+    background: var(--whiteColor)
+}
+
+.song-info {
+    padding-left: .6em;
+    font-weight: 300;
+    line-height: 2em;
+    font-size: .906em;
+    cursor: pointer
+}
+
+.miscelaneo {
+    margin-right: .6em;
+    color: var(--darkGreyColor)
+}
+
+.search-results {
+    border-radius: 25px;
+    background: rgba(151,154,154, .5);
+    line-height: 2.6em;
+    text-align: center;
+    margin: 1em;
+    color: var(--lightGreyColor)
+}
+
+#search-container {
+    background: rgba(229, 232, 232, .3);
+    position: fixed;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    top: 0
+}
+
+#search-wrapper {
+    position: relative;
+    padding: 6em 0 3.5em 0;
+    margin: auto;
+    height: auto;
+    width: 11%
+}
+
+#search {
+    background-image: url(../../assets/img/search.svg);
+    background-repeat: no-repeat;
+    background-color: transparent;
+    background-size: 1.6em;
+    border-bottom: .03em solid var(--darkGreyColor);
+    line-height: 0;
+    transform: scale(0);
+    padding: .2em .2em .2em 1.6em;
+    margin: 0;
+    cursor: text;
+    width: 100%;
+    color: var(--blackColor)
+}
+
+#search,
+#search-result {
+    font-weight: 300;
+    font-size: 1.6em
+}
+
+#search-result {
+    position: absolute;
+    color: rgba(182, 182, 182, .4);
+    left: 1.6em;
+    top: 4.1em;
+    z-index: -1
+}
+
+.search-anim {
+    animation: showInputUp .5s ease-in forwards
+}
+
+.search-wrapper-anim {
+    animation: displayInputSearch .5s .6s ease-in-out forwards 
+}
+
+#container-results {
+    overflow: hidden;
+    height: 370px
+}
+
+.results,
+#wrapper-results{
+    height: 100%;
+    float: left
+}
+
+/* ------------------------ PAGINACIÓN DEL INPUT SEARCH ------------------------ */
+#pagination {
+    position: relative;
+    height: 30px;
+    margin: 0 auto;
+    width: 400px;
+    top: 1em
+}
+
+.arrow::after,
+.arrow::before {
+    border-radius: 25px;
+    background: var(--blackColor);
+    position: absolute;
+    content: '';
+    opacity: .2;
+    height:.3em;
+    width: 10%
+}
+
+.arrow-open-anim::after {
+    animation: openArrowDown .6s ease-out forwards
+}
+
+.arrow-open-anim::before {
+    animation: openArrowUp .6s ease-out forwards
+}
+
+#left-arrow {
+    cursor: pointer;
+    float: left
+}
+
+#left-arrow::before,
+#left-arrow::after {
+    transform-origin: left
+}
+
+#right-arrow::before,
+#right-arrow::after {
+    transform-origin: right
+}
+
+/* -------------------------------------- */
+#right-arrow::after,
+#left-arrow::before { /* Para obtener una mejor simetría en los ejes que se unen */
+    top: 2px
+}
+
+#right-arrow::before,
+#left-arrow::after { /* Para obtener una mejor simetría en los ejes que se unen */
+    top: 0
+}
+/* -------------------------------------- */
+
+#right-arrow {
+    cursor: pointer;
+    float: right
+}
+
+/* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
+#init-message {
+    background: white !important;
+    margin-top: 4em;
+    text-align: center;
+    font-size: 2em;
+    color: var(--darkGreyColor)
+}
+
+/* ------------------------ MENSAJE DE CANCIONES NUEVAS ------------------------ */
+#pop-up-container {
+    position: absolute;
+    height: auto;
+    width: 100%;
+    top: 6.6em
+}
+
+#pop-up {
+    border-radius: 21px;
+    background: var(--darkGreyColor);
+    font-weight: 500;
+    text-align: center;
+    transform: scale(0);
+    font-size: .94em;
+    padding: .6em;
+    margin: auto;
+    width: 17em;
+    color:  var(--whiteColor)
+}
+
+.pop-up-anim {
+    animation:  showPopUp .3s ease-in-out forwards
+}
+
+/* ------------------------ TOOLTIPS ------------------------ */
+.tooltip {
+    transform-origin: top;
+    letter-spacing: .14em;
+    border-radius: 10px;
+    line-height: 2em;
+    text-align: center;
+    background: hsla(180, 5%, 27%, .8);
+    font-size: .8em;
+    transform: scale(1, 0);
+    position: absolute;
+    opacity: 0;
+    padding: 0 1em;
+    width: auto;
+    color: var(--whiteColor);
+}
+
+.tooltip::after {
+    border-style: solid;
+    border-width: 0 8px 11px 8px;
+    border-color: transparent transparent hsla(180, 5%, 27%, .8) transparent;
+    position: absolute;
+    content: '';
+    height: 0;
+    margin: 0 auto;
+    width: 0;
+    right: 0;
+    left: 0;
+    top: -11px;
+}
+
+.text-container:hover > .tooltip {
+    animation: showToolTip .3s ease-in forwards
+}
+
+/* ------------------------ ANIMACIONES ------------------------ */
+@keyframes showToolTip {
+    100% {
+        transform: scale(1, 1);
+        opacity: 1
+    }
+}
+
+@keyframes showPopUp {
+    100% {
+        transform: scale(1)
+    }
+}
+
+@keyframes displayInputSearch {
+    100% {
+        width: 75%
+    }
+}
+
+@keyframes showInputUp {
+    100% {
+        transform: scale(1)
+    }
+}
+
+@keyframes clickControllsEffect {
+	0% {
+		transform: scale3d(.3, .3, 1)
+	}
+	25%, 50% {
+		opacity: .8
+	}
+	100% {
+		transform: scale3d(1.2, 1.2, 1);
+        opacity: 0
+	}
+}
+
+@keyframes openArrowDown {
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(40deg);
+    opacity: 1
+  }
+}
+
+@keyframes openArrowUp {
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(-40deg);
+    opacity: 1
+  }
+}
+
+
+/* ------------------------ MEDIA QUERIES ------------------------ */
+@media only screen and (max-width: 750px) {
+/* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
+    #total-progress-bar{
+        margin: .1em 1.3em .5em
+    }
+
+    .prev-next::after {
+        left: 14.7%
+    }
+
+/* ------------------------ TOP NAV ------------------------*/
+    #config-container {
+        border-radius: 50%;
+        background: var(--pinkColor);
+        position: fixed;
+        padding: .46em;
+        bottom: 45px;
+        z-index: 4;
+        height: 3em;
+        width: 3em;
+        right: 16px
+    }
+
+    #config {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        float: left
+    }
+
+/* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
+    #info-song {
+        text-align: left;
+        margin: .3em 1.2em;
+        width: 93%
+    }
+
+    #info-song > div {
+        overflow: hidden
+    }
+
+    #song-title > h1 {
+        font-size: 1.16em
+    }
+
+    #artist > h2,
+    #album > h3 {
+        font-size: 1em
+    }
+
+    #time {
+        font-size: 1em;
+        margin: 0
+    }
+}

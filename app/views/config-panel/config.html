@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <link href="../../assets/css/unsemantic.css" rel="stylesheet">
+    <link href="../../assets/css/base.css" rel="stylesheet">
+    <link href="../../assets/css/config.css" rel="stylesheet">
+</head>
+<body>
+    <div class="grid-container">
+        <div id="nav" class="grid-100 border-bottom border-color-dark-pink">
+            <h1 id="_titleconfig"></h1><h1 id="_titlesubconfig"></h1>
+        </div>
+        <!-- Opciones de configuración -->
+        <div class="grid-100" id="config-container-options">
+            <!-- Agregar carpeta de música -->
+            <div class="grid-100">
+                <div class="grid-33 config-option">
+                    <div class="config-icons">
+                        <img id="add-songs" src="../../assets/img/folder.svg" height="100%" width="100%">
+                    </div>
+                    <div class="grid-100">
+                        <p id="_addsongfolder"></p>
+                    </div>
+                    <div id="folder-status">
+                        <h4 id="_statussongfolder"></h4>
+                    </div>
+                </div>
+                <!-- Cambiar idioma-->
+                <div class="grid-33 config-option">
+                    <div class="config-icons">
+                        <img id="change-lang" data-action="lang" src="../../assets/img/lang.svg" height="100%" width="100%">
+                    </div>
+                    <div class="grid-100">
+                        <p id="_changelanguage"></p>
+                    </div>
+                    <div id="lang-status">
+                        <h4 id="_statuslanguage"></h4>
+                    </div>
+                </div>
+                <!-- Ecualizador -->
+                <div class="grid-33 config-option">
+                    <div class="config-icons">
+                        <img id="equalizer-panel" data-action="equalizer" src="../../assets/img/equalizer.svg" height="100%" width="100%">
+                    </div>
+                    <div class="grid-100">
+                        <p id="_equalizersetting"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-100">
+                <!-- Legal -->
+                <div class="grid-33 config-option">
+                    <div class="config-icons">
+                        <img id="terms" data-action="legal" src="../../assets/img/legal.svg" height="100%" width="100%">
+                    </div>
+                    <div class="grid-100">
+                        <p id="_legal"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Configuraciones -->
+        <div class="grid-100 hide" id="config-container-values">
+            <!-- Configuración idioma -->
+            <div id="lang" class="grid-100 hide">
+                <div class="lang-option grid-50" data-lang="es">
+                    <h1>Español</h1>
+                </div>
+                <div class="lang-option grid-50" data-lang="us">
+                    <h1>English</h1>
+                </div>
+            </div>
+            <!-- Configuración ecualizador -->
+            <div id="equalizer" class="grid-100 hide">
+                <div id="equalizer-container">
+                    <div class="grid-100">
+                        <ul>
+                            <li><h4>50<br>KHz</h4></li>
+                            <li><h4>100<br>KHz</h4></li>
+                            <li><h4>156<br>KHz</h4></li>
+                            <li><h4>220<br>KHz</h4></li>
+                            <li><h4>331<br>KHz</h4></li>
+                            <li><h4>440<br>KHz</h4></li>
+                            <li><h4>622<br>KHz</h4></li>
+                            <li><h4>880<br>KHz</h4></li>
+                            <li><h4>1250<br>KHz</h4></li>
+                            <li><h4>1750<br>KHz</h4></li>
+                            <li><h4>2500<br>KHz</h4></li>
+                            <li><h4>3500<br>KHz</h4></li>
+                            <li><h4>5000<br>KHz</h4></li>
+                            <li><h4>10000<br>KHz</h4></li>
+                            <li><h4>20000<br>KHz</h4></li>
+                        </ul>
+                    </div>
+                    <div class="grid-100">
+                        <div class="range-container">
+                            <div class="range-circle" data-position="0"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="1"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="2"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="3"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="4"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="5"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="6"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="7"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="8"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="9"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="10"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="11"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="12"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="13"></div>
+                        </div>
+                        <div class="range-container">
+                            <div class="range-circle" data-position="14"></div>
+                        </div>
+                    </div>
+                    <div class="gird-100">
+                        <h6 id="_infoequalizer"></h6>
+                    </div>
+                </div>
+            </div>
+            <!-- Display legal -->
+            <div id="legal" class="grid-100 hide">
+                <div>
+                    <p>1.- Soube is under <a href="https://github.com/DracotMolver/Soube/blob/master/LICENSE"><b>MIT license</b>.</a></p>
+                    <p>2.- Soube code was developed by me, <b>Diego Alberto Molina Vera</b>, with exception of the platform that powered to Soube.</p>
+                    <p>3.- Soube is powered by <a href="http://electron.atom.io/"><b>ElectronJS</b></a> framework, which belongs to Github Team.</p>
+                    <p>4.- Soube is using <b>musicmetadata</b> to extract metadata from the audios files. This module belongs to <a href="https://www.npmjs.com/~leetreveil"><b>@leetreveil</b></a>.</p>
+                    <p>5.- All the icons were made by me, <b>Diego Alberto Molina Vera</b>. Any similarity with any other icon are just coincidence.</p>
+                    <p>6.- The name <b>Soube</b> is a modification of <b>Sound be</b>. This mean, in some way <i>You are the sound</i>. Therefor, the name was not copied from any brand.</p>
+                    <p>7.- The fonts the I'm using is <a href="https://fonts.google.com/specimen/Hind">Hind</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Loading al cargar las carpetas de música -->
+    <div id="loading" class="hide">
+        <div id="loading-info"><p id="_loading-info"></p>
+    </div>
+  </div>
+    <!--scripts-->
+    <script>require('../../assets/js/configMain.js')</script>
+</body>
+</html>

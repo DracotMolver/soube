@@ -1,0 +1,41 @@
+{
+  "name": "soube",
+  "version": "1.2.1",
+  "description": "Simple music player",
+  "author": {
+    "email": "dracotm25@gmail.com",
+    "name": "Diego Molina Vera"
+  },
+  "homepage": "http://soube.diegomolina.cl",
+  "devDependencies": {
+    "electron": "^1.4.1",
+    "electron-builder": "^7.9.0",
+    "electron-packager": "^8.0.0"
+  },
+  "build": {
+    "asar": false,
+    "linux": {
+      "category": "Audio",
+      "packageCategory": "sound",
+      "target": [
+        "rpm",
+        "deb"
+      ],
+      "synopsis": "Soube — Simple music player",
+      "desktop": {
+        "Type": "Application",
+        "Encoding": "UTF-8",
+        "Name": "Soube",
+        "Exec": "soube",
+        "Terminal": false,
+        "Version": "1.1.0",
+        "Categories": "Application;MusicPlayer"
+      }
+    }
+  },
+  "scripts": {
+    "pack": "build --dir",
+    "dist": "build",
+    "build": "electron-packager ./app soube --out=dist --platform=linux --ignore='^/dist$' --arch=all --prune --icon='./app/assets/img/icon.png'"
+  }
+}
