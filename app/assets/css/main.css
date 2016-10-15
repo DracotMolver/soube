@@ -62,7 +62,7 @@
 }
 
 #next::after {
-    top: 0px
+    top: 0
 }
 
 #shuffle::after {
@@ -363,7 +363,7 @@
     width: 0;
     right: 0;
     left: 0;
-    top: -11px;
+    top: -11px
 }
 
 .text-container:hover > .tooltip {
@@ -411,7 +411,7 @@
 
 @keyframes openArrowDown {
   0% {
-    transform: rotate(0deg)
+    transform: rotate(0)
   }
   100% {
     transform: rotate(40deg);
@@ -421,7 +421,7 @@
 
 @keyframes openArrowUp {
   0% {
-    transform: rotate(0deg)
+    transform: rotate(0)
   }
   100% {
     transform: rotate(-40deg);
