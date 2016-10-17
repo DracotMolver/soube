@@ -59,7 +59,7 @@ function getDataSongAtPosition() {
 // Genera la vista del listado de canciones por defecto
 function createDefaultListView() {
   // Contenedor que se reptite para el títutlo, artista y album
-  const child = $.clone('div', false).addClass('grid-33 mobile-grid-33 song-info').css('overflow:hidden;');
+  const child = $.clone('div', false).addClass('grid-33 mobile-grid-33 song-info');
   const parentContainer = $.clone('div', false).addClass('list-song-container');
   const f = document.createDocumentFragment();
   let title = null;
@@ -88,44 +88,6 @@ function createDefaultListView() {
 
   $('#list-songs').insert(f);
 }
-
-// function createSecondView() {
-//   const songFiles = jread(SONG_FILE);
-//   const parentContainer = $.clone('div', false).addClass('second-view-container');
-//   const child = $.clone('div', false).addClass('grid-100');
-//   const child2 = $.clone('div', false).addClass('grid-33');
-//   const f = document.createDocumentFragment();
-//   let artist = null;
-//   let album = null;
-
-//   // Obtener el total de artistas unicos
-//   [...new Set(songFiles.map(v => v.artist.toLowerCase()))].forEach(v => {
-//     artist = $.clone(child, true).text(v).addClass('second-view-artist');
-
-//     // Obtener total de albunes únicos
-//     album = $.clone(child, true);
-//     [...new Set(songFiles.map(s.album.toLowerCase()))].filter(v => {
-//       if (v === ) {
-//       }
-//     });
-//         .insert(
-//           $.clone(child2, true).text(v).addClass('second-view-album')
-//         );
-//     // songFiles.filter(s => {
-//     //   if (s.artist.toLowerCase() === v) return s;
-//     // }).forEach(a => {
-//     //   console.log(a)
-//     // });
-
-//     f.appendChild(
-//       $.clone(parentContainer, true)
-//       // .attr({id: i})[0]
-//       .insert(artist, album)[0]
-//     );
-//   });
-
-//   $('#list-songs').insert(f);
-// }
 
 // Función generadora que retorna el la ruta del archivo a leer
 const iter = (function* getSongs() { 
@@ -211,6 +173,5 @@ function avoidStack () {
 module.exports = {
   setNextSongFunction,
   createDefaultListView,
-  // createSecondView,
   getMetadata
 };
