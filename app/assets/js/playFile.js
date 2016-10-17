@@ -143,7 +143,7 @@ function dataSong(_position) {
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
 
   // Título de la canción
-  $('#song-title').child().each(v => { v.text(infoSong.title); });
+  $('#song-title').data({position}).child().each(v => { v.text(infoSong.title); });
   // Artista
   $('#artist').child().each(v => { v.text(infoSong.artist); });
   // Album
