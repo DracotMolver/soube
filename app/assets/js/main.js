@@ -234,6 +234,32 @@ function clickBtnControls() {
 }
 
 /** --------------------------------------- Eventos --------------------------------------- **/
+// Scrolling al dar click en la canción para buscarla en el listado total
+$('#song-title').on({
+  'click': function () {
+    if (this.children[0].textContent.trim() !== '') {
+      const el = document.getElementById('list-songs').scrollTop
+      const top = document.getElementById($(this).data('position', 'string')).offsetTop;
+      const topNav = document.getElementById('top-nav').clientHeight;
+
+      if (document.getElementById('list-songs').scrollTop !== (top - (topNav + 100))) {
+        document.getElementById('list-songs').scrollTop += (top - (topNav + 100)) - el;
+
+        const _time = setTimeout(() => {
+          $(`#${$(this).data('position', 'string')}`).addClass('anim-selected-song');
+          $('.anim-selected-song').on({
+            'animationend': function() {
+              $(this).rmAttr('anim-selected-song');
+            }
+          });
+
+          clearTimeout(_time);
+        }, 100);
+      }
+    }
+  }
+});
+
 // Activar shuffle
 if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC;');
 
