@@ -17,13 +17,12 @@ const {
   getMetadata
 } = require('./listSongs');
 
-const {
-  ipcRenderer,
-  metaData,
-  execFile,
-  dialog,
-  fs
-} = require('./commons');
+const fs = require('fs');
+const execFile = require('child_process').execFile;
+const metaData = require('musicmetadata');
+const { ipcRenderer, shell, remote } = require('electron');
+const { dialog, app } = remote;
+require('./commons');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 let _songs = []; // Canciones cargadas
@@ -62,11 +61,42 @@ let configFile = jread(CONFIG_FILE); // Configuraciones básicas
 let lang = jread(LANG_FILE)[configFile.lang]; // Textos en idiomas
 
 /** --------------------------------------- Funciones --------------------------------------- **/
+// Una opción para los usuarios de linux.
+// Verifica con github las versiones lanzadas.
+// Así mostrar un mensaje que lleve a la página del sitio para descargarlo
+function getActualVersion() {
+  const xhtr = new XMLHttpRequest();
+  xhtr.open('GET', 'https://api.github.com/repos/dracotmolver/soube/releases/latest', true);
+  xhtr.onload = () => {
+    const r = JSON.parse(xhtr.response);
+    if (app.getVersion().toString() !== r.tag_name) {
+      $('#pop-up-container').rmClass('hide')
+      .child(0)
+      .text(`<a href="http://soube.diegomolina.cl/views/download.html">${lang.alerts.newVersion}</a>`)
+      .addClass('pop-up-anim');
+      // Para poder abrir en el navegador predeterminado y no dentro de la app
+      $(':a').on({
+        'click': function (e) {
+          e.preventDefault();
+          shell.openExternal(this.href);
+        }
+      });
+      const tout = setTimeout(() => {
+        $('#pop-up-container').addClass('hide').child(0)
+        .rmClass('pop-up-anim');
+        clearTimeout(tout);
+      }, 5000);
+    }
+  };
+  xhtr.send(null);
+}
+
 // Una de las funciones importantes.
 // Se encarga de verificar si hay canciones que mostrar y arma lo
 // necesario para que el reproductor funciones
 function loadSongs() {
   if (Object.keys(jread(SONG_FILE)).length === 0) {
+    getActualVersion();
     $('#list-songs').text(`<div id="init-message">${lang.alerts.welcome}</div>`);
   } else {
     checkNewSongs();
@@ -185,15 +215,14 @@ function searchInputData(e) {
 function checkNewSongs() {
   getMetadata(jread(CONFIG_FILE).musicFolder, () => {
     // Desplegar pop-up
-    $('#pop-up-container').rmClass('hide');
-    $('#pop-up').addClass('pop-up-anim');
+    $('#pop-up-container').rmClass('hide').child(0).addClass('pop-up-anim');
   }, _s => {
     // Pasamos el listado total de canciones a playFile.js
     setSongs((_songs = _s));
 
     // Ocultar pop-up
-    $('#pop-up-container').addClass('hide');
-    $('#pop-up').rmClass('pop-up-anim');
+    $('#pop-up-container').addClass('hide').child(0).rmClass('pop-up-anim');
+    getActualVersion();
   }, (count, maxLengt) => {
     // Pop-up con la cantidad de canciones cargandose
     $('#pop-up').text(`${lang.alerts.newSongsFound}${count} / ${maxLengt}`);
