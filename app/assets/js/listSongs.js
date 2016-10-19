@@ -7,13 +7,12 @@
  * artista/albunes
  */
 /** ---------------------------- Varibles ---------------------------- **/
-const {
-  execFile,
-  metaData,
-  dialog,
-  path,
-  fs
-} = require('./commons');
+const execFile = require('child_process').execFile;
+const metaData = require('musicmetadata');
+const path = require('path');
+const fs = require('fs');
+const { dialog } = require('electron').remote;
+require('./commons');
 
 let clickNextSong = null; // Almacena la función nextSong del archivo playFile.js
 let metaDataSongs = [];

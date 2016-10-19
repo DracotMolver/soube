@@ -2,18 +2,12 @@
  * @author Diego Alberto Molina Vera
  */
 /** --------------------------------------- Módulos --------------------------------------- **/
-const {
-  ipcRenderer,
-  metaData,
-  execFile,
-  dialog,
-  shell,
-  fs
-} = require('./commons');
-
-const {
-  getMetadata
-} = require('./listSongs');
+const metaData = require('musicmetadata');
+const execFile = require('child_process').execFile;
+const fs = require('fs');
+const { shell, ipcRenderer, remote } = require('electron');
+const { dialog } = remote;
+const { getMetadata } = require('./listSongs');
 
 
 /** --------------------------------------- Variables --------------------------------------- **/

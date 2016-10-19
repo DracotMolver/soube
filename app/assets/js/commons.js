@@ -5,14 +5,7 @@
 require('./template');
 
 // Módulos
-const {
-  ipcRenderer,
-  remote,
-  shell
-} = require('electron');
-
-const metaData = require('musicmetadata');
-const execFile = require('child_process').execFile;
+const { remote } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
@@ -26,13 +19,3 @@ global.jsave = (data, c) => {
   fs.writeFileSync(data, JSON.stringify(c, null), { encoding: 'utf8', mode: 511, flag: 'w' });
   return jread(data);
 }
-
-module.exports = {
-  dialog: remote.dialog,
-  ipcRenderer,
-  metaData,
-  execFile,
-  shell,
-  path,
-  fs
-};

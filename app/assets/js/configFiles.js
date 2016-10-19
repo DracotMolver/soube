@@ -1,8 +1,11 @@
+/**
+ * @author Diego Molina Vera.
+ */
 const fs = require('fs');
 
 let path = '';
 
-function setPath (_path) { path = _path; }
+function setPath (app) { path = app.getPath('userData'); }
 
 function makeFiles () {
   // Config.json
