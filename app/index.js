@@ -69,10 +69,12 @@ function ready() {
   .on('blur', closeRegisteredKeys);
 
   // Deslegar la ventana una vez esté cargado todo el contenido del DOM
-  mainWindow.once('ready-to-show', () => { mainWindow.show() });
+  mainWindow.once('ready-to-show', () => { 
+    mainWindow.show();
+  });
 
   // Crear archivos de configuración
-  configFiles.setPath(app.getPath('userData'));
+  configFiles.setPath(app);
   configFiles.makeFiles();
 }
 
