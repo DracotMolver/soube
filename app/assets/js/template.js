@@ -42,8 +42,8 @@ module.exports = (_ => {
           return this;
         } else { // Extraer datos
           switch (s[1]) {
-            case 'string': return this.element.dataset[s[0]].toString()
-            case 'int': return parseInt(this.element.dataset[s[0]], 10)
+            case 'string': return this.element.dataset[s[0]].toString();
+            case 'int': return parseInt(this.element.dataset[s[0]], 10);
           }
         }
       },
@@ -136,5 +136,5 @@ module.exports = (_ => {
   const cloneFunc = function clone(s, b = false) {
     return this((typeof s === 'string' ? document.createElement(s) : s.element).cloneNode(b));
   };
-  _.$.clone = cloneFunc
+  _.$.clone = cloneFunc;
 })(global);
