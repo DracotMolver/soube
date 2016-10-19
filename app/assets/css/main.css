@@ -14,7 +14,8 @@
 }
 
 #config > img:hover,
-.search-results:hover {
+.search-results:hover,
+a {
     cursor: pointer
 }
 
@@ -335,6 +336,11 @@
     color:  var(--whiteColor)
 }
 
+#pop-up > a {
+    text-decoration: none;
+    color: currentColor
+}
+
 .pop-up-anim {
     animation:  showPopUp .3s ease-in-out forwards
 }
@@ -395,7 +401,7 @@
 }
 
 .anim-selected-song::after {
-    animation: selectedSong 2.6s cubic-bezier(0.785, 0.135, 0.150, 0.860) forwards;
+    animation: selectedSong 1.3s cubic-bezier(0.785, 0.135, 0.150, 0.860) forwards;
 }
 
 /* ------------------------ ANIMACIONES ------------------------ */
