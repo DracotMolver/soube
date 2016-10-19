@@ -6,16 +6,18 @@
  * Acá se usa la Audio Web API para reproducir la canción y también usar datos
  * obtenidos mediante el buffer. También la API nos permite manipular el archivo de audio
  */
-const {
-  dialog,
-  path
-} = require('./commons');
+/* --------------------------------------- Módulos ------------------------------------------- */
+const { dialog } = require('electron').remote;
+const path = require('path');
+require('./commons');
 
 /* --------------------------------------- Variables ------------------------------------------- */
 let isMovingForward = false; // Si se está tratando de adelantar la cación a un tiempo determinado
 let isSongPlaying = false; // Se ejecutó play sobre el AudioNode
 let isNexAble = false; // Se puede reproducir la siguiente canción
-let position = 0; // Posición de la canción actual
+let isPrevExec = false; // Solo se agregan las canciones ya reproducidas cuando se presiona next
+let position = null; // Posición de la canción actual
+let tmpPosition = []; // Posición de la canción anteriormente reproducida
 let filePath = ''; // Ruta de la canción
 let songs = {}; // Listado de canciones
 let notification = null; // Despliega una notificación de la canción que se va a reproducir
@@ -23,8 +25,15 @@ let notification = null; // Despliega una notificación de la canción que se va
 // Variables necesarias para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext(); // Objeto AudioContext
 const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
-const gain = audioContext.createGain(); // Gain a usar sobre el AudioNode
-  gain.gain.value = 1.06;
+const panner = audioContext.createPanner();
+  panner.panningModel = 'HRTF';
+  panner.distanceModel = 'exponential';
+  panner.coneOuterGain = 1;
+  panner.orientationZ = 1.6;
+  panner.positionZ = 1.6;
+  panner.positionX = 1;
+  panner.positionY = 1;
+  panner.refDistance = 2;
 // Frecuencias
 const hrz = [
   50, 100, 156,
@@ -128,7 +137,9 @@ function stopTimer() {
 
     // Conectar todos los nodos
     source.buffer = _buffer;
-    source.connect(gain).connect(filter[0]).connect(audioContext.destination);
+    source.connect(filter[0])
+    .connect(panner)
+    .connect(audioContext.destination);
     startTimer();
     source.start(0, forward);
     isMovingForward = false;
@@ -139,6 +150,8 @@ function stopTimer() {
 // Recibe la posición de la canción a buscar en el objeto song
 // para desplegarlos en la interfaz
 function dataSong(_position) {
+  if (position !== null && !isPrevExec) tmpPosition.push(position);
+
   const infoSong = songs[(position = parseInt(_position, 10))];
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
 
@@ -153,152 +166,149 @@ function dataSong(_position) {
   if (notification !== null) notification.close();
 
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
+    lang: 'US',
+    tag: 'song',
     body: `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`,
     icon: path.join(__dirname, '..', 'img', 'play.png')
   });
 }
 
-/**
- * EJecuta, por medio de la Audio Web API, la canción.
- * Se obtiene un array buffer con info útil para usar
- */
+// EJecuta, por medio de la Audio Web API, la canción.
+// Se obtiene un array buffer con info útil para usar
 function play() {
   // Creamos un Buffer que contendrá la canción
-  source = audioContext.createBufferSource()
+  source = audioContext.createBufferSource();
 
   // Leer erl achivo de audio
-  xhtr.open('GET', `file://${filePath}`, true)
-  xhtr.responseType = 'arraybuffer'
+  xhtr.open('GET', `file://${filePath}`, true);
+  xhtr.responseType = 'arraybuffer';
   xhtr.onload = () => {
     audioContext.decodeAudioData(xhtr.response).then(buffer => {
       // Para ser usado al momento de querer adelantar la canción
       // El buffer nos entrega la duración de la canción.
       // La duración de la cación está en segundos, por ende hay que pasarla a minutos.
-      _buffer = buffer
-      time = ((_duration = _buffer.duration) / 60).toString()
-      _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10)
-      _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60)
-      lapse = 100 / _duration // Porcentaje a usar por cada segundo en la barra de progreso
-      $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`)
+      _buffer = buffer;
+      time = ((_duration = _buffer.duration) / 60).toString();
+      _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
+      _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60);
+      lapse = 100 / _duration; // Porcentaje a usar por cada segundo en la barra de progreso
+      $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`);
 
       // Evento que se gatilla al terminar la canción
-      source.onended = stopTimer
+      source.onended = stopTimer;
 
       // Conectar todos los nodos
-      source.buffer = _buffer
-      source.connect(gain).connect(filter[0]).connect(audioContext.destination)
+      source.buffer = _buffer;
+      source.connect(filter[0])
+      .connect(panner)
+      .connect(audioContext.destination);
 
       // Inicializar el tiempo y la canción
-      startTimer()
-      source.start(0)
-      isNexAble = isSongPlaying = true
+      startTimer();
+      source.start(0);
+      isNexAble = isSongPlaying = true;
     }, reason => {
-      dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong}\n${reason}`)
-      return
-    })
-  }
-  xhtr.send()
+      dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong}\n${reason}`);
+      return;
+    });
+  };
+  xhtr.send(null);
 }
 
-/**
- * Reproducirá la siguiente canción.
- * Esta función se comparte cuando se genera la lista de cacniones
- * ya que al dar click sobre una cación la que se reproduce es otra "siguiente"
- *
- * @var _position {Number} - Posición de la canción a reproducir
- */
+// Reproduce la siguiente canción.
+// Esta función se comparte cuando se genera la lista de canciones,
+// ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
 function nextSong(_position = -1) {
+  isPrevExec = false;
   if (_position !== -1) {
     // ver si está reproduciendose o no
     if (isSongPlaying && audioContext.state === 'running' ||
       !isSongPlaying && audioContext.state === 'suspended') {
-      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
+      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
-      isNexAble = false
-      source.stop(0)
-      source = null
+      isNexAble = false;
+      source.stop(0);
+      source = null;
     }
 
-    dataSong(_position)
-    play()
+    dataSong(_position);
+    play();
   } else {
     // Ver en primera instancia si es posible reproducir la siguiente canción.
     // Esto va a depender de si se ejecutó ya una canción.
     // Si no se válida, podrían reproducirse varias pistas a la vez - No queremos esto :-(
     if (isNexAble) {
-      isNexAble = false
-      dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0))
+      isNexAble = false;
+      dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0));
       // si está sonando la canción, esta se debe detener para tocar la nueva
       if (isSongPlaying && audioContext.state === 'running' ||
          !isSongPlaying && audioContext.state === 'suspended') {
         // Verificar si el contexto está pausado o no.
         // Si está pausado no se reproducirá una nueva pista
-        if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
+        if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
-        source.stop(0)
-        source = null
+        source.stop(0);
+        source = null;
       }
 
-      play()
+      play();
     }
   }
 }
 
-/**
- * Reproducirá la canción anterior
- */
+// Reproducirá la canción anterior
 function prevSong() {
-  if (isNexAble) {
-    isNexAble = false
-    dataSong(songs.length - 1 > position ? position - 1 : 0)
+  if (isNexAble && tmpPosition.length > 0) {
+    isNexAble = false;
+    isPrevExec = true;
+    dataSong(tmpPosition.pop());
+
     // si está sonando la canción, esta se debe detener para tocar la nueva
     if (isSongPlaying && audioContext.state === 'running') {
-      source.stop(0)
-      source = null
+      source.stop(0);
+      source = null;
     }
     // Verificar si el contexto está pausado o no.
     // Si está pausado no se reproducirá una nueva pista
-    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume()
-    play()
+    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+    play();
   }
 }
 
-/**
- * Cambia los valores en la frecuencia específica
- */
-function setFilterVal(a, b) { filter[a].gain.setValueAtTime(b, audioContext.currentTime) }
+// Cambia los valores en la frecuencia específica
+function setFilterVal(a, b) { 
+  filter[a].gain.setValueAtTime(b, audioContext.currentTime);
+}
 
-/**
- * Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
- * [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
- */
+// Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
+// [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 function filters() {
-  const hrzGain = jread(CONFIG_FILE).equalizer
-  let f = null
+  const hrzGain = jread(CONFIG_FILE).equalizer;
+  let f = null;
   filter = hrz.map((v, i) =>
     (f = audioContext.createBiquadFilter(),
     f.type = 'peaking',
     f.frequency.value = v,
     f.Q.value = 1,
     f.gain.value = hrzGain[i] / 20, f)
-  )
-  filter.reduce((p, c) => p.connect(c))
+  );
+  filter.reduce((p, c) => p.connect(c));
 }
 
 function moveForward(event, element) {
-  forward = _duration * event.offsetX / element.clientWidth
-  const time_m = (forward / 60).toString()
+  forward = _duration * event.offsetX / element.clientWidth;
+  const time_m = (forward / 60).toString();
 
   // Recalcular el tiempo
-  minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10)
-  second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60)
-  millisecond = Math.floor(forward * 100) + 1
-  clearInterval(interval)
+  minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10);
+  second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60);
+  millisecond = Math.floor(forward * 100) + 1;
+  clearInterval(interval);
 
   // Recalcular el porcentaje de la barra de tiempo
-  percent = forward * (100 / _duration)
-  isMovingForward = true
-  source.stop(0)
+  percent = forward * (100 / _duration);
+  isMovingForward = true;
+  source.stop(0);
 }
 
 module.exports = Object.freeze({
@@ -308,4 +318,4 @@ module.exports = Object.freeze({
   nextSong,
   setFilterVal,
   moveForward
-})
+});
