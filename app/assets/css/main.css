@@ -161,8 +161,7 @@ a {
     font-weight: 300;
     line-height: 2em;
     font-size: .906em;
-    overflow: hidden;
-    cursor: pointer
+    overflow: hidden
 }
 
 .miscelaneo {
@@ -383,7 +382,8 @@ a {
 /* ------------------------ CANCIÓN SELECCIONADA ------------------------ */
 .list-song-container {
     width: 100%;
-    float: left
+    float: left;
+    cursor: pointer
 }
 
 .list-song-container::after {
