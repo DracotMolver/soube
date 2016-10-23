@@ -59,19 +59,12 @@ a {
 
 /* ----------------------------- LEGAL ---------------------------- */
 #legal {
-    padding-bottom: .5em;
-    padding-top: .5em;
-    text-align: center;
     background: var(--whiteColor);
-    position: absolute;
-    z-index: 4;
+    padding: 1em;
     border: .01em solid var(--lightGreyColor);
-    margin: 0 auto;
+    margin: 2em auto;
     height: auto;
-    width: 43em;
-    right: 0;
-    left: 0;
-    top: 4em
+    width: 60em;
 }
 
 #legal > h5 {
@@ -123,7 +116,7 @@ a {
     border-radius: 5px; 
     background: var(--darkGreyColor);
     padding: 0;
-    margin: .5em 1.235em 1.4em;
+    margin: .5em 1.225em 1.4em;
     opacity: .5;
     height: 18em;
     width: .6em;
@@ -164,11 +157,6 @@ a {
     width: 100%
 }
 
-#equalizer-container > div ~ div {
-    padding-right: 1.2em;
-    padding-left: 1.2em
-}
-
 #equalizer-container ul {
     margin: .6em .2em;
     width: 100%;
@@ -181,6 +169,48 @@ a {
     width: 2.8em
 }
 
+#hertz {
+    width: 27em
+}
+
+#k-hertz {
+    width: 41.2em
+}
+
+#hertz,
+#k-hertz {
+    padding-right: .5em;
+    padding-left: .5em;
+    text-align: center;
+    float: left
+}
+
+#hertz > div,
+#k-hertz > div{
+    background: white;
+    margin: 0 auto;
+    width: 3em;
+}
+
+#hertz::before,
+#k-hertz::before {
+    content: '';
+    position: absolute;
+    background: var(--lightGreyColor);
+    z-index: -1;
+    height: 2px;
+    top: 55px
+}
+
+#hertz::before {
+    width: 26em;
+    left: 13px
+}
+
+#k-hertz::before {
+    width: 41em;
+    left: 459px
+}
 /*---------------------------------- ANIMACIONES ----------------------------------*/
 @keyframes confSlide {
     100% {
