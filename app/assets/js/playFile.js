@@ -239,17 +239,17 @@ function play() {
       .connect(filter[9]) // 500
       .connect(filter[10]) // 600
       .connect(filter[11]) // 800
-      .connect(filter[13]) // 1000
-      .connect(filter[14]) // 1600
-      .connect(filter[15]) // 2000
-      .connect(filter[16]) // 3000
-      .connect(filter[17]) // 4000
-      .connect(filter[18]) // 5000
-      .connect(filter[19]) // 6000
-      .connect(filter[20]) // 7000
-      .connect(filter[21]) // 8000
-      .connect(filter[22]) // 10000
-      .connect(filter[23]) // 16000
+      .connect(filter[12]) // 1000
+      .connect(filter[13]) // 1600
+      .connect(filter[14]) // 2000
+      .connect(filter[15]) // 3000
+      .connect(filter[16]) // 4000
+      .connect(filter[17]) // 5000
+      .connect(filter[18]) // 6000
+      .connect(filter[19]) // 7000
+      .connect(filter[20]) // 8000
+      .connect(filter[21]) // 10000
+      .connect(filter[22]) // 16000
       // .connect(panner)
       .connect(audioContext.destination);
 
@@ -335,8 +335,9 @@ function setFilterVal(a, b) {
 function filters() {
   let f = null;
   let db = jread(CONFIG_FILE).equalizer
-  .map(v => parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10));
-
+  .map(v =>
+    v !== 0 ? parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10) : 0
+  );
 
   hrz.forEach((v, i) => {
     filter.push(

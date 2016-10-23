@@ -116,7 +116,7 @@ function onEqualizerPanel(e) {
 
       ipcRenderer.send('equalizer-filter', [
         $(range).data('position', 'int'),
-        parseFloat((plus < 130 ? (121 - db) : - (db - 140)) / 10)
+        plus !== 0 ? parseFloat((plus < 130 ? (121 - db) : - (db - 140)) / 10) : 0
       ]);
     }
   };
