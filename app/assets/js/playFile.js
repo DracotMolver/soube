@@ -36,12 +36,13 @@ const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
 //   panner.refDistance = 2;
 // Frecuencias
 const hrz = [
-  20, 32, 48,
-  64, 100, 160, 224,
-  320, 440, 1200, 1800,
-  2500, 2800, 3500, 3800,
-  4000, 4700, 5000, 5500
+ 40, 80, 90, 100, 120, 150, 200,
+ 300, 400, 500, 600, 800, 1000,
+ 1600, 2000, 3000, 4000, 5000, 6000,
+ 7000, 8000, 10000, 16000
 ];
+
+
 
 let filter = []; // Array con el filtro a usar en distintas frecuencias
 let _duration = 0; // Duración máxima de la canción
@@ -139,6 +140,29 @@ function stopTimer() {
     // Conectar todos los nodos
     source.buffer = _buffer;
     source.connect(filter[0])
+    .connect(filter[0]) // 40
+    .connect(filter[1]) // 80
+    .connect(filter[2]) // 90
+    .connect(filter[3]) // 100
+    .connect(filter[4]) // 120
+    .connect(filter[5]) // 150
+    .connect(filter[6]) // 200
+    .connect(filter[7]) // 300
+    .connect(filter[8]) // 400
+    .connect(filter[9]) // 500
+    .connect(filter[10]) // 600
+    .connect(filter[11]) // 800
+    .connect(filter[13]) // 1000
+    .connect(filter[14]) // 1600
+    .connect(filter[15]) // 2000
+    .connect(filter[16]) // 3000
+    .connect(filter[17]) // 4000
+    .connect(filter[18]) // 5000
+    .connect(filter[19]) // 6000
+    .connect(filter[20]) // 7000
+    .connect(filter[21]) // 8000
+    .connect(filter[22]) // 10000
+    .connect(filter[23]) // 16000
     // .connect(panner)
     .connect(audioContext.destination);
     startTimer();
@@ -164,7 +188,10 @@ function dataSong(_position) {
   $('#album').child().each(v => { v.text(infoSong.album); });
 
   // Mostrar notificación
-  if (notification !== null) notification.close();
+  if (notification !== null) {
+    notification.close();
+    notification = null
+  }
 
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     lang: 'US',
@@ -200,7 +227,29 @@ function play() {
 
       // Conectar todos los nodos
       source.buffer = _buffer;
-      source.connect(filter[0])
+      source.connect(filter[0]) // 40
+      .connect(filter[1]) // 80
+      .connect(filter[2]) // 90
+      .connect(filter[3]) // 100
+      .connect(filter[4]) // 120
+      .connect(filter[5]) // 150
+      .connect(filter[6]) // 200
+      .connect(filter[7]) // 300
+      .connect(filter[8]) // 400
+      .connect(filter[9]) // 500
+      .connect(filter[10]) // 600
+      .connect(filter[11]) // 800
+      .connect(filter[13]) // 1000
+      .connect(filter[14]) // 1600
+      .connect(filter[15]) // 2000
+      .connect(filter[16]) // 3000
+      .connect(filter[17]) // 4000
+      .connect(filter[18]) // 5000
+      .connect(filter[19]) // 6000
+      .connect(filter[20]) // 7000
+      .connect(filter[21]) // 8000
+      .connect(filter[22]) // 10000
+      .connect(filter[23]) // 16000
       // .connect(panner)
       .connect(audioContext.destination);
 
@@ -277,23 +326,27 @@ function prevSong() {
 }
 
 // Cambia los valores en la frecuencia específica
-function setFilterVal(a, b) { 
+function setFilterVal(a, b) {
   filter[a].gain.setValueAtTime(b, audioContext.currentTime);
 }
 
 // Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
 // [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 function filters() {
-  const hrzGain = jread(CONFIG_FILE).equalizer;
   let f = null;
-  filter = hrz.map((v, i) =>
-    (f = audioContext.createBiquadFilter(),
-    f.type = 'peaking',
-    f.frequency.value = v,
-    f.Q.value = 1,
-    f.gain.value = hrzGain[i] / 10, f)
-  );
-  filter.reduce((p, c) => p.connect(c));
+  let db = jread(CONFIG_FILE).equalizer
+  .map(v => parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10));
+
+
+  hrz.forEach((v, i) => {
+    filter.push(
+      (f = audioContext.createBiquadFilter(),
+      f.type = 'peaking',
+      f.frequency.value = v,
+      f.Q.value = 1,
+      f.gain.value = db[i], f)
+    );
+  });
 }
 
 function moveForward(event, element) {
