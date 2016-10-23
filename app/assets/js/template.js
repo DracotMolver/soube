@@ -89,8 +89,16 @@ module.exports = (_ => {
       },
       css: function (s) { // Editar estilos css
         const rgx = new RegExp(s, 'g');
-        let cssText = this.element.style;
-        if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${s}` : ` ${s}`;
+        let cssText = null;
+        if (this.element.length !== undefined) {
+          this.element.forEach(e => {
+            cssText = e.style;
+            if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${s}` : ` ${s}`;
+          });
+        } else {
+            cssText = this.element.style;
+            if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${s}` : ` ${s}`;
+        }
 
         return this;
       },
