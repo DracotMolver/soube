@@ -16,7 +16,7 @@ function makeFiles () {
         lang: 'us',
         shuffle: true,
           musicFolder: '',
-          equalizer: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+          equalizer: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       };
 
       fs.open(configPath, 'w', (err, fd) => {
@@ -25,6 +25,12 @@ function makeFiles () {
         fs.writeFileSync(configPath, JSON.stringify(config, null), { encoding: 'utf8', flag: 'w' });
         fs.closeSync(fd);
       });
+    } else {
+      let config = JSON.parse(fs.readFileSync(configPath).toString());
+      if (config.equalizer.length < 23) {
+        config.equalizer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        fs.writeFileSync(configPath, JSON.stringify(config, null), { encoding: 'utf8', flag: 'w' });
+      }
     }
   });
 
