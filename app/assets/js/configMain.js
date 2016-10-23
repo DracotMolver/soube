@@ -116,7 +116,7 @@ function onEqualizerPanel(e) {
 
       ipcRenderer.send('equalizer-filter', [
         $(range).data('position', 'int'),
-        parseFloat((plus < 130 ? (121 - db) : - (db - 140)) / 10).toFixed(3)
+        parseFloat((plus < 130 ? (121 - db) : - (db - 140)) / 10)
       ]);
     }
   };
@@ -136,13 +136,19 @@ function onEqualizerPanel(e) {
   $(document).on({ 'mouseup': onDragEnd, 'mousemove': onDragMove });
 
   // El evento es solo registrado sobre los botones redondos
+  // Setear la configuración establecida
   $('.range-circle').each((v, i) => {
-    // Setear la configuración establecida
-    v.on({
-      'mousedown': onDragStart
-    })
-    .css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`);
+    v.css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px;`);
+  }).on({
+    'mousedown': onDragStart
   });
+}
+
+// Resetea el Equalizador
+function resetEQ() {
+  configFile.equalizer = configFile.equalizer.map(v => 0);
+  configFile = jsave(CONFIG_FILE, configFile);
+  $('.range-circle').css('top:130px;');
 }
 
 // Mostrar los términos legales
@@ -175,6 +181,15 @@ $('#add-songs').on({
 
 // Mostrar ecualizador
 $('#equalizer-panel').on({ 'click': onEqualizerPanel });
+
+// Acciones predefinidas del ecualizador
+$('.eq-buttons').on({
+  'click': function () {
+    switch($(this).data('eq', 'string')) {
+      case 'reset': resetEQ(); break;
+    }
+  }
+});
 
 // Abrir en el navegador por defecto sel SO
 $(':a').on({
