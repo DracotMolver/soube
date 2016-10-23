@@ -25,23 +25,24 @@ let notification = null; // Despliega una notificación de la canción que se va
 // Variables necesarias para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext(); // Objeto AudioContext
 const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
-const panner = audioContext.createPanner();
-  panner.panningModel = 'HRTF';
-  panner.distanceModel = 'exponential';
-  panner.coneOuterGain = 1;
-  panner.orientationZ = 1.6;
-  panner.positionZ = 1.6;
-  panner.positionX = 1;
-  panner.positionY = 1;
-  panner.refDistance = 2;
+// const panner = audioContext.createPanner();
+//   panner.panningModel = 'HRTF';
+//   panner.distanceModel = 'exponential';
+//   panner.coneOuterGain = 1;
+//   panner.orientationZ = 1.6;
+//   panner.positionZ = 1.6;
+//   panner.positionX = 1;
+//   panner.positionY = 1;
+//   panner.refDistance = 2;
 // Frecuencias
 const hrz = [
-  50, 100, 156,
-  220, 331, 440,
-  622, 880, 1250,
-  1750, 2500, 3500,
-  5000, 10000, 20000
+  20, 32, 48,
+  64, 100, 160, 224,
+  320, 440, 1200, 1800,
+  2500, 2800, 3500, 3800,
+  4000, 4700, 5000, 5500
 ];
+
 let filter = []; // Array con el filtro a usar en distintas frecuencias
 let _duration = 0; // Duración máxima de la canción
 let _buffer = {}; // Buffer devuelto por decodeAudioData
@@ -138,7 +139,7 @@ function stopTimer() {
     // Conectar todos los nodos
     source.buffer = _buffer;
     source.connect(filter[0])
-    .connect(panner)
+    // .connect(panner)
     .connect(audioContext.destination);
     startTimer();
     source.start(0, forward);
@@ -200,7 +201,7 @@ function play() {
       // Conectar todos los nodos
       source.buffer = _buffer;
       source.connect(filter[0])
-      .connect(panner)
+      // .connect(panner)
       .connect(audioContext.destination);
 
       // Inicializar el tiempo y la canción
@@ -290,7 +291,7 @@ function filters() {
     f.type = 'peaking',
     f.frequency.value = v,
     f.Q.value = 1,
-    f.gain.value = hrzGain[i] / 20, f)
+    f.gain.value = hrzGain[i] / 10, f)
   );
   filter.reduce((p, c) => p.connect(c));
 }
