@@ -108,14 +108,15 @@ function onEqualizerPanel(e) {
     if (range !== null) {
       y = parseInt(window.getComputedStyle(range).getPropertyValue('top'), 10);
       plus = (e.clientY - range.offsetTop) + y;
+
       if (plus > 0 && plus < 261) {
         db = plus;
         $(range).css(`top:${(e.clientY - range.offsetTop) + y}px;`);
       }
-      // Se modifican las ondas
+
       ipcRenderer.send('equalizer-filter', [
         $(range).data('position', 'int'),
-        parseFloat((db / 20 > 130 ? -(7 - db / 20) : (7 - db / 20)) + 1.6).toFixed(3)
+        parseFloat((plus < 130 ? (121 - db) : - (db - 140)) / 10).toFixed(3)
       ]);
     }
   };
