@@ -98,7 +98,7 @@ ipcMain.on('show-config', () => {
       resizable: false,
       height: 500,
       center: true,
-      width: 780,
+      width: 1125,
       icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.ico'))
     });
 
