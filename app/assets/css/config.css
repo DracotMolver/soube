@@ -170,11 +170,11 @@ a {
 }
 
 #hertz {
-    width: 27em
+    width: 35em
 }
 
 #k-hertz {
-    width: 41.2em
+    width: 32.2em
 }
 
 #hertz,
@@ -203,14 +203,34 @@ a {
 }
 
 #hertz::before {
-    width: 26em;
+    width: 35em;
     left: 13px
 }
 
 #k-hertz::before {
-    width: 41em;
-    left: 459px
+    width: 31em;
+    left: 609px
 }
+
+.eq-buttons {
+    border-radius: 5px;
+    line-height: 2em;
+    margin-right: 1em;
+    margin-left: 1em;
+    text-align: center;
+    transition: all .1s ease-in;
+    position: relative;
+    border: 1px solid var(--darkGreyColor);
+    cursor: pointer
+}
+
+.eq-buttons:hover {
+    transform: scale(1.01);
+    box-shadow: 0px 2px 1px rgba(0,0,0,.14);
+}
+
+
+
 /*---------------------------------- ANIMACIONES ----------------------------------*/
 @keyframes confSlide {
     100% {
