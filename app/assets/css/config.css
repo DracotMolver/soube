@@ -107,11 +107,6 @@ a {
 }
 
 /* ----------------------------- EQUALIZADOR ---------------------------- */
-#_infoequalizer {
-    font-size: .8em;
-    font-weight: 100
-}
-
 .range-container {
     border-radius: 5px; 
     background: var(--darkGreyColor);
