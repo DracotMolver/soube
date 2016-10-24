@@ -23,6 +23,11 @@ let pos = 0;
 let db = 0;
 let y = 0;
 
+// Estilos de ondas
+const rock = [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103];
+const electro = [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121];
+const acustic = [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90];
+
 /** --------------------------------------- Funciones --------------------------------------- **/
 // Texto a modificar en la ventana de configuraciones
 (function updateTextContet() {
@@ -32,7 +37,6 @@ let y = 0;
   $('#_statuslanguage').text(lang.config.statusLanguage);
   $('#_titleconfig').text(lang.config.titleConfig);
   $('#_equalizersetting').text(lang.config.equalizerSetting);
-  $('#_infoequalizer').text(lang.alerts.infoEqualizer);
   $('#_legal').text(lang.config.legal);
 })();
 
@@ -96,6 +100,8 @@ function saveSongList(parentFolder = '') {
 
 // Animación de los botones sobre el panel ecualizador
 function onEqualizerPanel(e) {
+  $('.eq-buttons').each((v, i) => { v.text(lang.eqStyles[i]); });
+
   $(`#${$(this).data('action', 'string')}`).rmClass('hide');
 
   animConfigPanel();
@@ -147,9 +153,30 @@ function onEqualizerPanel(e) {
 // Resetea el Equalizador
 function resetEQ() {
   configFile.equalizer = configFile.equalizer.map(v => 0);
+  configFile.equalizer.forEach((v, i) => {
+    ipcRenderer.send('equalizer-filter', [i, v]);
+  });
   configFile = jsave(CONFIG_FILE, configFile);
   $('.range-circle').css('top:130px;');
 }
+
+// EQUALIZADOR - ROCK
+function othersEQ(hrz) {
+  const circles = $('.range-circle');
+  hrz.forEach((v, i) => {
+    // Afectar al source node actual
+    ipcRenderer.send('equalizer-filter', [i,
+      v !== 0 ? parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10) : 0
+    ]);
+
+    $(circles.get(i)).css(`top:${v === 0 ? 130 : v}px;`);
+  });
+  
+  // Guardar configuración
+  configFile.equalizer = hrz;
+  configFile = jsave(CONFIG_FILE, configFile);
+}
+
 
 // Mostrar los términos legales
 function onClickLegal() {
@@ -187,6 +214,9 @@ $('.eq-buttons').on({
   'click': function () {
     switch($(this).data('eq', 'string')) {
       case 'reset': resetEQ(); break;
+      case 'rock': othersEQ(rock); break;
+      case 'electro': othersEQ(electro); break;
+      case 'acustic': othersEQ(acustic); break;
     }
   }
 });
