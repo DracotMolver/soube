@@ -139,7 +139,7 @@ function stopTimer() {
 
     // Conectar todos los nodos
     source.buffer = _buffer;
-    source.connect(filter[0])
+    source
     .connect(filter[0]) // 40
     .connect(filter[1]) // 80
     .connect(filter[2]) // 90
@@ -152,17 +152,17 @@ function stopTimer() {
     .connect(filter[9]) // 500
     .connect(filter[10]) // 600
     .connect(filter[11]) // 800
-    .connect(filter[13]) // 1000
-    .connect(filter[14]) // 1600
-    .connect(filter[15]) // 2000
-    .connect(filter[16]) // 3000
-    .connect(filter[17]) // 4000
-    .connect(filter[18]) // 5000
-    .connect(filter[19]) // 6000
-    .connect(filter[20]) // 7000
-    .connect(filter[21]) // 8000
-    .connect(filter[22]) // 10000
-    .connect(filter[23]) // 16000
+    .connect(filter[12]) // 1000
+    .connect(filter[13]) // 1600
+    .connect(filter[14]) // 2000
+    .connect(filter[15]) // 3000
+    .connect(filter[16]) // 4000
+    .connect(filter[17]) // 5000
+    .connect(filter[18]) // 6000
+    .connect(filter[19]) // 7000
+    .connect(filter[20]) // 8000
+    .connect(filter[21]) // 10000
+    .connect(filter[22]) // 16000
     // .connect(panner)
     .connect(audioContext.destination);
     startTimer();
@@ -280,8 +280,7 @@ function nextSong(_position = -1) {
       source.stop(0);
       source = null;
     }
-
-    dataSong(_position);
+    dataSong(_position)
     play();
   } else {
     // Ver en primera instancia si es posible reproducir la siguiente canción.
