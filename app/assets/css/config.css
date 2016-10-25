@@ -29,6 +29,8 @@ h5 {
 .range-circle:hover,
 .config-icons > img:hover,
 #legal > h5,
+.eq-buttons:hover,
+.lang-option:hover,
 a {
     cursor:  pointer
 }
@@ -55,6 +57,13 @@ a {
 
 .config-opt-anim {
     animation: confSlide 1s ease-in-out forwards
+}
+
+.range-circle::before,
+#hertz::before,
+#k-hertz::before{
+    position: absolute;
+    content: ''
 }
 
 /* ----------------------------- LEGAL ---------------------------- */
@@ -96,8 +105,7 @@ a {
 }
 
 .lang-option:hover {
-    border-bottom: .1em solid #0277bd;
-    cursor: pointer
+    border-bottom: .1em solid #0277bd
 }
 
 .lang-option {
@@ -137,8 +145,6 @@ a {
     border-radius: 50%;
     box-shadow: 0 1px 2px 1px rgba(0,0,0,.14);
     background: var(--darkPinkColor);
-    position: absolute;
-    content: '';
     border: .1em solid var(--pinkColor);
     height: .7em;
     width: .7em;
@@ -189,8 +195,6 @@ a {
 
 #hertz::before,
 #k-hertz::before {
-    content: '';
-    position: absolute;
     background: var(--lightGreyColor);
     z-index: -1;
     height: 2px;
@@ -209,22 +213,19 @@ a {
 
 .eq-buttons {
     border-radius: 5px;
-    line-height: 2em;
     margin-right: 1em;
+    line-height: 2em;
     margin-left: 1em;
     text-align: center;
     transition: all .1s ease-in;
     position: relative;
     border: 1px solid var(--darkGreyColor);
-    cursor: pointer
 }
 
 .eq-buttons:hover {
     transform: scale(1.01);
     box-shadow: 0px 2px 1px rgba(0,0,0,.14);
 }
-
-
 
 /*---------------------------------- ANIMACIONES ----------------------------------*/
 @keyframes confSlide {

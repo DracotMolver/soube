@@ -14,6 +14,7 @@
  * por usar el comodín [*] para formatear todos los elementos HTML
  */
 * {
+    -webkit-text-size-adjust: 100%;
     -webkit-font-smooth: antialiased;
     font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
     font-stretch: condensed;

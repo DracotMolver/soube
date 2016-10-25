@@ -1,9 +1,25 @@
 /**
  * @author Diego Alberto Molina Vera
  */
+/* ------------------------ GENERAL ------------------------*/
+#config > img:hover,
+.search-results:hover,
+.btn-controlls,
+a {
+    cursor: pointer
+}
+
+.btn-controlls::after,
+.arrow::after,
+.arrow::before,
+.list-song-container::after {
+    position: absolute;
+    content: ''
+}
+
 /* ------------------------ TOP NAV ------------------------*/
 #top-nav {
-    background:  var(--pinkColor)
+    background: var(--pinkColor)
 }
 
 #config {
@@ -13,24 +29,15 @@
     height: 2em
 }
 
-#config > img:hover,
-.search-results:hover,
-a {
-    cursor: pointer
-}
-
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
 .btn-controlls {
-    cursor: pointer;
     float: left
 }
 
 .btn-controlls::after {
     border-radius: 50%;
     background: var(--darkPinkColor);
-    position: absolute;
-    opacity: 0;
-    content: ''
+    opacity: 0
 }
 
 #play-pause {
@@ -106,31 +113,33 @@ a {
 
 #song-title > h1 {
     font-weight: 500;
-    font-size: 1.6em;
-    color: var(--whiteColor)
+    font-size: 1.6em
 }
 
 #artist > h2 {
-    font-weight: 400;
-    font-size: 1.3em;
-    color: var(--whiteColor)
+    font-size: 1.3em
 }
 
 #album > h3 {
     font-weight: 300;
-    font-size: 1em;
-    color: var(--whiteColor)
+    font-size: 1em
 }
 
 #time {
     text-align: center;
     font-size: 1.16em;
-    margin: .5em 0;
-    color: var(--whiteColor)
+    margin: .5em 0
 }
 
-#time > span {
-    font-weight: 400;
+#time > span,
+#artist > h2 {
+    font-weight: 400
+}
+
+#song-title > h1,
+#album > h3,
+#time > span,
+#artist > h2 {
     color: var(--whiteColor)
 }
 
@@ -168,7 +177,6 @@ a {
     margin-right: .6em;
     color: var(--darkGreyColor)
 }
-
 
 /* ------------------------ BUSQUEDA DE CANCIONES ------------------------ */
 .search-results {
@@ -258,8 +266,6 @@ a {
 .arrow::before {
     border-radius: 25px;
     background: var(--blackColor);
-    position: absolute;
-    content: '';
     opacity: .2;
     height:.3em;
     width: 10%
@@ -273,8 +279,12 @@ a {
     animation: openArrowUp .6s ease-out forwards
 }
 
-#left-arrow {
+#left-arrow,
+#right-arrow {
     cursor: pointer;
+}
+
+#left-arrow {
     float: left
 }
 
@@ -301,7 +311,6 @@ a {
 /* -------------------------------------- */
 
 #right-arrow {
-    cursor: pointer;
     float: right
 }
 
@@ -389,15 +398,13 @@ a {
 .list-song-container::after {
     border-radius: 25px;
     background: rgba(66, 73, 73, .2);
-    position: absolute;
     opacity: 0;
-    content: '';
     height: 28px;
     margin: 0 auto;
     width: 0;
     right: 0;
     left: 0;
-    top: 192px;
+    top: 192px
 }
 
 .anim-selected-song::after {
