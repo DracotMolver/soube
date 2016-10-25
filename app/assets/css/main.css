@@ -138,7 +138,7 @@ a {
 
 #song-title > h1,
 #album > h3,
-#time > span,
+#time, #time > span,
 #artist > h2 {
     color: var(--whiteColor)
 }
