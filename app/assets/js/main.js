@@ -278,7 +278,7 @@ $('#song-title').on({
           $(`#${$(this).data('position', 'string')}`).addClass('anim-selected-song');
           $('.anim-selected-song').on({
             'animationend': function() {
-              $(this).rmAttr('anim-selected-song');
+              $(this).rmClass('anim-selected-song');
             }
           });
 
