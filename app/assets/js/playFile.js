@@ -188,10 +188,9 @@ function dataSong(_position) {
   $('#album').child().each(v => { v.text(infoSong.album); });
 
   // Mostrar notificación
-  if (notification !== null) {
-    notification.close();
-    notification = null
-  }
+  if (notification !== null) notification.close();
+
+  notification = null
 
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     lang: 'US',
