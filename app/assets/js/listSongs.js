@@ -7,7 +7,7 @@
  * artista/albunes
  */
 /** ---------------------------- Varibles ---------------------------- **/
-const execFile = require('child_process').execFile;
+const exec = require('child_process').exec;
 const metaData = require('musicmetadata');
 const path = require('path');
 const fs = require('fs');
@@ -110,23 +110,26 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   let songs = Object.keys(jread(SONG_FILE)).length === 0 ? [] : jread(SONG_FILE);
   if (songs.length > 0) metaDataSongs = songs;
  
+  // Ejecutar linea de comando dependiendo del SO
+  let command = '';
+  if (process.platform === 'darwin' || process.platform === 'linux')
+    command = `find ${folder} -type f | grep -E \"\.(mp3|wma|wmv|ogg|m4a)$\"`
+
   files = [];
-  execFile('find', [folder], (error, stdout, stderr) => {
+  exec(command, (error, stdout, stderr) => {
     if (error) {
       dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
       return;
     } else {
-      files = stdout.split('\n').filter(f => {
-        if (/(\.mp3|\.wav|\.wave|\.wma|\.wmv|\.ogg|\.m4a)/.test(f.slice(f.lastIndexOf('.'), f.length)))
+      files = stdout.trim().split('\n').filter(f => {
           if (songs.find(v => v.filename === f) === undefined) return path.normalize(f);
       });
-
       songSize = max = files.length;
       if (songSize > 0) {
         fnStart();
         extractMetadata();
       } else {
-        fnEnd(songs);
+        return fnEnd(songs);
       }
     }
   });
@@ -158,10 +161,10 @@ function extractMetadata() {
             position: metaDataSongs.length
           }
       );
-      avoidStack();
+      return avoidStack();
     })
   } else {
-    fnEnd(jsave(SONG_FILE, metaDataSongs));
+    return fnEnd(jsave(SONG_FILE, metaDataSongs));
   }
 }
 
