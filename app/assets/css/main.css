@@ -355,7 +355,7 @@ a {
 
 /* ------------------------ TOOLTIPS ------------------------ */
 .tooltip {
-    transform-origin: top;
+    transform-origin: center;
     letter-spacing: .14em;
     border-radius: 10px;
     line-height: 2em;
@@ -414,7 +414,7 @@ a {
 /* ------------------------ ANIMACIONES ------------------------ */
 @keyframes showToolTip {
     100% {
-        transform: scale(1, 1);
+        transform: scale(1);
         opacity: 1
     }
 }
