@@ -7,6 +7,7 @@
  * obtenidos mediante el buffer. También la API nos permite manipular el archivo de audio
  */
 /* --------------------------------------- Módulos ------------------------------------------- */
+const worker = new Worker('../../assets/js/timeWorker.js');
 const { dialog } = require('electron').remote;
 const path = require('path');
 require('./commons');
@@ -25,15 +26,7 @@ let notification = null; // Despliega una notificación de la canción que se va
 // Variables necesarias para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext(); // Objeto AudioContext
 const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
-// const panner = audioContext.createPanner();
-//   panner.panningModel = 'HRTF';
-//   panner.distanceModel = 'exponential';
-//   panner.coneOuterGain = 1;
-//   panner.orientationZ = 1.6;
-//   panner.positionZ = 1.6;
-//   panner.positionX = 1;
-//   panner.positionY = 1;
-//   panner.refDistance = 2;
+
 // Frecuencias
 const hrz = [
  40, 80, 90, 100, 120, 150, 200,
@@ -42,22 +35,18 @@ const hrz = [
  7000, 8000, 10000, 16000
 ];
 
-
-
 let filter = []; // Array con el filtro a usar en distintas frecuencias
 let _duration = 0; // Duración máxima de la canción
 let _buffer = {}; // Buffer devuelto por decodeAudioData
 let source = {}; // Objeto AudioNode
+let _connection = []
 
 // Variables para generar el calculo del tiempo transcurrido
-let millisecond = 1;
+// let millisecond = 1;
 let interval = null; // Función interval para crear el tiempo de reproducción
 let _minute = 0; // Final
 let _second = 0; // Final
 let forward = 0; // tiempo estimado dónde debería de seguir corriendo la canción al adelantarla
-let percent = 0;
-let minute = 0; // Inicial
-let second = 0; // Inicial
 let lapse = 0;
 let time = 0; // Tiempo total final
 
@@ -82,13 +71,12 @@ function playSong() {
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
     audioContext.suspend().then(() => {
       isSongPlaying = false;
-      clearInterval(interval);
+      cancelAnimationFrame(interval);
     });
 
     return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
-    ++millisecond;
     startTimer();
     audioContext.resume();
 
@@ -99,30 +87,24 @@ function playSong() {
 // Genera el tiempo que lleva reproduciendose la canción
 function startTimer() {
   const iter = () => {
-    ++millisecond;
-    if (millisecond / 100 > second + (60 * minute)) { // Segundos
-      if (second > 59) {
-        ++minute;
-        second = 0;
-      }
-
-      // Tiempo transcurrido
-      $('#time-start').text(`${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`);
-      $('#progress-bar').css(`width:${percent += lapse}%`); // Barra de carga
-      ++second;
-    }
+    worker.postMessage({ action:'start', per: lapse });
+    interval = requestAnimationFrame(iter);
   }
-  interval = setInterval(iter, 10);
+  interval = requestAnimationFrame(iter);
+
+  worker.addEventListener('message', e => {
+    $('#time-start').text(e.data.time);
+    $('#progress-bar').css(e.data.w);
+  });
 }
 
-// Limpi el tiempo transcurrido
+// Límpia el tiempo transcurrido
 function stopTimer() {
   if (!isMovingForward) {
     isSongPlaying = false;
-    clearInterval(interval);
+    cancelAnimationFrame(interval);
+    worker.postMessage({ action: 'stop' });
     $('#time-start').text('00:00');
-    millisecond = 1;
-    second = minute = percent =
     _duration = _minute = _second = time = 0;
     if (isNexAble && !isMovingForward) nextSong();
   } else if (isMovingForward) {
@@ -138,33 +120,13 @@ function stopTimer() {
     source.onended = stopTimer;
 
     // Conectar todos los nodos
+    _connection = [];
     source.buffer = _buffer;
-    source
-    .connect(filter[0]) // 40
-    .connect(filter[1]) // 80
-    .connect(filter[2]) // 90
-    .connect(filter[3]) // 100
-    .connect(filter[4]) // 120
-    .connect(filter[5]) // 150
-    .connect(filter[6]) // 200
-    .connect(filter[7]) // 300
-    .connect(filter[8]) // 400
-    .connect(filter[9]) // 500
-    .connect(filter[10]) // 600
-    .connect(filter[11]) // 800
-    .connect(filter[12]) // 1000
-    .connect(filter[13]) // 1600
-    .connect(filter[14]) // 2000
-    .connect(filter[15]) // 3000
-    .connect(filter[16]) // 4000
-    .connect(filter[17]) // 5000
-    .connect(filter[18]) // 6000
-    .connect(filter[19]) // 7000
-    .connect(filter[20]) // 8000
-    .connect(filter[21]) // 10000
-    .connect(filter[22]) // 16000
-    // .connect(panner)
-    .connect(audioContext.destination);
+    _connection.push(source);
+    _connection.concat(filter);
+    _connection.push(audioContext.destination);
+    _connection.reduce((a, b) => a.connect(b));
+
     startTimer();
     source.start(0, forward);
     isMovingForward = false;
@@ -226,31 +188,11 @@ function play() {
 
       // Conectar todos los nodos
       source.buffer = _buffer;
-      source.connect(filter[0]) // 40
-      .connect(filter[1]) // 80
-      .connect(filter[2]) // 90
-      .connect(filter[3]) // 100
-      .connect(filter[4]) // 120
-      .connect(filter[5]) // 150
-      .connect(filter[6]) // 200
-      .connect(filter[7]) // 300
-      .connect(filter[8]) // 400
-      .connect(filter[9]) // 500
-      .connect(filter[10]) // 600
-      .connect(filter[11]) // 800
-      .connect(filter[12]) // 1000
-      .connect(filter[13]) // 1600
-      .connect(filter[14]) // 2000
-      .connect(filter[15]) // 3000
-      .connect(filter[16]) // 4000
-      .connect(filter[17]) // 5000
-      .connect(filter[18]) // 6000
-      .connect(filter[19]) // 7000
-      .connect(filter[20]) // 8000
-      .connect(filter[21]) // 10000
-      .connect(filter[22]) // 16000
-      // .connect(panner)
-      .connect(audioContext.destination);
+      _connection = [];
+      _connection.push(source);
+      _connection.concat(filter);
+      _connection.push(audioContext.destination);
+      _connection.reduce((a, b) => a.connect(b));
 
       // Inicializar el tiempo y la canción
       startTimer();
@@ -356,7 +298,7 @@ function moveForward(event, element) {
   minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10);
   second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60);
   millisecond = Math.floor(forward * 100) + 1;
-  clearInterval(interval);
+  cancelAnimationFrame(interval);
 
   // Recalcular el porcentaje de la barra de tiempo
   percent = forward * (100 / _duration);
