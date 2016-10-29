@@ -222,7 +222,6 @@ function checkNewSongs() {
 
     // Ocultar pop-up
     $('#pop-up-container').addClass('hide').child(0).rmClass('pop-up-anim');
-    getActualVersion();
   }, (count, maxLengt) => {
     // Pop-up con la cantidad de canciones cargandose
     $('#pop-up').text(`${lang.alerts.newSongsFound}${count} / ${maxLengt}`);

@@ -113,7 +113,7 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   // Ejecutar linea de comando dependiendo del SO
   let command = '';
   if (process.platform === 'darwin' || process.platform === 'linux')
-    command = `find ${folder} -type f | grep -E \"\.(mp3|wma|wmv|ogg|m4a)$\"`
+    command = `find ${folder} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`
 
   files = [];
   exec(command, (error, stdout, stderr) => {
@@ -121,16 +121,31 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
       dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
       return;
     } else {
-      files = stdout.trim().split('\n').filter(f => {
-          if (songs.find(v => v.filename === f) === undefined) return path.normalize(f);
-      });
-      songSize = max = files.length;
-      if (songSize > 0) {
-        fnStart();
-        extractMetadata();
-      } else {
-        return fnEnd(songs);
+      const readFiles = stdout.trim().split('\n');
+      // Verificar que las canciones guardadas son la misma cantidad
+      // que las que hay en la carpeta de música.
+      // De lo contrario hay dos opciones:
+      //  1.- Borrar las canciones que sobran en caso de haber más [metaDataSongs > readFiles]
+      //  2.- Agregar las canciones nuevas [metaDataSongs < readFiles]
+      if (metaDataSongs.length < readFiles.length) { // Agregar
+        files = readFiles.filter(f => {
+            if (songs.find(v => v.filename === f) === undefined) return path.normalize(f);
+        });
+
+        songSize = max = files.length;
+        if (songSize > 0) {
+          fnStart();
+          extractMetadata();
+        } else {
+          return fnEnd(jsave(SONG_FILE, metaDataSongs));
+        }
+      } else if(metaDataSongs.length > readFiles.length) { // Borrar
+        metaDataSongs =  metaDataSongs.filter(f => {
+          if (readFiles.find(v => v === f.filename)) return f; 
+        });
+        window.location.reload(true);
       }
+      return fnEnd(jsave(SONG_FILE, metaDataSongs));
     }
   });
 }
