@@ -144,8 +144,9 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
           if (readFiles.find(v => v === f.filename)) return f; 
         });
         window.location.reload(true);
+      } else {
+        return fnEnd(jsave(SONG_FILE, metaDataSongs));
       }
-      return fnEnd(jsave(SONG_FILE, metaDataSongs));
     }
   });
 }
