@@ -39,7 +39,6 @@ let filter = []; // Array con el filtro a usar en distintas frecuencias
 let _duration = 0; // Duración máxima de la canción
 let _buffer = {}; // Buffer devuelto por decodeAudioData
 let source = {}; // Objeto AudioNode
-let _connection = []
 
 // Variables para generar el calculo del tiempo transcurrido
 // let millisecond = 1;
@@ -127,10 +126,30 @@ function stopTimer() {
     // Conectar todos los nodos
     _connection = [];
     source.buffer = _buffer;
-    _connection.push(source);
-    _connection.concat(filter);
-    _connection.push(audioContext.destination);
-    _connection.reduce((a, b) => a.connect(b));
+    source.connect(filter[0])
+    .connect(filter[1])
+    .connect(filter[2])
+    .connect(filter[3])
+    .connect(filter[4])
+    .connect(filter[5])
+    .connect(filter[6])
+    .connect(filter[7])
+    .connect(filter[8])
+    .connect(filter[9])
+    .connect(filter[10])
+    .connect(filter[11])
+    .connect(filter[12])
+    .connect(filter[13])
+    .connect(filter[14])
+    .connect(filter[15])
+    .connect(filter[16])
+    .connect(filter[17])
+    .connect(filter[18])
+    .connect(filter[19])
+    .connect(filter[20])
+    .connect(filter[21])
+    .connect(filter[22])
+    .connect(audioContext.destination);
 
     startTimer();
     source.start(0, forward);
@@ -192,11 +211,29 @@ function play() {
 
       // Conectar todos los nodos
       source.buffer = _buffer;
-      _connection = [];
-      _connection.push(source);
-      _connection.concat(filter);
-      _connection.push(audioContext.destination);
-      _connection.reduce((a, b) => a.connect(b));
+      source.connect(filter[0])
+      .connect(filter[1])
+      .connect(filter[2])
+      .connect(filter[3])
+      .connect(filter[4])
+      .connect(filter[5])
+      .connect(filter[6])
+      .connect(filter[7])
+      .connect(filter[8])
+      .connect(filter[9])
+      .connect(filter[10])
+      .connect(filter[12])
+      .connect(filter[13])
+      .connect(filter[14])
+      .connect(filter[15])
+      .connect(filter[16])
+      .connect(filter[17])
+      .connect(filter[18])
+      .connect(filter[19])
+      .connect(filter[20])
+      .connect(filter[21])
+      .connect(filter[22])
+      .connect(audioContext.destination);
 
       // Inicializar el tiempo y la canción
       startTimer();
