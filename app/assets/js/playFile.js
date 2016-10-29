@@ -49,6 +49,10 @@ let _second = 0; // Final
 let forward = 0; // tiempo estimado dónde debería de seguir corriendo la canción al adelantarla
 let lapse = 0;
 let time = 0; // Tiempo total final
+let minute = 0;
+let second = 0;
+let millisecond = 0;
+let percent = 0;
 
 /** --------------------------------------- Funciones --------------------------------------- **/
 // Recibe el listado de canciones desde el archivo listSongs.js
@@ -105,7 +109,8 @@ function stopTimer() {
     cancelAnimationFrame(interval);
     worker.postMessage({ action: 'stop' });
     $('#time-start').text('00:00');
-    _duration = _minute = _second = time = 0;
+    _duration = _minute = _second = time =
+    minute = second = millisecond = percent;
     if (isNexAble && !isMovingForward) nextSong();
   } else if (isMovingForward) {
     /**
@@ -153,7 +158,6 @@ function dataSong(_position) {
   if (notification !== null) notification.close();
 
   notification = null
-
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     lang: 'US',
     tag: 'song',
@@ -274,8 +278,7 @@ function setFilterVal(a, b) {
 // [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 function filters() {
   let f = null;
-  let db = jread(CONFIG_FILE).equalizer
-  .map(v =>
+  let db = jread(CONFIG_FILE).equalizer.map(v =>
     v !== 0 ? parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10) : 0
   );
 
@@ -303,6 +306,10 @@ function moveForward(event, element) {
   // Recalcular el porcentaje de la barra de tiempo
   percent = forward * (100 / _duration);
   isMovingForward = true;
+  worker.postMessage({
+    action: 'forward',
+    d: [minute, second, millisecond, percent]
+  });
   source.stop(0);
 }
 
