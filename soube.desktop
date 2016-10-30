@@ -1,0 +1,8 @@
+ [Desktop Entry]
+ Version=1.2.1
+ Name=Soube
+ Exec=/opt/soube/soube
+ Terminal=false
+ Icon=/opt/soube/resources/app/assets/img/icon.png
+ Type=Application
+ Categories=Application;MusicPlayer;Player
