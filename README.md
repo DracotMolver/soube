@@ -26,12 +26,15 @@ Soube is a simple and minimalist music player based on Electronjs.
  ```
   sudo mv [Place_where_is_soube_folder]/(soube-linux-ia32 or soube-linux-x64) /op/soube
  ```
+
 #### step 3 
  * Download the [soube.desktop](https://www.google.com) file for an icon launcher and move it to this location (or your prefer one):
+
  ```
  sudo  [Place_where_is_the_file]/soube.desktop /usr/share/applications
  
  ```
+
  * Done!. You should be ready to use Soube.
 
 ## Shortcuts
