@@ -327,20 +327,21 @@ a {
 #pop-up-container {
     position: absolute;
     height: auto;
-    width: 100%;
-    top: 6.6em
+    margin: 0 2%;
+    width: auto;
+    right: 0;
+    left: 0;
+    top: 6.4em
 }
 
 #pop-up {
-    border-radius: 21px;
+    border-radius: 2px;
+    border-bottom: 2px solid var(--pinkColor);
     background: var(--darkGreyColor);
-    font-weight: 500;
     text-align: center;
     transform: scale(0);
     font-size: .94em;
     padding: .6em;
-    margin: auto;
-    width: 17em;
     color:  var(--whiteColor)
 }
 
