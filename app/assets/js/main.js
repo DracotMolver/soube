@@ -81,6 +81,7 @@ function getActualVersion() {
           shell.openExternal(this.href);
         }
       });
+
       const tout = setTimeout(() => {
         $('#pop-up-container').addClass('hide').child(0)
         .rmClass('pop-up-anim');
@@ -139,7 +140,7 @@ function searchInputData(e) {
     hideSearchInputData();
   }
 
-  _list = _songs.filter(v => 
+  _list = _songs.filter(v =>
     (new RegExp(`^${searchValue.replace(/\s/g, '&nbsp;')}`, 'ig')).test(v.title)
   );
 
@@ -294,7 +295,6 @@ $('#song-title').on({
               $(this).rmClass('anim-selected-song');
             }
           });
-
           clearTimeout(_time);
         }, 100);
       }

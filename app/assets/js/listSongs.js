@@ -126,7 +126,7 @@ function createDefaultListView() {
 }
 
 // Función generadora que retorna el la ruta del archivo a leer
-const iter = (function* getSongs() { 
+const iter = (function* getSongs() {
   while (songSize--) yield files[songSize]
 })();
 
@@ -141,7 +141,6 @@ const iter = (function* getSongs() {
 function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   let command = '';
   files = [];
-  
   fnStart = _fnStart;
   fnIter = _fnIter;
   fnEnd = _fnEnd;
@@ -149,7 +148,7 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   // Rescatar el objeto que contiene el archivo listsong.json
   let songs = Object.keys(jread(SONG_FILE)).length === 0 ? [] : jread(SONG_FILE);
   if (songs.length > 0) metaDataSongs = songs;
-  
+
   // Para windows debemos usar un método recursivo [dir es muy limitado y findstr también].
   const readAllFiles = readFiles => {
       // Verificar que las canciones guardadas son la misma cantidad
@@ -233,8 +232,8 @@ function avoidStack () {
   extractMetadata();
 }
 
-module.exports = {
+module.exports = Object.freeze({
   setNextSongFunction,
   createDefaultListView,
   getMetadata
-};
+});

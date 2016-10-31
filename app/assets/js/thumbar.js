@@ -1,3 +1,8 @@
+/**
+ * @author Diego Molina Vera.
+ * 
+ * Crea el thumbar para controlar las canciones
+ */
 function makeThumBar(win, imgs = {}) {
   const play = {
     icon: imgs.play,

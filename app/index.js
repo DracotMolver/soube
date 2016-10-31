@@ -71,7 +71,7 @@ function ready() {
   .on('blur', closeRegisteredKeys);
 
   // Deslegar la ventana una vez esté cargado todo el contenido del DOM
-  mainWindow.once('ready-to-show', () => { 
+  mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {

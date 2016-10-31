@@ -4,7 +4,7 @@
  *
  * Encargada de reproducir la canción, tocar la siguiente canción o la anterior.
  * Acá se usa la Audio Web API para reproducir la canción y también usar datos
- * obtenidos mediante el buffer. También la API nos permite manipular el archivo de audio
+ * obtenidos mediante el buffer.
  */
 /* --------------------------------------- Módulos ------------------------------------------- */
 const worker = new Worker('../../assets/js/timeWorker.js');
@@ -109,7 +109,7 @@ function stopTimer() {
     worker.postMessage({ action: 'stop' });
     $('#time-start').text('00:00');
     _duration = _minute = _second = time =
-    minute = second = millisecond = percent;
+    minute = second = millisecond = percent = 0;
     if (isNexAble && !isMovingForward) nextSong();
   } else if (isMovingForward) {
     /**
@@ -117,14 +117,10 @@ function stopTimer() {
      * Por lo tanto lo que continua después de detener la canción deberá ser ejecutado
      * dentro de la función onended
      */
-    // Se debe crear un nuevo AudioNode, ya que al dar stop el nodo se elimina
-    source = audioContext.createBufferSource();
-
-    // Evento que se gatilla al terminar la canción
-    source.onended = stopTimer;
+    source = audioContext.createBufferSource(); // Se debe crear un nuevo AudioNode, ya que al dar stop el nodo se elimina
+    source.onended = stopTimer; // Evento que se gatilla al terminar la canción
 
     // Conectar todos los nodos
-    _connection = [];
     source.buffer = _buffer;
     source.connect(filter[0])
     .connect(filter[1])
@@ -166,17 +162,16 @@ function dataSong(_position) {
   const infoSong = songs[(position = parseInt(_position, 10))];
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
 
-  // Título de la canción
   $('#song-title').data({position}).child().each(v => { v.text(infoSong.title); });
-  // Artista
   $('#artist').child().each(v => { v.text(infoSong.artist); });
-  // Album
   $('#album').child().each(v => { v.text(infoSong.album); });
 
   // Mostrar notificación
-  if (notification !== null) notification.close();
+  if (notification !== null) { 
+    notification.close();
+    notification = null
+  }
 
-  notification = null
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     lang: 'US',
     tag: 'song',

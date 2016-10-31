@@ -170,12 +170,11 @@ function othersEQ(hrz) {
 
     $(circles.get(i)).css(`top:${v === 0 ? 130 : v}px;`);
   });
-  
+
   // Guardar configuración
   configFile.equalizer = hrz;
   configFile = jsave(CONFIG_FILE, configFile);
 }
-
 
 // Mostrar los términos legales
 function onClickLegal() {
