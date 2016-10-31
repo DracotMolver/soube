@@ -53,7 +53,7 @@ function ready() {
     center: true,
     width: 1200,
     show: false,
-    icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.ico'))
+    icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.png'))
   });
 
   mainWindow.setMenu(null);
@@ -77,10 +77,14 @@ function ready() {
   if (process.platform === 'win32') {
     mainWindow.setThumbarButtons([
       {
+        icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-play.png')),
         tooltip: 'Button1',
         click: () => {
-          console.log('cclick3!');
-        }
+          console.log('click3!');
+        },
+        flags: [
+          'nobackground'
+        ]
       }
     ]);
   }
@@ -109,7 +113,7 @@ ipcMain.on('show-config', () => {
       height: 500,
       center: true,
       width: 1125,
-      icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.ico'))
+      icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.png'))
     });
 
     configWindow.setMenu(null);
