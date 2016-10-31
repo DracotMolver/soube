@@ -14,6 +14,7 @@
     "soundcloud": "^3.1.2"
   },
   "build": {
+    "copyright": "Copyright © 2016 Diego Molina Vera.",
     "asar": false,
     "linux": {
       "category": "Audio",
@@ -30,8 +31,14 @@
         "Exec": "soube",
         "Terminal": false,
         "Version": "1.3.2",
-        "Categories": "Audio;Music;Player;AudioVideo;"
+        "Categories": "Audio;Music;Player;AudioVideo"
       }
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "squirrel"
+      ]
     }
   },
   "scripts": {
