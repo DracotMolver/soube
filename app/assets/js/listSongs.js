@@ -30,6 +30,43 @@ let configFile = jread(CONFIG_FILE); // Archivo de configuraciones
 let lang = jread(LANG_FILE)[configFile.lang]; // Archivo de mensajes en disintos idiomas
 
 /** ---------------------------- Funciones ---------------------------- **/
+// Lista el total de archivos y sub-archivos
+function findFiles(dir) {
+  let allFiles = [];
+  let tmpFolders = [];
+  let foldersSize = 0;
+  let folders = [];
+  const rgxExt = /(\.mp3|\.wmv|\.wav|\.ogg)$/ig;
+
+ fs.readdirSync(dir).forEach(files => {
+    // Carpetas bases.
+    // Obtener todas las carpetas
+    if (fs.lstatSync(`${dir}\\${files}`).isDirectory()) {
+      folders.push(`${dir}\\${files}`);
+    } else if (fs.lstatSync(`${dir}\\${files}`).isFile() && rgxExt.test(files)) {
+      // Obtener todos los archivos con las extensiones definidas.
+      allFiles.push(`${dir}\\${files}`);
+    }
+  });
+
+  foldersSize = folders.length - 1;
+  while (foldersSize > -1) {
+    fs.readdirSync(folders[foldersSize]).forEach(files => {
+      if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isDirectory()) {
+        tmpFolders.push(`${folders[foldersSize]}/${files}`);
+      } else if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isFile() && rgxExt.test(files)) {
+        allFiles.push(`${folders[foldersSize]}/${files}`);
+      }
+    });
+
+    folders.pop();
+    folders = folders.concat(tmpFolders);
+    foldersSize = folders.length - 1;
+  }
+
+  return allFiles;
+}
+
 // Recibe la función nextSong del archivo PlayFile.js para reproducir una canción
 function setNextSongFunction(_function) {
   clickNextSong = _function;
@@ -102,6 +139,9 @@ const iter = (function* getSongs() {
  * @var _fnIter {Function} - Solo se ejecuta cuando hay archivos de los cuales extraer metadatos
  */
 function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
+  let command = '';
+  files = [];
+  
   fnStart = _fnStart;
   fnIter = _fnIter;
   fnEnd = _fnEnd;
@@ -109,19 +149,9 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
   // Rescatar el objeto que contiene el archivo listsong.json
   let songs = Object.keys(jread(SONG_FILE)).length === 0 ? [] : jread(SONG_FILE);
   if (songs.length > 0) metaDataSongs = songs;
- 
-  // Ejecutar linea de comando dependiendo del SO
-  let command = '';
-  if (process.platform === 'darwin' || process.platform === 'linux')
-    command = `find ${folder} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`
-
-  files = [];
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
-      return;
-    } else {
-      const readFiles = stdout.trim().split('\n');
+  
+  // Para windows debemos usar un método recursivo [dir es muy limitado y findstr también].
+  const readAllFiles = readFiles => {
       // Verificar que las canciones guardadas son la misma cantidad
       // que las que hay en la carpeta de música.
       // De lo contrario hay dos opciones:
@@ -147,8 +177,23 @@ function getMetadata(folder, _fnStart, _fnEnd, _fnIter) {
       } else {
         return fnEnd(jsave(SONG_FILE, metaDataSongs));
       }
-    }
-  });
+  };
+
+  // Ejecutar linea de comando [Linux | Mac]
+  if (process.platform === 'darwin' || process.platform === 'linux') {
+    command = `find ${folder} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
+
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
+        return;
+      } else {
+        readAllFiles(stdout.trim().split('\n'));
+      }
+    });
+  } else if (process.platform === 'win32') {
+    readAllFiles(findFiles(folder));
+  }
 }
 
 // Extrae los datos de las canciones.
