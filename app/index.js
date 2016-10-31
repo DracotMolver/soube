@@ -73,21 +73,27 @@ function ready() {
     mainWindow.show();
   });
 
-  // Thumbar-button [Windows]
-  if (process.platform === 'win32') {
-    mainWindow.setThumbarButtons([
-      {
-        icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-play.png')),
-        tooltip: 'Button1',
-        click: () => {
-          console.log('click3!');
-        },
-        flags: [
-          'nobackground'
-        ]
-      }
-    ]);
-  }
+  // // Thumbar-button [Windows]
+  // if (process.platform === 'win32') {
+  //   mainWindow.setThumbarButtons([
+  //     {
+  //       icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-prev.png')),
+  //       tooltip: 'Button1',
+  //       click: () => {
+  //         console.log('click3!');
+  //       }
+  //       // flags: [
+  //       //   'nobackground'
+  //       // ]
+  //     }
+  //   ]);
+  //   mainWindow.setThumbnailClip({
+  //     x:0,
+  //     y:0,
+  //     height: 300,
+  //     width: 300
+  //   })
+  // }
 
   // Crear archivos de configuración
   configFiles.setPath(app);
