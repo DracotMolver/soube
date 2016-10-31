@@ -12,6 +12,7 @@ const {
 
 const path = require('path'); // Crear la ruta usando el separador por defecto del SO
 const configFiles = require('./../app/assets/js/configFiles.js');
+const thumbar = require('./../app/assets/js/thumbar.js'); // [Windows]
 
 /** ---------------------------- Variables ---------------------------- **/
 let configWindow = null;
@@ -24,6 +25,7 @@ const shortKeys = {
   'CommandOrControl+Left': 'prev-song', // Prev
   'CommandOrControl+Down': 'shuffle' // Shuffle
 };
+let thumbarButtons = {};
 
 /** ---------------------------- Funciones ---------------------------- **/
 function closeRegisteredKeys() {
@@ -71,34 +73,14 @@ function ready() {
   // Deslegar la ventana una vez esté cargado todo el contenido del DOM
   mainWindow.once('ready-to-show', () => { 
     mainWindow.show();
-  });
-
-  mainWindow.on('show', () => {
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {
-      mainWindow.setThumbarButtons([
-        { // Prev
-          icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-prev.png')),
-          tooltip: 'Prev',
-          click: () => {
-            mainWindow.webContents.send('thumbar-controls', 'prev');
-          }
-        },
-        { // Play
-          icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-play.png')),
-          tooltip: 'Play',
-          click: () => {
-            mainWindow.webContents.send('thumbar-controls', 'play-pause');
-          }
-        },
-        { // Next
-          icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-next.png')),
-          tooltip: 'Next',
-          click: () => {
-            mainWindow.webContents.send('thumbar-controls', 'next');
-          }
-        }
-      ]);
+     thumbarButtons = thumbar.makeThumBar(mainWindow, {
+        next: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-next.png')),
+        pause: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-pause.png')),
+        prev: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-prev.png')),
+        play: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-play.png'))
+      });
     }
   });
 
@@ -151,4 +133,9 @@ ipcMain.on('equalizer-filter', (e, a) => {
 // Actualiza el idioma del mensaje de la ventana principal
 ipcMain.on('update-lang', () => {
   mainWindow.webContents.send('update-init-text');
+});
+
+// Actualizar los thumbar buttons
+ipcMain.on('thumb-bar-update', (e, a) => {
+  mainWindow.setThumbarButtons(thumbarButtons[a]);
 });

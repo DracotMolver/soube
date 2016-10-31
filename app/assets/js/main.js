@@ -249,13 +249,21 @@ function clickBtnControls() {
 function controlsActions(action) {
       switch (action) {
       case 'play-pause':
-        playSong() === 'resume' ?
+        if (playSong() === 'resume') {
+          // Send a message to the thumbar buttons [Windows]
+          if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
+
           $('.anim-play').each((v, i) => {
             v.attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
-          }) :
+          });
+        } else {
+          // Send a message to the thumbar buttons [Windows]
+          if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
+
           $('.anim-play').each((v, i) => {
             v.attr({ 'from': anim.to[i], 'to': anim.from[i] })[0].beginElement();
           });
+        }
         break;
       case 'next': nextSong(); break;
       case 'prev': prevSong(); break;
@@ -404,5 +412,5 @@ ipcRenderer.on('shuffle', () => {
 
 // ThumbarButtons [Windows]
 ipcRenderer.on('thumbar-controls', (e, a) => {
-  console.log(e, a);
+  controlsActions(a);
 });
