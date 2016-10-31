@@ -15,7 +15,7 @@
   },
   "build": {
     "copyright": "Copyright © 2016 Diego Molina Vera.",
-    "asar": false,
+    "asar": true,
     "linux": {
       "category": "Audio",
       "packageCategory": "sound",
@@ -36,7 +36,6 @@
     },
     "win": {
       "target": [
-        "nsis",
         "squirrel"
       ]
     }
