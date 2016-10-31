@@ -73,6 +73,18 @@ function ready() {
     mainWindow.show();
   });
 
+  // Thumbar-button [Windows]
+  if (process.platform === 'win32') {
+    mainWindow.setThumbarButtons([
+      {
+        tooltip: 'Button1',
+        click: () => {
+          console.log('cclick3!');
+        }
+      }
+    ]);
+  }
+
   // Crear archivos de configuración
   configFiles.setPath(app);
   configFiles.makeFiles();
