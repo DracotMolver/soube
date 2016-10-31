@@ -226,7 +226,7 @@ function checkNewSongs() {
   }, (count, maxLengt) => {
     // Pop-up con la cantidad de canciones cargandose
     $('#pop-up').text(`${lang.alerts.newSongsFound}${count} / ${maxLengt}`);
-    if (count === maxLengt) window.location.reload(true);
+    if (count > maxLengt) window.location.reload(true);
   });
 }
 
