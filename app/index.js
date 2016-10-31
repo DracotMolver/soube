@@ -73,27 +73,34 @@ function ready() {
     mainWindow.show();
   });
 
-  // // Thumbar-button [Windows]
-  // if (process.platform === 'win32') {
-  //   mainWindow.setThumbarButtons([
-  //     {
-  //       icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-prev.png')),
-  //       tooltip: 'Button1',
-  //       click: () => {
-  //         console.log('click3!');
-  //       }
-  //       // flags: [
-  //       //   'nobackground'
-  //       // ]
-  //     }
-  //   ]);
-  //   mainWindow.setThumbnailClip({
-  //     x:0,
-  //     y:0,
-  //     height: 300,
-  //     width: 300
-  //   })
-  // }
+  mainWindow.on('show', () => {
+    // Thumbar-button [Windows]
+    if (process.platform === 'win32') {
+      mainWindow.setThumbarButtons([
+        { // Prev
+          icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-prev.png')),
+          tooltip: 'Prev',
+          click: () => {
+            mainWindow.webContents.send('thumbar-controls', 'prev');
+          }
+        },
+        { // Play
+          icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-play.png')),
+          tooltip: 'Play',
+          click: () => {
+            mainWindow.webContents.send('thumbar-controls', 'play-pause');
+          }
+        },
+        { // Next
+          icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-next.png')),
+          tooltip: 'Next',
+          click: () => {
+            mainWindow.webContents.send('thumbar-controls', 'next');
+          }
+        }
+      ]);
+    }
+  });
 
   // Crear archivos de configuración
   configFiles.setPath(app);

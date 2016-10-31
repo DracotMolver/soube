@@ -236,7 +236,18 @@ function clickBtnControls() {
   $(this).addClass('click-controlls');
 
   if (_songs.length !== 0) {
-    switch (this.id) {
+    controlsActions(this.id);
+  } else {
+    dialog.showMessageBox({
+      type: 'info',
+      buttons: ['Ok'],
+      message: lang.alerts.error_002
+    });
+  }
+}
+
+function controlsActions(action) {
+      switch (action) {
       case 'play-pause':
         playSong() === 'resume' ?
           $('.anim-play').each((v, i) => {
@@ -254,13 +265,6 @@ function clickBtnControls() {
         configFile = jsave(CONFIG_FILE, configFile);
         break;
     }
-  } else {
-    dialog.showMessageBox({
-      type: 'info',
-      buttons: ['Ok'],
-      message: lang.alerts.error_002
-    });
-  }
 }
 
 /** --------------------------------------- Eventos --------------------------------------- **/
@@ -396,4 +400,9 @@ ipcRenderer.on('shuffle', () => {
   configFile.shuffle = !configFile.shuffle;
   $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC;' : 'fill:#f06292;');
   configFile = jsave(CONFIG_FILE, configFile);
+});
+
+// ThumbarButtons [Windows]
+ipcRenderer.on('thumbar-controls', (e, a) => {
+  console.log(e, a);
 });
