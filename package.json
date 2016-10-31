@@ -36,6 +36,7 @@
     },
     "win": {
       "target": [
+        "nsis",
         "squirrel"
       ]
     }
