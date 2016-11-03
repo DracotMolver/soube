@@ -175,6 +175,7 @@ function dataSong(_position) {
   notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
     lang: 'US',
     tag: 'song',
+    silent: false,
     body: `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`,
     icon: path.join(__dirname, '..', 'img', 'play.png')
   });
