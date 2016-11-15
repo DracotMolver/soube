@@ -39,6 +39,10 @@
         "nsis",
         "squirrel"
       ]
+    },
+    "mac": {
+      "category": "public.app-category.music",
+      "target": "dmg"
     }
   },
   "scripts": {
