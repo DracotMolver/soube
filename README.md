@@ -1,6 +1,7 @@
 # Soube
 Soube is a simple and minimalist music player based on Electronjs.
 
+[Soube website](http://soube.diegomolina.cl)
 
 ## Features
  * Notifications showing what song is played.
