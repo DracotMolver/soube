@@ -24,9 +24,11 @@ let db = 0;
 let y = 0;
 
 // Estilos de ondas
-const rock = [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103];
-const electro = [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121];
-const acustic = [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90];
+const _otherQE = {
+  rock: [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103],
+  electro: [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121],
+  acustic: [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90]
+};
 
 /** --------------------------------------- Funciones --------------------------------------- **/
 // Texto a modificar en la ventana de configuraciones
@@ -64,8 +66,8 @@ function onClickChangeLang() {
     'click': function () {
       configFile.lang = $(this).data('lang', 'string');
       configFile = jsave(CONFIG_FILE, configFile);
-      window.location.reload(false);
       ipcRenderer.send('update-lang');
+      window.location.reload(false);
     }
   });
 }
@@ -121,7 +123,7 @@ function onEqualizerPanel(e) {
 
       ipcRenderer.send('equalizer-filter', [
         $(range).data('position', 'int'),
-        plus !== 0 ? parseFloat((plus < 130 ? (121 - db) : - (db - 140)) / 10) : 0
+        plus !== 0 ? parseFloat((plus < 130 ? 121 - db : - (db - 140)) / 10) : 0
       ]);
     }
   };
@@ -151,7 +153,7 @@ function onEqualizerPanel(e) {
 
 // Resetea el Equalizador
 function resetEQ() {
-  configFile.equalizer = configFile.equalizer.map(v => 0);
+  configFile.equalizer = configFile.equalizer.fill(0);
   configFile.equalizer.forEach((v, i) => {
     ipcRenderer.send('equalizer-filter', [i, v]);
   });
@@ -159,13 +161,12 @@ function resetEQ() {
   $('.range-circle').css('top:130px;');
 }
 
-// EQUALIZADOR - ROCK
 function othersEQ(hrz) {
   const circles = $('.range-circle');
   hrz.forEach((v, i) => {
     // Afectar al source node actual
     ipcRenderer.send('equalizer-filter', [i,
-      v !== 0 ? parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10) : 0
+      v !== 0 ? parseFloat((v < 130 ? 121 - v : - (v - 140)) / 10) : 0
     ]);
 
     $(circles.get(i)).css(`top:${v === 0 ? 130 : v}px;`);
@@ -210,11 +211,12 @@ $('#equalizer-panel').on({ 'click': onEqualizerPanel });
 // Acciones predefinidas del ecualizador
 $('.eq-buttons').on({
   'click': function () {
-    switch($(this).data('eq', 'string')) {
+    const eq = $(this).data('eq', 'string');
+    switch(eq) {
+      case 'rock':
+      case 'electro':
+      case 'acustic': othersEQ(_otherQE[eq]); break;
       case 'reset': resetEQ(); break;
-      case 'rock': othersEQ(rock); break;
-      case 'electro': othersEQ(electro); break;
-      case 'acustic': othersEQ(acustic); break;
     }
   }
 });
