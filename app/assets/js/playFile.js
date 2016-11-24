@@ -21,7 +21,7 @@ let position = null; // Posición de la canción actual
 let tmpPosition = []; // Posición de la canción anteriormente reproducida
 let filePath = ''; // Ruta de la canción
 let songs = {}; // Listado de canciones
-let notification = null; // Despliega una notificación de la canción que se va a reproducir
+let infoSong = {};
 
 // Variables necesarias para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext(); // Objeto AudioContext
@@ -52,6 +52,16 @@ let minute = 0;
 let second = 0;
 let millisecond = 0;
 let percent = 0;
+let time_m = 0;
+
+// Notificación
+let notification = null; // Despliega una notificación de la canción que se va a reproducir
+let notfi = {
+  lang: 'US',
+  tag: 'song',
+  silent: false,
+  icon: path.join(__dirname, '..', 'img', 'play.png')
+};
 
 /** --------------------------------------- Funciones --------------------------------------- **/
 // Recibe el listado de canciones desde el archivo listSongs.js
@@ -61,7 +71,7 @@ function setSongs(_songs) {
 }
 
 // Retorna un número aleatorio entre 0 y el total de canciones
-function shuffle() { return Math.floor(Math.random() * songs.length).toString(); }
+function shuffle() { return Math.floor(Math.random() * songs.length); }
 
 // Reproduce una cancion o la pausará
 // Responde a todos los posibles estados de una canción
@@ -123,28 +133,7 @@ function stopTimer() {
     // Conectar todos los nodos
     source.buffer = _buffer;
     source.connect(filter[0])
-    .connect(filter[1])
-    .connect(filter[2])
-    .connect(filter[3])
-    .connect(filter[4])
-    .connect(filter[5])
-    .connect(filter[6])
-    .connect(filter[7])
-    .connect(filter[8])
-    .connect(filter[9])
-    .connect(filter[10])
-    .connect(filter[11])
-    .connect(filter[12])
-    .connect(filter[13])
-    .connect(filter[14])
-    .connect(filter[15])
-    .connect(filter[16])
-    .connect(filter[17])
-    .connect(filter[18])
-    .connect(filter[19])
-    .connect(filter[20])
-    .connect(filter[21])
-    .connect(filter[22])
+    filter.reduce((p, c) => p.connect(c))
     .connect(audioContext.destination);
 
     startTimer();
@@ -159,7 +148,7 @@ function stopTimer() {
 function dataSong(_position) {
   if (position !== null && !isPrevExec) tmpPosition.push(position);
 
-  const infoSong = songs[(position = parseInt(_position, 10))];
+  infoSong = songs[(position = parseInt(_position, 10))];
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
 
   $('#song-title').data({position}).child().each(v => { v.text(infoSong.title); });
@@ -167,18 +156,13 @@ function dataSong(_position) {
   $('#album').child().each(v => { v.text(infoSong.album); });
 
   // Mostrar notificación
-  if (notification !== null) { 
+  if (notification !== null) {
     notification.close();
     notification = null
   }
 
-  notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), {
-    lang: 'US',
-    tag: 'song',
-    silent: false,
-    body: `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`,
-    icon: path.join(__dirname, '..', 'img', 'play.png')
-  });
+  notfi.body = `${infoSong.artist.replace(/\&nbsp;/g, ' ')} from ${infoSong.album.replace(/\&nbsp;/g, ' ')}`;
+  notification = new Notification(infoSong.title.replace(/\&nbsp;/g, ' '), notfi);
 }
 
 // EJecuta, por medio de la Audio Web API, la canción.
@@ -198,7 +182,7 @@ function play() {
       _buffer = buffer;
       time = ((_duration = _buffer.duration) / 60).toString();
       _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
-      _second = Math.floor(parseFloat(time.slice(time.lastIndexOf('.'))) * 60);
+      _second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
       lapse = 100 / _duration; // Porcentaje a usar por cada segundo en la barra de progreso
       $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`);
 
@@ -207,28 +191,8 @@ function play() {
 
       // Conectar todos los nodos
       source.buffer = _buffer;
-      source.connect(filter[0])
-      .connect(filter[1])
-      .connect(filter[2])
-      .connect(filter[3])
-      .connect(filter[4])
-      .connect(filter[5])
-      .connect(filter[6])
-      .connect(filter[7])
-      .connect(filter[8])
-      .connect(filter[9])
-      .connect(filter[10])
-      .connect(filter[12])
-      .connect(filter[13])
-      .connect(filter[14])
-      .connect(filter[15])
-      .connect(filter[16])
-      .connect(filter[17])
-      .connect(filter[18])
-      .connect(filter[19])
-      .connect(filter[20])
-      .connect(filter[21])
-      .connect(filter[22])
+      source.connect(filter[0]);
+      filter.reduce((p, c) => p.connect(c))
       .connect(audioContext.destination);
 
       // Inicializar el tiempo y la canción
@@ -258,7 +222,8 @@ function nextSong(_position = -1) {
       source.stop(0);
       source = null;
     }
-    dataSong(_position)
+
+    dataSong(_position);
     play();
   } else {
     // Ver en primera instancia si es posible reproducir la siguiente canción.
@@ -312,28 +277,26 @@ function setFilterVal(a, b) {
 function filters() {
   let f = null;
   let db = jread(CONFIG_FILE).equalizer.map(v =>
-    v !== 0 ? parseFloat((v < 130 ? (121 - v) : - (v - 140)) / 10) : 0
+    v !== 0 ? parseFloat((v < 130 ? 121 - v : - (v - 140)) / 10) : 0
   );
 
-  hrz.forEach((v, i) => {
-    filter.push(
+  filter = hrz.map((v, i) =>
       (f = audioContext.createBiquadFilter(),
       f.type = 'peaking',
       f.frequency.value = v,
       f.Q.value = 1,
       f.gain.value = db[i], f)
-    );
-  });
+  );
 }
 
 function moveForward(event, element) {
   forward = _duration * event.offsetX / element.clientWidth;
-  const time_m = (forward / 60).toString();
+  time_m = (forward / 60).toString();
 
   // Recalcular el tiempo
   minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10);
-  second = Math.floor(parseFloat(time_m.slice(time_m.lastIndexOf('.'))) * 60);
-  millisecond = Math.floor(forward * 100) + 1;
+  second = Math.floor(time_m.slice(time_m.lastIndexOf('.')) * 60);
+  millisecond = forward * 100 + 1;
   cancelAnimationFrame(interval);
 
   // Recalcular el porcentaje de la barra de tiempo
