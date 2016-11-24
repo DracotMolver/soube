@@ -1,4 +1,7 @@
+![Soube](app/assets/img/icon@1.8x.png)
+
 # Soube
+
 Soube is a simple and minimalist music player based on Electronjs.
 
 [Soube website](http://soube.diegomolina.cl)
