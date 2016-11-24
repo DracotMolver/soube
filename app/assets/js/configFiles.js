@@ -10,13 +10,15 @@ function setPath (app) { path = app.getPath('userData'); }
 function makeFiles () {
   // Config.json
   const configPath = `${path}/config.json`;
+  const eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
   fs.stat(configPath, (err, stats) => {
     if (err) {
       const config = {
         lang: 'us',
         shuffle: true,
           musicFolder: '',
-          equalizer: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          equalizer: eq
       };
 
       fs.open(configPath, 'w', (err, fd) => {
@@ -28,7 +30,7 @@ function makeFiles () {
     } else {
       let config = JSON.parse(fs.readFileSync(configPath).toString());
       if (config.equalizer.length < 23) {
-        config.equalizer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        config.equalizer = eq;
         fs.writeFileSync(configPath, JSON.stringify(config, null), { encoding: 'utf8', flag: 'w' });
       }
     }
