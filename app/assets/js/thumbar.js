@@ -38,8 +38,8 @@ function makeThumBar(win, imgs = {}) {
     }
   };
 
-  playMomment = [prev, play, next];
-  pauseMomment = [prev, pause, next];
+  const playMomment = [prev, play, next];
+  const pauseMomment = [prev, pause, next];
 
   // Iniciación por defecto
   win.setThumbarButtons(playMomment);

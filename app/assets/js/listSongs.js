@@ -41,11 +41,11 @@ function findFiles(dir) {
  fs.readdirSync(dir).forEach(files => {
     // Carpetas bases.
     // Obtener todas las carpetas
-    if (fs.lstatSync(`${dir}\\${files}`).isDirectory()) {
-      folders.push(`${dir}\\${files}`);
-    } else if (fs.lstatSync(`${dir}\\${files}`).isFile() && rgxExt.test(files)) {
+    if (fs.lstatSync(`${dir}/${files}`).isDirectory()) {
+      folders.push(`${dir}/${files}`);
+    } else if (fs.lstatSync(`${dir}/${files}`).isFile() && rgxExt.test(files)) {
       // Obtener todos los archivos con las extensiones definidas.
-      allFiles.push(`${dir}\\${files}`);
+      allFiles.push(`${dir}/${files}`);
     }
   });
 
