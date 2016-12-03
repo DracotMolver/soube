@@ -44,18 +44,6 @@ const items = [
   $.clone('div', false).addClass('results')
 ];
 
-// Para generar la animación del botón play
-const anim = {
-  from: [
-    'M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
-    'm 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z'
-  ],
-  to: [
-    'M 5.827315,6.7672041 39.949651,6.9753863 39.92649,170.36386 5.8743095,170.58995 Z',
-    'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
-  ]
-};
-
 // Archivos de configuraciones
 let configFile = jread(CONFIG_FILE); // Configuraciones básicas
 let lang = jread(LANG_FILE)[configFile.lang]; // Textos en idiomas
@@ -132,11 +120,6 @@ function searchInputData(e) {
     // Por defecto es la primera de las posibles coincidencias - texto fantasma
     nextSong(_list[0].position);
 
-    // Anima el botón play
-    $('.anim-play').each((v, i) => {
-      v.attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
-    });
-
     hideSearchInputData();
   }
 
@@ -168,11 +151,6 @@ function searchInputData(e) {
             'click': function () {
               // Reproduce la canción buscada
               nextSong($(this).data('position', 'int'));
-
-              // Anima el botón play
-              $('.anim-play').each((v, i) => {
-                v.attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
-              });
 
               hideSearchInputData();
             }
@@ -254,16 +232,9 @@ function controlsActions(action) {
             // Send a message to the thumbar buttons [Windows]
             if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
 
-            $('.anim-play').each((v, i) => {
-              v.attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
-            });
           } else {
             // Send a message to the thumbar buttons [Windows]
             if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
-
-            $('.anim-play').each((v, i) => {
-              v.attr({ 'from': anim.to[i], 'to': anim.from[i] })[0].beginElement();
-            });
           }
           break;
         case 'next': nextSong(); break;
@@ -388,13 +359,7 @@ ipcRenderer.on('update-init-text', () => {
 
 // Pausar o empezar canción con la combinación Ctrl + Up
 ipcRenderer.on('play-and-pause-song', () => {
-  playSong() === 'resume' ?
-  $('.anim-play').each((v, i) => {
-    v.attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement();
-  }) :
-  $('.anim-play').each((v, i) => {
-    v.attr({ 'from': anim.to[i], 'to': anim.from[i] }).element.beginElement();
-  });
+  playSong();
 });
 
 // Siguiente canción con la combinación Ctrl + Right
