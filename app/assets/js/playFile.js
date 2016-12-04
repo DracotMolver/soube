@@ -23,7 +23,6 @@ let songs = {}; // Listado de canciones
 let infoSong = {};
 let _t = null; // Tiempo estimado para iniciar una canción seleccionada
 
-
 // Variables necesarias para trabajar sobre el AudioContext
 const audioContext = new window.AudioContext(); // Objeto AudioContext
 const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
@@ -206,6 +205,7 @@ function dataSong(_position) {
 
 // EJecuta, por medio de la Audio Web API, la canción.
 // Se obtiene un array buffer con info útil para usar
+oldFilePath = '';
 function play() {
   clearTimeout(_t);
 
@@ -214,37 +214,33 @@ function play() {
   xhtr.responseType = 'arraybuffer';
   xhtr.onload = () => {
     audioContext.decodeAudioData(xhtr.response).then(buffer => {
-      if (source === null) {
-        // Creamos un Buffer que contendrá la canción
-        source = audioContext.createBufferSource();
+      // Creamos un Buffer que contendrá la canción
+      source = audioContext.createBufferSource();
 
-        // Para ser usado al momento de querer adelantar la canción
-        // El buffer nos entrega la duración de la canción.
-        // La duración de la cación está en segundos, por ende hay que pasarla a minutos.
-        _buffer = buffer;
-        time = ((_duration = _buffer.duration) / 60).toString();
-        _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
-        _second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
-        lapse = 100 / _duration; // Porcentaje a usar por cada segundo en la barra de progreso
-        $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`);
+      // Para ser usado al momento de querer adelantar la canción
+      // El buffer nos entrega la duración de la canción.
+      // La duración de la cación está en segundos, por ende hay que pasarla a minutos.
+      _buffer = buffer;
+      time = ((_duration = _buffer.duration) / 60).toString();
+      _minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
+      _second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
+      lapse = 100 / _duration; // Porcentaje a usar por cada segundo en la barra de progreso
+      $('#time-end').text(`${_minute > 9 ? `${_minute}` : `0${_minute}`}${_second > 9 ? `:${_second}` : `:0${_second}`}`);
 
-        // Evento que se gatilla al terminar la canción
-        source.onended = stopTimer;
+      // Evento que se gatilla al terminar la canción
+      source.onended = stopTimer;
 
-        // Conectar todos los nodos
-        source.buffer = _buffer;
-        source.connect(filter[0]);
-        filter.reduce((p, c) => p.connect(c))
-        .connect(audioContext.destination);
+      // Conectar todos los nodos
+      source.buffer = _buffer;
+      source.connect(filter[0]);
+      filter.reduce((p, c) => p.connect(c))
+      .connect(audioContext.destination);
 
-        // Inicia el tiempo y la canción
-        if (!isSongPlaying) {
-          startTimer();
-          source.start(0);
-          isSongPlaying = true;
-          isNextAble = true;
-        }
-      }
+      // Inicia el tiempo y la canción
+      startTimer();
+      source.start(0);
+      isSongPlaying = true;
+      isNextAble = true;
     }, reason => {
       dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong}\n${reason}`);
       return;
@@ -253,16 +249,25 @@ function play() {
   xhtr.send(null);
 }
 
-function canPlay() {
-  if (isSongPlaying && audioContext.state === 'running' ||
-    !isSongPlaying && audioContext.state === 'suspended') {
+function canBePlay() {
+  // Limpia en caso de haber existido un timer.
+  // Eso es cuando se cambia de cación muy rápido.
+  // De tener la cación escogina, se espera unos milesegundos para inicializar la canción.
+  clearTimeout(_t);
+  _t = setTimeout(() => {
+    play();
+  }, 360);
+}
 
-    source.stop(0);
-
-    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+function stateOfSongs() {
+  if (isSongPlaying && audioContext.state === 'running') {
+    source.stop(audioContext.currentTime);
+  } else if (!isSongPlaying && audioContext.state === 'suspended') {
+    source.stop(audioContext.currentTime);
+    audioContext.resume();
+  } else if (!isSongPlaying && audioContext.state === 'running' ) {
+    source.stop(audioContext.currentTime);
   }
-
-  source = null;
 }
 
 // Reproduce la siguiente canción.
@@ -281,15 +286,8 @@ function nextSong(_position = -1) {
     )
   );
 
-  canPlay();
-
-  // Limpia en caso de haber existido un timer.
-  // Eso es cuando se cambia de cación muy rápido.
-  // De tener la cación escogina, se espera unos milesegundos para inicializar la canción.
-  clearTimeout(_t);
-  _t = setTimeout(() => {
-    play();
-  }, 360);
+  stateOfSongs();
+  canBePlay();
 }
 
 // Reproducirá la canción anterior
@@ -297,17 +295,11 @@ function prevSong() {
   if (tmpPosition.length > 0) {
     isNextAble = false;
 
-    canPlay();
+    stateOfSongs();
 
     // ver si está reproduciendose o no
     dataSong(tmpPosition.pop());
-
-    // Verificar si el contexto está pausado o no.
-    // Si está pausado no se reproducirá una nueva pista
-    clearTimeout(_t);
-    _t = setTimeout(() => {
-      play();
-    }, 360);
+    canBePlay();
   }
 }
 
