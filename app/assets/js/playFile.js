@@ -15,8 +15,7 @@ require('./commons');
 /* --------------------------------------- Variables ------------------------------------------- */
 let isMovingForward = false; // Si se está tratando de adelantar la cación a un tiempo determinado
 let isSongPlaying = false; // Se ejecutó play sobre el AudioNode
-let isNexAble = false; // Se puede reproducir la siguiente canción
-let isPrevExec = false; // Solo se agregan las canciones ya reproducidas cuando se presiona next
+let isNextAble = false; // Se puede reproducir la siguiente canción
 let position = null; // Posición de la canción actual
 let tmpPosition = []; // Posición de la canción anteriormente reproducida
 let filePath = ''; // Ruta de la canción
@@ -63,6 +62,18 @@ let notfi = {
   icon: path.join(__dirname, '..', 'img', 'play.png')
 };
 
+// Para generar la animación del botón play
+const anim = {
+  from: [
+    'M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
+    'm 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z'
+  ],
+  to: [
+    'M 5.827315,6.7672041 39.949651,6.9753863 39.92649,170.36386 5.8743095,170.58995 Z',
+    'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
+  ]
+};
+
 /** --------------------------------------- Funciones --------------------------------------- **/
 // Recibe el listado de canciones desde el archivo listSongs.js
 function setSongs(_songs) {
@@ -73,12 +84,25 @@ function setSongs(_songs) {
 // Retorna un número aleatorio entre 0 y el total de canciones
 function shuffle() { return Math.floor(Math.random() * songs.length); }
 
+function animPlay() {
+  $('.anim-play').each((v, i) => {
+    v.attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement();
+  })
+}
+
+function animPause() {
+  $('.anim-play').each((v, i) => {
+    v.attr({ 'from': anim.to[i], 'to': anim.from[i] }).element.beginElement();
+  });
+}
+
 // Reproduce una cancion o la pausará
 // Responde a todos los posibles estados de una canción
 function playSong() {
   if (!isSongPlaying && audioContext.state === 'running') { // Primera vez
-    dataSong(shuffle());
+    if (position === null) dataSong(shuffle());
     play();
+    animPlay();
 
     return 'resume';
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
@@ -86,12 +110,14 @@ function playSong() {
       isSongPlaying = false;
       cancelAnimationFrame(interval);
     });
+    animPause();
 
     return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
     startTimer();
     audioContext.resume();
+    animPlay();
 
     return 'resume';
   }
@@ -115,12 +141,14 @@ function startTimer() {
 function stopTimer() {
   if (!isMovingForward) {
     isSongPlaying = false;
+
     cancelAnimationFrame(interval);
     worker.postMessage({ action: 'stop' });
-    $('#time-start').text('00:00');
+
     _duration = _minute = _second = time =
     minute = second = millisecond = percent = 0;
-    if (isNexAble && !isMovingForward) nextSong();
+
+    if (isNextAble && !isMovingForward) nextSong();
   } else if (isMovingForward) {
     /**
      * La función stop tarda unos milesegundos más que ejecutar la función moveForward.
@@ -146,7 +174,8 @@ function stopTimer() {
 // Recibe la posición de la canción a buscar en el objeto song
 // para desplegarlos en la interfaz
 function dataSong(_position) {
-  if (position !== null && !isPrevExec) tmpPosition.push(position);
+  $('#time-start').text('00:00');
+  $('#progress-bar').css('width:0;');
 
   infoSong = songs[(position = parseInt(_position, 10))];
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
@@ -198,7 +227,7 @@ function play() {
       // Inicializar el tiempo y la canción
       startTimer();
       source.start(0);
-      isNexAble = isSongPlaying = true;
+      isNextAble = isSongPlaying = true;
     }, reason => {
       dialog.showErrorBox('Error [002]', `${jread(LANG_FILE)[jread(CONFIG_FILE).lang].alerts.playSong}\n${reason}`);
       return;
@@ -211,59 +240,40 @@ function play() {
 // Esta función se comparte cuando se genera la lista de canciones,
 // ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
 function nextSong(_position = -1) {
-  isPrevExec = false;
-  if (_position !== -1) {
-    // ver si está reproduciendose o no
-    if (isSongPlaying && audioContext.state === 'running' ||
-      !isSongPlaying && audioContext.state === 'suspended') {
-      if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+  if (isNextAble) {
+    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+    tmpPosition.push(position);
 
-      isNexAble = false;
+    isNextAble = isSongPlaying = false;
+    if(source !== null) {
       source.stop(0);
       source = null;
     }
 
-    dataSong(_position);
-    play();
-  } else {
-    // Ver en primera instancia si es posible reproducir la siguiente canción.
-    // Esto va a depender de si se ejecutó ya una canción.
-    // Si no se válida, podrían reproducirse varias pistas a la vez - No queremos esto :-(
-    if (isNexAble) {
-      isNexAble = false;
-      dataSong(jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0));
-      // si está sonando la canción, esta se debe detener para tocar la nueva
-      if (isSongPlaying && audioContext.state === 'running' ||
-         !isSongPlaying && audioContext.state === 'suspended') {
-        // Verificar si el contexto está pausado o no.
-        // Si está pausado no se reproducirá una nueva pista
-        if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+    dataSong(_position !== -1 ? _position : (
+      jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0)
+    ));
 
-        source.stop(0);
-        source = null;
-      }
-
-      play();
-    }
+    playSong();
   }
 }
 
 // Reproducirá la canción anterior
 function prevSong() {
-  if (isNexAble && tmpPosition.length > 0) {
-    isNexAble = false;
-    isPrevExec = true;
+  if (isNextAble && tmpPosition.length > 0) {
     dataSong(tmpPosition.pop());
 
-    // si está sonando la canción, esta se debe detener para tocar la nueva
-    if (isSongPlaying && audioContext.state === 'running') {
-      source.stop(0);
-      source = null;
-    }
     // Verificar si el contexto está pausado o no.
     // Si está pausado no se reproducirá una nueva pista
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
-    play();
+
+    isNextAble = isSongPlaying = false;
+    if(source !== null) {
+      source.stop(0);
+      source = null;
+    }
+
+    playSong();
   }
 }
 
