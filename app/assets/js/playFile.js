@@ -14,8 +14,8 @@ require('./commons');
 
 /* --------------------------------------- Variables ------------------------------------------- */
 let isMovingForward = false; // Si se está tratando de adelantar la cación a un tiempo determinado
+let isNextAble = true;
 let isSongPlaying = false; // Se ejecutó play sobre el AudioNode
-let isNextAble = false; // Se puede reproducir la siguiente canción
 let position = null; // Posición de la canción actual
 let tmpPosition = []; // Posición de la canción anteriormente reproducida
 let filePath = ''; // Ruta de la canción
@@ -37,7 +37,7 @@ const hrz = [
 let filter = []; // Array con el filtro a usar en distintas frecuencias
 let _duration = 0; // Duración máxima de la canción
 let _buffer = {}; // Buffer devuelto por decodeAudioData
-let source = {}; // Objeto AudioNode
+let source = null; // Objeto AudioNode
 
 // Variables para generar el calculo del tiempo transcurrido
 // let millisecond = 1;
