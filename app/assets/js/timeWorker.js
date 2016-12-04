@@ -3,7 +3,7 @@
  * 
  * Calcula el tiempo que transcurre mientras se reproduce la canción
  */
-let millisecond = 0;
+let millisecond = 60;
 let second = 0;
 let minute = 0;
 let percent = 0;
