@@ -88,9 +88,6 @@ function setNextSongFunction(_function) {
 // para generar la animación del botón play
 function getDataSongAtPosition() {
   clickNextSong($(this).data('position', 'int'));
-  $('.anim-play').each((v, i) => {
-    v.attr({ 'from': anim.from[i], 'to': anim.to[i] })[0].beginElement();
-  });
 }
 
 // Genera la vista del listado de canciones por defecto

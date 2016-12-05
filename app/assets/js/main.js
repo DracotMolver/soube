@@ -226,25 +226,24 @@ function clickBtnControls() {
 }
 
 function controlsActions(action) {
-      switch (action) {
-        case 'play-pause':
-          if (playSong() === 'resume') {
-            // Send a message to the thumbar buttons [Windows]
-            if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
-
-          } else {
-            // Send a message to the thumbar buttons [Windows]
-            if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
-          }
-          break;
-        case 'next': nextSong(); break;
-        case 'prev': prevSong(); break;
-        case 'shuffle':
-          configFile.shuffle = !configFile.shuffle;
-          $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC;' : 'fill:#f06292;');
-          configFile = jsave(CONFIG_FILE, configFile);
-          break;
-    }
+  switch (action) {
+    case 'play-pause':
+      if (playSong() === 'resume') {
+        // Send a message to the thumbar buttons [Windows]
+        if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
+      } else {
+        // Send a message to the thumbar buttons [Windows]
+        if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
+      }
+      break;
+    case 'next': nextSong(); break;
+    case 'prev': prevSong(); break;
+    case 'shuffle':
+      configFile.shuffle = !configFile.shuffle;
+      $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC;' : 'fill:#f06292;');
+      configFile = jsave(CONFIG_FILE, configFile);
+      break;
+  }
 }
 
 /** --------------------------------------- Eventos --------------------------------------- **/
@@ -358,9 +357,7 @@ ipcRenderer.on('update-init-text', () => {
 });
 
 // Pausar o empezar canción con la combinación Ctrl + Up
-ipcRenderer.on('play-and-pause-song', () => {
-  playSong();
-});
+ipcRenderer.on('play-and-pause-song', () => { playSong(); });
 
 // Siguiente canción con la combinación Ctrl + Right
 ipcRenderer.on('next-song', () => { nextSong(); });
