@@ -40,6 +40,11 @@ function registreKeys() {
   });
 }
 
+// Crear los iconos de la aplicación
+function makeIcon(name) {
+  return nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', name));
+}
+
 function ready() {
   // Mostrará el icono de notificación
   const appIcon = new Tray(path.join(__dirname, 'assets', 'img', 'icon.png'));
@@ -55,7 +60,7 @@ function ready() {
     center: true,
     width: 1200,
     show: false,
-    icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.png'))
+    icon: makeIcon('icon.png')
   });
 
   mainWindow.setMenu(null);
@@ -76,10 +81,10 @@ function ready() {
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {
      thumbarButtons = thumbar.makeThumBar(mainWindow, {
-        next: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-next.png')),
-        pause: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-pause.png')),
-        prev: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-prev.png')),
-        play: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'thumb-play.png'))
+        next: makeIcon('thumb-next.png'),
+        pause: makeIcon('thumb-pause.png'),
+        prev: makeIcon('thumb-prev.png'),
+        play: makeIcon('thumb-play.png')
       });
     }
   });
@@ -108,7 +113,7 @@ ipcMain.on('show-config', () => {
       height: 500,
       center: true,
       width: 1125,
-      icon: nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', 'icon.png'))
+      icon: makeIcon('icon.png')
     });
 
     configWindow.setMenu(null);
