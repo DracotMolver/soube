@@ -116,7 +116,8 @@ function createDefaultListView() {
         url: v.filename
       })
       .insert(title, artist, album)
-      .on({ 'click': getDataSongAtPosition })[0]
+      .on({ 'click': getDataSongAtPosition })
+      .get()
     );
   });
 

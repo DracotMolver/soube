@@ -170,14 +170,14 @@ function searchInputData(e) {
           .data({ position: _list[totalResults - 1].position })
           .on({
             'click': playSelectedSong
-          })[0]
+          }).get()
         );
       }
 
       // Agregar los items al slide
       fragContRes.appendChild(
         $.clone(items[2], true).insert(fragRes)
-        .css(`width:${document.body.clientWidth}px;`)[0]
+        .css(`width:${document.body.clientWidth}px;`).get()
       );
     }
 
@@ -352,7 +352,7 @@ ipcRenderer.on('search-song', () => {
     $($('.grid-container').get(0)).css('-webkit-filter:blur(2px);');
     $('#wrapper-results').text('');
     $('#search').addClass('search-anim')
-    .on({ 'keyup': searchInputData }).val()[0].focus();
+    .on({ 'keyup': searchInputData }).get().focus();
     isSearchDisplayed = true;
     countSlide = 0;
   }
