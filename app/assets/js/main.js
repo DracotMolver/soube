@@ -20,8 +20,16 @@ const {
 const fs = require('fs');
 const execFile = require('child_process').execFile;
 const metaData = require('musicmetadata');
-const { ipcRenderer, shell, remote } = require('electron');
-const { dialog, app } = remote;
+const {
+  ipcRenderer,
+  shell,
+  remote
+} = require('electron');
+
+const {
+  dialog,
+  app
+} = remote;
 require('./commons');
 
 /** --------------------------------------- Variables --------------------------------------- **/
@@ -37,6 +45,7 @@ let tempSlide = 0;
 let countSlide = 0;
 let fragRes = null;
 let slide = 0;
+let regex = null;
 let _list = null; // Listado html de las canciones desplegadas en el front
 const items = [
   $.clone('div', false).addClass('grid-25 mobile-grid-25'),
@@ -107,6 +116,14 @@ function hideSearchInputData() {
   isSearchDisplayed = false;
 }
 
+// Busca la canción - Pequeña función de los items del slide
+// [searchInputData]
+function playSelectedSong() {
+  nextSong($(this).data('position', 'int'));
+
+  hideSearchInputData();
+}
+
 // Desplegar input search para buscar canciones
 // Registrar un shorcut
 function searchInputData(e) {
@@ -123,9 +140,13 @@ function searchInputData(e) {
     hideSearchInputData();
   }
 
-  _list = _songs.filter(v =>
-    (new RegExp(`^${searchValue.replace(/\s/g, '&nbsp;')}`, 'ig')).test(v.title)
-  );
+  regex = new RegExp(`^${searchValue.replace(/\s/g, '&nbsp;')}`, 'ig');
+  _list = _songs.filter(v => {
+    if (regex.test(v.title)) {
+      v.title = v.title.replace(/\&nbsp;/g, ' ');
+      return v;
+    }
+  });
 
   // Posibles resultados
   if (searchValue.length > 0) {
@@ -138,7 +159,7 @@ function searchInputData(e) {
     const x = (totalResults < 20 ? totalResults : 20);
     while (slide--) {
       for (var i = 0; i < x; i++ , totalResults--) {
-        textFound = _list[totalResults - 1].title.replace(/\&nbsp;/g, ' ');
+        textFound = _list[totalResults - 1].title;
 
         // Se generan los items dentro del slide
         fragRes.appendChild(
@@ -148,12 +169,7 @@ function searchInputData(e) {
           )
           .data({ position: _list[totalResults - 1].position })
           .on({
-            'click': function () {
-              // Reproduce la canción buscada
-              nextSong($(this).data('position', 'int'));
-
-              hideSearchInputData();
-            }
+            'click': playSelectedSong
           })[0]
         );
       }
@@ -166,14 +182,12 @@ function searchInputData(e) {
     }
 
     // Agregar paginación en caso de haber más de un slide
-    if (tempSlide > 1) {
-      // Como hay más canciones de las que se muestran
-      // se crea la paginación y siempre empieza en el primer slide
-      // generando así la animación de la flecha del lado derecho para avanzar al siguiente slide
-      $('#pagination').rmClass('hide').child(1).addClass('arrow-open-anim');
-    } else {
-      $('#pagination').addClass('hide');
-    }
+    // Como hay más canciones de las que se muestran
+    // se crea la paginación y siempre empieza en el primer slide
+    // generando así la animación de la flecha del lado derecho para avanzar al siguiente slide
+    tempSlide > 1 ?
+    $('#pagination').rmClass('hide').child(1).addClass('arrow-open-anim') :
+    $('#pagination').addClass('hide');
 
     // Despliega el total de canciones
     $('#wrapper-results').text('').insert(fragContRes)
@@ -225,6 +239,13 @@ function clickBtnControls() {
   }
 }
 
+// Activar animación shuffle
+function setShuffles() {
+  configFile.shuffle = !configFile.shuffle;
+  $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC;' : 'fill:#f06292;');
+  configFile = jsave(CONFIG_FILE, configFile);
+}
+
 function controlsActions(action) {
   switch (action) {
     case 'play-pause':
@@ -238,11 +259,7 @@ function controlsActions(action) {
       break;
     case 'next': nextSong(); break;
     case 'prev': prevSong(); break;
-    case 'shuffle':
-      configFile.shuffle = !configFile.shuffle;
-      $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC;' : 'fill:#f06292;');
-      configFile = jsave(CONFIG_FILE, configFile);
-      break;
+    case 'shuffle': setShuffles() ;break;
   }
 }
 
@@ -357,20 +374,16 @@ ipcRenderer.on('update-init-text', () => {
 });
 
 // Pausar o empezar canción con la combinación Ctrl + Up
-ipcRenderer.on('play-and-pause-song', () => { playSong(); });
+ipcRenderer.on('play-and-pause-song', playSong);
 
 // Siguiente canción con la combinación Ctrl + Right
-ipcRenderer.on('next-song', () => { nextSong(); });
+ipcRenderer.on('next-song', nextSong);
 
 // Canción anterior con la combinación Ctrl + Left
-ipcRenderer.on('prev-song', () => { prevSong(); });
+ipcRenderer.on('prev-song', prevSong);
 
 // shuffle Ctrl + Down
-ipcRenderer.on('shuffle', () => {
-  configFile.shuffle = !configFile.shuffle;
-  $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC;' : 'fill:#f06292;');
-  configFile = jsave(CONFIG_FILE, configFile);
-});
+ipcRenderer.on('shuffle', setShuffles);
 
 // ThumbarButtons [Windows]
 ipcRenderer.on('thumbar-controls', (e, a) => {
