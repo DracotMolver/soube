@@ -377,7 +377,7 @@ ipcRenderer.on('update-init-text', () => {
 ipcRenderer.on('play-and-pause-song', playSong);
 
 // Siguiente canción con la combinación Ctrl + Right
-ipcRenderer.on('next-song', nextSong);
+ipcRenderer.on('next-song', () => nextSong());
 
 // Canción anterior con la combinación Ctrl + Left
 ipcRenderer.on('prev-song', prevSong);
