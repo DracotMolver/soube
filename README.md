@@ -4,6 +4,8 @@
 
 Soube is a simple and minimalist music player based on Electronjs.
 
+#### Install it on Windows, Mac & Linux
+
 [Soube website](http://soube.diegomolina.cl)
 
 ## Features
