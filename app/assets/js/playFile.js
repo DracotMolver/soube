@@ -86,13 +86,13 @@ function shuffle() { return Math.floor(Math.random() * songs.length); }
 
 function animPlay() {
   $('.anim-play').each((v, i) => {
-    v.attr({ 'from': anim.from[i], 'to': anim.to[i] }).element.beginElement();
+    v.attr({ 'from': anim.from[i], 'to': anim.to[i] }).get().beginElement();
   })
 }
 
 function animPause() {
   $('.anim-play').each((v, i) => {
-    v.attr({ 'from': anim.to[i], 'to': anim.from[i] }).element.beginElement();
+    v.attr({ 'from': anim.to[i], 'to': anim.from[i] }).get().beginElement();
   });
 }
 
