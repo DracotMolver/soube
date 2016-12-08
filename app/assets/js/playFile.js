@@ -197,7 +197,6 @@ function dataSong(_position) {
 
 // EJecuta, por medio de la Audio Web API, la canción.
 // Se obtiene un array buffer con info útil para usar
-oldFilePath = '';
 function play() {
   // Creamos un Buffer que contendrá la canción
   source = audioContext.createBufferSource();
@@ -241,27 +240,6 @@ function play() {
   xhtr.send(null);
 }
 
-function canBePlay() {
-  // Limpia en caso de haber existido un timer.
-  // Eso es cuando se cambia de cación muy rápido.
-  // De tener la cación escogina, se espera unos milesegundos para inicializar la canción.
-  clearTimeout(_t);
-  _t = setTimeout(() => {
-    play();
-  }, 360);
-}
-
-function stateOfSongs() {
-  if (isSongPlaying && audioContext.state === 'running') {
-    source.stop(audioContext.currentTime);
-  } else if (!isSongPlaying && audioContext.state === 'suspended') {
-    source.stop(audioContext.currentTime);
-    audioContext.resume();
-  } else if (!isSongPlaying && audioContext.state === 'running' ) {
-    source.stop(audioContext.currentTime);
-  }
-}
-
 // Reproduce la siguiente canción.
 // Esta función se comparte cuando se genera la lista de canciones,
 // ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
@@ -276,6 +254,7 @@ function nextSong(_position = -1) {
       source = null;
     }
 
+
     dataSong(_position !== -1 ? _position : (
       jread(CONFIG_FILE).shuffle ? shuffle() : (songs.length - 1 > position ? position + 1 : 0)
     ));
@@ -286,7 +265,7 @@ function nextSong(_position = -1) {
 
 // Reproducirá la canción anterior
 function prevSong() {
-  if (isNextAble && tmpPosition.length > 0) {
+  if (isNextAble && (tmpPosition.length > 0 || tmpPosition[0] !== null)) {
     dataSong(tmpPosition.pop());
 
     // Verificar si el contexto está pausado o no.
