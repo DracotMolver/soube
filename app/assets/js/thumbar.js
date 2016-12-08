@@ -35,7 +35,7 @@ function makeThumBar(win, imgs = {}) {
   let pause = Object.create(generalObject);
   pause.icon = imgs.pause
   pause.tooltip = 'Pause';
-  puase.click = () => {
+  pause.click = () => {
     win.setThumbarButtons(playMomment);
     win.webContents.send('thumbar-controls', 'play-pause');
   }
