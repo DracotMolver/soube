@@ -1,6 +1,7 @@
 process.env.NODE_ENV = 'production';
 
-/** ---------------------------- Módulos ---------------------------- **/
+/* --------------------------------- Módulos --------------------------------- */
+// Electron módulos
 const {
   globalShortcut,
   BrowserWindow,
@@ -10,11 +11,14 @@ const {
   app
 } = require('electron');
 
+// Node módulos
 const path = require('path'); // Crear la ruta usando el separador por defecto del SO
-const configFiles = require('./../app/assets/js/configFiles.js');
-const thumbar = require('./../app/assets/js/thumbar.js'); // [Windows]
 
-/** ---------------------------- Variables ---------------------------- **/
+// Módulos propios
+const configFiles = require('./../app/assets/js/config');
+const thumbar = require('./../app/assets/js/thumbar'); // [Windows]
+
+/* --------------------------------- Variables --------------------------------- */
 let configWindow = null;
 let mainWindow = null;
 const shortKeys = {
@@ -27,7 +31,7 @@ const shortKeys = {
 };
 let thumbarButtons = {};
 
-/** ---------------------------- Funciones ---------------------------- **/
+/* --------------------------------- Funciones --------------------------------- */
 function closeRegisteredKeys() {
   Object.keys(shortKeys).forEach(v => { globalShortcut.unregister(v); });
 }
@@ -86,21 +90,23 @@ function ready() {
         prev: makeIcon('thumb-prev.png'),
         play: makeIcon('thumb-play.png')
       });
+
+      // Iniciación por defecto
+      mainWindow.setThumbarButtons(obj.playMomment);
     }
   });
 
   // Crear archivos de configuración
-  configFiles.setPath(app);
-  configFiles.makeFiles();
+  configFiles.createFiles(app.getPath('userData'));
 }
 
-/** ---------------------------- Electronjs Cosas O_o ---------------------------- **/
+/* --------------------------------- Electronjs Cosas O_o --------------------------------- */
 app.on('window-all-closed', () => { app.quit(); })
 app.setName('Soube');
 app.on('ready', ready);
 
 
-/** ---------------------------- Ipc Main ---------------------------- **/
+/* --------------------------------- Ipc Main --------------------------------- */
 // Desplegar la ventana de configuraciones
 ipcMain.on('show-config', () => {
   if (configWindow === null) {
