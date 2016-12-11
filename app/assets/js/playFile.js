@@ -125,16 +125,17 @@ function playSong() {
 
 // Genera el tiempo que lleva reproduciendose la canción
 function startTimer() {
-  worker.addEventListener('message', e => {
-    $('#time-start').text(e.data.time);
-    $('#progress-bar').css(e.data.w);
-  });
+  worker.onmessage = e => {
+    console.log(e);
+    // $('#time-start').text(e.data.time);
+    // $('#progress-bar').css(e.data.w);
+  };
 
-  const iter = () => {
+  // const iter = () => {
     worker.postMessage({ action:'start', per: lapse });
-    interval = requestAnimationFrame(iter);
-  }
-  interval = requestAnimationFrame(iter);
+    // interval = requestAnimationFrame(iter);
+  // }
+  // interval = requestAnimationFrame(iter);
 
 }
 
@@ -145,6 +146,7 @@ function stopTimer() {
 
     cancelAnimationFrame(interval);
     worker.postMessage({ action: 'stop' });
+    worker.terminate();
 
     _duration = _minute = _second = time =
     minute = second = millisecond = percent = 0;
@@ -176,7 +178,7 @@ function stopTimer() {
 // para desplegarlos en la interfaz
 function dataSong(_position) {
   $('#time-start').text('00:00');
-  $('#progress-bar').css('width:0;');
+  $('#progress-bar').css('width:0');
 
   infoSong = songs[(position = parseInt(_position, 10))];
   filePath = infoSong.filename; // Ruta donde se encuentra el archivo a reproducir
