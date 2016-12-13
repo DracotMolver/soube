@@ -10,28 +10,34 @@ module.exports = (_ => {
     key: ''
   };
   let poolListeners = [];
+  let count = 0;
 
   /* --------------------------------- Pools --------------------------------- */
   // Listeners
   const registerListener = (name, listener) => {
-    listener.key = name;
+    listener.key = /^[^\.\:\#]/.test(name) ? `#${name}` : name;
     poolListeners[name] = listener;
   }
 
   const getListener = name => {
+    if (/^[^\.\:\#]/.test(name)) name = `${name}`;
     return poolListeners[name];
   };
 
   // Pool general
   const setPool = (name, element) => {
-    poolElements[name] = element;
+    if (/^[^\.\:\#]/.test(name)) name = `#${name}`;
+
+    if (!poolElements[name]) poolElements[name] = element;
   };
 
   const getPool = name => {
-    if (poolElements[name]) return poolElements[name];
+    if (/^[^\.\:\#]/.test(name)) name = `${name}`;
+    return poolElements[name] ? poolElements[name] : false;
   };
 
   const isInPool = name => {
+    if (/^[^\.\:\#]/.test(name)) name = `#${name}`;
     return poolElements[name] !== undefined;
   };
 
@@ -74,7 +80,7 @@ module.exports = (_ => {
   emitters.on('child', (name, pos = -1) => {
     if(pos > -1) {
       let c = getPool(name).children[pos];
-      name = `#${name}-child`;
+      name = `${name}-child`;
       setPool(name, c);
       registerListener(name, Object.assign({}, listeners));
     } else {
@@ -113,9 +119,9 @@ module.exports = (_ => {
       Object.keys(data[0]).forEach(v => {
         el.dataset[v] = data[v];
       });
-
-      return getListener(name);
     }
+
+    return getListener(name);
   });
 
   emitters.on('each', (name, fn) => {
@@ -204,18 +210,36 @@ module.exports = (_ => {
     // }
 
   /* --------------------------------- Main Function --------------------------------- */
+  // const uniqueId = function(element) {
+  //   const n = `${element.tagName}-${Math.floor(Math.random() * 256)}`;
+  //   if (!isInPool(n)) {
+  //     element.id = n;
+  //     return;
+  //   } else {
+  //     uniqueId(element);
+  //   }
+  // }
+
   // Recibe un string para buscar el elemento en el DOM y retornar un objeto
   // con todasl a funciones necesarias para ser usados sobre este proyecto
   const DOM = e => {
     // Revisar si ya se está usando el mismo elemento
+    // De no existir se crea, pero solo una vez.
     if (!isInPool(e)) {
       // Insertar en pool elementos seleccionados desde el DOM
-      if (/^\./.test(e)) setPool(e, Array.from(document.getElementsByClassName(e.replace('.', ''))));
-      else if (/^#/.test(e)) setPool(e, document.getElementById(e.replace('#', '')));
-      else if (/^:/.test(e)) setPool(e, Array.from(document.getElementsByTagName(e.replace(':', ''))));
+      if (/^\./.test(e)) setPool(e, Array.from(document.getElementsByClassName(e.replace('.', '')))), count = 0;
+      else if (/^#/.test(e)) setPool(e, document.getElementById(e.replace('#', ''))), count = 0;
+      else if (/^:/.test(e)) setPool(e, Array.from(document.getElementsByTagName(e.replace(':', '')))), count = 0;
       else {
-        e = e.id === '' ? `${e.tagName}-${Math.floor(Math.random() * 256)}` : e.id;
-        setPool(`#${e.id}`, e);
+        if (e.id === '') {
+          e.id = `${e.tagName.toLowerCase()}-${count++}`;
+          if (isInPool(e.id)) {
+            let n = e.id.match(/\d+$/);
+            e.id = `${e.tagName.toLowerCase()}-${parseInt(n[0], 10) + 1}`;
+          }
+        }
+        setPool(`${e.id}`, e);
+        e = `${e.id}`;
       }
 
       registerListener(e, Object.assign({}, listeners));
