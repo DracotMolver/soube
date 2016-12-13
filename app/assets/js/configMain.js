@@ -22,7 +22,7 @@ require('./dom');
 // Equalizador
 let hrzGain = config().equalizer;
 let range = null;
-let plus = 0;
+// let plus = 0;
 let pos = 0;
 let db = 0;
 let y = 0;
@@ -108,7 +108,9 @@ function animConfigPanel() {
 
 // Animación de los botones sobre el panel ecualizador
 function onEqualizerPanel(e) {
-  $('.eq-buttons').each((v, i) => { $(v).text(lang.eqStyles[i]); });
+  $('.eq-buttons').each((v, i) => {
+    $(v).text(lang.eqStyles[i]);
+  });
 
   $(`#${$(this).data('action')}`).replaceClass('hide', '');
 
@@ -159,11 +161,10 @@ function onEqualizerPanel(e) {
 
 // Resetea el Equalizador
 function resetEQ() {
-  configFile.equalizer = configFile.equalizer.fill(0);
-  configFile.equalizer.forEach((v, i) => {
+  config().equalizer = config().equalizer.fill(0);
+  config().equalizer.forEach((v, i) => {
     ipcRenderer.send('equalizer-filter', [i, v]);
   });
-  configFile = jsave(CONFIG_FILE, configFile);
   $('.range-circle').css('top:130px');
 }
 
@@ -171,12 +172,12 @@ function othersEQ(hrz) {
   const circles = $('.range-circle');
   hrz.forEach((v, i) => {
     // Afectar al source node actual
-  ipcRenderer.send('equalizer-filter', [i,
-    v !== 0 ? parseFloat((v < 130 ? 121 - v : - (v - 140)) / 10) : 0
-  ]);
+    ipcRenderer.send('equalizer-filter', [i,
+      v !== 0 ? parseFloat((v < 130 ? 121 - v : - (v - 140)) / 10) : 0
+    ]);
 
-  $(circles.get(i)).css(`top:${v === 0 ? 130 : v}px`);
-});
+    $(circles.get(i)).css(`top:${v === 0 ? 130 : v}px`);
+  });
 
 // Guardar configuración
 // configFile.equalizer = hrz;
@@ -214,18 +215,18 @@ function onClickLegal() {
 // Mostrar ecualizador
 $('#equalizer-panel').on({ 'click': onEqualizerPanel });
 
-// // Acciones predefinidas del ecualizador
-// $('.eq-buttons').on({
-//   'click': function () {
-//     const eq = $(this).data('eq', 'string');
-//     switch(eq) {
-//       case 'rock':
-//       case 'electro':
-//       case 'acustic': othersEQ(_otherQE[eq]); break;
-//       case 'reset': resetEQ(); break;
-//     }
-//   }
-// });
+// Acciones predefinidas del ecualizador
+$('.eq-buttons').on({
+  'click': function () {
+    const eq = $(this).data('eq');
+    switch(eq) {
+      case 'rock':
+      case 'electro':
+      case 'acustic': othersEQ(_otherQE[eq]); break;
+      case 'reset': resetEQ(); break;
+    }
+  }
+});
 
 // Abrir en el navegador por defecto sel SO
 $(':a').on({
