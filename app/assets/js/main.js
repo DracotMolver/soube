@@ -53,11 +53,11 @@ let fragRes = null;
 let slide = 0;
 let regex = null;
 let _list = null; // Listado html de las canciones desplegadas en el front
-const items = [
-  $.create('div').addClass('grid-25 mobile-grid-25'),
-  $.create('div').addClass('search-results'),
-  $.create('div').addClass('results')
-];
+// const items = [
+//   $.create('div').addClass('grid-25 mobile-grid-25'),
+//   $.create('div').addClass('search-results'),
+//   $.create('div').addClass('results')
+// ];
 
 
 /** --------------------------------------- Funciones --------------------------------------- **/
