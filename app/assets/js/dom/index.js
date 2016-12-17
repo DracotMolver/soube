@@ -16,11 +16,11 @@ module.exports = (_ => {
   // Listeners
   const registerListener = (name, listener) => {
     listener.key = /^[^\.\:\#]/.test(name) ? `#${name}` : name;
-    poolListeners[name] = listener;
+    poolListeners[listener.key] = listener;
   }
 
   const getListener = name => {
-    if (/^[^\.\:\#]/.test(name)) name = `${name}`;
+    if (/^[^\.\:\#]/.test(name)) name = `#${name}`;
     return poolListeners[name];
   };
 
@@ -32,13 +32,13 @@ module.exports = (_ => {
   };
 
   const getPool = name => {
-    if (/^[^\.\:\#]/.test(name)) name = `${name}`;
+    if (/^[^\.\:\#]/.test(name)) name = `#${name}`;
     return poolElements[name] ? poolElements[name] : false;
   };
 
   const isInPool = name => {
     if (/^[^\.\:\#]/.test(name)) name = `#${name}`;
-    return poolElements[name] !== undefined;
+    return Object.keys(poolElements).some(v => v === name);
   };
 
   /* --------------------------------- Events --------------------------------- */
@@ -111,7 +111,7 @@ module.exports = (_ => {
   emitters.on('data', (name, data) => {
     if (typeof data === 'string') {
       let d = getPool(name).dataset[data];
-      if (/^\d+$/.test(d)) return parseInt(d, 10);
+      if (/^\d+$/.test(d)) return parseInt(d);
       else if (/^\d+(\.+)\d+$/.test(d)) return parseFloat(d);
       else if (/^(\w|\s)+$/.test(d)) return d.toString();
     } else {
@@ -137,6 +137,7 @@ module.exports = (_ => {
     const rgx = new RegExp(str, 'g');
     let cssText = null;
     let el = getPool(name);
+    console.log(el);
     if (el.length !== undefined) {
       el.forEach(e => {
         cssText = e.style;
@@ -146,6 +147,12 @@ module.exports = (_ => {
         cssText = el.style;
         if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${str};` : ` ${str};`;
     }
+
+    return getListener(name);
+  });
+
+  emitters.on('clone', (name, isCloned) => {
+    return DOM(getPool(name).cloneNode(isCloned));
   });
 
   listeners.addClass = function(str) { return emitters.send('addClass', this.key , str); };
@@ -156,6 +163,7 @@ module.exports = (_ => {
   listeners.data = function(data) { return emitters.send('data', this.key , data); };
   listeners.each = function(fn) { return emitters.send('each', this.key , fn); };
   listeners.css = function(str) { return emitters.send('css', this.key , str); };
+  listeners.clone = function(isCloned) { return emitters.send('clone', this.key, str)};
 
     // return {
 
@@ -231,15 +239,30 @@ module.exports = (_ => {
       else if (/^#/.test(e)) setPool(e, document.getElementById(e.replace('#', ''))), count = 0;
       else if (/^:/.test(e)) setPool(e, Array.from(document.getElementsByTagName(e.replace(':', '')))), count = 0;
       else {
-        if (e.id === '') {
-          e.id = `${e.tagName.toLowerCase()}-${count++}`;
-          if (isInPool(e.id)) {
-            let n = e.id.match(/\d+$/);
-            e.id = `${e.tagName.toLowerCase()}-${parseInt(n[0], 10) + 1}`;
+        if (typeof e !== 'object') { // Cuando pasamos un string para crear un elemento
+          setPool(e, document.createElement(e));
+        }else { // Cando se pasa el objeto de manera directa usando this
+          if (e.id === '') {
+            e.id = `${e.tagName.toLowerCase()}-${count++}`;
+            const search = () => {
+              if (isInPool(e.id)) {
+                e.id = `${e.tagName.toLowerCase()}-${parseInt(e.id.match(/\d+$/)[0]) + 1}`;
+                return search();
+              } else {
+                return;
+              }
+            };
+            search();
+          }
+
+          if (e !== document) {
+            setPool(`${e.id}`, e);
+            e = `${e.id}`;
+          } else {
+            setPool('document', e);
+            e = 'document';
           }
         }
-        setPool(`${e.id}`, e);
-        e = `${e.id}`;
       }
 
       registerListener(e, Object.assign({}, listeners));
@@ -248,16 +271,5 @@ module.exports = (_ => {
     return getListener(e);
   };
 
-  const createFunc = e => {
-    if (!isInPool(e)) {
-      setPool(e, document.createElement(e));
-      registerListener(e, Object.assign({}, listeners));
-    }
-
-    return getListener(e);
-  };
-
   _.$ = DOM; // Manipular DOM
-  _.$.create = createFunc; // Crear elementos
-
 })(global);
