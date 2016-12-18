@@ -78,7 +78,7 @@ module.exports = (_ => {
   });
 
   emitters.on('child', (name, pos = -1) => {
-    if(pos > -1) {
+    if (pos > -1) {
       let c = getPool(name).children[pos];
       name = `${name}-child`;
       setPool(name, c);
@@ -95,15 +95,15 @@ module.exports = (_ => {
       getPool(name).forEach(e => {
         Object.keys(fn).forEach(v => {
           /animation/.test(v) ?
-          e.addEventListener(v.toLowerCase(), fn[v]) :
-          e[`on${v.toLowerCase()}`] = fn[v];
+            e.addEventListener(v.toLowerCase(), fn[v]) :
+            e[`on${v.toLowerCase()}`] = fn[v];
         });
       });
     } else {
       Object.keys(fn).forEach(v => {
         /animation/.test(v) ?
-        getPool(name).addEventListener(v.toLowerCase(), fn[v]) :
-        getPool(name)[`on${v.toLowerCase()}`] = fn[v];
+          getPool(name).addEventListener(v.toLowerCase(), fn[v]) :
+          getPool(name)[`on${v.toLowerCase()}`] = fn[v];
       });
     }
   });
@@ -126,9 +126,9 @@ module.exports = (_ => {
 
   emitters.on('each', (name, fn) => {
     let el = getPool(name);
-    for (var i = 0, size = el.length; i < size; i++) {
-      fn.length === 1 ? fn(el[i]) : fn(el[i], i);
-    }
+    el.forEach((v, i) => {
+      fn.length === 1 ? fn(v) : fn(v, i);
+    });
 
     return getListener(name);
   });
@@ -137,15 +137,15 @@ module.exports = (_ => {
     const rgx = new RegExp(str, 'g');
     let cssText = null;
     let el = getPool(name);
-    console.log(el);
+
     if (el.length !== undefined) {
       el.forEach(e => {
         cssText = e.style;
         if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${str};` : ` ${str};`;
       });
     } else {
-        cssText = el.style;
-        if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${str};` : ` ${str};`;
+      cssText = el.style;
+      if (!rgx.test()) cssText.cssText += cssText.cssText === '' ? `${str};` : ` ${str};`;
     }
 
     return getListener(name);
@@ -155,79 +155,70 @@ module.exports = (_ => {
     return DOM(getPool(name).cloneNode(isCloned));
   });
 
-  listeners.addClass = function(str) { return emitters.send('addClass', this.key , str); };
-  listeners.text = function(str) { return emitters.send('text', this.key , str); };
-  listeners.replaceClass = function(from, to) { return emitters.send('replaceClass', this.key , from, to); };
-  listeners.child = function(pos) { return emitters.send('child', this.key , pos); };
-  listeners.on = function(fn) { return emitters.send('on', this.key , fn); };
-  listeners.data = function(data) { return emitters.send('data', this.key , data); };
-  listeners.each = function(fn) { return emitters.send('each', this.key , fn); };
-  listeners.css = function(str) { return emitters.send('css', this.key , str); };
-  listeners.clone = function(isCloned) { return emitters.send('clone', this.key, str)};
+  emitters.on('get', (name, pos) => {
+    const e = getPool(name);
+    return e.length !== undefined ? e[pos] : e;
+  });
 
-    // return {
+  emitters.on('rmAttr', (name, attr) => {
+    getPool(name).removeAttribute(attr);
+    return getListener(name);
+  });
+
+  listeners.addClass = function (str) { return emitters.send('addClass', this.key, str); };
+  listeners.text = function (str) { return emitters.send('text', this.key, str); };
+  listeners.replaceClass = function (from, to) { return emitters.send('replaceClass', this.key, from, to); };
+  listeners.child = function (pos) { return emitters.send('child', this.key, pos); };
+  listeners.on = function (fn) { return emitters.send('on', this.key, fn); };
+  listeners.data = function (data) { return emitters.send('data', this.key, data); };
+  listeners.each = function (fn) { return emitters.send('each', this.key, fn); };
+  listeners.css = function (str) { return emitters.send('css', this.key, str); };
+  listeners.clone = function (isCloned) { return emitters.send('clone', this.key, str) };
+  listeners.get = function (pos) { return emitters.send('get', this.key, pos); }
+  listeners.rmAttr = function (attr) { return emitters.send('rmAttr', this.key, attr); }
+
+  //   child: function (p = 'all') { // Buscar hijos
+  //     this._e = (p !== 'all' && typeof p === 'number') ? this._e.children[p] : Array.from(this._e.children);
+  //     return this;
+  //   },
+  //   rmChild: function (c) { // Remover hijo específico
+  //     this._e.removeChild(this._e.children[c - 1]);
+  //   },
+
+  //   has: function (s) {
+  //     return (new RegExp(s, 'g')).test(this._e.className);
+  //   },
+  //   attr: function (o) { // Agrega un atributo
+  //     if (typeof o === 'object')
+  //       Object.keys(o).forEach(v => { this._e.setAttribute(v, o[v]); });
+  //     else if (typeof o == 'string')
+  //       return this._e.getAttribute(o);
+
+  //     return this;
+  //   },
+  //   insert: function (...a) { // appendChild
+  //     a.forEach(v => { this._e.appendChild('_e' in v ? v._e : v); });
+  //     return this;
+  //   },
 
 
-    //   child: function (p = 'all') { // Buscar hijos
-    //     this._e = (p !== 'all' && typeof p === 'number') ? this._e.children[p] : Array.from(this._e.children);
-    //     return this;
-    //   },
-    //   rmChild: function (c) { // Remover hijo específico
-    //     this._e.removeChild(this._e.children[c - 1]);
-    //   },
-
-    //   rmAttr: function (a) { // Remueve un atributo
-    //     this._e.removeAttribute(a);
-    //     return this;
-    //   },
-    //   has: function (s) {
-    //     return (new RegExp(s, 'g')).test(this._e.className);
-    //   },
-    //   attr: function (o) { // Agrega un atributo
-    //     if (typeof o === 'object')
-    //       Object.keys(o).forEach(v => { this._e.setAttribute(v, o[v]); });
-    //     else if (typeof o == 'string')
-    //       return this._e.getAttribute(o);
-
-    //     return this;
-    //   },
-    //   insert: function (...a) { // appendChild
-    //     a.forEach(v => { this._e.appendChild('_e' in v ? v._e : v); });
-    //     return this;
-    //   },
+  //     return this;
+  //   },
 
 
-    //     return this;
-    //   },
-
-
-    //     return this;
-    //   },
-    //   val: function (v = '') { // Ingresar value
-    //     if (v === '') {
-    //       return v.value;
-    //     } else {
-    //       this._e.value = v;
-    //       return this;
-    //     }
-    //   },
-
-    //   get: function (p = 0) {
-    //     return this._e.length !== undefined ? this._e[p] : this._e;
-    //   }
-    // }
-
-  /* --------------------------------- Main Function --------------------------------- */
-  // const uniqueId = function(element) {
-  //   const n = `${element.tagName}-${Math.floor(Math.random() * 256)}`;
-  //   if (!isInPool(n)) {
-  //     element.id = n;
-  //     return;
-  //   } else {
-  //     uniqueId(element);
-  //   }
+  //     return this;
+  //   },
+  //   val: function (v = '') { // Ingresar value
+  //     if (v === '') {
+  //       return v.value;
+  //     } else {
+  //       this._e.value = v;
+  //       return this;
+  //     }
+  //   },
   // }
 
+  /* --------------------------------- Main Function --------------------------------- */
   // Recibe un string para buscar el elemento en el DOM y retornar un objeto
   // con todasl a funciones necesarias para ser usados sobre este proyecto
   const DOM = e => {
@@ -241,13 +232,13 @@ module.exports = (_ => {
       else {
         if (typeof e !== 'object') { // Cuando pasamos un string para crear un elemento
           setPool(e, document.createElement(e));
-        }else { // Cando se pasa el objeto de manera directa usando this
+        } else { // Cando se pasa el objeto de manera directa usando this
           if (e.id === '') {
             e.id = `${e.tagName.toLowerCase()}-${count++}`;
             const search = () => {
               if (isInPool(e.id)) {
                 e.id = `${e.tagName.toLowerCase()}-${parseInt(e.id.match(/\d+$/)[0]) + 1}`;
-                return search();
+                search();
               } else {
                 return;
               }
