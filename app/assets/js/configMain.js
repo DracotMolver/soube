@@ -4,19 +4,15 @@
 /* --------------------------------- Módulos --------------------------------- */
 // Electron módulos
 const {
-// //   shell,
+  shell,
   ipcRenderer,
   remote
 } = require('electron');
 
-// // // // Node módulos
-// // // const execFile = require('child_process').execFile;
-// // // const fs = require('fs');
-
 // Propios
 const factory = require('./factory');
 const player = factory('player');
-// // const equalizer = factory('equilizer');
+const EQ = factory('equilizer');
 
 const {
   configFile,
@@ -26,17 +22,7 @@ const {
 } = require('./config').init();
 require('./dom');
 
-// // /* --------------------------------- Variables --------------------------------- */
-// // // Equalizador
-// // let hrzGain = config().equalizer;
-
-// // // // Estilos de ondas
-// // // const _otherQE = {
-// // //   rock: [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103],
-// // //   electro: [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121],
-// // //   acustic: [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90]
-// // // };
-
+/* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
 
 /* --------------------------------- Funciones --------------------------------- */
@@ -69,20 +55,20 @@ function animConfigPanel(e, text) {
   $('#_titlesubconfig').text(` > ${text}`);
 }
 
-// // // Cambiar el idioma del reproductor
-// // // // Nota: Esta función se mantiene acá por ser simple
-// // // function onClickChangeLang() {
-// // //   animConfigPanel(lang.config.changeLanguage);
+// Cambiar el idioma del reproductor
+// Nota: Esta función se mantiene acá por ser simple
+function onClickChangeLang() {
+  animConfigPanel(lang.config.changeLanguage);
 
-// // //   $('.lang-option').on({
-// // //     'click': function () {
-// // //       // configFile.lang = $(this).data('lang', 'string');
-// // //       // configFile = jsave(CONFIG_FILE, configFile);
-// // //       // ipcRenderer.send('update-lang');
-// // //       // window.location.reload(false);
-// // //     }
-// // //   });
-// // // }
+  $('.lang-option').on({
+    'click': function () {
+      configFile.lang = $(this).data('lang');
+      editFile('config', configFile);
+      ipcRenderer.send('update-lang');
+      window.location.reload(false);
+    }
+  });
+}
 
 // Obtenemos las canciones - ruta
 function saveSongList(parentFolder = '') {
@@ -110,62 +96,65 @@ function saveSongList(parentFolder = '') {
   });
 }
 
-// // // Animación de los botones sobre el panel ecualizador
-// // // Hace uso de la clase equalizer y sus métodos
-// // function onEqualizerPanel(e) {
-// //   $('.eq-buttons').each((v, i) => {
-// //     $(v).text(lang.eqStyles[i]);
-// //   });
+// Animación de los botones sobre el panel ecualizador
+// Hace uso de la clase equalizer y sus métodos
+function onEqualizerPanel(e) {
+  $('.eq-buttons').each((v, i) => {
+    $(v).text(lang.eqStyles[i]);
+  });
 
-// //   animConfigPanel(this, lang.config.equalizerSetting);
+  animConfigPanel(this, lang.config.equalizerSetting);
 
-// //   equalizer.onDragMove(data => {
-// //       ipcRenderer.send('equalizer-filter', data);
-// //   });
+  EQ.onDragMove(data => {
+      ipcRenderer.send('equalizer-filter', data);
+  });
 
-// //   equalizer.onDragEnd((pos, db) => {
-// //     config().equalizer = (hrzGain[pos] = db);
-// //   });
+  EQ.onDragEnd((pos, db) => {
+    configFile.equalizer[pos] = db;
+  });
 
-// //   // El evento es solo registrado sobre los botones redondos
-// //   // Setear la configuración establecida
-// //   $('.range-circle').each((v, i) => {
-// //     $(v).css(`top:${hrzGain[i] === 0 ? 130 : hrzGain[i]}px`);
-// //   }).on({
-// //     'mousedown': equalizer.onDragStart
-// //   });
-// // }
+  // El evento es solo registrado sobre los botones redondos
+  // Setear la configuración establecida
+  $('.range-circle').each((v, i) => {
+    $(v).css(`top:${configFile.equalizer[i] === 0 ? 130 : configFile.equalizer[i]}px`);
+  }).on({
+    'mousedown': EQ.onDragStart
+  });
+}
 
-// // // Resetea el Equalizador
-// // function resetEQ() {
-// //   config().equalizer = config().equalizer.fill(0);
-// //   config().equalizer.forEach((v, i) => {
-// //     ipcRenderer.send('equalizer-filter', [i, v]);
-// //   });
-// //   $('.range-circle').css('top:130px');
-// // }
+// Resetea el Equalizador
+function resetEQ() {
+  configFile.equalizer.fill(0).forEach((v, i) => {
+    ipcRenderer.send('equalizer-filter', [i, v]);
+  });
+  $('.range-circle').css('top:130px');
+}
 
-// // function othersEQ(hrz) {
-// //   $('.range-circle').each((v, i) => {
-// //     $(v).css(`top:${v === 0 ? 130 : v}px`);
+function othersEQ(hrz) {
+  $('.range-circle').each((v, i) => {
+    $(v).css(`top:${hrz[i] === 0 ? 130 : hrz[i]}px`);
 
-// //     // Afectar al source node actual
-// //     ipcRenderer.send('equalizer-filter', [i,
-// //       hrz[i] !== 0 ? parseFloat((hrz[i] < 130 ? 121 - hrz[i] : -hrz[i] + 140) / 10) : 0
-// //     ]);
-// //   });
-// // // Guardar configuración
-// // // configFile.equalizer = hrz;
-// // // configFile = jsave(CONFIG_FILE, configFile);
-// // }
+    // Afectar al source node actual
+    ipcRenderer.send('equalizer-filter', [i,
+      hrz[i] !== 0 ? parseFloat((hrz[i] < 130 ? 121 - hrz[i] : -hrz[i] + 140) / 10) : 0
+    ]);
+  });
 
+  configFile.equalizer = hrz;
+}
 
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Refrescar la ventana
-$('#_titleconfig').on({ 'click': () => { window.location.reload(false); }});
+$('#_titleconfig').on({
+  'click': () => {
+    // Ya que se refresca el navegador, debemos guardar todo cambio
+    editFile('config', configFile);
+    window.location.reload(false);
+  }
+});
 
-// // // // // Cambiar idioma
-// // // // $('#change-lang').on({ 'click': onClickChangeLang });
+// Cambiar idioma
+$('#change-lang').on({ 'click': onClickChangeLang });
 
 // Acción para agregar el listado de canciones
 $('#add-songs').on({
@@ -179,29 +168,29 @@ $('#add-songs').on({
   }
 });
 
-// // // Mostrar ecualizador
-// // $('#equalizer-panel').on({ 'click': onEqualizerPanel });
+// Mostrar ecualizador
+$('#equalizer-panel').on({ 'click': onEqualizerPanel });
 
-// // // Acciones predefinidas del ecualizador
-// // $('.eq-buttons').on({
-// //   'click': function () {
-// //     const eq = $(this).data('eq');
-// //     switch(eq) {
-// //       case 'rock':
-// //       case 'electro':
-// //       case 'acustic': othersEQ(_otherQE[eq]); break;
-// //       case 'reset': resetEQ(); break;
-// //     }
-// //   }
-// // });
+// Acciones predefinidas del ecualizador
+$('.eq-buttons').on({
+  'click': function () {
+    const eq = $(this).data('eq');
+    switch(eq) {
+      case 'rock':
+      case 'electro':
+      case 'acustic': othersEQ(EQ.styles[eq]); break;
+      case 'reset': resetEQ(); break;
+    }
+  }
+});
 
-// // // // Abrir en el navegador por defecto sel SO
-// // // $(':a').on({
-// // //   'click': function (e) {
-// // //     e.preventDefault();
-// // //     shell.openExternal(this.href);
-// // //   }
-// // // });
+// Abrir en el navegador por defecto sel SO
+$(':a').on({
+  'click': function (e) {
+    e.preventDefault();
+    shell.openExternal(this.href);
+  }
+});
 
 // Mostrar legal
 $('#terms').on({
