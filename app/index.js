@@ -15,7 +15,7 @@ const {
 const path = require('path'); // Crear la ruta usando el separador por defecto del SO
 
 // Módulos propios
-const configFiles = require('./../app/assets/js/config');
+const config = require('./../app/assets/js/config');
 const thumbar = require('./../app/assets/js/thumbar'); // [Windows]
 
 /* --------------------------------- Variables --------------------------------- */
@@ -97,7 +97,7 @@ function ready() {
   });
 
   // Crear archivos de configuración
-  configFiles.createFiles(app.getPath('userData'));
+  config.createFiles(app.getPath('userData'));
 }
 
 /* --------------------------------- Electronjs Cosas O_o --------------------------------- */
