@@ -6,37 +6,38 @@ module.exports = (_ => {
   /* --------------------------------- Variables --------------------------------- */
   var createdElements = {};
   var poolOfElements = {};
+  var event = {};
 
   /* --------------------------------- Eventos --------------------------------- */
   const Event = {
     element: null,
-    addClass: str => {
+    addClass: function(str) {
       const rgx = new RegExp(str, 'g');
-      const cName = Event.element.className;
+      const cName = this.element.className;
 
-      if (!rgx.test(cName)) Event.element.className += cName === '' ? `${str}` : ` ${str}`;
+      if (!rgx.test(cName)) this.element.className += cName === '' ? `${str}` : ` ${str}`;
 
-      return Event;
+      return this;
     },
-    text: (str = '') => {
-      if (str !== '') Event.element.innerHTML = `${str}`;
-      else return Event.element.textContent;
+    text: function(str = '') {
+      if (str !== '') this.element.innerHTML = `${str}`;
+      else return this.element.textContent;
 
-      return Event;
+      return this;
     },
-    replaceClass: (from, to) => {
-      Event.element.className = Event.element.className.replace(from, to);
-      return Event;
+    replaceClass: function(from, to) {
+      this.element.className = this.element.className.replace(from, to);
+      return this;
     },
-    child: (pos = -1) => {
-      if (pos !== -1) Event.element = Event.element.children[pos];
-      else Event.element = Array.from(Event.element.children[0]);
+    child: function(pos = -1) {
+      if (pos !== -1) this.element = this.element.children[pos];
+      else this.element = Array.from(this.element.children[0]);
 
-      return Event;
+      return this;
     },
-    on: fn => {
-      if (Event.element.length !== undefined) {
-        Event.element.forEach(e => {
+    on: function(fn) {
+      if (this.element.length !== undefined) {
+        this.element.forEach(e => {
           Object.keys(fn).forEach(v => {
             /animation/.test(v) ?
               e.addEventListener(v.toLowerCase(), fn[v]) :
@@ -46,37 +47,37 @@ module.exports = (_ => {
       } else {
         Object.keys(fn).forEach(v => {
           /animation/.test(v) ?
-            Event.element.addEventListener(v.toLowerCase(), fn[v]) :
-            Event.element[`on${v.toLowerCase()}`] = fn[v];
+            this.element.addEventListener(v.toLowerCase(), fn[v]) :
+            this.element[`on${v.toLowerCase()}`] = fn[v];
         });
       }
 
-      return Event;
+      return this;
     },
-    data: (data = null) => {
+    data: function(data = null) {
       if (data !== null) {
-        let d = Event.element.dataset[data];
+        let d = this.element.dataset[data];
         if (/^\d+$/.test(d)) return parseInt(d);
         else if (/^\d+(\.+)\d+$/.test(d)) return parseFloat(d);
         else if (/^(\w|\s)+$/.test(d)) return d.toString();
       } else {
         Object.keys(data[0]).forEach(v => {
-          Event.element.dataset[v] = data[v];
+          this.element.dataset[v] = data[v];
         });
       }
 
-      return Event;
+      return this;
     },
-    each: fn => {
-      Event.element.forEach((v, i) => {
+    each: function(fn) {
+      this.element.forEach((v, i) => {
       fn.length === 1 ? fn(v) : fn(v, i);
       });
 
-      return Event;
+      return this;
     },
-    css: str => {
+    css: function(str) {
       const rgx = new RegExp(str, 'g');
-      let el = Event.element;
+      let el = this.element;
 
       if (el.length !== undefined) {
         el.forEach(e => {
@@ -86,16 +87,16 @@ module.exports = (_ => {
         if (!rgx.test(el.style.cssText)) el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
       }
 
-      return Event;
+      return this;
     },
-    clone: (name, isCloned) => {
-      Event.element = getCreatedElement(name).cloneNode(isCloned);
-      return Event;
+    clone: function(name, isCloned) {
+      this.element = getCreatedElement(name).cloneNode(isCloned);
+      return this;
     },
-    get: () => Event.element,
-    rmAttr: attr => {
-      Event.element.removeAttribute(attr);
-      return Event;
+    get: function() { return this.element },
+    rmAttr: function(attr) {
+      this.element.removeAttribute(attr);
+      return this;
     }
   };
 
@@ -155,8 +156,8 @@ module.exports = (_ => {
     // Revisar si ya se está usando el mismo elemento
     // De no existir se crea, pero solo una vez.
     if (inPool(e)) {
-      Event.element = getElementInPool(e);
-      return Event;
+      event = Object.assign({}, Event);
+      event.element = getElementInPool(e);
     } else {
       // Insertar en pool elementos seleccionados desde el DOM
       if (/^\./.test(e)) e = Array.from(document.getElementsByClassName(e.replace('.', '')));
@@ -164,10 +165,11 @@ module.exports = (_ => {
       else if (/^:/.test(e)) e = Array.from(document.getElementsByTagName(e.replace(':', '')));
       else if (typeof e !== 'object') saveCreatedElement(e);
 
-      Event.element = e;
+      event = Object.assign({}, Event);
+      event.element = e;
     }
 
-    return Event;
+    return event;
   }
 
   _.$ = DOM; // Manipular DOM
