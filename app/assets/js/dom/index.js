@@ -55,13 +55,13 @@ module.exports = (_ => {
       return this;
     },
     data: function(data = null) {
-      if (data !== null) {
+      if (typeof data === 'string') {
         let d = this.element.dataset[data];
         if (/^\d+$/.test(d)) return parseInt(d);
         else if (/^\d+(\.+)\d+$/.test(d)) return parseFloat(d);
         else if (/^(\w|\s)+$/.test(d)) return d.toString();
       } else {
-        Object.keys(data[0]).forEach(v => {
+        Object.keys(data).forEach(v => {
           this.element.dataset[v] = data[v];
         });
       }
@@ -89,13 +89,33 @@ module.exports = (_ => {
 
       return this;
     },
-    clone: function(name, isCloned) {
-      this.element = getCreatedElement(name).cloneNode(isCloned);
-      return this;
+    clone: function(isCloned) {
+      if (typeof this.element === 'string') {
+        this.element = getCreatedElement(this.element).cloneNode(isCloned);
+        return this;
+      } else {
+        event = Object.assign({}, Event);
+        event.element = this.element.cloneNode(isCloned);
+        return event;
+      }
     },
-    get: function() { return this.element },
+    get: function(pos = -1) {
+      return pos === -1 ? this.element : this.element[pos];
+    },
     rmAttr: function(attr) {
       this.element.removeAttribute(attr);
+      return this;
+    },
+    attr: function (attr) {
+      if (typeof attr === 'object')
+        Object.keys(attr).forEach(v => { this.element.setAttribute(v, attr[v]); });
+      else
+        return this.element.getAttribute(attr);
+
+      return this;
+    },
+    insert: function (...a) {
+      a.forEach(v => { this.element.appendChild('element' in v ? v.element : v); });
       return this;
     }
   };
@@ -128,17 +148,6 @@ module.exports = (_ => {
 //   //   has: function (s) {
 //   //     return (new RegExp(s, 'g')).test(this._e.className);
 //   //   },
-//   //   attr: function (o) { // Agrega un atributo
-//   //     if (typeof o === 'object')
-//   //       Object.keys(o).forEach(v => { this._e.setAttribute(v, o[v]); });
-//   //     else if (typeof o == 'string')
-//   //       return this._e.getAttribute(o);
-//   //     return this;
-//   //   },
-//   //   insert: function (...a) { // appendChild
-//   //     a.forEach(v => { this._e.appendChild('_e' in v ? v._e : v); });
-//   //     return this;
-//   //   },
 //   //   val: function (v = '') { // Ingresar value
 //   //     if (v === '') {
 //   //       return v.value;
@@ -153,22 +162,30 @@ module.exports = (_ => {
   // Recibe un string para buscar el elemento en el DOM y retornar un objeto
   // con todas las funciones necesarias para ser usados sobre este proyecto
   const DOM = e => {
+    event = Object.assign({}, Event);
+
     // Revisar si ya se está usando el mismo elemento
     // De no existir se crea, pero solo una vez.
     if (inPool(e)) {
-      event = Object.assign({}, Event);
       event.element = getElementInPool(e);
     } else {
       // Insertar en pool elementos seleccionados desde el DOM
-      if (/^\./.test(e)) e = Array.from(document.getElementsByClassName(e.replace('.', '')));
-      else if (/^#/.test(e)) e = document.getElementById(e.replace('#', ''));
-      else if (/^:/.test(e)) e = Array.from(document.getElementsByTagName(e.replace(':', '')));
-      else if (typeof e !== 'object') saveCreatedElement(e);
-
-      event = Object.assign({}, Event);
-      event.element = e;
+      if (/^\./.test(e)) {
+        e = Array.from(document.getElementsByClassName(e.replace('.', '')));
+        saveElementInPool(e);
+      } else if (/^#/.test(e)) {
+        e = document.getElementById(e.replace('#', ''));
+        saveElementInPool(e);
+      } else if (/^:/.test(e)) {
+        e = Array.from(document.getElementsByTagName(e.replace(':', '')));
+        saveElementInPool(e);
+      } else if (typeof e === 'string') {
+        saveCreatedElement(e);
+      } else {
+      }
     }
 
+    event.element = e;
     return event;
   }
 

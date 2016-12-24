@@ -1,7 +1,7 @@
-// /**
-//  * @author Diego Alberto Molina Vera
-//  */
-// /** --------------------------------------- Módulos --------------------------------------- **/
+/**
+ * @author Diego Alberto Molina Vera
+ */
+/** --------------------------------------- Módulos --------------------------------------- **/
 // // const {
 // //   setFilterVal,
 // //   moveForward,
@@ -17,15 +17,17 @@
 // //   getMetadata
 // // } = require('./listSongs');
 
+// Nodejs módulos
 // const fs = require('fs');
 // const execFile = require('child_process').execFile;
+
 // const metaData = require('musicmetadata');
+// Electron módulos
 const {
   ipcRenderer,
 //   shell,
   remote
 } = require('electron');
-
 const {
 //   dialog,
   app
@@ -34,7 +36,6 @@ const {
 // Módulos propios
 const factory = require('./factory');
 const player = factory('player');
-
 const {
     configFile,
     langFile,
@@ -44,6 +45,7 @@ require('./dom');
 
 // /** --------------------------------------- Variables --------------------------------------- **/
 // let _songs = []; // Canciones cargadas
+let lang = langFile[configFile.lang];
 
 // // Busqueda de canciones
 // let isSearchDisplayed = false; // Validar si se ha pulsado (ctrl | cmd) + f
@@ -79,7 +81,7 @@ function getActualVersion() {
       .child(0)
       .addClass('pop-up-anim')
       .text(
-        `<a href="http://soube.diegomolina.cl">${langFile[configFile.lang].alerts.newVersion}</a>`
+        `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
       );
 
       // Para poder abrir en el navegador predeterminado y no dentro de la app
@@ -113,17 +115,14 @@ function loadSongs() {
 
   if (Object.keys(listSongs).length === 0) {
     $('#list-songs').text(
-      `<div id="init-message">${langFile[configFile.lang].alerts.welcome}</div>`
+      `<div id="init-message">${lang.alerts.welcome}</div>`
     );
   } else {
-
-//     // Compartimos la función nextSong para el evento onclick en el listado de canciones
-//     setNextSongFunction(nextSong);
-
     // Desplegamos el listado de canciones con el estilo por defecto de tipo lista
     player.createView();
   }
 }
+loadSongs();
 
 // // function hideSearchInputData() {
 // //   $('#search-result').text('');
@@ -242,7 +241,7 @@ function checkNewSongs() {
 // // // Acciones sobre los botones del menú superior.
 // // // play, prev, next & shuffles
 // // function clickBtnControls() {
-// //   $(this).addClass('click-controlls');
+// //   $(this).addClass('click-controls');
 
 // //   if (_songs.length !== 0) {
 // //     controlsActions(this.id);
@@ -311,21 +310,11 @@ function checkNewSongs() {
 // Abrir ventana de configuración
 $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 
-// Vendría siendo el método init
-// fs.access(SONG_FILE, fs.F_OK | fs.R_OK, error => {
-//   if (error) {
-//     dialog.showErrorBox('Error [001]', `${lang.alerts.error_001}\n${error}`);
-//     return;
-//   } else {
-    // Iniciar todo lo necesario para desplegar en la interfaz
-    loadSongs();
-//   }
-// });
 
-// // $('.btn-controlls').on({
+// // $('.btn-controls').on({
 // //   'click': clickBtnControls,
 // //   'animationend': function () {
-// //     $(this).rmClass('click-controlls');
+// //     $(this).rmClass('click-controls');
 // //   }
 // // });
 
@@ -354,7 +343,7 @@ $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 // //   }
 // // });
 
-// // /** --------------------------------------- Ipc Renderer --------------------------------------- **/
+/** --------------------------------------- Ipc Renderer --------------------------------------- **/
 // // // Se detecta el cierre del inputsearch con la tecla Esc
 // // ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
 
@@ -376,12 +365,11 @@ $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 // // // Configurar el equalizador.
 // // ipcRenderer.on('get-equalizer-filter', (e, a) => { setFilterVal(...a); });
 
-// // // Generar el listado de canciones cuando se han cargado desde el panel de configuraciones
-// // // El llamdo se hace desde el main.js
-// // ipcRenderer.on('order-display-list', () => {
-// //   $('#list-songs').text('');
-// //   loadSongs();
-// // });
+// Generar el listado de canciones cuando se han cargado desde el panel de configuraciones
+// El llamdo se hace desde el main.js
+ipcRenderer.on('order-display-list', () => {
+  window.location.reload(false);
+});
 
 // // // Resetea el texto al idioma seleccionado
 // // ipcRenderer.on('update-init-text', () => {
