@@ -1,3 +1,6 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
 function factory(nameClass) {
   switch (nameClass.toLowerCase()) {
     case 'equilizer': return require('./../player/equalizer');

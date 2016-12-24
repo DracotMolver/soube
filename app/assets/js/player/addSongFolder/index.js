@@ -1,3 +1,6 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
 /* --------------------------------- Módulos --------------------------------- */
 // Node módulos
 const fs = require('fs');

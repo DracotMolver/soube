@@ -1,4 +1,11 @@
+/**
+ * @author Diego Alberto Molina Vera
+ */
+  /* --------------------------------- Módulos --------------------------------- */
+// Nodejs módulos
 const fs = require('fs');
+
+// Electron módulos
 const remote = require('electron').remote;
 
 function createFiles(path) {
