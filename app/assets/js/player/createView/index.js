@@ -9,12 +9,16 @@ const {
 } = require('./../../config').init();
 require('./../../dom');
 
+/** --------------------------------------- Variables --------------------------------------- **/
+let player = null;
 
+/** --------------------------------------- Funciones --------------------------------------- **/
 function getDataSongAtPosition() {
-  // controls.nextSong($(this).data('position'));
+  player.controls.nextSong($(this).data('position'));
 }
 
-function createView() {
+function createView(player) {
+  player = player;
   // Contenedor que se reptite para el títutlo, artista y album
   const child = $('div').clone(false).addClass('grid-33 mobile-grid-33 song-info');
   const parentContainer = $('div').clone(false).addClass('list-song-container');

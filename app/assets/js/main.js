@@ -36,6 +36,7 @@ const {
 // Módulos propios
 const factory = require('./factory');
 const player = factory('player');
+
 const {
     configFile,
     langFile,
@@ -119,7 +120,7 @@ function loadSongs() {
     );
   } else {
     // Desplegamos el listado de canciones con el estilo por defecto de tipo lista
-    player.createView();
+    player.createView(player.controls);
   }
 }
 loadSongs();
@@ -376,8 +377,8 @@ ipcRenderer.on('order-display-list', () => {
 // //   window.location.reload(false);
 // // });
 
-// // // Pausar o empezar canción con la combinación Ctrl + Up
-// // ipcRenderer.on('play-and-pause-song', playSong);
+// Pausar o empezar canción con la combinación Ctrl + Up
+ipcRenderer.on('play-and-pause-song', player.controls.playSong());
 
 // // // Siguiente canción con la combinación Ctrl + Right
 // // ipcRenderer.on('next-song', () => nextSong());
