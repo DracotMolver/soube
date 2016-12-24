@@ -4,12 +4,12 @@
 /* ------------------------ GENERAL ------------------------*/
 #config > img:hover,
 .search-results:hover,
-.btn-controlls,
+.btn-controls,
 a {
     cursor: pointer
 }
 
-.btn-controlls::after,
+.btn-controls::after,
 .arrow::after,
 .arrow::before,
 .list-song-container::after {
@@ -30,11 +30,11 @@ a {
 }
 
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
-.btn-controlls {
+.btn-controls {
     float: left
 }
 
-.btn-controlls::after {
+.btn-controls::after {
     border-radius: 50%;
     background: var(--darkPinkColor);
     opacity: 0
@@ -81,8 +81,8 @@ a {
     top: 32px
 }
 
-.click-controlls::after {
-    animation: clickControllsEffect .3s ease-out forwards
+.click-controls::after {
+    animation: clickControlsEffect .3s ease-out forwards
 }
 
 #total-progress-bar,
@@ -438,7 +438,7 @@ a {
     }
 }
 
-@keyframes clickControllsEffect {
+@keyframes clickControlsEffect {
 	0% {
 		transform: scale3d(.3, .3, 1)
 	}
