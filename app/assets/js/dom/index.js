@@ -31,7 +31,7 @@ module.exports = (_ => {
     },
     child: function(pos = -1) {
       if (pos !== -1) this.element = this.element.children[pos];
-      else this.element = Array.from(this.element.children[0]);
+      else this.element = Array.from(this.element.children);
 
       return this;
     },
