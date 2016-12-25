@@ -125,6 +125,13 @@ a {
     font-size: 1em
 }
 
+#song-title > h1,
+#artist > h2,
+#album > h3 {
+    text-overflow: ellipsis;
+    overflow: hidden
+}
+
 #time {
     text-align: center;
     font-size: 1.16em;
@@ -140,7 +147,7 @@ a {
 #album > h3,
 #time, #time > span,
 #artist > h2 {
-    color: var(--whiteColor)
+    color: var(--whiteColor);
 }
 
 /* ------------------------ LISTADO DE CANCIONES ------------------------ */
@@ -166,6 +173,7 @@ a {
 }
 
 .song-info {
+    text-overflow: ellipsis;
     padding-left: .6em;
     font-weight: 300;
     line-height: 2em;
