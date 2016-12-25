@@ -93,7 +93,7 @@ function getActualVersion() {
         }
       });
 
-      const tout = setTimeout(() => {
+      let tout = setTimeout(() => {
         $('#pop-up-container')
         .addClass('hide')
         .child(0)
@@ -378,7 +378,7 @@ ipcRenderer.on('order-display-list', () => {
 // // });
 
 // Pausar o empezar canción con la combinación Ctrl + Up
-ipcRenderer.on('play-and-pause-song', player.controls.playSong());
+ipcRenderer.on('play-and-pause-song', player.controls.playSong);
 
 // // // Siguiente canción con la combinación Ctrl + Right
 // // ipcRenderer.on('next-song', () => nextSong());
