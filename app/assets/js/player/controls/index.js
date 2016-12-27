@@ -12,7 +12,8 @@ const dialog = require('electron').remote.dialog;
 const {
     configFile,
     langFile,
-    listSongs
+    listSongs,
+    editFile
 } = require('./../../config').init();
 require('./../../dom');
 
@@ -23,7 +24,7 @@ let lang = langFile[configFile.lang];
 let isMovingForward = false; // Si se está tratando de adelantar la cación a un tiempo determinado
 let isNextAble = true;
 let isSongPlaying = false; // Se ejecutó play sobre el AudioNode
-// let position = null; // Posición de la canción actual
+let position = Math.floor(Math.random() * listSongs.length); // Posición de la canción actual
 // let tmpPosition = []; // Posición de la canción anteriormente reproducida
 let file = ''; // Ruta de la canción
 // let songs = {}; // Listado de canciones
@@ -80,11 +81,13 @@ let notifi = {
 // };
 
 // /** --------------------------------------- Funciones --------------------------------------- **/
-// // Recibe el listado de canciones desde el archivo listSongs.js
-// function setSongs(_songs) {
-//   songs = _songs;
-//   filters();
-// }
+
+// Activar shuffle
+function shuffle() {
+  configFile.shuffle = !configFile.shuffle;
+  $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292');
+  editFile('config', configFile);
+}
 
 // // Retorna un número aleatorio entre 0 y el total de canciones
 // function shuffle() { return Math.floor(Math.random() * songs.length); }
@@ -110,22 +113,22 @@ function playSong() {
 //     play();
 //     animPlay();
 
-//     return 'resume';
+    return 'resume';
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
-//     audioContext.suspend().then(() => {
-//       isSongPlaying = false;
+    audioContext.suspend().then(() => {
+      isSongPlaying = false;
 //       cancelAnimationFrame(interval);
-//     });
+    });
 //     animPause();
 
-//     return 'paused';
+    return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
-//     isSongPlaying = true;
+    isSongPlaying = true;
 //     startTimer();
-//     audioContext.resume();
+    audioContext.resume();
 //     animPlay();
 
-//     return 'resume';
+    return 'resume';
   }
 }
 
@@ -205,7 +208,7 @@ function setBufferInPool(filePath, buffer) {
 
 function getFile() {
   // Revisar si está activado el shuffle o no
-  return listSongs[configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : position + 1];
+  return listSongs[configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : position++];
 }
 
 function initSong() {
@@ -283,6 +286,7 @@ function initSong() {
       // Siguiente canción.
       // Si ya existe no guardar.
       file = getFile();
+      console.log(file.filename);
       if (!poolOfSongs[file.filename]) {
         getBuffer(file.filename, data => {
           if (!data) throw data;
@@ -297,7 +301,7 @@ function initSong() {
 // Reproduce la siguiente canción.
 // Esta función se comparte cuando se genera la lista de canciones,
 // ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
-function nextSong(_position = -1) {
+function nextSong(/*_position = -1*/) {
   if (isNextAble) {
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 //     tmpPosition.push(position);
@@ -337,9 +341,9 @@ function nextSong(_position = -1) {
 // }
 
 // Cambia los valores en la frecuencia específica
-// function setFilterVal(a, b) {
-//   filter[a].gain.setValueAtTime(b, audioContext.currentTime);
-// }
+function setFilterVal(a, b) {
+  filter[a].gain.setValueAtTime(b, audioContext.currentTime);
+}
 
 // Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
 // [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
@@ -383,5 +387,6 @@ module.exports = {
   // nextSong,
   // prevSong,
   playSong,
-  // shuffle
+  shuffle,
+  setFilterVal
 }

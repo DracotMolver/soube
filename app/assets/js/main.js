@@ -3,7 +3,6 @@
  */
 /** --------------------------------------- Módulos --------------------------------------- **/
 // // const {
-// //   setFilterVal,
 // //   moveForward,
 // //   playSong,
 // //   prevSong,
@@ -112,6 +111,9 @@ function getActualVersion() {
 // Se encarga de verificar si hay canciones que mostrar y arma lo
 // necesario para que el reproductor funciones
 function loadSongs() {
+  // Activar shuffle
+  if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
+
   getActualVersion();
 
   if (Object.keys(listSongs).length === 0) {
@@ -255,12 +257,6 @@ function checkNewSongs() {
 // //   }
 // // }
 
-// // // Activar animación shuffle
-// // function setShuffles() {
-// //   configFile.shuffle = !configFile.shuffle;
-// //   $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292');
-// //   configFile = jsave(CONFIG_FILE, configFile);
-// // }
 
 // // function controlsActions(action) {
 // //   switch (action) {
@@ -304,9 +300,6 @@ function checkNewSongs() {
 // //     }
 // //   }
 // // });
-
-// // // Activar shuffle
-// // if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
 // Abrir ventana de configuración
 $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
@@ -364,7 +357,7 @@ $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 // // })
 
 // // // Configurar el equalizador.
-// // ipcRenderer.on('get-equalizer-filter', (e, a) => { setFilterVal(...a); });
+ipcRenderer.on('get-equalizer-filter', (e, a) => { player.controls.setFilterVal(...a); });
 
 // Generar el listado de canciones cuando se han cargado desde el panel de configuraciones
 // El llamdo se hace desde el main.js
@@ -386,8 +379,8 @@ ipcRenderer.on('play-and-pause-song', player.controls.playSong);
 // // // Canción anterior con la combinación Ctrl + Left
 // // ipcRenderer.on('prev-song', prevSong);
 
-// // // shuffle Ctrl + Down
-// // ipcRenderer.on('shuffle', setShuffles);
+// shuffle Ctrl + Down
+ipcRenderer.on('shuffle', player.controls.shuffle);
 
 // // // ThumbarButtons [Windows]
 // // ipcRenderer.on('thumbar-controls', (e, a) => {
