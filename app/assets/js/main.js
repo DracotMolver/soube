@@ -365,19 +365,14 @@ ipcRenderer.on('order-display-list', () => {
   window.location.reload(false);
 });
 
-// // // Resetea el texto al idioma seleccionado
-// // ipcRenderer.on('update-init-text', () => {
-// //   window.location.reload(false);
-// // });
-
 // Pausar o empezar canción con la combinación Ctrl + Up
 ipcRenderer.on('play-and-pause-song', player.controls.playSong);
 
-// // // Siguiente canción con la combinación Ctrl + Right
-// // ipcRenderer.on('next-song', () => nextSong());
+// Siguiente canción con la combinación Ctrl + Right
+ipcRenderer.on('next-song', player.controls.nextSong);
 
-// // // Canción anterior con la combinación Ctrl + Left
-// // ipcRenderer.on('prev-song', prevSong);
+// Canción anterior con la combinación Ctrl + Left
+ipcRenderer.on('prev-song', player.controls.prevSong);
 
 // shuffle Ctrl + Down
 ipcRenderer.on('shuffle', player.controls.shuffle);
