@@ -64,7 +64,6 @@ function onClickChangeLang() {
     'click': function () {
       configFile.lang = $(this).data('lang');
       editFile('config', configFile);
-      ipcRenderer.send('update-lang');
       window.location.reload(false);
     }
   });

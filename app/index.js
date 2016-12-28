@@ -141,11 +141,6 @@ ipcMain.on('equalizer-filter', (e, a) => {
   mainWindow.webContents.send('get-equalizer-filter', a);
 });
 
-// Actualiza el idioma del mensaje de la ventana principal
-ipcMain.on('update-lang', () => {
-  mainWindow.webContents.send('update-init-text');
-});
-
 // Actualizar los thumbar buttons
 ipcMain.on('thumb-bar-update', (e, a) => {
   mainWindow.setThumbarButtons(thumbarButtons[a]);
