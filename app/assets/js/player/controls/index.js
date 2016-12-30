@@ -28,6 +28,7 @@ let position = Math.floor(Math.random() * listSongs.length); // Posición de la 
 let prevSongsToPlay = []; // Posición de la canción anteriormente reproducida
 let file = ''; // Alamacenará la canción a tocar y se reemplaza por la siguiente a tocar
 let oldFile = ''; // Guarda la canción a tocar pero no se reemplaza por la siguiente a tocar
+let playedAtPosition = false // Si la canción es seleccionada desde la lista
 // let songs = {}; // Listado de canciones
 // let infoSong = {};
 
@@ -104,6 +105,18 @@ function shuffle() {
 //     v.attr({ 'from': anim.to[i], 'to': anim.from[i] }).get().beginElement();
 //   });
 // }
+
+function playSongAtPosition() {
+  if (source !== null) {
+    source.stop(0);
+    source = null;
+  }
+
+  file = '';
+  playedAtPosition = true;
+  position = $(this).data('position');
+  initSong();
+}
 
 function playSong() {
   if (!isSongPlaying && audioContext.state === 'running') { // Reproducción única
@@ -206,7 +219,7 @@ function setBufferInPool(filePath, buffer) {
 
 function getFile() {
   // Revisar si está activado el shuffle o no
-  return listSongs[configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : position++];
+  return listSongs[playedAtPosition ? position : (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : ++position)];
 }
 
 function initSong() {
@@ -251,6 +264,7 @@ function initSong() {
     // Inicializar el tiempo y la canción
     // startTimer();
     source.start(0);
+    prevSongsToPlay.push(oldFile);
     isNextAble = isSongPlaying = true;
   }
 
@@ -259,6 +273,7 @@ function initSong() {
     // Canción a ftocar
     dataSong((oldFile = file));
     setSong(poolOfSongs[file.filename]);
+    playedAtPosition = false;
 
     // Siguiente canción
     file = getFile();
@@ -279,6 +294,7 @@ function initSong() {
       // Tocar canción
       dataSong((oldFile = file));
       setSong(data);
+      playedAtPosition = false;
 
       // Siguiente canción.
       // Si ya existe no guardar.
@@ -297,12 +313,10 @@ function initSong() {
 // Reproduce la siguiente canción.
 // Esta función se comparte cuando se genera la lista de canciones,
 // ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
-function nextSong(/*_position = -1*/) {
+function nextSong() {
   if (isNextAble) {
     // Verificar si el contexto está pausado o no.
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
-
-    prevSongsToPlay.push(oldFile);
 
     if(source !== null) {
       source.stop(0);
@@ -378,5 +392,6 @@ module.exports = {
   prevSong,
   playSong,
   shuffle,
-  setFilterVal
+  setFilterVal,
+  playSongAtPosition
 }
