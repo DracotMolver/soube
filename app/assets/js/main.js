@@ -122,7 +122,7 @@ function loadSongs() {
     );
   } else {
     // Desplegamos el listado de canciones con el estilo por defecto de tipo lista
-    player.createView(player.controls);
+    player.createView(player);
   }
 }
 loadSongs();
