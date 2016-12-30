@@ -42,14 +42,14 @@ a {
 
 #play-pause {
     text-align: center;
-    margin: 1.33em 1em;
+    margin: 1.25em 1em;
     height: 3em
 }
 
 .prev-next {
     text-align: center;
-    margin: .3em;
-    height: 1.3em
+    margin: .3em 0;
+    height: 1.2em
 }
 
 #shuffle-icon {
@@ -106,7 +106,7 @@ a {
 #info-song {
     text-align: left;
     overflow: hidden;
-    margin: .3em 1.2em;
+    margin: .1em 1.2em;
     width: 85%;
     float: left
 }
