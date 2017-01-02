@@ -4,7 +4,7 @@
         "artist": "Desconocido",
         "album": "Desconocido",
         "config": {
-            "addSongFolder": "Carpeta de música",
+            "addSongFolder": "Carpeta música",
             "changeLanguage": "Cambiar idioma",
             "statusLanguage": "Español",
             "titleConfig": "Configuración",
@@ -15,13 +15,13 @@
             "legal": "Términos legales"
         },
         "eqStyles": [
-            "Reiniciar",
+            "Reset",
             "Rock",
             "Electrónica",
             "Acústica"
         ],
         "alerts": {
-            "newVersion": "Hay una nueva versión!. Click para ir descargarlo.",
+            "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
             "newSongsFound": "Agregando nuevas canciones",
             "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música &#127926;",
             "error_001": "Falta un archivo necesario para que funcione el reproductor. Ir a: https:\/\/github.com\/DracotMolver\/Soube y reportar el error. Gracias",
@@ -35,7 +35,7 @@
         "album": "Unknown",
         "config": {
             "addSongFolder": "Music folder",
-            "changeLanguage": "Chanage language",
+            "changeLanguage": "Change language",
             "statusLanguage": "English",
             "titleConfig": "Configuration",
             "addAccounts": "Accounts",
@@ -51,12 +51,12 @@
             "Acustic"
         ],
         "alerts": {
-            "newVersion": "There's new version!. Click to download it.",
+            "newVersion": "We've got a new version!. Click to download it.",
             "newSongsFound": "Adding new songs ",
             "welcome": "There is no music folder added.<br>Please, add your music folder &#127926;",
-            "error_001": "It missed a file needed to use the music player. Go to:  https:\/\/github.com\/DracotMolver\/Soube and report the error. Thanks.",
-            "error_002": "There's no files to play. Please, go to the config icon and add your music folder.",
-            "error_003": "An error happened trying to read the folder: "
+            "error_001": "Missed a file needed to use the music player. Go to:  https:\/\/github.com\/DracotMolver\/Soube and report the error. Thanks.",
+            "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",
+            "error_003": "An error occured trying to read the folder: "
         }
     }
 }
