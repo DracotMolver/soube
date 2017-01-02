@@ -18,17 +18,17 @@ const {
 require('./../../dom');
 
 /* --------------------------------------- Variables ------------------------------------------- */
-let poolOfSongs = {};
+let poolOfSongs = {}; // Will keep all the AudioBuffers
 let lang = langFile[configFile.lang];
-
-let isMovingForward = false; // Si se está tratando de adelantar la cación a un tiempo determinado
-let isNextAble = false;
-let isSongPlaying = false; // Se ejecutó play sobre el AudioNode
-let position = Math.floor(Math.random() * listSongs.length); // Posición de la canción actual
-let prevSongsToPlay = []; // Posición de la canción anteriormente reproducida
-let file = ''; // Alamacenará la canción a tocar y se reemplaza por la siguiente a tocar
-let oldFile = ''; // Guarda la canción a tocar pero no se reemplaza por la siguiente a tocar
-let playedAtPosition = false // Si la canción es seleccionada desde la lista
+let isMovingForward = false; // Step the song time
+let isNextAble = false; // if the next song can be played (needed because AudioNode.stop() works with Promise)
+let isPrevAble = false; // if the prev song is played (Is not the same behavior as isNextAble)
+let isSongPlaying = false; // It's AudioNode playing
+let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
+let prevSongsToPlay = []; // Will keep all the filename of old songs
+let file = ''; // Will keep the data song info
+let oldFile = ''; // Will keep the data of the song played
+let playedAtPosition = false // If the song is clicked on from the list
 // let songs = {}; // Listado de canciones
 // let infoSong = {};
 
@@ -36,7 +36,7 @@ let playedAtPosition = false // Si la canción es seleccionada desde la lista
 const audioContext = new window.AudioContext(); // Objeto AudioContext
 const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
 
-// Frecuencias
+// Frequencies
 const hrz = [
  40, 80, 90, 100, 120, 150, 200,
  300, 400, 500, 600, 800, 1000,
@@ -44,10 +44,9 @@ const hrz = [
  7000, 8000, 10000, 16000
 ];
 
-let filter = []; // Array con el filtro a usar en distintas frecuencias
-let duration = 0; // Duración máxima de la canción
-// let buffer = {}; // Buffer devuelto por decodeAudioData
-let source = null; // Objeto AudioNode
+let filter = []; // Array for createBiquadFilter to use the Frequencies
+let duration = 0; // max duration of the song
+let source = null; // AudioNode object
 
 // // Variables para generar el calculo del tiempo transcurrido
 // // let millisecond = 1;
@@ -264,14 +263,14 @@ function initSong() {
     // Inicializar el tiempo y la canción
     // startTimer();
     source.start(0);
-    prevSongsToPlay.push(oldFile);
-    isNextAble = isSongPlaying = true;
+    isSongPlaying = true;
+    isPrevAble = false;
   }
 
   // Obtener los datos de la primera canción a reproducir
   if (poolOfSongs[file.filename]) {
-    // Canción a ftocar
-    dataSong((oldFile = file));
+    // Canción a tocar
+    dataSong(isPrevAble ? file : (oldFile = file));
     setSong(poolOfSongs[file.filename]);
     playedAtPosition = false;
 
@@ -280,6 +279,7 @@ function initSong() {
     getBuffer(file.filename, data => {
       if (!data) throw data;
 
+      isNextAble = true;
       setBufferInPool(file.filename, data);
     });
   } else { // Se ejecuta una sola vez
@@ -303,6 +303,7 @@ function initSong() {
         getBuffer(file.filename, data => {
           if (!data) throw data;
 
+          isNextAble = true;
           setBufferInPool(file.filename, data);
         });
       }
@@ -315,6 +316,8 @@ function initSong() {
 // ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
 function nextSong() {
   if (isNextAble) {
+    prevSongsToPlay.push(oldFile);
+
     // Verificar si el contexto está pausado o no.
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
@@ -330,7 +333,7 @@ function nextSong() {
 function prevSong() {
   if (prevSongsToPlay.length > 0 && isNextAble) {
     file = prevSongsToPlay.pop();
-    position = file.position + 1;
+    isPrevAble = true;
 
     // Verificar si el contexto está pausado o no.
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
