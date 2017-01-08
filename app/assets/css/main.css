@@ -59,14 +59,14 @@ a {
 #play-pause::after {
     height: 4em;
     width: 4em;
-    top: 15px;
-    left: .8%
+    left: 14px;
+    top: 12px
 }
 
 .prev-next::after {
-    height: 1.9em;
-    width: 1.9em;
-    left: 7.4%
+    height: 1.7em;
+    width: 1.7em;
+    left: 104px
 }
 
 #next::after {
@@ -74,11 +74,11 @@ a {
 }
 
 #shuffle::after {
-    top: 64px
+    top: 61px
 }
 
 #prev::after {
-    top: 32px
+    top: 31px
 }
 
 .click-controls::after {
@@ -406,14 +406,13 @@ a {
 
 .list-song-container::after {
     border-radius: 25px;
-    background: rgba(66, 73, 73, .2);
-    opacity: 0;
+    background: rgba(66, 73, 73, 0);
     height: 28px;
     margin: 0 auto;
     width: 0;
     right: 0;
     left: 0;
-    top: 192px
+    top: 188px
 }
 
 .anim-selected-song::after {
@@ -481,18 +480,18 @@ a {
 
 @keyframes selectedSong {
     85% {
-        opacity: 1
+        background: rgba(66, 73, 73, .2)
     }
     100% {
         border-radius: 0;
-        opacity: 0;
+        background: rgba(66, 73, 73, 0);
         width: 100%
     }
 }
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
 @media only screen and (max-width: 750px) {
-/* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
+    /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
     #total-progress-bar{
         margin: .1em 1.3em .5em
     }
@@ -501,7 +500,7 @@ a {
         left: 14.7%
     }
 
-/* ------------------------ TOP NAV ------------------------*/
+    /* ------------------------ TOP NAV ------------------------*/
     #config-container {
         border-radius: 50%;
         background: var(--pinkColor);
@@ -522,7 +521,7 @@ a {
         float: left
     }
 
-/* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
+    /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
     #info-song {
         text-align: left;
         margin: .3em 1.2em;
@@ -545,5 +544,10 @@ a {
     #time {
         font-size: 1em;
         margin: 0
+    }
+
+    /* ------------------------ LISTADO DE CANCIONES ------------------------ */
+    .list-song-container::after {
+        top: 193px
     }
 }
