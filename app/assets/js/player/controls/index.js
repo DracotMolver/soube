@@ -69,17 +69,21 @@ let notifi = {
   icon: path.join(__dirname, '../../../', 'img', 'play.png')
 };
 
-// // Para generar la animación del botón play
-// const anim = {
-//   from: [
-//     'M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
-//     'm 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z'
-//   ],
-//   to: [
-//     'M 5.827315,6.7672041 39.949651,6.9753863 39.92649,170.36386 5.8743095,170.58995 Z',
-//     'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
-//   ]
-// };
+// Cords to generate the animation
+// Google Chrome is throwing the next warning message:
+// ** SVG's SMIL animations (<animate>, <set>, etc.) are deprecated and
+// will be removed. Please use CSS animations or Web animations instead.**-
+// For now all works fine. :P
+const anim = {
+  from: [
+    'M 5.827315,6.7672041 62.280287,48.845328 62.257126,128.62684 5.8743095,170.58995 Z',
+    'm 61.189203,48.025 56.296987,40.520916 0,0.0028 -56.261916,40.850634 z'
+  ],
+  to: [
+    'M 5.827315,6.7672041 39.949651,6.9753863 39.92649,170.36386 5.8743095,170.58995 Z',
+    'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
+  ]
+};
 
 // /** --------------------------------------- Funciones --------------------------------------- **/
 
@@ -93,17 +97,19 @@ function shuffle() {
 // // Retorna un número aleatorio entre 0 y el total de canciones
 // function shuffle() { return Math.floor(Math.random() * songs.length); }
 
-// function animPlay() {
-//   $('.anim-play').each((v, i) => {
-//     v.attr({ 'from': anim.from[i], 'to': anim.to[i] }).get().beginElement();
-//   })
-// }
+// Animation of the play/pause button when it sets to play
+function animPlay() {
+  $('.anim-play').each((v, i) => {
+    $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).get().beginElement();
+  });
+}
 
-// function animPause() {
-//   $('.anim-play').each((v, i) => {
-//     v.attr({ 'from': anim.to[i], 'to': anim.from[i] }).get().beginElement();
-//   });
-// }
+// Animation of the play/pause button when it sets to pause
+function animPause() {
+  $('.anim-play').each((v, i) => {
+    $(v).attr({ 'from': anim.to[i], 'to': anim.from[i] }).get().beginElement();
+  });
+}
 
 function playSongAtPosition() {
   if (source !== null) {
@@ -119,10 +125,8 @@ function playSongAtPosition() {
 
 function playSong() {
   if (!isSongPlaying && audioContext.state === 'running') { // Reproducción única
-    // Buscará dos canciones. La primera seleccionada o al azar
-    // y la segunda que es la siguiente (shuffle off) o la siguiente al azar (shuffle on)
     initSong();
-//     animPlay();
+    animPlay();
 
     return 'resume';
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
@@ -130,14 +134,14 @@ function playSong() {
       isSongPlaying = false;
 //       cancelAnimationFrame(interval);
     });
-//     animPause();
+    animPause();
 
     return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
 //     startTimer();
     audioContext.resume();
-//     animPlay();
+    animPlay();
 
     return 'resume';
   }
@@ -198,7 +202,7 @@ function dataSong(file) {
   $('#time-start').text('00:00');
   $('#progress-bar').css('width:0');
 
-  $('#song-title').child().each(v => { $(v).text(file.title); });
+  $('#song-title').data({position}).child().each(v => { $(v).text(file.title); });
   $('#artist').child().each(v => { $(v).text(file.artist); });
   $('#album').child().each(v => { $(v).text(file.album); });
 
@@ -333,6 +337,7 @@ function nextSong() {
 function prevSong() {
   if (prevSongsToPlay.length > 0 && isNextAble) {
     file = prevSongsToPlay.pop();
+    position = file.position;
     isPrevAble = true;
 
     // Verificar si el contexto está pausado o no.

@@ -47,7 +47,9 @@ require('./dom');
 // let _songs = []; // Canciones cargadas
 let lang = langFile[configFile.lang];
 
-// // Busqueda de canciones
+// Busqueda de canciones
+let clickedElement = null; // When you do click on the name of the song
+let positionElement = null; // Where is the song that you clicked on.
 // let isSearchDisplayed = false; // Validar si se ha pulsado (ctrl | cmd) + f
 // let totalResults = 0;
 // let searchValue = '';
@@ -241,76 +243,72 @@ function checkNewSongs() {
   });
 }
 
-// // // Acciones sobre los botones del menú superior.
-// // // play, prev, next & shuffles
-// // function clickBtnControls() {
-// //   $(this).addClass('click-controls');
+function clickBtnControls() {
+  // animación sobre los botones
+  $(this).addClass('click-controls')
+    .on({
+      'animationend': function () {
+        $(this).replaceClass('click-controls', '');
+      }
+  });
 
-// //   if (_songs.length !== 0) {
-// //     controlsActions(this.id);
-// //   } else {
-// //     dialog.showMessageBox({
-// //       type: 'info',
-// //       buttons: ['Ok'],
-// //       message: lang.alerts.error_002
-// //     });
-// //   }
-// // }
+  if (listSongs.length !== 0) {
+    switch (this.id) {
+      case 'play-pause':
+        if (player.controls.playSong() === 'resume') {
+          // Send a message to the thumbar buttons [Windows]
+  // //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
+        } else {
+          // Send a message to the thumbar buttons [Windows]
+  // //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
+        }
+        break;
+      case 'next': player.controls.nextSong(); break;
+      case 'prev': player.controls.prevSong(); break;
+      case 'shuffle': player.controls.shuffle() ;break;
+    }
+  } else {
+      dialog.showMessageBox({
+        type: 'info',
+        buttons: ['Ok'],
+        message: lang.alerts.error_002
+      });
+  }
+}
 
+/** --------------------------------------- Events --------------------------------------- **/
+// Scrolling al dar click en la canción para buscarla en el listado total
+$('#song-title').on({
+  'click': function () {
+    if (this.children[0].textContent.trim() !== '') {
+      clickedElement = document.getElementById('list-songs');
+      positionElement = document.getElementById($(this).data('position'));
+      const el = clickedElement.scrollTop;
+      const top = positionElement.offsetTop;
+      const topNav = Math.round(document.getElementById('top-nav').offsetHeight);
 
-// // function controlsActions(action) {
-// //   switch (action) {
-// //     case 'play-pause':
-// //       if (playSong() === 'resume') {
-// //         // Send a message to the thumbar buttons [Windows]
-// //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
-// //       } else {
-// //         // Send a message to the thumbar buttons [Windows]
-// //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
-// //       }
-// //       break;
-// //     case 'next': nextSong(); break;
-// //     case 'prev': prevSong(); break;
-// //     case 'shuffle': setShuffles() ;break;
-// //   }
-// // }
+      if (el !== top - (topNav + 100)) {
+        clickedElement.scrollTop += (top - (topNav + 100)) - el;
 
-// // /** --------------------------------------- Eventos --------------------------------------- **/
-// // // Scrolling al dar click en la canción para buscarla en el listado total
-// // $('#song-title').on({
-// //   'click': function () {
-// //     if (this.children[0].textContent.trim() !== '') {
-// //       const el = document.getElementById('list-songs').scrollTop
-// //       const top = document.getElementById($(this).data('position', 'string')).offsetTop;
-// //       const topNav = document.getElementById('top-nav').clientHeight;
-
-// //       if (document.getElementById('list-songs').scrollTop !== (top - (topNav + 100))) {
-// //         document.getElementById('list-songs').scrollTop += (top - (topNav + 100)) - el;
-
-// //         const _time = setTimeout(() => {
-// //           $(`#${$(this).data('position', 'string')}`).addClass('anim-selected-song');
-// //           $('.anim-selected-song').on({
-// //             'animationend': function() {
-// //               $(this).rmClass('anim-selected-song');
-// //             }
-// //           });
-// //           clearTimeout(_time);
-// //         }, 100);
-// //       }
-// //     }
-// //   }
-// // });
+        const _time = setTimeout(() => {
+          $(positionElement).addClass('anim-selected-song');
+          $('.anim-selected-song').on({
+            'animationend': function() {
+              $(positionElement).replaceClass('anim-selected-song', '');
+            }
+          });
+          clearTimeout(_time);
+        }, 60);
+      }
+    }
+  }
+});
 
 // Abrir ventana de configuración
 $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 
-
-// // $('.btn-controls').on({
-// //   'click': clickBtnControls,
-// //   'animationend': function () {
-// //     $(this).rmClass('click-controls');
-// //   }
-// // });
+// Action whe do click on over the buttons play, next, prev and shuffle
+$('.btn-controls').on({ 'click': clickBtnControls });
 
 // // // Adelantar o retroceder la canción usando la barra de progreso
 // // $('#total-progress-bar').on({ 'click': function (e) { moveForward(e, this); }});
@@ -356,25 +354,26 @@ $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 // //   }
 // // })
 
-// // // Configurar el equalizador.
-ipcRenderer.on('get-equalizer-filter', (e, a) => { player.controls.setFilterVal(...a); });
+// Send the values from the equalizer to the AudioContext [player/controls/index.js]
+ipcRenderer.on('get-equalizer-filter', (e, a) => {
+  player.controls.setFilterVal(...a);
+});
 
-// Generar el listado de canciones cuando se han cargado desde el panel de configuraciones
-// El llamdo se hace desde el main.js
+// Makes the list of song when are exported from the config panel (adding the music folder)
 ipcRenderer.on('order-display-list', () => {
   window.location.reload(false);
 });
 
-// Pausar o empezar canción con la combinación Ctrl + Up
+// Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', player.controls.playSong);
 
-// Siguiente canción con la combinación Ctrl + Right
+// Next song [Ctrl + Right]
 ipcRenderer.on('next-song', player.controls.nextSong);
 
-// Canción anterior con la combinación Ctrl + Left
+// Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', player.controls.prevSong);
 
-// shuffle Ctrl + Down
+// Shuffle [Ctrl + Down]
 ipcRenderer.on('shuffle', player.controls.shuffle);
 
 // // // ThumbarButtons [Windows]
