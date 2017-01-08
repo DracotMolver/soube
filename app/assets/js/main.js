@@ -47,10 +47,9 @@ require('./dom');
 // let _songs = []; // Canciones cargadas
 let lang = langFile[configFile.lang];
 
-// Busqueda de canciones
 let clickedElement = null; // When you do click on the name of the song
 let positionElement = null; // Where is the song that you clicked on.
-// let isSearchDisplayed = false; // Validar si se ha pulsado (ctrl | cmd) + f
+let isSearchDisplayed = false; // Checks if it was launched the search input
 // let totalResults = 0;
 // let searchValue = '';
 // let fragContRes = null;
@@ -59,8 +58,8 @@ let positionElement = null; // Where is the song that you clicked on.
 // let countSlide = 0;
 // let fragRes = null;
 // let slide = 0;
-// let regex = null;
-// let _list = null; // Listado html de las canciones desplegadas en el front
+let regex = null; // The name of the song to searching for as a regular expression
+let list = null; // Filtered songs.
 // // const items = [
 // //   $.create('div').addClass('grid-25 mobile-grid-25'),
 // //   $.create('div').addClass('search-results'),
@@ -129,14 +128,14 @@ function loadSongs() {
 }
 loadSongs();
 
-// // function hideSearchInputData() {
-// //   $('#search-result').text('');
-// //   $('#search-container').addClass('hide');
-// //   $('#search-wrapper').rmClass('search-wrapper-anim');
-// //   $($('.grid-container').get(0)).rmAttr('style');
-// //   $('#search').rmClass('input-search-anim');
-// //   isSearchDisplayed = false;
-// // }
+function hideSearchInputData() {
+  $('#search-result').text('');
+  $('#search-container').addClass('hide');
+  $('#search-wrapper').replaceClass('search-wrapper-anim', '');
+  $('.grid-container').rmAttr('style');
+  $('#search').replaceClass('input-search-anim', '');
+  isSearchDisplayed = false;
+}
 
 // // // Busca la canción - Pequeña función de los items del slide
 // // // [searchInputData]
@@ -148,29 +147,24 @@ loadSongs();
 
 // // // Desplegar input search para buscar canciones
 // // // Registrar un shorcut
-// // function searchInputData(e) {
+function searchInputData(e) {
 // //   countSlide = 0;
-// //   searchValue = this.value;
-// //   if (e.key === 'ArrowRight' && searchValue.length > 1)
-// //     this.value = $('#search-result').text();
+  searchValue = this.value;
 
-// //   if (e.key === 'Enter') {
-// //     // Reproduce la canción buscada
-// //     // Por defecto es la primera de las posibles coincidencias - texto fantasma
-// //     nextSong(_list[0].position);
+  // Complete the text
+  if (e.key === 'ArrowRight' && searchValue.length > 1)
+    this.value = $('#search-result').text();
 
-// //     hideSearchInputData();
-// //   }
+  if (e.key === 'Enter') {
+    // plays the searched song
+    player.controls.playSongAtPosition(list[0].position);
+    hideSearchInputData();
+  }
 
-// //   regex = new RegExp(`^${searchValue.replace(/\s/g, '&nbsp;')}`, 'ig');
-// //   _list = _songs.filter(v => {
-// //     if (regex.test(v.title)) {
-// //       v.title = v.title.replace(/\&nbsp;/g, ' ');
-// //       return v;
-// //     }
-// //   });
+  regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
+  list = listSongs.filter(v => regex.test(v.title));
 
-// //   // Posibles resultados
+  // Shows possibles results
 // //   if (searchValue.length > 0) {
 // //     totalResults = _list.length;
 // //     tempSlide = slide = totalResults > 20 ? Math.floor(totalResults / 20) : 1;
@@ -220,9 +214,9 @@ loadSongs();
 // //     $('#pagination').addClass('hide');
 // //   }
 
-// //   // Mustra la primera coincidencia como opción a buscar
-// //   $('#search-result').text(_list.length > 0 && searchValue.length > 0 ? _list[0].title : '');
-// // }
+  // Shows the first coincidence to show as a ghost text
+  $('#search-result').text(list.length > 0 && searchValue.length > 0 ? list[0].title : '');
+}
 
 // Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
 function checkNewSongs() {
@@ -339,20 +333,19 @@ $('.btn-controls').on({ 'click': clickBtnControls });
 // // // Se detecta el cierre del inputsearch con la tecla Esc
 // // ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
 
-// // // Se detecta el registro de la combinación de teclas (ctrl|cmd) + F
-// // // Para desplegar la busqueda de canciones
-// // ipcRenderer.on('search-song', () => {
-// //   if (!isSearchDisplayed) {
-// //     $('#search-container').rmClass('hide');
-// //     $('#search-wrapper').addClass('search-wrapper-anim');
-// //     $($('.grid-container').get(0)).css('-webkit-filter:blur(2px)');
-// //     $('#wrapper-results').text('');
-// //     $('#search').addClass('search-anim')
-// //     .on({ 'keyup': searchInputData }).get().focus();
-// //     isSearchDisplayed = true;
-// //     countSlide = 0;
-// //   }
-// // })
+// Displays the search input [ctrl + F]
+ipcRenderer.on('search-song', () => {
+  if (!isSearchDisplayed) {
+    $('#search-container').replaceClass('hide', '');
+    $('#search-wrapper').addClass('search-wrapper-anim');
+    $('.grid-container').css('-webkit-filter:blur(1px)');
+    $('#wrapper-results').text('');
+    $('#search').addClass('search-anim')
+    .on({ 'keyup': searchInputData }).get().focus();
+    isSearchDisplayed = true;
+    countSlide = 0;
+  }
+});
 
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) => {

@@ -82,14 +82,18 @@ function saveSongList(parentFolder = '') {
   // Leer el contenido de la carpeta padre
   player.addSongFolder(parentFolder, () => { // Función inicial del proceso
     $('#loading').replaceClass('hide', '');
-    $($('.grid-container').get(0)).css('-webkit-filter:blur(2px)');
+    // $(
+      $('.grid-container')//.get(0))
+    .css('-webkit-filter:blur(2px)');
   }, (i, maxLength) => { // Función iteradora
     // Pop-up con la cantidad de canciones cargandose
     $('#_loading-info').text(`${lang.config.loadingSongFolder} ${i + 1} / ${maxLength}`);
     if (i === maxLength) {
       // Ocultar loading
       $('#loading').addClass('hide');
-      $($('.grid-container').get(0)).rmAttr('style');
+      // $(
+        $('.grid-container')//.get(0))
+        .rmAttr('style');
       ipcRenderer.send('display-list');
     }
   });

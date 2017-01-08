@@ -111,7 +111,7 @@ function animPause() {
   });
 }
 
-function playSongAtPosition() {
+function playSongAtPosition(pos = -1) {
   if (source !== null) {
     source.stop(0);
     source = null;
@@ -119,7 +119,7 @@ function playSongAtPosition() {
 
   file = '';
   playedAtPosition = true;
-  position = $(this).data('position');
+  position = pos !== -1 ? pos : $(this).data('position');
   initSong();
 }
 
