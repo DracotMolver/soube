@@ -119,14 +119,13 @@ function playSongAtPosition(pos = -1) {
 
   file = '';
   playedAtPosition = true;
-  position = pos !== -1 ? pos : $(this).data('position');
+  position = pos;
   initSong();
 }
 
 function playSong() {
   if (!isSongPlaying && audioContext.state === 'running') { // Reproducción única
     initSong();
-    animPlay();
 
     return 'resume';
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
@@ -174,7 +173,7 @@ function stopTimer() {
 //     _duration = _minute = _second = time =
 //     minute = second = millisecond = percent = 0;
     isNextAble = true;
-    if (isNextAble && !isMovingForward) playSong();
+    if (isNextAble && !isMovingForward) initSong();
   } else if (isMovingForward) {
 //     /**
 //      * La función stop tarda unos milesegundos más que ejecutar la función moveForward.
@@ -226,6 +225,7 @@ function getFile() {
 }
 
 function initSong() {
+  animPlay();
   // Obtener buffer de la canción
   const getBuffer = (filePath, fnc) => {
     // Leer erl achivo de audio

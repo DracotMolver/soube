@@ -34,8 +34,11 @@ function createView(player) {
         url: v.filename
       })
       .insert(title, artist, album)
-      .on({ 'click': player.controls.playSongAtPosition })
-      .get()
+      .on({
+        'click': function() {
+          player.controls.playSongAtPosition($(this).data('position'));
+        }
+      }).get()
     );
   });
 

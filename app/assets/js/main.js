@@ -1,40 +1,18 @@
 /**
  * @author Diego Alberto Molina Vera
+ * 
+ * All the constants variables are Uppercase.
+ * Except some exported modules
  */
 /** --------------------------------------- Módulos --------------------------------------- **/
-// // const {
-// //   moveForward,
-// //   playSong,
-// //   prevSong,
-// //   nextSong,
-// //   setSongs
-// // } = require('./playFile');
-
-// // const {
-// //   createDefaultListView,
-// //   setNextSongFunction,
-// //   getMetadata
-// // } = require('./listSongs');
-
-// Nodejs módulos
-// const fs = require('fs');
-// const execFile = require('child_process').execFile;
-
-// const metaData = require('musicmetadata');
 // Electron módulos
 const {
   ipcRenderer,
-//   shell,
   remote
 } = require('electron');
-const {
-//   dialog,
-  app
-} = remote;
 
 // Módulos propios
-const factory = require('./factory');
-const player = factory('player');
+const PLAYER = require('./factory')('player');
 
 const {
     configFile,
@@ -44,29 +22,28 @@ const {
 require('./dom');
 
 // /** --------------------------------------- Variables --------------------------------------- **/
-// let _songs = []; // Canciones cargadas
 let lang = langFile[configFile.lang];
-
 let clickedElement = null; // When you do click on the name of the song
 let positionElement = null; // Where is the song that you clicked on.
 let isSearchDisplayed = false; // Checks if it was launched the search input
-// let totalResults = 0;
-// let searchValue = '';
-// let fragContRes = null;
-// let textFound = '';
+
+const LAPSE_POPUP = 4500; // Duration of info popups
+const LAPSE_SCROLLING = 60; // Lapse before do scrolling
+const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [search input]
+let totalResults = 0; // Amount of songs filtered
+let searchValue = ''; // The input text to search for
 // let tempSlide = 0;
 // let countSlide = 0;
-// let fragRes = null;
-// let slide = 0;
+let fragmentSlide = null; // DocumentFragment() slide container
+let fragmentItems = null; // DocumentFragment() button container
+let slide = 0; // Amount of slides to make
 let regex = null; // The name of the song to searching for as a regular expression
 let list = null; // Filtered songs.
-// // const items = [
-// //   $.create('div').addClass('grid-25 mobile-grid-25'),
-// //   $.create('div').addClass('search-results'),
-// //   $.create('div').addClass('results')
-// // ];
-
-
+const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
+    $('div').clone(false).addClass('grid-25 mobile-grid-25'),
+    $('div').clone(false).addClass('search-results'),
+    $('div').clone(false).addClass('results')
+  ];
 /** --------------------------------------- Funciones --------------------------------------- **/
 // Una opción para los usuarios de linux.
 // Verifica con github las versiones lanzadas.
@@ -75,8 +52,8 @@ function getActualVersion() {
   const xhtr = new XMLHttpRequest();
   xhtr.open('GET', 'https://api.github.com/repos/dracotmolver/soube/releases/latest', true);
   xhtr.onload = () => {
-    const r = JSON.parse(xhtr.response);
-    if (app.getVersion().toString() !== r.tag_name) {
+    const RESPONSE = JSON.parse(xhtr.response);
+    if (remote.app.getVersion().toString() !== RESPONSE.tag_name) {
       $('#pop-up-container')
       .replaceClass('hide', '')
       .child(0)
@@ -102,7 +79,7 @@ function getActualVersion() {
         if (Object.keys(listSongs).length !== 0) checkNewSongs();
 
         clearTimeout(tout);
-      }, 4500);
+      }, LAPSE_POPUP);
     }
   };
   xhtr.send(null);
@@ -123,30 +100,29 @@ function loadSongs() {
     );
   } else {
     // Desplegamos el listado de canciones con el estilo por defecto de tipo lista
-    player.createView(player);
+    PLAYER.createView(PLAYER);
   }
 }
 loadSongs();
 
 function hideSearchInputData() {
-  $('#search-result').text('');
+  $('#search-result').empty();
   $('#search-container').addClass('hide');
   $('#search-wrapper').replaceClass('search-wrapper-anim', '');
-  $('.grid-container').rmAttr('style');
+  $($('.grid-container').get(0)).rmAttr('style');
   $('#search').replaceClass('input-search-anim', '');
   isSearchDisplayed = false;
 }
 
-// // // Busca la canción - Pequeña función de los items del slide
-// // // [searchInputData]
-// // function playSelectedSong() {
-// //   nextSong($(this).data('position', 'int'));
 
-// //   hideSearchInputData();
-// // }
+// This function is use into the function itemSlide
+function selectedSong (position) {
+  PLAYER.controls.playSongAtPosition(position);
+  hideSearchInputData();
+}
 
-// // // Desplegar input search para buscar canciones
-// // // Registrar un shorcut
+// This funciton will be executed every time the use hit down a keyword
+// So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
 // //   countSlide = 0;
   searchValue = this.value;
@@ -155,47 +131,44 @@ function searchInputData(e) {
   if (e.key === 'ArrowRight' && searchValue.length > 1)
     this.value = $('#search-result').text();
 
-  if (e.key === 'Enter') {
-    // plays the searched song
-    player.controls.playSongAtPosition(list[0].position);
-    hideSearchInputData();
-  }
+  if (e.key === 'Enter') selectedSong(list[0].position);
 
   regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
   list = listSongs.filter(v => regex.test(v.title));
 
   // Shows possibles results
-// //   if (searchValue.length > 0) {
-// //     totalResults = _list.length;
-// //     tempSlide = slide = totalResults > 20 ? Math.floor(totalResults / 20) : 1;
-// //     fragContRes = document.createDocumentFragment();
-// //     fragRes = document.createDocumentFragment();
+  if (searchValue.length > 0) {
+    totalResults = list.length - 1;
+    // tempSlide = 
+    slide = totalResults > MAX_ELEMENTS ? Math.floor(totalResults / MAX_ELEMENTS) : 1;
+    fragmentSlide = fragmentItems = document.createDocumentFragment();
 
-// //     // Genera slide con listado total de las coincidencias
-// //     const x = (totalResults < 20 ? totalResults : 20);
-// //     while (slide--) {
-// //       for (var i = 0; i < x; i++ , totalResults--) {
-// //         textFound = _list[totalResults - 1].title;
+    // Makes an slide with all the filtered coincidences
+    const FILTERED_SONGS = totalResults < MAX_ELEMENTS ? totalResults : MAX_ELEMENTS;
+    while (slide--) {
+      for (var i = 0; i < FILTERED_SONGS; i++ , totalResults--) {
+        fragmentItems.appendChild(
+          BTN_FILTER_SONGS[0].clone(true)
+          .insert(
+            BTN_FILTER_SONGS[1].clone(true)
+            .text(list[totalResults].title)
+          )
+          .data({ position: list[totalResults].position })
+          .on({
+            'click': function() {
+              selectedSong($(this).data('position'));
+            }
+          }).get()
+        );
+      }
 
-// //         // Se generan los items dentro del slide
-// //         fragRes.appendChild(
-// //           $.clone(items[0], true).insert(
-// //             $.clone(items[1], true)
-// //             .text(textFound.length > 25 ? `${textFound.slice(0, 25)}...` : textFound)
-// //           )
-// //           .data({ position: _list[totalResults - 1].position })
-// //           .on({
-// //             'click': playSelectedSong
-// //           }).get()
-// //         );
-// //       }
-
-// //       // Agregar los items al slide
-// //       fragContRes.appendChild(
-// //         $.clone(items[2], true).insert(fragRes)
-// //         .css(`width:${document.body.clientWidth}px`).get()
-// //       );
-// //     }
+      // All the buttons into the slides
+      fragmentSlide.appendChild(
+        BTN_FILTER_SONGS[2].clone(true)
+        .insert(fragmentItems)
+        .css(`width:${document.body.clientWidth}px`).get()
+      );
+    }
 
 // //     // Agregar paginación en caso de haber más de un slide
 // //     // Como hay más canciones de las que se muestran
@@ -205,14 +178,14 @@ function searchInputData(e) {
 // //     $('#pagination').rmClass('hide').child(1).addClass('arrow-open-anim') :
 // //     $('#pagination').addClass('hide');
 
-// //     // Despliega el total de canciones
-// //     $('#wrapper-results').text('').insert(fragContRes)
-// //     .css(`width:${tempSlide * document.body.clientWidth}px`);
-// //   } else {
-// //     // Limpiar cuando no haya coincidencia
-// //     $('#wrapper-results').text('');
-// //     $('#pagination').addClass('hide');
-// //   }
+    // Displays all the filtered songs
+    $('#wrapper-results').empty().insert(fragmentSlide);
+  // .css(`width:${tempSlide * document.body.clientWidth}px`);
+  } else {
+    // Clean if there's no coincidence
+    $('#wrapper-results').empty();
+    $('#pagination').addClass('hide');
+  }
 
   // Shows the first coincidence to show as a ghost text
   $('#search-result').text(list.length > 0 && searchValue.length > 0 ? list[0].title : '');
@@ -220,7 +193,7 @@ function searchInputData(e) {
 
 // Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
 function checkNewSongs() {
-  player.addSongFolder(configFile.musicFolder, () => {
+  PLAYER.addSongFolder(configFile.musicFolder, () => {
     // Desplegar pop-up
     $('#pop-up-container')
     .replaceClass('hide', '')
@@ -249,7 +222,7 @@ function clickBtnControls() {
   if (listSongs.length !== 0) {
     switch (this.id) {
       case 'play-pause':
-        if (player.controls.playSong() === 'resume') {
+        if (PLAYER.controls.playSong() === 'resume') {
           // Send a message to the thumbar buttons [Windows]
   // //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
         } else {
@@ -257,9 +230,9 @@ function clickBtnControls() {
   // //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
         }
         break;
-      case 'next': player.controls.nextSong(); break;
-      case 'prev': player.controls.prevSong(); break;
-      case 'shuffle': player.controls.shuffle() ;break;
+      case 'next': PLAYER.controls.nextSong(); break;
+      case 'prev': PLAYER.controls.prevSong(); break;
+      case 'shuffle': PLAYER.controls.shuffle() ;break;
     }
   } else {
       dialog.showMessageBox({
@@ -277,22 +250,22 @@ $('#song-title').on({
     if (this.children[0].textContent.trim() !== '') {
       clickedElement = document.getElementById('list-songs');
       positionElement = document.getElementById($(this).data('position'));
-      const el = clickedElement.scrollTop;
-      const top = positionElement.offsetTop;
-      const topNav = Math.round(document.getElementById('top-nav').offsetHeight);
+      const ELEMENT = clickedElement.scrollTop;
+      const TOP = positionElement.offsetTop;
+      const TOPNAV = Math.round(document.getElementById('top-nav').offsetHeight);
 
-      if (el !== top - (topNav + 100)) {
-        clickedElement.scrollTop += (top - (topNav + 100)) - el;
+      if (ELEMENT !== TOP - (TOPNAV + 100)) {
+        clickedElement.scrollTop += (TOP - (TOPNAV + 100)) - ELEMENT;
 
-        const _time = setTimeout(() => {
+        let time = setTimeout(() => {
           $(positionElement).addClass('anim-selected-song');
           $('.anim-selected-song').on({
             'animationend': function() {
               $(positionElement).replaceClass('anim-selected-song', '');
             }
           });
-          clearTimeout(_time);
-        }, 60);
+          clearTimeout(time);
+        }, LAPSE_SCROLLING);
       }
     }
   }
@@ -338,8 +311,8 @@ ipcRenderer.on('search-song', () => {
   if (!isSearchDisplayed) {
     $('#search-container').replaceClass('hide', '');
     $('#search-wrapper').addClass('search-wrapper-anim');
-    $('.grid-container').css('-webkit-filter:blur(1px)');
-    $('#wrapper-results').text('');
+    $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
+    $('#wrapper-results').empty();
     $('#search').addClass('search-anim')
     .on({ 'keyup': searchInputData }).get().focus();
     isSearchDisplayed = true;
@@ -349,7 +322,7 @@ ipcRenderer.on('search-song', () => {
 
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) => {
-  player.controls.setFilterVal(...a);
+  PLAYER.controls.setFilterVal(...a);
 });
 
 // Makes the list of song when are exported from the config panel (adding the music folder)
@@ -358,16 +331,16 @@ ipcRenderer.on('order-display-list', () => {
 });
 
 // Play or pause song [Ctrl + Up]
-ipcRenderer.on('play-and-pause-song', player.controls.playSong);
+ipcRenderer.on('play-and-pause-song', PLAYER.controls.playSong);
 
 // Next song [Ctrl + Right]
-ipcRenderer.on('next-song', player.controls.nextSong);
+ipcRenderer.on('next-song', PLAYER.controls.nextSong);
 
 // Prev song [Ctrl + Left]
-ipcRenderer.on('prev-song', player.controls.prevSong);
+ipcRenderer.on('prev-song', PLAYER.controls.prevSong);
 
 // Shuffle [Ctrl + Down]
-ipcRenderer.on('shuffle', player.controls.shuffle);
+ipcRenderer.on('shuffle', PLAYER.controls.shuffle);
 
 // // // ThumbarButtons [Windows]
 // // ipcRenderer.on('thumbar-controls', (e, a) => {
