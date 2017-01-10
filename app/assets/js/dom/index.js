@@ -9,13 +9,19 @@ module.exports = (_ => {
   var event = {};
 
   /* --------------------------------- Eventos --------------------------------- */
-  const Event = {
+  const EVENT = {
     element: null,
     addClass: function(str) {
-      const rgx = new RegExp(str, 'g');
-      const cName = this.element.className;
+      const RGX = new RegExp(str, 'g');
+      const CLASS_NAME = this.element.className;
 
-      if (!rgx.test(cName)) this.element.className += cName === '' ? `${str}` : ` ${str}`;
+      if (!RGX.test(CLASS_NAME)) this.element.className += CLASS_NAME === '' ? `${str}` : ` ${str}`;
+
+      return this;
+    },
+    empty: function() {
+      let el = this.element;
+      while(el.firstChild) el.removeChild(el.firstChild);
 
       return this;
     },
@@ -76,15 +82,15 @@ module.exports = (_ => {
       return this;
     },
     css: function(str) {
-      const rgx = new RegExp(str, 'g');
+      const RGX = new RegExp(str, 'g');
       let el = this.element;
 
       if (el.length !== undefined) {
         el.forEach(e => {
-          if (!rgx.test(e.style.cssText)) e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
+          if (!RGX.test(e.style.cssText)) e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
         });
       } else {
-        if (!rgx.test(el.style.cssText)) el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
+        if (!RGX.test(el.style.cssText)) el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
       }
 
       return this;
@@ -94,7 +100,7 @@ module.exports = (_ => {
         this.element = getCreatedElement(this.element).cloneNode(isCloned);
         return this;
       } else {
-        event = Object.assign({}, Event);
+        event = Object.assign({}, EVENT);
         event.element = this.element.cloneNode(isCloned);
         return event;
       }
@@ -134,7 +140,7 @@ module.exports = (_ => {
   }
 
   function inPool(name) {
-    return poolOfElements[name] === Event.element;
+    return poolOfElements[name] === EVENT.element;
   }
 
   function getElementInPool(name) {
@@ -162,26 +168,23 @@ module.exports = (_ => {
   // Recibe un string para buscar el elemento en el DOM y retornar un objeto
   // con todas las funciones necesarias para ser usados sobre este proyecto
   const DOM = e => {
-    event = Object.assign({}, Event);
+    event = Object.assign({}, EVENT);
 
     // Revisar si ya se está usando el mismo elemento
     // De no existir se crea, pero solo una vez.
     if (inPool(e)) {
       event.element = getElementInPool(e);
     } else {
-      // Insertar en pool elementos seleccionados desde el DOM
-      if (/^\./.test(e)) {
-        e = Array.from(document.getElementsByClassName(e.replace('.', '')));
-        saveElementInPool(e);
-      } else if (/^#/.test(e)) {
-        e = document.getElementById(e.replace('#', ''));
-        saveElementInPool(e);
-      } else if (/^:/.test(e)) {
-        e = Array.from(document.getElementsByTagName(e.replace(':', '')));
+      if ((r = /^(\.|#|:)/.exec(e))) {
+        switch(r[0]) {
+          case '.': e = Array.from(document.getElementsByClassName(e.replace('.', ''))); break;
+          case '#': e = document.getElementById(e.replace('#', '')); break;
+          case ':': e = Array.from(document.getElementsByTagName(e.replace(':', ''))); break;
+        }
+
         saveElementInPool(e);
       } else if (typeof e === 'string') {
         saveCreatedElement(e);
-      } else {
       }
     }
 

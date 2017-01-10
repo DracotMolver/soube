@@ -1,5 +1,8 @@
 /**
  * @author Diego Alberto Molina Vera
+ * 
+ * All the constants variables are Uppercase.
+ * Except some exported modules.
  */
 /* --------------------------------- Modules --------------------------------- */
 // Nodejs module
@@ -20,43 +23,43 @@ const remote = require('electron').remote;
  */
 function createFiles(path) {
   /* --------------------------------- Configuration --------------------------------- */
-  const configPath = `${path}/config.json`;
-  const eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const CONFIG_PATH = `${path}/config.json`;
+  const EQ = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  fs.stat(configPath, (err, stats) => {
+  fs.stat(CONFIG_PATH, (err, stats) => {
     if (err) {
       // Values by default
-      const config = {
+      const CONFIG = {
         lang: 'us',
         shuffle: true,
         musicFolder: '',
-        equalizer: eq
+        equalizer: EQ
       };
 
-      fs.open(configPath, 'w', (err, fd) => {
+      fs.open(CONFIG_PATH, 'w', (err, fd) => {
         if (err) return;
 
-        fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
+        fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG, null), { flag: 'w' });
         fs.closeSync(fd);
       });
     } else {
       // ONLY FOR VERSIONS LOWER THAN 1.3.2
-      let config = JSON.parse(fs.readFileSync(configPath).toString());
+      let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
       if (config.equalizer.length < 23) {
-        config.equalizer = eq;
-        fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
+        config.equalizer = EQ;
+        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null), { flag: 'w' });
       }
     }
   });
 
   /* --------------------------------- File of songs --------------------------------- */
-  const listSongPath = `${path}/listSong.json`;
-  fs.stat(listSongPath, (err, stats) => {
+  const LIST_SONG_PATH = `${path}/listSong.json`;
+  fs.stat(LIST_SONG_PATH, (err, stats) => {
     if (err) {
-      fs.open(listSongPath, 'w', (err, fd) => {
+      fs.open(LIST_SONG_PATH, 'w', (err, fd) => {
         if (err) return;
 
-        fs.writeFileSync(listSongPath, JSON.stringify({}, null), { flag: 'w' });
+        fs.writeFileSync(LIST_SONG_PATH, JSON.stringify({}, null), { flag: 'w' });
         fs.closeSync(fd);
       });
     }
@@ -82,15 +85,11 @@ function editFile(fileName, data) {
  * @return {Object} return an object.
  */
 function init() {
-  const configFile = require(`${remote.app.getPath('userData')}/config.json`);
-  const langFile = require('./lang.json');
-  const listSongs = require(`${remote.app.getPath('userData')}/listSong.json`);;
-
   return {
     editFile,
-    configFile,
-    listSongs,
-    langFile
+    configFile: require(`${remote.app.getPath('userData')}/config.json`),
+    listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
+    langFile: require('./lang.json')
   }
 }
 
