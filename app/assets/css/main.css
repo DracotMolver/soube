@@ -42,7 +42,7 @@ a {
 
 #play-pause {
     text-align: center;
-    margin: 1.25em 1em;
+    margin: 1.25em .9em;
     height: 3em
 }
 
@@ -127,7 +127,8 @@ a {
 
 #song-title > h1,
 #artist > h2,
-#album > h3 {
+#album > h3,
+.search-results {
     text-overflow: ellipsis;
     overflow: hidden
 }
@@ -188,12 +189,7 @@ a {
 
 /* ------------------------ BUSQUEDA DE CANCIONES ------------------------ */
 .search-results {
-    border-radius: 25px;
-    background: rgba(151,154,154, .5);
-    line-height: 2.6em;
-    text-align: center;
-    margin: 1em;
-    color: var(--lightGreyColor)
+    margin: 1em
 }
 
 #search-container {
@@ -342,15 +338,19 @@ a {
     top: 6.4em
 }
 
-#pop-up {
+#pop-up,
+.search-results {
     border-radius: 2px;
     border-bottom: 2px solid var(--pinkColor);
     background: var(--darkGreyColor);
     text-align: center;
-    transform: scale(0);
     font-size: .94em;
     padding: .6em;
     color:  var(--whiteColor)
+}
+
+#pop-up {
+    transform: scale(0)
 }
 
 #pop-up > a {
