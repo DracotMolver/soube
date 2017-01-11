@@ -1,26 +1,19 @@
 /**
  * @author Diego Alberto Molina Vera
- * 
- * All the constants variables are Uppercase.
- * Except some exported modules.
  */
 /* --------------------------------- Modules --------------------------------- */
-// Nodejs module
+// Nodejs modules
 const fs = require('fs');
 
-// Electron module
+// Electron modules
 const remote = require('electron').remote;
 
 /* --------------------------------- Functions --------------------------------- */
-/**
- * Will create all the files needed by the music player.
- * Some old files (old soubes versions) will be overwritens.
- * This function will checks for two files:
- *  - config.json
- *  -listSong.json
- * 
- * @var {String} path Path where is the .confg folder created by Chrome
- */
+// Will create all the files needed by the music player.
+// Some old files (old soubes versions) will be overwritens.
+// This function will checks for two files:
+// - config.json
+// - listSong.json
 function createFiles(path) {
   /* --------------------------------- Configuration --------------------------------- */
   const CONFIG_PATH = `${path}/config.json`;
@@ -66,24 +59,15 @@ function createFiles(path) {
   });
 }
 
-/**
- * Will save the files config.json and listSong.json if needed.
- * 
- * @var {String} fileName Name of the file to save changes.
- * @var {Object} data JSON object to save into the file.
- */
+// Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data) {
   fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
 }
 
-/**
- * Will get all the config files.
- * - config.json // .confg
- * - lang.json // local project
- * - listSong.json // .config
- * 
- * @return {Object} return an object.
- */
+// Will get all the config files.
+// config.json [.confg] path
+// lang.json [local project] path
+// listSong.json [.config] path
 function init() {
   return {
     editFile,

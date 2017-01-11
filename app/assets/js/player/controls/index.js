@@ -1,7 +1,7 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-// /* --------------------------------------- Módulos ------------------------------------------- */
+/* --------------------------------------- Modules ------------------------------------------- */
 // const worker = new Worker('../../assets/js/timeWorker.js');
 // Nodejs módulos
 const path = require('path');

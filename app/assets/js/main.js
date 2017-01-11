@@ -21,7 +21,7 @@ const {
 } = require('./config').init();
 require('./dom');
 
-// /** --------------------------------------- Variables --------------------------------------- **/
+/** --------------------------------------- Variables --------------------------------------- **/
 let lang = langFile[configFile.lang];
 let clickedElement = null; // When you do click on the name of the song
 let positionElement = null; // Where is the song that you clicked on.
@@ -32,7 +32,8 @@ const LAPSE_SCROLLING = 60; // Lapse before do scrolling
 const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [search input]
 let totalResults = 0; // Amount of songs filtered
 let searchValue = ''; // The input text to search for
-// let tempSlide = 0;
+let tempSlide = 0; // To create the pagination
+
 // let countSlide = 0;
 let fragmentSlide = null; // DocumentFragment() slide container
 let fragmentItems = null; // DocumentFragment() button container
@@ -139,8 +140,7 @@ function searchInputData(e) {
   // Shows possibles results
   if (searchValue.length > 0) {
     totalResults = list.length - 1;
-    // tempSlide = 
-    slide = totalResults > MAX_ELEMENTS ? Math.floor(totalResults / MAX_ELEMENTS) : 1;
+    tempSlide = slide = totalResults > MAX_ELEMENTS ? Math.floor(totalResults / MAX_ELEMENTS) : 1;
     fragmentSlide = fragmentItems = document.createDocumentFragment();
 
     // Makes an slide with all the filtered coincidences
@@ -170,17 +170,15 @@ function searchInputData(e) {
       );
     }
 
-// //     // Agregar paginación en caso de haber más de un slide
-// //     // Como hay más canciones de las que se muestran
-// //     // se crea la paginación y siempre empieza en el primer slide
-// //     // generando así la animación de la flecha del lado derecho para avanzar al siguiente slide
-// //     tempSlide > 1 ?
-// //     $('#pagination').rmClass('hide').child(1).addClass('arrow-open-anim') :
-// //     $('#pagination').addClass('hide');
+    // Add pagination if there's more than one slide
+    tempSlide > 1 ?
+    $('#pagination').replaceClass('hide', '').child(1).addClass('arrow-open-anim') :
+    $('#pagination').addClass('hide');
 
     // Displays all the filtered songs
-    $('#wrapper-results').empty().insert(fragmentSlide);
-  // .css(`width:${tempSlide * document.body.clientWidth}px`);
+    $('#wrapper-results').empty()
+    .insert(fragmentSlide)
+    .css(`width:${tempSlide * document.body.clientWidth}px`);
   } else {
     // Clean if there's no coincidence
     $('#wrapper-results').empty();
@@ -271,20 +269,20 @@ $('#song-title').on({
   }
 });
 
-// Abrir ventana de configuración
+// Open the window configuration
 $('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
 
-// Action whe do click on over the buttons play, next, prev and shuffle
+// Action when do click on over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ 'click': clickBtnControls });
 
 // // // Adelantar o retroceder la canción usando la barra de progreso
 // // $('#total-progress-bar').on({ 'click': function (e) { moveForward(e, this); }});
 
-// // // Acción sobre los botones de paginación
-// // $('.arrow').on({
-// //   'click': function () {
+// Action over the pagination
+$('.arrow').on({
+  'click': function () {
 // //     if (!$('#pagination').has('hide')) {
-// //       if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
+    if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
 // //         if (countSlide < tempSlide) ++countSlide;
 // //       } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
 // //         if (countSlide < tempSlide && countSlide > 0) --countSlide;
@@ -298,13 +296,13 @@ $('.btn-controls').on({ 'click': clickBtnControls });
 // //         $('#wrapper-results').child()
 // //         .css(`transform:translateX(${-1 * (countSlide * document.body.clientWidth)}px)`);
 // //       }
-// //     }
-// //   }
-// // });
+    }
+  }
+});
 
 /** --------------------------------------- Ipc Renderer --------------------------------------- **/
-// // // Se detecta el cierre del inputsearch con la tecla Esc
-// // ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
+// Close the search input bar
+ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
 
 // Displays the search input [ctrl + F]
 ipcRenderer.on('search-song', () => {
@@ -314,7 +312,7 @@ ipcRenderer.on('search-song', () => {
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
     $('#wrapper-results').empty();
     $('#search').addClass('search-anim')
-    .on({ 'keyup': searchInputData }).get().focus();
+    .on({ 'keyup': searchInputData }).val('').get().focus();
     isSearchDisplayed = true;
     countSlide = 0;
   }

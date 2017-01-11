@@ -1,19 +1,19 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-/* --------------------------------- Módulos --------------------------------- */
-// Node módulos
+/* --------------------------------- Modules --------------------------------- */
+// Nodejs modules
 const fs = require('fs');
 const exec = require('child_process').exec;
 const path = require('path');
 
-// Electron módulos
+// Electron modules
 const dialog = require('electron').remote.dialog;
 
-// Otros
+// Others
 const musicmetadata = require('musicmetadata');
 
-// Módulos propios
+// Own modules
 let {
   configFile,
   langFile,
@@ -26,8 +26,9 @@ let lang = langFile[configFile.lang];
 let songs = [];
 let files = [];
 
-/* --------------------------------- Funciones --------------------------------- */
-// Lista el total de archivos y sub-archivos
+/* --------------------------------- Functions --------------------------------- */
+// List of files and sub-files
+// In this way, we avoid to use recursion
 function findFiles(dir) {
   let allFiles = [];
   let tmpFolders = [];
@@ -36,12 +37,10 @@ function findFiles(dir) {
   const rgxExt = /(\.mp3|\.wmv|\.wav|\.ogg)$/ig;
 
   fs.readdirSync(dir).forEach(files => {
-    // Carpetas bases.
-    // Obtener todas las carpetas
+    // Based folders.
     if (fs.lstatSync(`${dir}/${files}`).isDirectory()) {
       folders.push(`${dir}/${files}`);
     } else if (fs.lstatSync(`${dir}/${files}`).isFile() && rgxExt.test(files)) {
-      // Obtener todos los archivos con las extensiones definidas.
       allFiles.push(`${dir}/${files}`);
     }
   });
@@ -64,17 +63,14 @@ function findFiles(dir) {
   return allFiles;
 }
 
+// Will get all this songs files.
+// It will compare if there's more or few songs
 function addSongFolder(folder, fnStart, fnIter) {
-  // Rescatar el objeto que contiene el archivo listsong.json
+  // Get the object from listsong.json - only if was already created it
   songs = Object.keys(listSongs).length === 0 ? [] : listSongs;
 
   const readAllFiles = readFiles => {
-    // Verificar que las canciones guardadas son la misma cantidad
-    // que las que hay en la carpeta de música.
-    // De lo contrario hay dos opciones:
-    //  1.- Borrar las canciones que sobran en caso de haber más [metaDataSongs > readFiles]
-    //  2.- Agregar las canciones nuevas [metaDataSongs < readFiles]
-    if (songs.length < readFiles.length) { // Agregar
+    if (songs.length < readFiles.length) { // Add songs
       files = readFiles.filter(f => {
         if (songs.find(v => v.filename === f) === undefined) return path.normalize(f);
       });
@@ -83,7 +79,7 @@ function addSongFolder(folder, fnStart, fnIter) {
         fnStart();
         extractMetadata(fnIter);
       }
-    } else if(songs.length > readFiles.length) { // Borrar
+    } else if(songs.length > readFiles.length) { // Remove songs
       songs = songs.filter(f => {
         if (readFiles.find(v => v === f.filename)) return f;
       });
@@ -93,7 +89,6 @@ function addSongFolder(folder, fnStart, fnIter) {
     }
   };
 
-  // NOTA: Para windows debemos usar un método recursivo [dir es muy limitado y findstr también].
   // Ejecutar linea de comando [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
     const command = `find ${folder} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
@@ -106,16 +101,18 @@ function addSongFolder(folder, fnStart, fnIter) {
       }
     });
   } else if (process.platform === 'win32') {
+    // Only for windows
     readAllFiles(findFiles(folder));
   }
 }
 
+// Will get all the needed metadata from a song file
 function extractMetadata(fnIter, fnEnd) {
   let readStream = null;
   songs = [];
   files.forEach(v => {
     musicmetadata(fs.createReadStream(v), (error, data) => {
-      // En caso de error, generar atributos de la canción con un valor en el idioma correspondiente
+      // In case of error, it will save data using what is inside the lang.json file
       songs.push(
         error ?
         {
