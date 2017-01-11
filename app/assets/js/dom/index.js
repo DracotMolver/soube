@@ -1,5 +1,5 @@
 /**
- * Framework pequeño para manipular el DOM
+ * DOM manipulation
  * @author Diego Alberto Molina Vera
  */
 module.exports = (_ => {
@@ -8,14 +8,13 @@ module.exports = (_ => {
   var poolOfElements = {};
   var event = {};
 
-  /* --------------------------------- Eventos --------------------------------- */
+  /* --------------------------------- Events --------------------------------- */
   const EVENT = {
     element: null,
     addClass: function(str) {
-      const RGX = new RegExp(str, 'g');
       const CLASS_NAME = this.element.className;
 
-      if (!RGX.test(CLASS_NAME)) this.element.className += CLASS_NAME === '' ? `${str}` : ` ${str}`;
+      if (CLASS_NAME.indexOf(str) === -1) this.element.className += CLASS_NAME === '' ? `${str}` : ` ${str}`;
 
       return this;
     },
@@ -82,15 +81,14 @@ module.exports = (_ => {
       return this;
     },
     css: function(str) {
-      const RGX = new RegExp(str, 'g');
       let el = this.element;
 
       if (el.length !== undefined) {
         el.forEach(e => {
-          if (!RGX.test(e.style.cssText)) e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
+          if (e.style.cssText.indexOf(str)) e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
         });
       } else {
-        if (!RGX.test(el.style.cssText)) el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
+        if (el.style.cssText.indexOf(str)) el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
       }
 
       return this;
@@ -123,10 +121,22 @@ module.exports = (_ => {
     insert: function (...a) {
       a.forEach(v => { this.element.appendChild('element' in v ? v.element : v); });
       return this;
+    },
+    val: function (v = null) {
+      if (v === null) {
+        return this.element.value;
+      } else {
+        this.element.value = v;
+
+        return this;
+      }
+    },
+    has: function (s) {
+      return this.element.className.indexOf(s) !== -1;
     }
   };
 
-  /* --------------------------------- Funciones --------------------------------- */
+  /* --------------------------------- Functions --------------------------------- */
   function saveCreatedElement(name) {
     if (!createdElements[name]) createdElements[name] = document.createElement(name);
   }
@@ -151,27 +161,12 @@ module.exports = (_ => {
 //   //     this._e.removeChild(this._e.children[c - 1]);
 //   //   },
 
-//   //   has: function (s) {
-//   //     return (new RegExp(s, 'g')).test(this._e.className);
-//   //   },
-//   //   val: function (v = '') { // Ingresar value
-//   //     if (v === '') {
-//   //       return v.value;
-//   //     } else {
-//   //       this._e.value = v;
-//   //       return this;
-//   //     }
-//   //   },
-//   // }
-
   /* --------------------------------- Main Function --------------------------------- */
-  // Recibe un string para buscar el elemento en el DOM y retornar un objeto
-  // con todas las funciones necesarias para ser usados sobre este proyecto
+  // Get an string to search for an element into the DOM and its return an Object
+  // with all the needed functions
   const DOM = e => {
     event = Object.assign({}, EVENT);
 
-    // Revisar si ya se está usando el mismo elemento
-    // De no existir se crea, pero solo una vez.
     if (inPool(e)) {
       event.element = getElementInPool(e);
     } else {
@@ -192,5 +187,5 @@ module.exports = (_ => {
     return event;
   }
 
-  _.$ = DOM; // Manipular DOM
+  _.$ = DOM;
 })(global);
