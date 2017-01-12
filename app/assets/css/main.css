@@ -215,12 +215,12 @@ a {
     background-color: transparent;
     background-size: 1.6em;
     border-bottom: .03em solid var(--darkGreyColor);
+    padding-left: 1.6em;
     line-height: 0;
     transform: scale(0);
-    padding: .2em .2em .2em 1.6em;
     margin: 0;
     cursor: text;
-    width: 100%;
+    width: 94%;
     color: var(--blackColor)
 }
 
@@ -231,11 +231,11 @@ a {
 }
 
 #search-result {
+    padding-left: 1.6em;
     position: absolute;
+    z-index: -1;
     color: rgba(182, 182, 182, .4);
-    left: 1.6em;
-    top: 4.1em;
-    z-index: -1
+    top: 4.1em
 }
 
 .search-anim {
