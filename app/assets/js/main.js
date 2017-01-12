@@ -34,7 +34,7 @@ let totalResults = 0; // Amount of songs filtered
 let searchValue = ''; // The input text to search for
 let tempSlide = 0; // To create the pagination
 
-// let countSlide = 0;
+let countSlide = 0;
 let fragmentSlide = null; // DocumentFragment() slide container
 let fragmentItems = null; // DocumentFragment() button container
 let slide = 0; // Amount of slides to make
@@ -125,26 +125,26 @@ function selectedSong (position) {
 // This funciton will be executed every time the use hit down a keyword
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
-// //   countSlide = 0;
-  searchValue = this.value;
+  searchValue = this.value.trim();
 
-  // Complete the text
-  if (e.key === 'ArrowRight' && searchValue.length > 1)
-    this.value = $('#search-result').text();
+  if (searchValue !== '') {
+    countSlide = 0;
+    // Complete the text
+    if (e.key === 'ArrowRight' && searchValue.length > 1)
+      this.value = $('#search-result').text();
 
-  if (e.key === 'Enter') selectedSong(list[0].position);
+    if (e.key === 'Enter') selectedSong(list[0].position);
 
-  regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
-  list = listSongs.filter(v => regex.test(v.title));
+    regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}+`, 'ig');
+    list = listSongs.filter(v => regex.test(v.title));
 
   // Shows possibles results
-  if (searchValue.length > 0) {
     totalResults = list.length - 1;
     tempSlide = slide = totalResults > MAX_ELEMENTS ? Math.floor(totalResults / MAX_ELEMENTS) : 1;
     fragmentSlide = fragmentItems = document.createDocumentFragment();
 
     // Makes an slide with all the filtered coincidences
-    const FILTERED_SONGS = totalResults < MAX_ELEMENTS ? totalResults : MAX_ELEMENTS;
+    const FILTERED_SONGS = totalResults < MAX_ELEMENTS ? totalResults + 1 : MAX_ELEMENTS;
     while (slide--) {
       for (var i = 0; i < FILTERED_SONGS; i++ , totalResults--) {
         fragmentItems.appendChild(
@@ -168,6 +168,7 @@ function searchInputData(e) {
         .insert(fragmentItems)
         .css(`width:${document.body.clientWidth}px`).get()
       );
+      fragmentItems = document.createDocumentFragment();
     }
 
     // Add pagination if there's more than one slide
@@ -186,7 +187,7 @@ function searchInputData(e) {
   }
 
   // Shows the first coincidence to show as a ghost text
-  $('#search-result').text(list.length > 0 && searchValue.length > 0 ? list[0].title : '');
+  $('#search-result').text(searchValue !== '' ? list[0].title : '');
 }
 
 // Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
@@ -281,26 +282,24 @@ $('.btn-controls').on({ 'click': clickBtnControls });
 // Action over the pagination
 $('.arrow').on({
   'click': function () {
-// //     if (!$('#pagination').has('hide')) {
     if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
-// //         if (countSlide < tempSlide) ++countSlide;
-// //       } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
-// //         if (countSlide < tempSlide && countSlide > 0) --countSlide;
-// //       }
+        if (countSlide < tempSlide) ++countSlide;
+    } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
+      if (countSlide < tempSlide && countSlide > 0) --countSlide;
+    }
 
-// //       if (countSlide === tempSlide - 1) $('#right-arrow').rmClass('arrow-open-anim');
-// //       if (countSlide === 1) $('#left-arrow').addClass('arrow-open-anim');
-// //       if (countSlide === 0) $('#left-arrow').rmClass('arrow-open-anim');
-// //       if (countSlide === tempSlide - 2) $('#right-arrow').addClass('arrow-open-anim');
-// //       if (countSlide < tempSlide && countSlide !== -1) {
-// //         $('#wrapper-results').child()
-// //         .css(`transform:translateX(${-1 * (countSlide * document.body.clientWidth)}px)`);
-// //       }
+    if (countSlide === tempSlide - 1) $('#right-arrow').replaceClass('arrow-open-anim', '');
+    if (countSlide === 1) $('#left-arrow').addClass('arrow-open-anim');
+    if (countSlide === 0) $('#left-arrow').replaceClass('arrow-open-anim', '');
+    if (countSlide === tempSlide - 2) $('#right-arrow').addClass('arrow-open-anim');
+    if (countSlide < tempSlide && countSlide !== -1) {
+      $('#wrapper-results').child()
+      .css(`transform:translateX(${-1 * (countSlide * document.body.clientWidth)}px)`);
     }
   }
 });
 
-/** --------------------------------------- Ipc Renderer --------------------------------------- **/
+/** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the search input bar
 ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
 
@@ -318,7 +317,7 @@ ipcRenderer.on('search-song', () => {
   }
 });
 
-// Send the values from the equalizer to the AudioContext [player/controls/index.js]
+// Sends the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) => {
   PLAYER.controls.setFilterVal(...a);
 });

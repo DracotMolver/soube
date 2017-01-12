@@ -24,8 +24,8 @@ module.exports = (_ => {
 
       return this;
     },
-    text: function(str = '') {
-      if (str !== '') this.element.innerHTML = `${str}`;
+    text: function(str = null) {
+      if (str !== null) this.element.innerHTML = `${str}`;
       else return this.element.textContent;
 
       return this;

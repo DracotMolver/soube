@@ -1,15 +1,15 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-/* --------------------------------- Módulos --------------------------------- */
-// Electron módulos
+/* --------------------------------- Modules --------------------------------- */
+// Electron modules
 const {
   shell,
   ipcRenderer,
   remote
 } = require('electron');
 
-// Propios
+// Own modules
 const factory = require('./factory');
 const player = factory('player');
 const EQ = factory('equilizer');
@@ -17,7 +17,6 @@ const EQ = factory('equilizer');
 const {
   configFile,
   langFile,
-// //   songsFile,
   editFile
 } = require('./config').init();
 require('./dom');
@@ -25,9 +24,9 @@ require('./dom');
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
 
-/* --------------------------------- Funciones --------------------------------- */
+/* --------------------------------- Functions --------------------------------- */
 
-// Texto a modificar en la ventana de configuraciones
+// Change the text in the config window
 (function updateTextContet() {
   $('#_addsongfolder').text(lang.config.addSongFolder);
   $('#_statussongfolder').text(configFile.musicFolder === '' ? lang.config.statusSongFolder : configFile.musicFolder);
@@ -114,6 +113,7 @@ function onEqualizerPanel(e) {
 
   EQ.onDragEnd((pos, db) => {
     configFile.equalizer[pos] = db;
+    editFile('config', configFile);
   });
 
   // El evento es solo registrado sobre los botones redondos
@@ -177,13 +177,15 @@ $('#equalizer-panel').on({ 'click': onEqualizerPanel });
 // Acciones predefinidas del ecualizador
 $('.eq-buttons').on({
   'click': function () {
-    const eq = $(this).data('eq');
-    switch(eq) {
+    const EQ_DATA = $(this).data('eq');
+    switch(EQ_DATA) {
       case 'rock':
       case 'electro':
-      case 'acustic': othersEQ(EQ.styles[eq]); break;
+      case 'acustic': othersEQ(EQ.styles[EQ_DATA]); break;
       case 'reset': resetEQ(); break;
     }
+
+  editFile('config', configFile);
   }
 });
 
