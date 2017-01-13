@@ -27,7 +27,12 @@
             "error_001": "Falta un archivo necesario para que funcione el reproductor. Ir a: https:\/\/github.com\/DracotMolver\/Soube y reportar el error. Gracias",
             "error_002": "No hay archivos para reproducir. Por favor, ir al icono de configuración y agregar tu carpeta de música",
             "error_003": "Se ha producido un error al intentar leer la carpeta: "
-        }
+        },
+        "searchBy": [
+            "Canción",
+            "Artista",
+            "Álbum"
+        ]
     },
     "us": {
         "title": "Unknown",
@@ -57,6 +62,11 @@
             "error_001": "Missed a file needed to use the music player. Go to:  https:\/\/github.com\/DracotMolver\/Soube and report the error. Thanks.",
             "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",
             "error_003": "An error occured trying to read the folder: "
-        }
+        },
+        "searchBy": [
+            "Song",
+            "Artist",
+            "Album"
+        ]
     }
 }
