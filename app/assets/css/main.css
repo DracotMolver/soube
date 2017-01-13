@@ -147,7 +147,8 @@ a {
 #song-title > h1,
 #album > h3,
 #time, #time > span,
-#artist > h2 {
+#artist > h2,
+#searchBy > option {
     color: var(--whiteColor);
 }
 
@@ -237,6 +238,17 @@ a {
     color: rgba(182, 182, 182, .4);
     top: 4.1em
 }
+
+#searchBy {
+    border-radius: 4px;
+    padding-left: 7px;
+    background: var(--darkGreyColor);
+    height: 42px;
+    border: none;
+    width: 75%;
+    color: var(--whiteColor);
+}
+
 
 .search-anim {
     animation: showInputUp .5s ease-in forwards
