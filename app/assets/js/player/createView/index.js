@@ -1,16 +1,15 @@
 /**
  * @author Diego Alberto Molina Vera
  */
-/** --------------------------------------- Módulos --------------------------------------- **/
-// Módulos propios
+/** --------------------------------------- Modules --------------------------------------- **/
+// Own modules
 const {
     listSongs
 } = require('./../../config').init();
 require('./../../dom');
 
-/** --------------------------------------- Funciones --------------------------------------- **/
+/** --------------------------------------- Functions --------------------------------------- **/
 function createView(player) {
-  // Contenedor que se reptite para el títutlo, artista y album
   const child = $('div').clone(false).addClass('grid-33 mobile-grid-33 song-info');
   const parentContainer = $('div').clone(false).addClass('list-song-container');
   const f = document.createDocumentFragment();
@@ -19,9 +18,9 @@ function createView(player) {
   let artist = null;
 
   listSongs.forEach((v, i) => {
-    title = child.clone(true).text(v.title); // Título de la canción
-    artist = child.clone(true).text(`<span class="miscelaneo">by</span>${v.artist}`); // Artista
-    album = child.clone(true).text(`<span class="miscelaneo">from</span>${v.album}`); // Album
+    title = child.clone(true).text(v.title);
+    artist = child.clone(true).text(`<span class="miscelaneo">by</span>${v.artist}`);
+    album = child.clone(true).text(`<span class="miscelaneo">from</span>${v.album}`);
 
     f.appendChild(
       parentContainer.clone(true)
@@ -35,7 +34,7 @@ function createView(player) {
       })
       .insert(title, artist, album)
       .on({
-        'click': function() {
+        click: function() {
           player.controls.playSongAtPosition($(this).data('position'));
         }
       }).get()

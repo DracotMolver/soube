@@ -149,7 +149,7 @@ function othersEQ(hrz) {
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Refrescar la ventana
 $('#_titleconfig').on({
-  'click': () => {
+  click: () => {
     // Ya que se refresca el navegador, debemos guardar todo cambio
     editFile('config', configFile);
     window.location.reload(false);
@@ -157,11 +157,11 @@ $('#_titleconfig').on({
 });
 
 // Cambiar idioma
-$('#change-lang').on({ 'click': onClickChangeLang });
+$('#change-lang').on({ click: onClickChangeLang });
 
 // Acción para agregar el listado de canciones
 $('#add-songs').on({
-  'click': () => {
+  click: () => {
     remote.dialog.showOpenDialog({
       title: 'Add music folder',
       properties: ['openDirectory']
@@ -172,11 +172,11 @@ $('#add-songs').on({
 });
 
 // Mostrar ecualizador
-$('#equalizer-panel').on({ 'click': onEqualizerPanel });
+$('#equalizer-panel').on({ click: onEqualizerPanel });
 
 // Acciones predefinidas del ecualizador
 $('.eq-buttons').on({
-  'click': function () {
+  click: function () {
     const EQ_DATA = $(this).data('eq');
     switch(EQ_DATA) {
       case 'rock':
@@ -185,13 +185,13 @@ $('.eq-buttons').on({
       case 'reset': resetEQ(); break;
     }
 
-  editFile('config', configFile);
+    editFile('config', configFile);
   }
 });
 
 // Abrir en el navegador por defecto sel SO
 $(':a').on({
-  'click': function (e) {
+  click: function (e) {
     e.preventDefault();
     shell.openExternal(this.href);
   }
@@ -199,7 +199,7 @@ $(':a').on({
 
 // Mostrar legal
 $('#terms').on({
-  'click': function() {
+  click: function() {
     animConfigPanel(this, lang.config.legal);
   }
 });

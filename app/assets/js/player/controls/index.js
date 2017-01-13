@@ -3,10 +3,10 @@
  */
 /* --------------------------------------- Modules ------------------------------------------- */
 // const worker = new Worker('../../assets/js/timeWorker.js');
-// Nodejs módulos
+// Nodejs modules
 const path = require('path');
 
-// Electron módulos
+// Electron modules
 const dialog = require('electron').remote.dialog;
 
 const {
@@ -85,7 +85,7 @@ const anim = {
   ]
 };
 
-// /** --------------------------------------- Funciones --------------------------------------- **/
+// /** --------------------------------------- Functions --------------------------------------- **/
 
 // Activar shuffle
 function shuffle() {
@@ -100,14 +100,14 @@ function shuffle() {
 // Animation of the play/pause button when it sets to play
 function animPlay() {
   $('.anim-play').each((v, i) => {
-    $(v).attr({ 'from': anim.from[i], 'to': anim.to[i] }).get().beginElement();
+    $(v).attr({ from: anim.from[i], to: anim.to[i] }).get().beginElement();
   });
 }
 
 // Animation of the play/pause button when it sets to pause
 function animPause() {
   $('.anim-play').each((v, i) => {
-    $(v).attr({ 'from': anim.to[i], 'to': anim.from[i] }).get().beginElement();
+    $(v).attr({ from: anim.to[i], to: anim.from[i] }).get().beginElement();
   });
 }
 
@@ -200,8 +200,7 @@ function stopTimer() {
 function dataSong(file) {
   $('#time-start').text('00:00');
   $('#progress-bar').css('width:0');
-
-  $('#song-title').data({position}).child().each(v => { $(v).text(file.title); });
+  $('#song-title').data({position: file.position}).child().each(v => { $(v).text(file.title); });
   $('#artist').child().each(v => { $(v).text(file.artist); });
   $('#album').child().each(v => { $(v).text(file.album); });
 
@@ -362,7 +361,7 @@ function setFilterVal(a, b) {
 function filters() {
   let f = null;
   let db = configFile.equalizer.map(v =>
-    v !== 0 ? parseFloat((v < 130 ? 121 - v : - v + 140) / 10) : 0
+    v !== 0 ? parseFloat((v < 130 ? 121 - v : -v + 140) / 10) : 0
   );
 
   filter = hrz.map((v, i) =>

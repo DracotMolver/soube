@@ -42,19 +42,9 @@ module.exports = (_ => {
     },
     on: function(fn) {
       if (this.element.length !== undefined) {
-        this.element.forEach(e => {
-          Object.keys(fn).forEach(v => {
-            /animation/.test(v) ?
-              e.addEventListener(v.toLowerCase(), fn[v]) :
-              e[`on${v.toLowerCase()}`] = fn[v];
-          });
-        });
+        this.element.forEach(e => onFunction(e, fn));
       } else {
-        Object.keys(fn).forEach(v => {
-          /animation/.test(v) ?
-            this.element.addEventListener(v.toLowerCase(), fn[v]) :
-            this.element[`on${v.toLowerCase()}`] = fn[v];
-        });
+        onFunction(this.element, fn);
       }
 
       return this;
@@ -137,6 +127,14 @@ module.exports = (_ => {
   };
 
   /* --------------------------------- Functions --------------------------------- */
+  function onFunction (el, fn) {
+    Object.keys(fn).forEach(v => {
+      /animation/.test(v) ?
+        el.addEventListener(v.toLowerCase(), fn[v]) :
+        el[`on${v.toLowerCase()}`] = fn[v];
+    })
+  }
+
   function saveCreatedElement(name) {
     if (!createdElements[name]) createdElements[name] = document.createElement(name);
   }

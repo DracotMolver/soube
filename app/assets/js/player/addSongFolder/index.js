@@ -34,13 +34,13 @@ function findFiles(dir) {
   let tmpFolders = [];
   let foldersSize = 0;
   let folders = [];
-  const rgxExt = /(\.mp3|\.wmv|\.wav|\.ogg)$/ig;
+  const RGX_EXT = /(\.mp3|\.wmv|\.wav|\.ogg)$/ig;
 
   fs.readdirSync(dir).forEach(files => {
     // Based folders.
     if (fs.lstatSync(`${dir}/${files}`).isDirectory()) {
       folders.push(`${dir}/${files}`);
-    } else if (fs.lstatSync(`${dir}/${files}`).isFile() && rgxExt.test(files)) {
+    } else if (fs.lstatSync(`${dir}/${files}`).isFile() && RGX_EXT.test(files)) {
       allFiles.push(`${dir}/${files}`);
     }
   });
@@ -50,7 +50,7 @@ function findFiles(dir) {
     fs.readdirSync(folders[foldersSize]).forEach(files => {
       if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isDirectory()) {
         tmpFolders.push(`${folders[foldersSize]}/${files}`);
-      } else if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isFile() && rgxExt.test(files)) {
+      } else if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isFile() && RGX_EXT.test(files)) {
         allFiles.push(`${folders[foldersSize]}/${files}`);
       }
     });

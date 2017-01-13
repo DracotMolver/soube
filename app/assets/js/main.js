@@ -26,29 +26,27 @@ let lang = langFile[configFile.lang];
 let clickedElement = null; // When you do click on the name of the song
 let positionElement = null; // Where is the song that you clicked on.
 let isSearchDisplayed = false; // Checks if it was launched the search input
-
 const LAPSE_POPUP = 4500; // Duration of info popups
 const LAPSE_SCROLLING = 60; // Lapse before do scrolling
 const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [search input]
 let totalResults = 0; // Amount of songs filtered
 let searchValue = ''; // The input text to search for
 let tempSlide = 0; // To create the pagination
-
 let countSlide = 0;
+let searchBy = 'title';
 let fragmentSlide = null; // DocumentFragment() slide container
 let fragmentItems = null; // DocumentFragment() button container
 let slide = 0; // Amount of slides to make
 let regex = null; // The name of the song to searching for as a regular expression
 let list = null; // Filtered songs.
 const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
-    $('div').clone(false).addClass('grid-25 mobile-grid-25'),
-    $('div').clone(false).addClass('search-results'),
-    $('div').clone(false).addClass('results')
-  ];
-/** --------------------------------------- Funciones --------------------------------------- **/
-// Una opción para los usuarios de linux.
-// Verifica con github las versiones lanzadas.
-// Así mostrar un mensaje que lleve a la página del sitio para descargarlo
+  $('div').clone(false).addClass('grid-25 mobile-grid-25'),
+  $('div').clone(false).addClass('search-results'),
+  $('div').clone(false).addClass('results')
+];
+
+/** --------------------------------------- Functions --------------------------------------- **/
+// Checks if there's a new versions to download
 function getActualVersion() {
   const xhtr = new XMLHttpRequest();
   xhtr.open('GET', 'https://api.github.com/repos/dracotmolver/soube/releases/latest', true);
@@ -65,7 +63,7 @@ function getActualVersion() {
 
       // Para poder abrir en el navegador predeterminado y no dentro de la app
       $(':a').on({
-        'click': function (e) {
+        click: function (e) {
           e.preventDefault();
           shell.openExternal(this.href);
         }
@@ -75,9 +73,9 @@ function getActualVersion() {
         $('#pop-up-container')
         .addClass('hide')
         .child(0)
-        .replaceClass('pop-up-anim', 'hide');
+        .replaceClass('pop-up-anim', '');
 
-        if (Object.keys(listSongs).length !== 0) checkNewSongs();
+        if (listSongs.length !== 0) checkNewSongs();
 
         clearTimeout(tout);
       }, LAPSE_POPUP);
@@ -94,8 +92,7 @@ function loadSongs() {
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
   getActualVersion();
-
-  if (Object.keys(listSongs).length === 0) {
+  if (listSongs.length === 0) {
     $('#list-songs').text(
       `<div id="init-message">${lang.alerts.welcome}</div>`
     );
@@ -136,7 +133,7 @@ function searchInputData(e) {
     if (e.key === 'Enter') selectedSong(list[0].position);
 
     regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}+`, 'ig');
-    list = listSongs.filter(v => regex.test(v.title));
+    list = listSongs.filter(v => regex.test(v[searchBy]));
 
   // Shows possibles results
     totalResults = list.length - 1;
@@ -151,11 +148,11 @@ function searchInputData(e) {
           BTN_FILTER_SONGS[0].clone(true)
           .insert(
             BTN_FILTER_SONGS[1].clone(true)
-            .text(list[totalResults].title)
+            .text(list[totalResults][searchBy])
           )
           .data({ position: list[totalResults].position })
           .on({
-            'click': function() {
+            click: function() {
               selectedSong($(this).data('position'));
             }
           }).get()
@@ -187,7 +184,7 @@ function searchInputData(e) {
   }
 
   // Shows the first coincidence to show as a ghost text
-  $('#search-result').text(searchValue !== '' ? list[0].title : '');
+  $('#search-result').text(searchValue !== '' ? list[0][searchBy] : '');
 }
 
 // Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
@@ -203,7 +200,7 @@ function checkNewSongs() {
 
     if (i === maxlength) {
       // Ocultar pop-up
-      $('#pop-up-container').addClass('hide').child(0).rmClass('pop-up-anim');
+      $('#pop-up-container').addClass('hide').child(0).replaceClass('pop-up-anim');
       window.location.reload(true);
     }
   });
@@ -213,7 +210,7 @@ function clickBtnControls() {
   // animación sobre los botones
   $(this).addClass('click-controls')
     .on({
-      'animationend': function () {
+      animationend: function () {
         $(this).replaceClass('click-controls', '');
       }
   });
@@ -245,7 +242,7 @@ function clickBtnControls() {
 /** --------------------------------------- Events --------------------------------------- **/
 // Scrolling al dar click en la canción para buscarla en el listado total
 $('#song-title').on({
-  'click': function () {
+  click: function () {
     if (this.children[0].textContent.trim() !== '') {
       clickedElement = document.getElementById('list-songs');
       positionElement = document.getElementById($(this).data('position'));
@@ -259,7 +256,7 @@ $('#song-title').on({
         let time = setTimeout(() => {
           $(positionElement).addClass('anim-selected-song');
           $('.anim-selected-song').on({
-            'animationend': function() {
+            animationend: function() {
               $(positionElement).replaceClass('anim-selected-song', '');
             }
           });
@@ -270,18 +267,24 @@ $('#song-title').on({
   }
 });
 
+// Choose an option to search by: 
+// - Song
+// - Artist
+// - Album
+// $('#searchBy').on({ change: function () { searchBy = this.value; } });
+
 // Open the window configuration
-$('#config').on({ 'click': () => { ipcRenderer.send('show-config'); }});
+$('#config').on({ click: () => { ipcRenderer.send('show-config'); } });
 
 // Action when do click on over the buttons play, next, prev and shuffle
-$('.btn-controls').on({ 'click': clickBtnControls });
+$('.btn-controls').on({ click: clickBtnControls });
 
 // // // Adelantar o retroceder la canción usando la barra de progreso
 // // $('#total-progress-bar').on({ 'click': function (e) { moveForward(e, this); }});
 
 // Action over the pagination
 $('.arrow').on({
-  'click': function () {
+  click: function () {
     if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
         if (countSlide < tempSlide) ++countSlide;
     } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
@@ -311,7 +314,7 @@ ipcRenderer.on('search-song', () => {
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
     $('#wrapper-results').empty();
     $('#search').addClass('search-anim')
-    .on({ 'keyup': searchInputData }).val('').get().focus();
+    .on({ keyup: searchInputData }).val('').get().focus();
     isSearchDisplayed = true;
     countSlide = 0;
   }
