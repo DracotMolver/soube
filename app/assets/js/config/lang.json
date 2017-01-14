@@ -11,7 +11,7 @@
             "addAccounts": "Cuentas",
             "equalizerSetting": "Ecualizador",
             "statusSongFolder": "No hay carpeta de música",
-            "loadingSongFolder": "Cargando canciones: ",
+            "loadingSongFolder": "Cargando canciones: %d / %d \n Paciencia, se están extrayendo los metadatos :)",
             "legal": "Términos legales"
         },
         "eqStyles": [
@@ -46,7 +46,7 @@
             "addAccounts": "Accounts",
             "equalizerSetting": "Equalizer",
             "statusSongFolder": "No music folder",
-            "loadingSongFolder": "Loading songs: ",
+            "loadingSongFolder": "Loading songs: %d / %d Patience, extracting metadata",
             "legal": "Legal terms"
         },
         "eqStyles": [
