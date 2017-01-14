@@ -22,6 +22,7 @@ let {
 } = require('./../../config').init();
 
 /* --------------------------------- Variables --------------------------------- */
+  //---- normals ----
 let lang = langFile[configFile.lang];
 let songs = [];
 let files = [];
@@ -107,7 +108,7 @@ function addSongFolder(folder, fnStart, fnIter) {
 }
 
 // Will get all the needed metadata from a song file
-function extractMetadata(fnIter, fnEnd) {
+function extractMetadata(fnIter) {
   let readStream = null;
   songs = [];
   files.forEach(v => {

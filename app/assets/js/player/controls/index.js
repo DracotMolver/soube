@@ -9,6 +9,7 @@ const path = require('path');
 // Electron modules
 const dialog = require('electron').remote.dialog;
 
+// Own modules
 const {
     configFile,
     langFile,
@@ -18,6 +19,7 @@ const {
 require('./../../dom');
 
 /* --------------------------------------- Variables ------------------------------------------- */
+//---- normals ----
 let poolOfSongs = {}; // Will keep all the AudioBuffers
 let lang = langFile[configFile.lang];
 let isMovingForward = false; // Step the song time
@@ -29,38 +31,13 @@ let prevSongsToPlay = []; // Will keep all the filename of old songs
 let file = ''; // Will keep the data song info
 let oldFile = ''; // Will keep the data of the song played
 let playedAtPosition = false // If the song is clicked on from the list
-// let songs = {}; // Listado de canciones
-// let infoSong = {};
-
-// Variables necesarias para trabajar sobre el AudioContext
-const audioContext = new window.AudioContext(); // Objeto AudioContext
-const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
-
-// Frequencies
-const hrz = [
- 40, 80, 90, 100, 120, 150, 200,
- 300, 400, 500, 600, 800, 1000,
- 1600, 2000, 3000, 4000, 5000, 6000,
- 7000, 8000, 10000, 16000
-];
-
 let filter = []; // Array for createBiquadFilter to use the Frequencies
 let duration = 0; // max duration of the song
 let source = null; // AudioNode object
-
-// // Variables para generar el calculo del tiempo transcurrido
-// // let millisecond = 1;
-// let interval = null; // Función interval para crear el tiempo de reproducción
-// let forward = 0; // tiempo estimado dónde debería de seguir corriendo la canción al adelantarla
 let lapse = 0;
 let time = 0; // Tiempo total final
 let minute = 0;
 let second = 0;
-// let millisecond = 0;
-// let percent = 0;
-// let time_m = 0;
-
-// Notificación
 let notification = null; // Despliega una notificación de la canción que se va a reproducir
 let notifi = {
   lang: 'US',
@@ -68,6 +45,19 @@ let notifi = {
   silent: false,
   icon: path.join(__dirname, '../../../', 'img', 'play.png')
 };
+// let songs = {}; // Listado de canciones
+// let infoSong = {};
+
+//---- constants ----
+// Variables necesarias para trabajar sobre el AudioContext
+const audioContext = new window.AudioContext(); // Objeto AudioContext
+const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
+const hrz = [ // Frequencies
+ 40, 80, 90, 100, 120, 150, 200,
+ 300, 400, 500, 600, 800, 1000,
+ 1600, 2000, 3000, 4000, 5000, 6000,
+ 7000, 8000, 10000, 16000
+];
 
 // Cords to generate the animation
 // Google Chrome is throwing the next warning message:
@@ -84,6 +74,14 @@ const anim = {
     'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
   ]
 };
+
+// // Variables para generar el calculo del tiempo transcurrido
+// // let millisecond = 1;
+// let interval = null; // Función interval para crear el tiempo de reproducción
+// let forward = 0; // tiempo estimado dónde debería de seguir corriendo la canción al adelantarla
+// let millisecond = 0;
+// let percent = 0;
+// let time_m = 0;
 
 // /** --------------------------------------- Functions --------------------------------------- **/
 
@@ -164,6 +162,8 @@ function playSong() {
 
 // Límpia el tiempo transcurrido
 function stopTimer() {
+  $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
+
   if (!isMovingForward) {
     isSongPlaying = false;
 //     cancelAnimationFrame(interval);
@@ -262,6 +262,9 @@ function initSong() {
     source.buffer = buffer;
     source.connect(filter[0]);
     filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
+
+    // Change the color the actual song
+    $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
 
     // Inicializar el tiempo y la canción
     // startTimer();

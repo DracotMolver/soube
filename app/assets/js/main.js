@@ -22,13 +22,21 @@ const {
 require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
+//---- constants ----
+const LAPSE_POPUP = 4500; // Duration of info popups
+const LAPSE_SCROLLING = 60; // Lapse before do scrolling
+const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [search input]
+const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
+  $('div').clone(false).addClass('grid-25 mobile-grid-25'),
+  $('div').clone(false).addClass('search-results'),
+  $('div').clone(false).addClass('results')
+];
+
+//---- normals ----
 let lang = langFile[configFile.lang];
 let clickedElement = null; // When you do click on the name of the song
 let positionElement = null; // Where is the song that you clicked on.
 let isSearchDisplayed = false; // Checks if it was launched the search input
-const LAPSE_POPUP = 4500; // Duration of info popups
-const LAPSE_SCROLLING = 60; // Lapse before do scrolling
-const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [search input]
 let totalResults = 0; // Amount of songs filtered
 let searchValue = ''; // The input text to search for
 let tempSlide = 0; // To create the pagination
@@ -39,11 +47,6 @@ let fragmentItems = null; // DocumentFragment() button container
 let slide = 0; // Amount of slides to make
 let regex = null; // The name of the song to searching for as a regular expression
 let list = null; // Filtered songs.
-const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
-  $('div').clone(false).addClass('grid-25 mobile-grid-25'),
-  $('div').clone(false).addClass('search-results'),
-  $('div').clone(false).addClass('results')
-];
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Checks if there's a new versions to download
@@ -75,7 +78,7 @@ function getActualVersion() {
         .child(0)
         .replaceClass('pop-up-anim', '');
 
-        if (listSongs.length !== 0) checkNewSongs();
+        if (Object.keys(listSongs).length !== 0) checkNewSongs();
 
         clearTimeout(tout);
       }, LAPSE_POPUP);
@@ -92,7 +95,7 @@ function loadSongs() {
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
   getActualVersion();
-  if (listSongs.length === 0) {
+  if (Object.keys(listSongs).length === 0) {
     $('#list-songs').text(
       `<div id="init-message">${lang.alerts.welcome}</div>`
     );
@@ -250,19 +253,10 @@ $('#song-title').on({
       const TOP = positionElement.offsetTop;
       const TOPNAV = Math.round(document.getElementById('top-nav').offsetHeight);
 
-      if (ELEMENT !== TOP - (TOPNAV + 100)) {
+      if (ELEMENT !== TOP - (TOPNAV + 100))
         clickedElement.scrollTop += (TOP - (TOPNAV + 100)) - ELEMENT;
-
-        let time = setTimeout(() => {
-          $(positionElement).addClass('anim-selected-song');
-          $('.anim-selected-song').on({
-            animationend: function() {
-              $(positionElement).replaceClass('anim-selected-song', '');
-            }
-          });
-          clearTimeout(time);
-        }, LAPSE_SCROLLING);
-      }
+      else
+        clickedElement.scrollTop -= (TOP - (TOPNAV + 100)) - ELEMENT;
     }
   }
 });

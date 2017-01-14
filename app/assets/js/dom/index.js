@@ -4,6 +4,7 @@
  */
 module.exports = (_ => {
   /* --------------------------------- Variables --------------------------------- */
+  //---- normals ----
   var createdElements = {};
   var poolOfElements = {};
   var event = {};

@@ -3,7 +3,7 @@
  */
 /* --------------------------------- Modules --------------------------------- */
 require('./../../dom');
-
+//---- normals ----
 let range = null;
 let y = 0;
 let db = 0;
@@ -11,6 +11,7 @@ let pos = 0;
 let _db = 0;
 let _pos = 0;
 
+//---- constants ----
 const styles = {
   rock: [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103],
   electro: [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121],
@@ -47,8 +48,9 @@ function onDragEnd(fn) {
   });
 }
 
-function onDragStart() {
-  pos = $((range = this)).data('position');
+function onDragStart(el) {
+  pos = $((range = el)).data('position');
+  return true;
 };
 
 module.exports = {

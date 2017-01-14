@@ -16,6 +16,7 @@ const remote = require('electron').remote;
 // - listSong.json
 function createFiles(path) {
   /* --------------------------------- Configuration --------------------------------- */
+  //---- constants ----
   const CONFIG_PATH = `${path}/config.json`;
   const EQ = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
