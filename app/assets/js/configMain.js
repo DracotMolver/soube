@@ -23,6 +23,7 @@ require('./dom');
 
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
+let isDragged = false;
 
 /* --------------------------------- Functions --------------------------------- */
 
@@ -81,17 +82,16 @@ function saveSongList(parentFolder = '') {
   // Leer el contenido de la carpeta padre
   player.addSongFolder(parentFolder, () => { // Función inicial del proceso
     $('#loading').replaceClass('hide', '');
-    // $(
-      $('.grid-container')//.get(0))
+    $($('.grid-container').get(0))
     .css('-webkit-filter:blur(2px)');
   }, (i, maxLength) => { // Función iteradora
     // Pop-up con la cantidad de canciones cargandose
-    $('#_loading-info').text(`${lang.config.loadingSongFolder} ${i + 1} / ${maxLength}`);
+    $('#_loading-info').text(`${lang.config.loadingSongFolder} ${i} / ${maxLength}`);
+
     if (i === maxLength) {
       // Ocultar loading
       $('#loading').addClass('hide');
-      // $(
-        $('.grid-container')//.get(0))
+      $($('.grid-container').get(0))
         .rmAttr('style');
       ipcRenderer.send('display-list');
     }
@@ -113,7 +113,7 @@ function onEqualizerPanel(e) {
 
   EQ.onDragEnd((pos, db) => {
     configFile.equalizer[pos] = db;
-    editFile('config', configFile);
+    if (isDragged) editFile('config', configFile);
   });
 
   // El evento es solo registrado sobre los botones redondos
@@ -121,13 +121,16 @@ function onEqualizerPanel(e) {
   $('.range-circle').each((v, i) => {
     $(v).css(`top:${configFile.equalizer[i] === 0 ? 130 : configFile.equalizer[i]}px`);
   }).on({
-    'mousedown': EQ.onDragStart
+    mousedown: function () {
+      isDragged = EQ.onDragStart(this);
+    }
   });
 }
 
 // Resetea el Equalizador
 function resetEQ() {
-  configFile.equalizer.fill(0).forEach((v, i) => {
+  configFile.equalizer = configFile.equalizer.fill(0)
+  configFile.equalizer.forEach((v, i) => {
     ipcRenderer.send('equalizer-filter', [i, v]);
   });
   $('.range-circle').css('top:130px');
@@ -144,6 +147,7 @@ function othersEQ(hrz) {
   });
 
   configFile.equalizer = hrz;
+  editFile('config', configFile);
 }
 
 /** --------------------------------------- Eventos --------------------------------------- **/
@@ -184,8 +188,6 @@ $('.eq-buttons').on({
       case 'acustic': othersEQ(EQ.styles[EQ_DATA]); break;
       case 'reset': resetEQ(); break;
     }
-
-    editFile('config', configFile);
   }
 });
 
