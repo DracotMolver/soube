@@ -427,10 +427,6 @@ a {
     top: 188px
 }
 
-.anim-selected-song::after {
-    animation: selectedSong 1.3s cubic-bezier(0.785, 0.135, 0.150, 0.860) forwards;
-}
-
 /* ------------------------ ANIMACIONES ------------------------ */
 @keyframes showToolTip {
     100% {
@@ -488,17 +484,6 @@ a {
     transform: rotate(-40deg);
     opacity: 1
   }
-}
-
-@keyframes selectedSong {
-    85% {
-        background: rgba(66, 73, 73, .2)
-    }
-    100% {
-        border-radius: 0;
-        background: rgba(66, 73, 73, 0);
-        width: 100%
-    }
 }
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
