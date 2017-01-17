@@ -25,7 +25,7 @@ require('./dom');
 //---- constants ----
 const LAPSE_POPUP = 4500; // Duration of info popups
 const LAPSE_SCROLLING = 60; // Lapse before do scrolling
-const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [search input]
+const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [searching bar]
 const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
   $('div').clone(false).addClass('grid-25 mobile-grid-25'),
   $('div').clone(false).addClass('search-results'),
@@ -36,7 +36,7 @@ const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
 let lang = langFile[configFile.lang];
 let clickedElement = null; // When you do click on the name of the song
 let positionElement = null; // Where is the song that you clicked on.
-let isSearchDisplayed = false; // Checks if it was launched the search input
+let isSearchDisplayed = false; // Checks if it was launched the searching bar
 let totalResults = 0; // Amount of songs filtered
 let searchValue = ''; // The input text to search for
 let tempSlide = 0; // To create the pagination
@@ -297,10 +297,10 @@ $('.arrow').on({
 });
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
-// Close the search input bar
+// Close the searching bar
 ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
 
-// Displays the search input [ctrl + F]
+// Displays the searching bar [ctrl + F]
 ipcRenderer.on('search-song', () => {
   if (!isSearchDisplayed) {
     $('#search-container').replaceClass('hide', '');
