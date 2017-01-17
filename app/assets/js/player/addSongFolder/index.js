@@ -92,7 +92,7 @@ function addSongFolder(folder, fnStart, fnIter) {
 
   // Ejecutar linea de comando [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
-    const command = `find ${folder} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
+    const command = `find ${folder.replace(/\s/ig, '\\ ')} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
@@ -120,21 +120,28 @@ function extractMetadata(fnIter) {
           artist: lang.artist.trim().replace(/\s/g, '&nbsp;'),
           album: lang.album.trim().replace(/\s/g, '&nbsp;'),
           title: lang.title.trim().replace(/\s/g, '&nbsp;'),
-          filename: v,
-          position: songs.length
+          filename: v
         } :
         {
           artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).trim().replace(/\s/g, '&nbsp;'),
           album: (data.album.trim().length !== 0 ? data.album : lang.album).trim().replace(/\s/g, '&nbsp;'),
           title: (data.title.trim().length !== 0 ? data.title : lang.title).trim().replace(/\s/g, '&nbsp;'),
-          filename: v,
-          position: songs.length
+          filename: v
         }
       );
 
       fnIter(songs.length, files.length);
       if (songs.length === files.length) {
-        editFile('listSong', songs);
+        editFile('listSong',
+          songs.sort((a, b) =>
+            // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
+            a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
+            a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
+          ).map((v, i) => {
+            v.position = i
+            return v
+          })
+        );
       }
     });
   });
