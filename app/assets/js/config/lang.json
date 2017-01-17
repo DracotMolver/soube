@@ -46,7 +46,7 @@
             "addAccounts": "Accounts",
             "equalizerSetting": "Equalizer",
             "statusSongFolder": "No music folder",
-            "loadingSongFolder": "Loading songs: %d / %d Patience, extracting metadata",
+            "loadingSongFolder": "Loading songs: %d1 / %d2 \n Patience, extracting metadata",
             "legal": "Legal terms"
         },
         "eqStyles": [

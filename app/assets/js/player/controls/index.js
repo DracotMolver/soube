@@ -2,7 +2,6 @@
  * @author Diego Alberto Molina Vera
  */
 /* --------------------------------------- Modules ------------------------------------------- */
-// const worker = new Worker('../../assets/js/timeWorker.js');
 // Nodejs modules
 const path = require('path');
 
@@ -75,9 +74,12 @@ const anim = {
   ]
 };
 
+// Workers
+const timeWorker = new Worker(path.join(__dirname, '../../../', 'js/worker', 'index.js'));
+
 // // Variables para generar el calculo del tiempo transcurrido
 // // let millisecond = 1;
-// let interval = null; // Función interval para crear el tiempo de reproducción
+let interval = null;
 // let forward = 0; // tiempo estimado dónde debería de seguir corriendo la canción al adelantarla
 // let millisecond = 0;
 // let percent = 0;
@@ -96,16 +98,15 @@ function shuffle() {
 // function shuffle() { return Math.floor(Math.random() * songs.length); }
 
 // Animation of the play/pause button when it sets to play
-function animPlay() {
-  $('.anim-play').each((v, i) => {
-    $(v).attr({ from: anim.from[i], to: anim.to[i] }).get().beginElement();
-  });
-}
+function animPlayAndPause(animName) {
+  const animAttr = i => {
+    return animName === 'play' ?
+    { from: anim.from[i], to: anim.to[i] } :
+    { from: anim.to[i], to: anim.from[i] };
+  };
 
-// Animation of the play/pause button when it sets to pause
-function animPause() {
   $('.anim-play').each((v, i) => {
-    $(v).attr({ from: anim.to[i], to: anim.from[i] }).get().beginElement();
+    $(v).attr(animAttr(i)).get().beginElement();
   });
 }
 
@@ -131,34 +132,32 @@ function playSong() {
       isSongPlaying = false;
 //       cancelAnimationFrame(interval);
     });
-    animPause();
+    animPlayAndPause('pause');
 
     return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
 //     startTimer();
     audioContext.resume();
-    animPlay();
+    animPlayAndPause('play');
 
     return 'resume';
   }
 }
 
-// // Genera el tiempo que lleva reproduciendose la canción
-// function startTimer() {
-//   worker.onmessage = e => {
-//     console.log(e);
-//     // $('#time-start').text(e.data.time);
-//     // $('#progress-bar').css(e.data.w);
-//   };
+// Lapse of the time
+function startTimer() {
+  timeWorker.onmessage = e => {
+    $('#time-start').text(e.data.time);
+    $('#progress-bar').css(e.data.w);
+  };
 
-//   // const iter = () => {
-//     worker.postMessage({ action:'start', per: lapse });
-//     // interval = requestAnimationFrame(iter);
-//   // }
+  (function iter() {
+    timeWorker.postMessage({ action:'start', per: lapse });
+    interval = requestAnimationFrame(iter);
+  })();
 //   // interval = requestAnimationFrame(iter);
-
-// }
+}
 
 // Límpia el tiempo transcurrido
 function stopTimer() {
@@ -166,9 +165,9 @@ function stopTimer() {
 
   if (!isMovingForward) {
     isSongPlaying = false;
-//     cancelAnimationFrame(interval);
-//     worker.postMessage({ action: 'stop' });
-//     worker.terminate();
+    cancelAnimationFrame(interval);
+    timeWorker.postMessage({ action: 'stop' });
+    // timeWorker.terminate();
 
 //     _duration = _minute = _second = time =
 //     minute = second = millisecond = percent = 0;
@@ -224,7 +223,8 @@ function getFile() {
 }
 
 function initSong() {
-  animPlay();
+  animPlayAndPause('play');
+
   // Obtener buffer de la canción
   const getBuffer = (filePath, fnc) => {
     // Leer erl achivo de audio
@@ -266,8 +266,8 @@ function initSong() {
     // Change the color the actual song
     $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
 
-    // Inicializar el tiempo y la canción
-    // startTimer();
+    // Start timer
+    startTimer();
     source.start(0);
     isSongPlaying = true;
     isPrevAble = false;
