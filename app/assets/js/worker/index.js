@@ -1,26 +1,27 @@
 /**
  * @author Diego Molina Vera.
  * 
- * Calcula el tiempo que transcurre mientras se reproduce la canción
+ * Calculate the time while the song is songing
  */
 let millisecond = 60;
 let second = 0;
 let minute = 0;
 let percent = 0;
 
+function formatDecimals(decimal) {
+  return decimal > 9 ? `${decimal}` : `0${decimal}`;
+}
+
 function start(lapse) {
-  ++millisecond;
-  if (millisecond > 59) { // Segundos
-    ++second;
+  if (++millisecond > 59) {
     millisecond = 0;
-    if (second > 59) {
+    if (++second > 59) {
       ++minute;
       second = 0;
     }
 
-    // Tiempo transcurrido
     postMessage({
-      time: `${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`,
+      time: `${formatDecimals(minute)}:${formatDecimals(second)}`,
       w: `width:${percent += lapse}%`
     });
   }
@@ -35,7 +36,7 @@ function moveFoward(d) {
 }
 
 this.onmessage = e => {
-  switch(e.data.action) {
+  switch (e.data.action) {
     case 'start':
     case 'resume': start(e.data.per); break;
     case 'stop': stop(); break;
