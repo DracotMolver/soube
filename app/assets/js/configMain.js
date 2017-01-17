@@ -86,7 +86,7 @@ function saveSongList(parentFolder = '') {
     .css('-webkit-filter:blur(2px)');
   }, (i, maxLength) => { // Función iteradora
     // Pop-up con la cantidad de canciones cargandose
-    $('#_loading-info').text(`${lang.config.loadingSongFolder} ${i} / ${maxLength}`);
+    $('#_loading-info').text(`${lang.config.loadingSongFolder.replace('%d1', i).replace('%d2', maxLength)}`);
 
     if (i === maxLength) {
       // Ocultar loading
