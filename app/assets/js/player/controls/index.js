@@ -23,7 +23,6 @@ let poolOfSongs = {}; // Will keep all the AudioBuffers
 let lang = langFile[configFile.lang];
 let isMovingForward = false; // Step the song time
 let isNextAble = false; // if the next song can be played (needed because AudioNode.stop() works with Promise)
-let isPrevAble = false; // if the prev song is played (Is not the same behavior as isNextAble)
 let isSongPlaying = false; // It's AudioNode playing
 let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
 let prevSongsToPlay = []; // Will keep all the filename of old songs
@@ -34,23 +33,20 @@ let filter = []; // Array for createBiquadFilter to use the Frequencies
 let duration = 0; // max duration of the song
 let source = null; // AudioNode object
 let lapse = 0;
-let time = 0; // Tiempo total final
+let time = 0;
 let minute = 0;
 let second = 0;
-let notification = null; // Despliega una notificación de la canción que se va a reproducir
+let notification = null;
 let notifi = {
   lang: 'US',
   tag: 'song',
   silent: false,
   icon: path.join(__dirname, '../../../', 'img', 'play.png')
 };
-// let songs = {}; // Listado de canciones
-// let infoSong = {};
 
 //---- constants ----
-// Variables necesarias para trabajar sobre el AudioContext
-const audioContext = new window.AudioContext(); // Objeto AudioContext
-const xhtr = new XMLHttpRequest(); // Objeto XMLHttpRequest
+const audioContext = new window.AudioContext(); // Object AudioContext
+const xhtr = new XMLHttpRequest(); // Object XMLHttpRequest
 const hrz = [ // Frequencies
  40, 80, 90, 100, 120, 150, 200,
  300, 400, 500, 600, 800, 1000,
@@ -77,13 +73,12 @@ const anim = {
 // Workers
 const timeWorker = new Worker(path.join(__dirname, '../../../', 'js/worker', 'index.js'));
 
-// // Variables para generar el calculo del tiempo transcurrido
+
 // // let millisecond = 1;
 let interval = null;
-// let forward = 0; // tiempo estimado dónde debería de seguir corriendo la canción al adelantarla
-// let millisecond = 0;
+// let forward = 0;
+let millisecond = 0;
 // let percent = 0;
-// let time_m = 0;
 
 // /** --------------------------------------- Functions --------------------------------------- **/
 
@@ -130,14 +125,14 @@ function playSong() {
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
     audioContext.suspend().then(() => {
       isSongPlaying = false;
-//       cancelAnimationFrame(interval);
+      cancelAnimationFrame(interval);
     });
     animPlayAndPause('pause');
 
     return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
-//     startTimer();
+    startTimer();
     audioContext.resume();
     animPlayAndPause('play');
 
@@ -156,42 +151,34 @@ function startTimer() {
     timeWorker.postMessage({ action:'start', per: lapse });
     interval = requestAnimationFrame(iter);
   })();
-//   // interval = requestAnimationFrame(iter);
 }
 
 // Límpia el tiempo transcurrido
 function stopTimer() {
-  $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
+  // $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
 
   if (!isMovingForward) {
     isSongPlaying = false;
     cancelAnimationFrame(interval);
     timeWorker.postMessage({ action: 'stop' });
-    // timeWorker.terminate();
 
-//     _duration = _minute = _second = time =
-//     minute = second = millisecond = percent = 0;
     isNextAble = true;
     if (isNextAble && !isMovingForward) initSong();
   } else if (isMovingForward) {
-//     /**
-//      * La función stop tarda unos milesegundos más que ejecutar la función moveForward.
-//      * Por lo tanto lo que continua después de detener la canción deberá ser ejecutado
-//      * dentro de la función onended
-//      */
-//     source = audioContext.createBufferSource(); // Se debe crear un nuevo AudioNode, ya que al dar stop el nodo se elimina
-//     source.onended = stopTimer; // Evento que se gatilla al terminar la canción
 
-//     // Conectar todos los nodos
-//     source.buffer = _buffer;
-//     source.connect(filter[0])
-//     filter.reduce((p, c) => p.connect(c))
-//     .connect(audioContext.destination);
+    // It must be created a new AudioNode, because the stop function delete the node.
+    source = audioContext.createBufferSource();
+    source.onended = stopTimer;
 
-//     startTimer();
-//     source.start(0, forward);
-//     isMovingForward = false;
-//     isSongPlaying = true;
+    // Conectar todos los nodos
+    source.buffer = poolOfSongs[oldFile.filename];
+    source.connect(filter[0]);
+    filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
+
+    startTimer();
+    source.start(0, forward);
+    isMovingForward = false;
+    isSongPlaying = true;
   }
 }
 
@@ -264,19 +251,18 @@ function initSong() {
     filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
 
     // Change the color the actual song
-    $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
+    // $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
 
     // Start timer
     startTimer();
     source.start(0);
     isSongPlaying = true;
-    isPrevAble = false;
   }
 
   // Obtener los datos de la primera canción a reproducir
   if (poolOfSongs[file.filename]) {
     // Canción a tocar
-    dataSong(isPrevAble ? file : (oldFile = file));
+    dataSong((oldFile = file));
     setSong(poolOfSongs[file.filename]);
     playedAtPosition = false;
 
@@ -340,7 +326,6 @@ function prevSong() {
   if (prevSongsToPlay.length > 0 && isNextAble) {
     file = prevSongsToPlay.pop();
     position = file.position;
-    isPrevAble = true;
 
     // Verificar si el contexto está pausado o no.
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
@@ -377,25 +362,26 @@ function filters() {
 }
 filters();
 
-// function moveForward(event, element) {
-//   forward = _duration * event.offsetX / element.clientWidth;
-//   time_m = (forward / 60).toString();
+function moveForward(event, element) {
+  isMovingForward = true;
+  var x =source.stop(0);
+  cancelAnimationFrame(interval);
 
-//   // Recalcular el tiempo
-//   minute = parseInt(time_m.slice(0, time_m.lastIndexOf('.')), 10);
-//   second = Math.floor(time_m.slice(time_m.lastIndexOf('.')) * 60);
-//   millisecond = forward * 100 + 1;
-//   cancelAnimationFrame(interval);
+  forward = duration * event.offsetX / element.clientWidth;
+  time = (forward / 60).toString();
 
-//   // Recalcular el porcentaje de la barra de tiempo
-//   percent = forward * (100 / _duration);
-//   isMovingForward = true;
-//   worker.postMessage({
-//     action: 'forward',
-//     d: [minute, second, millisecond, percent]
-//   });
-//   source.stop(0);
-// }
+  // Calculate the time it should be playing the song
+  minute = parseInt(time.slice(0, time.lastIndexOf('.')));
+  second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
+  millisecond = forward * 100 + 1;
+
+  // Calculate the percent of the progress bar
+  percent = forward * (100 / duration);
+  timeWorker.postMessage({
+    action: 'forward',
+    d: [minute, second, millisecond, percent]
+  });
+}
 
 module.exports = {
   nextSong,
@@ -403,5 +389,6 @@ module.exports = {
   playSong,
   shuffle,
   setFilterVal,
+  moveForward,
   playSongAtPosition
 }

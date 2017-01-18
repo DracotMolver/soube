@@ -273,8 +273,8 @@ $('#config').on({ click: () => { ipcRenderer.send('show-config'); } });
 // Action when do click on over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ click: clickBtnControls });
 
-// // // Adelantar o retroceder la canción usando la barra de progreso
-// // $('#total-progress-bar').on({ 'click': function (e) { moveForward(e, this); }});
+// step forward or step back the song using the progress bar
+$('#total-progress-bar').on({ click: function (e) { PLAYER.controls.moveForward(e, this); } });
 
 // Action over the pagination
 $('.arrow').on({
