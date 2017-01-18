@@ -42,7 +42,8 @@ module.exports = (_ => {
       return this;
     },
     on: function(fn) {
-      if (this.element.length !== undefined) {
+      // Select element is like an array because of the options elements inside
+      if (this.element.length !== undefined && this.element.nodeName !== 'SELECT') {
         this.element.forEach(e => onFunction(e, fn));
       } else {
         onFunction(this.element, fn);
