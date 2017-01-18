@@ -194,7 +194,7 @@ a {
 }
 
 #search-container {
-    background: rgba(229, 232, 232, .3);
+    background: rgba(245, 245, 245, .3);
     position: fixed;
     z-index: 10;
     height: 100%;
@@ -236,7 +236,7 @@ a {
     position: absolute;
     z-index: -1;
     color: rgba(182, 182, 182, .4);
-    top: 4.1em
+    top: 3.9em
 }
 
 #searchBy {
