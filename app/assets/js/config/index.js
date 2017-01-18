@@ -27,7 +27,8 @@ function createFiles(path) {
         lang: 'us',
         shuffle: true,
         musicFolder: '',
-        equalizer: EQ
+        equalizer: EQ,
+        equalizerConfig: 'reset'
       };
 
       fs.open(CONFIG_PATH, 'w', (err, fd) => {

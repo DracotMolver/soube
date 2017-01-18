@@ -72,9 +72,17 @@
             </div>
             <!-- Configuración ecualizador -->
             <div id="equalizer" class="grid-100 hide">
+                <div class="grid-100">
+                    <div class="grid-25">
+                        <select id="eq-buttons">
+                        </select>
+                    </div>
+                </div>
                 <div id="equalizer-container">
-                    <div id="hertz"><div>Hz</div></div>
-                    <div id="k-hertz"><div>KHz</div></div>
+                    <div class="grid-100">
+                        <div id="hertz"><div>Hz</div></div>
+                        <div id="k-hertz"><div>KHz</div></div>
+                    </div>
                     <div class="grid-100">
                         <ul>
                             <li><h4>40</h4></li>
@@ -171,20 +179,6 @@
                         </div>
                         <div class="range-container">
                             <div class="range-circle" data-position="22"></div>
-                        </div>
-                    </div>
-                    <div class="grid-100">
-                        <div class="grid-25">
-                            <div class="eq-buttons" data-eq="reset"></div>
-                        </div>
-                        <div class="grid-25">
-                            <div class="eq-buttons" data-eq="rock"></div>
-                        </div>
-                        <div class="grid-25">
-                            <div class="eq-buttons" data-eq="electro"></div>
-                        </div>
-                        <div class="grid-25">
-                            <div class="eq-buttons" data-eq="acustic"></div>
                         </div>
                     </div>
                 </div>

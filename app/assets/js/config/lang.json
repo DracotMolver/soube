@@ -18,7 +18,8 @@
             "Reset",
             "Rock",
             "Electrónica",
-            "Acústica"
+            "Acústica",
+            "Agregar nuevo..."
         ],
         "alerts": {
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
@@ -53,7 +54,8 @@
             "Reset",
             "Rock",
             "Electro",
-            "Acustic"
+            "Acustic",
+            "Add new..."
         ],
         "alerts": {
             "newVersion": "We've got a new version!. Click to download it.",

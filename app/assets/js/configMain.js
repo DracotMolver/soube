@@ -101,10 +101,6 @@ function saveSongList(parentFolder = '') {
 // Animación de los botones sobre el panel ecualizador
 // Hace uso de la clase equalizer y sus métodos
 function onEqualizerPanel(e) {
-  $('.eq-buttons').each((v, i) => {
-    $(v).text(lang.eqStyles[i]);
-  });
-
   animConfigPanel(this, lang.config.equalizerSetting);
 
   EQ.onDragMove(data => {
@@ -150,6 +146,18 @@ function othersEQ(hrz) {
   editFile('config', configFile);
 }
 
+
+// Options to config the EQ
+function setEQ () {
+  const EQ_DATA = this.value;
+  switch(EQ_DATA) {
+    case 'rock':
+    case 'electro':
+    case 'acustic': othersEQ(EQ.styles[EQ_DATA]); break;
+    case 'reset': resetEQ(); break;
+  }
+}
+
 /** --------------------------------------- Eventos --------------------------------------- **/
 // Refrescar la ventana
 $('#_titleconfig').on({
@@ -178,20 +186,15 @@ $('#add-songs').on({
 // Mostrar ecualizador
 $('#equalizer-panel').on({ click: onEqualizerPanel });
 
-// Acciones predefinidas del ecualizador
-$('.eq-buttons').on({
-  click: function () {
-    const EQ_DATA = $(this).data('eq');
-    switch(EQ_DATA) {
-      case 'rock':
-      case 'electro':
-      case 'acustic': othersEQ(EQ.styles[EQ_DATA]); break;
-      case 'reset': resetEQ(); break;
-    }
-  }
+// EQ settings options
+lang.eqStyles.forEach(v => {
+  $('#eq-buttons').insert(
+    $('option').clone(true).val(v.toLowerCase()).text(v)
+  );
 });
+$('#eq-buttons').on({ change: setEQ });
 
-// Abrir en el navegador por defecto sel SO
+// Open the predefault browser of the OS
 $(':a').on({
   click: function (e) {
     e.preventDefault();
