@@ -1,129 +1,129 @@
 /**
- * @author Diego Alberto Molina Vera
- */
+* @author Diego Alberto Molina Vera
+*/
 /* ------------------------ GENERALES ------------------------ */
 @font-face {
-    font-family: 'Hind';
-    src: url(../files/Hind-Regular.ttf)
+  font-family: 'Hind';
+  src: url(../files/Hind-Regular.ttf)
 }
 
 /**
- * Se realizan reset pero de los atributos más importantes
- * que vamos a usar en Chromium.
- * Al no ser una aplicación web "online", no debemos de preocuperanos, en parte,
- * por usar el comodín [*] para formatear todos los elementos HTML
- */
+* Se realizan reset pero de los atributos más importantes
+* que vamos a usar en Chromium.
+* Al no ser una aplicación web "online", no debemos de preocuperanos, en parte,
+* por usar el comodín [*] para formatear todos los elementos HTML
+*/
 * {
-    -webkit-text-size-adjust: 100%;
-    -webkit-font-smooth: antialiased;
-    font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
-    font-stretch: condensed;
-    font-family: 'Hind', sans-serif;
-    font-weight: normal;
-    line-height: 1.35em;
-    font-size: 100%;
-    padding: 0;
-    margin: 0;
-    cursor: default;
-    color:  var(--blackColor)
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smooth: antialiased;
+  font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
+  font-stretch: condensed;
+  font-family: 'Hind', sans-serif;
+  font-weight: normal;
+  line-height: 1.35em;
+  font-size: 100%;
+  padding: 0;
+  margin: 0;
+  cursor: default;
+  color:  var(--blackColor)
 }
 
 input,
 button {
-    border: none
+  border: none
 }
 
 input:focus,
 button:focus {
-    outline-width: 0
+  outline-width: 0
 }
 
 ul {
-    list-style: none
+  list-style: none
 }
 
 body,
 html{
-    overflow: hidden;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-    right: 0;
-    left: 0;
-    top: 0
+  overflow: hidden;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  right: 0;
+  left: 0;
+  top: 0
 }
 
 .hide {
-    display: none
+  display: none
 }
 
 /* ------------------------ VARIABLES ------------------------ */
 :root {
-    --lightGreyColor: #F4F6F6;
-    --darkGreyColor: #979A9A;
-    --darkPinkColor: #d81b60;
-    --lightPinkColor: #f06292;
-    --whiteColor: #FBFCFC;
-    --blackColor: #424949;
-    --pinkColor: #e91e63
+  --lightGreyColor: #F4F6F6;
+  --darkGreyColor: #979A9A;
+  --darkPinkColor: #d81b60;
+  --lightPinkColor: #f06292;
+  --whiteColor: #FBFCFC;
+  --blackColor: #424949;
+  --pinkColor: #e91e63
 }
 
 /* ------------------------ GENERALES ------------------------ */
 .border-bottom,
 .border-left,
 .border-right {
-    border-width: 0;
-    border-style:  solid;
-    box-sizing:  border-box;
+  border-width: 0;
+  border-style:  solid;
+  box-sizing:  border-box;
 }
 
 .border-bottom {
-    border-bottom-width: .01em
+  border-bottom-width: .01em
 }
 
 .border-left {
-    border-left-width: .01em
+  border-left-width: .01em
 }
 
 .border-right {
-    border-right-width: .01em 
+  border-right-width: .01em 
 }
 
 .border-color-dark-pink {
-    border-color: var(--darkPinkColor)
+  border-color: var(--darkPinkColor)
 }
 
 .border-color-light-grey {
-    border-color: var(--lightGreyColor)
+  border-color: var(--lightGreyColor)
 }
 
 .border-color-dark-grey {
-    border-color: var(--darkGreyColor)
+  border-color: var(--darkGreyColor)
 }
 
 .border-color-white {
-    border-color: var(--whiteColor)
+  border-color: var(--whiteColor)
 }
 
 .border-color-black {
-    border-color: var(--blackColor)
+  border-color: var(--blackColor)
 }
 
 .border-color-pink {
-    border-color: var(--pinkColor)
+  border-color: var(--pinkColor)
 }
 
 .border-color-light-pink {
-    border-color: var(--lightPinkColor)
+  border-color: var(--lightPinkColor)
 }
 
 /* ------------------------ SCROLLBAR ------------------------ */
 ::-webkit-scrollbar {
-    background-color: var(--whiteColor);
-    width: .8em
+  background-color: var(--whiteColor);
+  width: .8em
 }
 
 ::-webkit-scrollbar-thumb:window-inactive,
 ::-webkit-scrollbar-thumb {
-    background:  var(--blackColor)
+  background:  var(--blackColor)
 }

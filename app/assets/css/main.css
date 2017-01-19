@@ -1,147 +1,147 @@
 /**
- * @author Diego Alberto Molina Vera
- */
+* @author Diego Alberto Molina Vera
+*/
 /* ------------------------ GENERAL ------------------------*/
 #config > img:hover,
 .search-results:hover,
 .btn-controls,
 a {
-    cursor: pointer
+  cursor: pointer
 }
 
 .btn-controls::after,
 .arrow::after,
 .arrow::before,
 .list-song-container::after {
-    position: absolute;
-    content: ''
+  position: absolute;
+  content: ''
 }
 
 /* ------------------------ TOP NAV ------------------------*/
 #top-nav {
-    background: var(--pinkColor)
+  background: var(--pinkColor)
 }
 
 #config {
-    margin-top: 1.9em;
-    padding-right: 35%;
-    padding-left: 35%;
-    height: 2em
+  margin-top: 1.9em;
+  padding-right: 35%;
+  padding-left: 35%;
+  height: 2em
 }
 
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
 .btn-controls {
-    float: left
+  float: left
 }
 
 .btn-controls::after {
-    border-radius: 50%;
-    background: var(--darkPinkColor);
-    opacity: 0
+  border-radius: 50%;
+  background: var(--darkPinkColor);
+  opacity: 0
 }
 
 #play-pause {
-    text-align: center;
-    margin: 1.25em .9em;
-    height: 3em
+  text-align: center;
+  margin: 1.25em .9em;
+  height: 3em
 }
 
 .prev-next {
-    text-align: center;
-    margin: .3em 0;
-    height: 1.2em
+  text-align: center;
+  margin: .3em 0;
+  height: 1.2em
 }
 
 #shuffle-icon {
-    fill: var(--lightPinkColor)
+  fill: var(--lightPinkColor)
 }
 
 #play-pause::after {
-    height: 4em;
-    width: 4em;
-    left: 14px;
-    top: 12px
+  height: 4em;
+  width: 4em;
+  left: 14px;
+  top: 12px
 }
 
 .prev-next::after {
-    height: 1.7em;
-    width: 1.7em;
-    left: 104px
+  height: 1.7em;
+  width: 1.7em;
+  left: 104px
 }
 
 #next::after {
-    top: 0
+  top: 0
 }
 
 #shuffle::after {
-    top: 61px
+  top: 61px
 }
 
 #prev::after {
-    top: 31px
+  top: 31px
 }
 
 .click-controls::after {
-    animation: clickControlsEffect .3s ease-out forwards
+  animation: clickControlsEffect .3s ease-out forwards
 }
 
 #total-progress-bar,
 #progress-bar {
-    height:  .36em;
-    cursor: e-resize
+  height:  .36em;
+  cursor: e-resize
 }
 
 #total-progress-bar {
-    background: var(--lightPinkColor)
+  background: var(--lightPinkColor)
 }
 
 #progress-bar {
-    background: var(--whiteColor);
-    box-shadow: 1px 0 3px 0 #fff;
-    float: left;
-    width: 0
+  background: var(--whiteColor);
+  box-shadow: 1px 0 3px 0 #fff;
+  float: left;
+  width: 0
 }
 
 /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
 #info-song {
-    text-align: left;
-    overflow: hidden;
-    margin: .1em 1.2em;
-    width: 85%;
-    float: left
+  text-align: left;
+  overflow: hidden;
+  margin: .1em 1.2em;
+  width: 85%;
+  float: left
 }
 
 #song-title > h1 {
-    font-weight: 500;
-    font-size: 1.6em
+  font-weight: 500;
+  font-size: 1.6em
 }
 
 #artist > h2 {
-    font-size: 1.3em
+  font-size: 1.3em
 }
 
 #album > h3 {
-    font-weight: 300;
-    font-size: 1em
+  font-weight: 300;
+  font-size: 1em
 }
 
 #song-title > h1,
 #artist > h2,
 #album > h3,
 .search-results {
-    text-overflow: ellipsis;
-    overflow: hidden
+  text-overflow: ellipsis;
+  overflow: hidden
 }
 
 #time {
-    text-align: center;
-    font-size: 1.16em;
-    margin: .5em 0
+  text-align: center;
+  font-size: 1.16em;
+  margin: .5em 0
 }
 
 #time > span,
 #artist > h2 {
-    font-weight: 400
+  font-weight: 400
 }
 
 #song-title > h1,
@@ -149,402 +149,402 @@ a {
 #time, #time > span,
 #artist > h2,
 #searchBy > option {
-    color: var(--whiteColor);
+  color: var(--whiteColor);
 }
 
 /* ------------------------ LISTADO DE CANCIONES ------------------------ */
 #list-songs {
-    background: linear-gradient(var(--whiteColor) 30%, transparent),
-               radial-gradient(at 50% 0, rgba(66,73,73, .3), transparent 80%);
-    background-repeat: no-repeat;
-    background-size: 100% 50px, 100% 15px;
-    background-attachment: local, scroll;
-    overflow: hidden;
-    overflow-y: scroll;
-    height: calc(100% - 95px);
-    width: 100%;
-    float: left
+  background: linear-gradient(var(--whiteColor) 30%, transparent),
+              radial-gradient(at 50% 0, rgba(66,73,73, .3), transparent 80%);
+  background-repeat: no-repeat;
+  background-size: 100% 50px, 100% 15px;
+  background-attachment: local, scroll;
+  overflow: hidden;
+  overflow-y: scroll;
+  height: calc(100% - 95px);
+  width: 100%;
+  float: left
 }
 
 .list-song-container:nth-child(odd) {
-    background: var(--lightGreyColor)
+  background: var(--lightGreyColor)
 }
 
 .list-song-container::nth-child(even) {
-    background: var(--whiteColor)
+  background: var(--whiteColor)
 }
 
 .song-info {
-    text-overflow: ellipsis;
-    padding-left: .6em;
-    font-weight: 300;
-    line-height: 2em;
-    font-size: .906em;
-    overflow: hidden
+  text-overflow: ellipsis;
+  padding-left: .6em;
+  font-weight: 300;
+  line-height: 2em;
+  font-size: .906em;
+  overflow: hidden
 }
 
 .miscelaneo {
-    margin-right: .6em;
-    color: var(--darkGreyColor)
+  margin-right: .6em;
+  color: var(--darkGreyColor)
 }
 
 /* ------------------------ BUSQUEDA DE CANCIONES ------------------------ */
 .search-results {
-    margin: 1em
+  margin: 1em
 }
 
 #search-container {
-    background: rgba(245, 245, 245, .3);
-    position: fixed;
-    z-index: 10;
-    height: 100%;
-    width: 100%;
-    top: 0
+  background: rgba(245, 245, 245, .3);
+  position: fixed;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  top: 0
 }
 
 #search-wrapper {
-    position: relative;
-    padding: 6em 0 3.5em 0;
-    margin: auto;
-    height: auto;
-    width: 11%
+  position: relative;
+  padding: 6em 0 3.5em 0;
+  margin: auto;
+  height: auto;
+  width: 11%
 }
 
 #search {
-    background-image: url(../../assets/img/search.svg);
-    background-repeat: no-repeat;
-    background-color: transparent;
-    background-size: 1.6em;
-    border-bottom: .03em solid var(--darkGreyColor);
-    padding-left: 1.6em;
-    line-height: 0;
-    transform: scale(0);
-    margin: 0;
-    cursor: text;
-    width: 94%;
-    color: var(--blackColor)
+  background-image: url(../../assets/img/search.svg);
+  background-repeat: no-repeat;
+  background-color: transparent;
+  background-size: 1.6em;
+  border-bottom: .03em solid var(--darkGreyColor);
+  padding-left: 1.6em;
+  line-height: 0;
+  transform: scale(0);
+  margin: 0;
+  cursor: text;
+  width: 94%;
+  color: var(--blackColor)
 }
 
 #search,
 #search-result {
-    font-weight: 300;
-    font-size: 1.6em
+  font-weight: 300;
+  font-size: 1.6em
 }
 
 #search-result {
-    padding-left: 1.6em;
-    position: absolute;
-    z-index: -1;
-    color: rgba(182, 182, 182, .4);
-    top: 3.9em
+  padding-left: 1.6em;
+  position: absolute;
+  z-index: -1;
+  color: rgba(182, 182, 182, .4);
+  top: 3.9em
 }
 
 #searchBy {
-    border-radius: 4px;
-    padding-left: 7px;
-    background: var(--darkGreyColor);
-    height: 42px;
-    border: none;
-    width: 75%;
-    color: var(--whiteColor);
+  border-radius: 4px;
+  padding-left: 7px;
+  background: var(--darkGreyColor);
+  height: 42px;
+  border: none;
+  width: 75%;
+  color: var(--whiteColor);
 }
 
 
 .search-anim {
-    animation: showInputUp .5s ease-in forwards
+  animation: showInputUp .5s ease-in forwards
 }
 
 .search-wrapper-anim {
-    animation: displayInputSearch .5s .6s ease-in-out forwards 
+  animation: displayInputSearch .5s .6s ease-in-out forwards 
 }
 
 #container-results {
-    overflow: hidden;
-    height: 370px
+  overflow: hidden;
+  height: 370px
 }
 
 .results,
 #wrapper-results{
-    height: 100%;
-    float: left
+  height: 100%;
+  float: left
 }
 
 /* ------------------------ PAGINACIÓN DEL INPUT SEARCH ------------------------ */
 #pagination {
-    position: relative;
-    height: 30px;
-    margin: 0 auto;
-    width: 400px;
-    top: 1em
+  position: relative;
+  height: 30px;
+  margin: 0 auto;
+  width: 400px;
+  top: 1em
 }
 
 .arrow::after,
 .arrow::before {
-    border-radius: 25px;
-    background: var(--blackColor);
-    opacity: .2;
-    height:.3em;
-    width: 10%
+  border-radius: 25px;
+  background: var(--blackColor);
+  opacity: .2;
+  height:.3em;
+  width: 10%
 }
 
 .arrow-open-anim::after {
-    animation: openArrowDown .6s ease-out forwards
+  animation: openArrowDown .6s ease-out forwards
 }
 
 .arrow-open-anim::before {
-    animation: openArrowUp .6s ease-out forwards
+  animation: openArrowUp .6s ease-out forwards
 }
 
 #left-arrow,
 #right-arrow {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #left-arrow {
-    float: left
+  float: left
 }
 
 #left-arrow::before,
 #left-arrow::after {
-    transform-origin: left
+  transform-origin: left
 }
 
 #right-arrow::before,
 #right-arrow::after {
-    transform-origin: right
+  transform-origin: right
 }
 
 /* -------------------------------------- */
 #right-arrow::after,
 #left-arrow::before { /* Para obtener una mejor simetría en los ejes que se unen */
-    top: 2px
+  top: 2px
 }
 
 #right-arrow::before,
 #left-arrow::after { /* Para obtener una mejor simetría en los ejes que se unen */
-    top: 0
+  top: 0
 }
 /* -------------------------------------- */
 
 #right-arrow {
-    float: right
+  float: right
 }
 
 /* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
 #init-message {
-    background: white !important;
-    margin-top: 4em;
-    text-align: center;
-    font-size: 2em;
-    color: var(--darkGreyColor)
+  background: white !important;
+  margin-top: 4em;
+  text-align: center;
+  font-size: 2em;
+  color: var(--darkGreyColor)
 }
 
 /* ------------------------ MENSAJE DE CANCIONES NUEVAS ------------------------ */
 #pop-up-container {
-    position: absolute;
-    height: auto;
-    margin: 0 2%;
-    width: auto;
-    right: 0;
-    left: 0;
-    top: 6.4em
+  position: absolute;
+  height: auto;
+  margin: 0 2%;
+  width: auto;
+  right: 0;
+  left: 0;
+  top: 6.4em
 }
 
 #pop-up,
 .search-results {
-    border-radius: 2px;
-    border-bottom: 2px solid var(--pinkColor);
-    background: var(--darkGreyColor);
-    text-align: center;
-    font-size: .94em;
-    padding: .6em;
-    color:  var(--whiteColor)
+  border-radius: 2px;
+  border-bottom: 2px solid var(--pinkColor);
+  background: var(--darkGreyColor);
+  text-align: center;
+  font-size: .94em;
+  padding: .6em;
+  color:  var(--whiteColor)
 }
 
 #pop-up {
-    transform: scale(0)
+  transform: scale(0)
 }
 
 #pop-up > a {
-    text-decoration: none;
-    color: currentColor
+  text-decoration: none;
+  color: currentColor
 }
 
 .pop-up-anim {
-    animation:  showPopUp .3s ease-in-out forwards
+  animation:  showPopUp .3s ease-in-out forwards
 }
 
 /* ------------------------ TOOLTIPS ------------------------ */
 .tooltip {
-    transform-origin: center;
-    letter-spacing: .14em;
-    border-radius: 10px;
-    line-height: 2em;
-    text-align: center;
-    background: hsla(180, 5%, 27%, .8);
-    font-size: .8em;
-    transform: scale(1, 0);
-    position: absolute;
-    opacity: 0;
-    padding: 0 1em;
-    width: auto;
-    color: var(--whiteColor);
+  transform-origin: center;
+  letter-spacing: .14em;
+  border-radius: 10px;
+  line-height: 2em;
+  text-align: center;
+  background: hsla(180, 5%, 27%, .8);
+  font-size: .8em;
+  transform: scale(1, 0);
+  position: absolute;
+  opacity: 0;
+  padding: 0 1em;
+  width: auto;
+  color: var(--whiteColor);
 }
 
 .tooltip::after {
-    border-style: solid;
-    border-width: 0 8px 11px 8px;
-    border-color: transparent transparent hsla(180, 5%, 27%, .8) transparent;
-    position: absolute;
-    content: '';
-    height: 0;
-    margin: 0 auto;
-    width: 0;
-    right: 0;
-    left: 0;
-    top: -11px
+  border-style: solid;
+  border-width: 0 8px 11px 8px;
+  border-color: transparent transparent hsla(180, 5%, 27%, .8) transparent;
+  position: absolute;
+  content: '';
+  height: 0;
+  margin: 0 auto;
+  width: 0;
+  right: 0;
+  left: 0;
+  top: -11px
 }
 
 .text-container:hover > .tooltip {
-    animation: showToolTip .3s ease-in forwards
+  animation: showToolTip .3s ease-in forwards
 }
 
 /* ------------------------ CANCIÓN SELECCIONADA ------------------------ */
 .list-song-container {
-    width: 100%;
-    float: left;
-    cursor: pointer
+  width: 100%;
+  float: left;
+  cursor: pointer
 }
 
 .list-song-container::after {
-    border-radius: 25px;
-    background: rgba(66, 73, 73, 0);
-    height: 28px;
-    margin: 0 auto;
-    width: 0;
-    right: 0;
-    left: 0;
-    top: 188px
+  border-radius: 25px;
+  background: rgba(66, 73, 73, 0);
+  height: 28px;
+  margin: 0 auto;
+  width: 0;
+  right: 0;
+  left: 0;
+  top: 188px
 }
 
 /* ------------------------ ANIMACIONES ------------------------ */
 @keyframes showToolTip {
-    100% {
-        transform: scale(1);
-        opacity: 1
-    }
+  100% {
+      transform: scale(1);
+      opacity: 1
+  }
 }
 
 @keyframes showPopUp {
-    100% {
-        transform: scale(1)
-    }
+  100% {
+      transform: scale(1)
+  }
 }
 
 @keyframes displayInputSearch {
-    100% {
-        width: 75%
-    }
+  100% {
+      width: 75%
+  }
 }
 
 @keyframes showInputUp {
-    100% {
-        transform: scale(1)
-    }
+  100% {
+      transform: scale(1)
+  }
 }
 
 @keyframes clickControlsEffect {
-	0% {
-		transform: scale3d(.3, .3, 1)
-	}
-	25%, 50% {
-		opacity: .8
-	}
-	100% {
-		transform: scale3d(1.2, 1.2, 1);
-        opacity: 0
-	}
+0% {
+  transform: scale3d(.3, .3, 1)
+}
+25%, 50% {
+  opacity: .8
+}
+100% {
+  transform: scale3d(1.2, 1.2, 1);
+      opacity: 0
+}
 }
 
 @keyframes openArrowDown {
-  0% {
-    transform: rotate(0)
-  }
-  100% {
-    transform: rotate(40deg);
-    opacity: 1
-  }
+0% {
+  transform: rotate(0)
+}
+100% {
+  transform: rotate(40deg);
+  opacity: 1
+}
 }
 
 @keyframes openArrowUp {
-  0% {
-    transform: rotate(0)
-  }
-  100% {
-    transform: rotate(-40deg);
-    opacity: 1
-  }
+0% {
+  transform: rotate(0)
+}
+100% {
+  transform: rotate(-40deg);
+  opacity: 1
+}
 }
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
 @media only screen and (max-width: 750px) {
-    /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
-    #total-progress-bar{
-        margin: .1em 1.3em .5em
-    }
+  /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
+  #total-progress-bar{
+      margin: .1em 1.3em .5em
+  }
 
-    .prev-next::after {
-        left: 14.7%
-    }
+  .prev-next::after {
+      left: 14.7%
+  }
 
-    /* ------------------------ TOP NAV ------------------------*/
-    #config-container {
-        border-radius: 50%;
-        background: var(--pinkColor);
-        position: fixed;
-        padding: .46em;
-        bottom: 45px;
-        z-index: 4;
-        height: 3em;
-        width: 3em;
-        right: 16px
-    }
+  /* ------------------------ TOP NAV ------------------------*/
+  #config-container {
+      border-radius: 50%;
+      background: var(--pinkColor);
+      position: fixed;
+      padding: .46em;
+      bottom: 45px;
+      z-index: 4;
+      height: 3em;
+      width: 3em;
+      right: 16px
+  }
 
-    #config {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-        float: left
-    }
+  #config {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      float: left
+  }
 
-    /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
-    #info-song {
-        text-align: left;
-        margin: .3em 1.2em;
-        width: 93%
-    }
+  /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
+  #info-song {
+      text-align: left;
+      margin: .3em 1.2em;
+      width: 93%
+  }
 
-    #info-song > div {
-        overflow: hidden
-    }
+  #info-song > div {
+      overflow: hidden
+  }
 
-    #song-title > h1 {
-        font-size: 1.16em
-    }
+  #song-title > h1 {
+      font-size: 1.16em
+  }
 
-    #artist > h2,
-    #album > h3 {
-        font-size: 1em
-    }
+  #artist > h2,
+  #album > h3 {
+      font-size: 1em
+  }
 
-    #time {
-        font-size: 1em;
-        margin: 0
-    }
+  #time {
+      font-size: 1em;
+      margin: 0
+  }
 
-    /* ------------------------ LISTADO DE CANCIONES ------------------------ */
-    .list-song-container::after {
-        top: 193px
-    }
+  /* ------------------------ LISTADO DE CANCIONES ------------------------ */
+  .list-song-container::after {
+      top: 193px
+  }
 }

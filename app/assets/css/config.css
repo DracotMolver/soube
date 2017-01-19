@@ -1,28 +1,28 @@
 /**
- * @author Diego Alberto Molina Vera
- */
+* @author Diego Alberto Molina Vera
+*/
 /* ------------------------ GENERALES ------------------------*/
 h1 {
-    font-size: 1.1em
+  font-size: 1.1em
 }
 
 h4 {
-    font-size: .9em
+  font-size: .9em
 }
 
 h5 {
-    font-size: .5625em
+  font-size: .5625em
 }
 
 #nav {
-    background: var(--pinkColor)
+  background: var(--pinkColor)
 }
 
 #nav > h1 {
-    font-weight: 400;
-    padding: .2em .34em;
-    float: left;
-    color:  var(--whiteColor)
+  font-weight: 400;
+  padding: .2em .34em;
+  float: left;
+  color: var(--whiteColor)
 }
 
 #_titleconfig,
@@ -30,197 +30,222 @@ h5 {
 .config-icons > img:hover,
 #legal > h5,
 .lang-option:hover,
-a {
-    cursor:  pointer
+a,
+#_neweq {
+  cursor: pointer
 }
 
 .config-icons {
-    position: relative;
-    margin: 1.6em auto auto 0;
-    height: 4.6em
+  position: relative;
+  margin: 1.6em auto auto 0;
+  height: 4.6em
 }
 
 .config-option p {
-    margin-bottom: .5em;
-    font-weight: 500;
-    margin-top: .5em;
-    text-align: center;
-    font-size: .95em
+  margin-bottom: .5em;
+  font-weight: 500;
+  margin-top: .5em;
+  text-align: center;
+  font-size: .95em
 }
 
 .config-option h4 {
-    font-weight: 300;
-    text-align: center;
-    color: var(--darkGreyColor)
+  font-weight: 300;
+  text-align: center;
+  color: var(--darkGreyColor)
 }
 
 .config-opt-anim {
-    animation: confSlide 1s ease-in-out forwards
+  animation: confSlide 1s ease-in-out forwards
 }
 
 .range-circle::before,
 #hertz::before,
 #k-hertz::before{
-    position: absolute;
-    content: ''
+  position: absolute;
+  content: ''
 }
 
 /* ----------------------------- LEGAL ---------------------------- */
 #legal {
-    background: var(--whiteColor);
-    padding: 1em;
-    border: .01em solid var(--lightGreyColor);
-    margin: 2em auto;
-    height: auto;
-    width: 60em;
+  background: var(--whiteColor);
+  padding: 1em;
+  border: .01em solid var(--lightGreyColor);
+  margin: 2em auto;
+  height: auto;
+  width: 60em;
 }
 
 #legal > h5 {
-    color: var(--darkGreyColor)
+  color: var(--darkGreyColor)
 }
 
 /* ------------------------ CONFIGURACIÓN CARPETA DE MÚSICA ------------------------*/
 #loading {
-    background: rgba(245, 245, 245, .3);
-    position: fixed;
-    z-index: 3;
-    height: 100%;
-    width: 100%;
-    cursor: wait;
-    top: 0
+  background: rgba(245, 245, 245, .3);
+  position: fixed;
+  z-index: 3;
+  height: 100%;
+  width: 100%;
+  cursor: wait;
+  top: 0
 }
 
 #loading-info {
-    margin-top: 22%;
-    text-align: center;
-    width: 100%;
-    color: var(--blackColor);
-    float: left
+  margin-top: 22%;
+  text-align: center;
+  width: 100%;
+  color: var(--blackColor);
+  float: left
 }
 
 /* ------------------------ CONFIGURACIÓN DEL IDIOMA ------------------------*/
 #lang {
-    box-sizing: border-box
+  box-sizing: border-box
 }
 
 .lang-option:hover {
-    border-bottom: .1em solid #0277bd
+  border-bottom: .1em solid #0277bd
 }
 
 .lang-option {
-    margin-top: .6em;
-    text-align: center;
-    font-size: 2em
+  margin-top: .6em;
+  text-align: center;
+  font-size: 2em
 }
 
 /* ----------------------------- EQUALIZADOR ---------------------------- */
 .range-container {
-    border-radius: 5px; 
-    background: var(--darkGreyColor);
-    padding: 0;
-    margin: .5em 1.225em 1.4em;
-    opacity: .5;
-    height: 18em;
-    width: .6em;
-    float: left
+  border-radius: 5px; 
+  background: var(--darkGreyColor);
+  padding: 0;
+  margin: .5em 1.225em 1.4em;
+  opacity: .5;
+  height: 18em;
+  width: .6em;
+  float: left
 }
 
 .range-container:hover{
-    opacity: 1
+  opacity: 1
 }
 
 .range-circle {
-    background: rgba(233,30,99, .14);
-    border-radius: 50%;
-    position: relative;
-    border: .1em solid var(--lightPinkColor);
-    height: 1.5em;
-    width: 1.5em;
-    left: -9px;
-    top: 130px
+  background: rgba(233,30,99, .14);
+  border-radius: 50%;
+  position: relative;
+  border: .1em solid var(--lightPinkColor);
+  height: 1.5em;
+  width: 1.5em;
+  left: -9px;
+  top: 130px
 }
 
 .range-circle::before {
-    border-radius: 50%;
-    box-shadow: 0 1px 2px 1px rgba(0,0,0,.14);
-    background: var(--darkPinkColor);
-    border: .1em solid var(--pinkColor);
-    height: .7em;
-    width: .7em;
-    left: 5px;
-    top: 5px
+  border-radius: 50%;
+  box-shadow: 0 1px 2px 1px rgba(0,0,0,.14);
+  background: var(--darkPinkColor);
+  border: .1em solid var(--pinkColor);
+  height: .7em;
+  width: .7em;
+  left: 5px;
+  top: 5px
 }
 
 #equalizer-container {
-    margin-top: 1em;
-    height: 100%;
-    width: 100%;
-    float: left
+  margin-top: 1em;
+  height: 100%;
+  width: 100%;
+  float: left
 }
 
 #equalizer-container ul {
-    margin: .6em .2em;
-    width: 100%;
-    float: left
+  margin: .6em .2em;
+  width: 100%;
+  float: left
 }
 
 #equalizer-container ul > li {
-    text-align: center;
-    display: inline-block;
-    width: 2.8em
+  text-align: center;
+  display: inline-block;
+  width: 2.8em
 }
 
 #hertz {
-    width: 35em
+  width: 35em
 }
 
 #k-hertz {
-    width: 32.2em
+  width: 32.2em
 }
 
 #hertz,
 #k-hertz {
-    padding-right: .5em;
-    padding-left: .5em;
-    text-align: center;
-    float: left
+  padding-right: .5em;
+  padding-left: .5em;
+  text-align: center;
+  float: left
 }
 
 #hertz > div,
 #k-hertz > div{
-    background: white;
-    margin: 0 auto;
-    width: 3em;
+  background: white;
+  margin: 0 auto;
+  width: 3em;
 }
 
 #hertz::before,
 #k-hertz::before {
-    background: var(--lightGreyColor);
-    z-index: -1;
-    height: 2px;
-    top: 117px
+  background: var(--lightGreyColor);
+  z-index: -1;
+  height: 2px;
+  top: 112px
 }
 
 #hertz::before {
-    width: 35em;
-    left: 13px
+  width: 35em;
+  left: 13px
 }
 
 #k-hertz::before {
-    width: 31em;
-    left: 609px
+  width: 31em;
+  left: 609px
 }
 
 #eq-buttons {
-    background: var(--whiteColor);
-    border-radius: 4px;
-    margin: 1em 1em .5em 1em;
+  background: var(--whiteColor)
+}
+
+#name-new-eq,
+#eq-buttons,
+#_neweq {
+  border: 1px solid rgba(0,0,0,.14);
+  border-radius: 4px;
+  margin: 1em 0 .5em 1em
+}
+
+#name-new-eq {
+  height: 28px;
+  width: 58%
+}
+
+#_neweq {
+  padding-right: .6em;
+  padding-left: .6em;
+  line-height: 1.9em;
+  background: var(--darkGreyColor);
+  color: var(--whiteColor)
+}
+
+#_neweq[disabled]{
+  background: var(--whiteColor);
+  color: #d4d4d4
 }
 
 /*---------------------------------- ANIMACIONES ----------------------------------*/
 @keyframes confSlide {
-    100% {
-        transform: translateX(-100%);
-          opacity: 0
-    }
+  100% {
+      transform: translateX(-100%);
+        opacity: 0
+  }
 }
