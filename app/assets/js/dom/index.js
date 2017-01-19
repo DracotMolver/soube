@@ -105,7 +105,7 @@ module.exports = (_ => {
     attr: function (attr) {
       if (typeof attr === 'object')
         Object.keys(attr).forEach(v => { this.element.setAttribute(v, attr[v]); });
-      else
+      else if (attr !== '')
         return this.element.getAttribute(attr);
 
       return this;

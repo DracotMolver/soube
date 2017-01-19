@@ -348,7 +348,7 @@ function setFilterVal(a, b) {
 // [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 function filters() {
   let f = null;
-  let db = configFile.equalizer.map(v =>
+  let db = configFile.equalizer[configFile.equalizerConfig].map(v =>
     v !== 0 ? parseFloat((v < 130 ? 121 - v : -v + 140) / 10) : 0
   );
 
