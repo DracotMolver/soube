@@ -11,16 +11,10 @@
             "addAccounts": "Cuentas",
             "equalizerSetting": "Ecualizador",
             "statusSongFolder": "No hay carpeta de música",
-            "loadingSongFolder": "Cargando canciones: %d / %d \n Paciencia, se están extrayendo los metadatos :)",
-            "legal": "Términos legales"
+            "loadingSongFolder": "Cargando canciones: %d / %d <br> Paciencia, se están extrayendo los metadatos :)",
+            "legal": "Términos legales",
+            "newEQ": "Nuevo"
         },
-        "eqStyles": [
-            "Reset",
-            "Rock",
-            "Electrónica",
-            "Acústica",
-            "Agregar nuevo..."
-        ],
         "alerts": {
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
             "newSongsFound": "Agregando nuevas canciones",
@@ -47,16 +41,10 @@
             "addAccounts": "Accounts",
             "equalizerSetting": "Equalizer",
             "statusSongFolder": "No music folder",
-            "loadingSongFolder": "Loading songs: %d1 / %d2 \n Patience, extracting metadata",
-            "legal": "Legal terms"
+            "loadingSongFolder": "Loading songs: %d1 / %d2 <br> Patience, extracting metadata",
+            "legal": "Legal terms",
+            "newEQ": "New"
         },
-        "eqStyles": [
-            "Reset",
-            "Rock",
-            "Electro",
-            "Acustic",
-            "Add new..."
-        ],
         "alerts": {
             "newVersion": "We've got a new version!. Click to download it.",
             "newSongsFound": "Adding new songs ",

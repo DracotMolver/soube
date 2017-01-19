@@ -23,7 +23,9 @@ require('./dom');
 
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
-let isDragged = false;
+let eqHrz = [];
+let newEQHrz = [];
+let actualPanel = null;
 
 /* --------------------------------- Functions --------------------------------- */
 
@@ -36,11 +38,12 @@ let isDragged = false;
   $('#_titleconfig').text(lang.config.titleConfig);
   $('#_equalizersetting').text(lang.config.equalizerSetting);
   $('#_legal').text(lang.config.legal);
+  $('#_neweq').text(lang.config.newEQ);
 })();
 
-// Animación del panel cuando se selecciona una opción a configurar
+// Animation of the panel when select an option
 function animConfigPanel(e, text) {
-  $(`#${$(e).data('action')}`).replaceClass('hide', '');
+  actualPanel = $(`#${$(e).data('action')}`).replaceClass('hide', '');
 
   $('#config-container-options')
   .addClass('config-opt-anim')
@@ -51,14 +54,12 @@ function animConfigPanel(e, text) {
     }
   });
 
-  // configuraciones > ventana de configuración actual
   $('#_titlesubconfig').text(` > ${text}`);
 }
 
-// Cambiar el idioma del reproductor
-// Nota: Esta función se mantiene acá por ser simple
+// Change the lang of the music player
 function onClickChangeLang() {
-  animConfigPanel(lang.config.changeLanguage);
+  animConfigPanel(this, lang.config.changeLanguage);
 
   $('.lang-option').on({
     'click': function () {
@@ -69,23 +70,21 @@ function onClickChangeLang() {
   });
 }
 
-// Obtenemos las canciones - ruta
+// Get path song
 function saveSongList(parentFolder = '') {
   configFile.musicFolder = parentFolder;
   editFile('listSong', {});
   editFile('config', configFile);
 
-  // Actualizar status de la carpeta
   $('#folder-status').child(0).text(parentFolder);
 
-  // Desplegar loading
-  // Leer el contenido de la carpeta padre
-  player.addSongFolder(parentFolder, () => { // Función inicial del proceso
+  // Shows loading
+  // Read the content of the parent folder
+  player.addSongFolder(parentFolder, () => {
     $('#loading').replaceClass('hide', '');
     $($('.grid-container').get(0))
     .css('-webkit-filter:blur(2px)');
-  }, (i, maxLength) => { // Función iteradora
-    // Pop-up con la cantidad de canciones cargandose
+  }, (i, maxLength) => { // Iterator function
     $('#_loading-info').text(`${lang.config.loadingSongFolder.replace('%d1', i).replace('%d2', maxLength)}`);
 
     if (i === maxLength) {
@@ -108,70 +107,57 @@ function onEqualizerPanel(e) {
   });
 
   EQ.onDragEnd((pos, db) => {
-    configFile.equalizer[pos] = db;
-    if (isDragged) editFile('config', configFile);
+    newEQHrz[pos] = db;
   });
 
-  // El evento es solo registrado sobre los botones redondos
-  // Setear la configuración establecida
+  // Set the EQ config choosen
+  newEQHrz = eqHrz = configFile.equalizer[configFile.equalizerConfig];
   $('.range-circle').each((v, i) => {
-    $(v).css(`top:${configFile.equalizer[i] === 0 ? 130 : configFile.equalizer[i]}px`);
+    $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
   }).on({
     mousedown: function () {
-      isDragged = EQ.onDragStart(this);
+      EQ.onDragStart(this);
     }
   });
 }
 
-// Resetea el Equalizador
-function resetEQ() {
-  configFile.equalizer = configFile.equalizer.fill(0)
-  configFile.equalizer.forEach((v, i) => {
-    ipcRenderer.send('equalizer-filter', [i, v]);
-  });
-  $('.range-circle').css('top:130px');
-}
-
-function othersEQ(hrz) {
-  $('.range-circle').each((v, i) => {
-    $(v).css(`top:${hrz[i] === 0 ? 130 : hrz[i]}px`);
-
-    // Afectar al source node actual
-    ipcRenderer.send('equalizer-filter', [i,
-      hrz[i] !== 0 ? parseFloat((hrz[i] < 130 ? 121 - hrz[i] : -hrz[i] + 140) / 10) : 0
-    ]);
-  });
-
-  configFile.equalizer = hrz;
-  editFile('config', configFile);
-}
-
-
 // Options to config the EQ
 function setEQ () {
-  const EQ_DATA = this.value;
-  switch(EQ_DATA) {
-    case 'rock':
-    case 'electro':
-    case 'acustic': othersEQ(EQ.styles[EQ_DATA]); break;
-    case 'reset': resetEQ(); break;
-  }
+  configFile.equalizerConfig = this.value;
+  editFile('config', configFile);
+
+  eqHrz = configFile.equalizer[configFile.equalizerConfig];
+  $('.range-circle').each((v, i) => {
+    $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
+
+    ipcRenderer.send('equalizer-filter', [i,
+      eqHrz[i] !== 0 ? parseFloat((eqHrz[i] < 130 ? 121 - eqHrz[i] : -eqHrz[i] + 140) / 10) : 0
+    ]);
+  });
 }
 
 /** --------------------------------------- Eventos --------------------------------------- **/
-// Refrescar la ventana
+// Refresh the window
 $('#_titleconfig').on({
   click: () => {
-    // Ya que se refresca el navegador, debemos guardar todo cambio
-    editFile('config', configFile);
-    window.location.reload(false);
+    if (actualPanel !== null) {
+      actualPanel.addClass('hide');
+
+      $('#config-container-options')
+      .replaceClass('config-opt-anim', '')
+      .replaceClass('hide', '');
+
+      $('#config-container-values').addClass('hide');
+
+      $('#_titlesubconfig').text('');
+    }
   }
 });
 
-// Cambiar idioma
+// Change the language
 $('#change-lang').on({ click: onClickChangeLang });
 
-// Acción para agregar el listado de canciones
+// Action to add the songs
 $('#add-songs').on({
   click: () => {
     remote.dialog.showOpenDialog({
@@ -183,18 +169,42 @@ $('#add-songs').on({
   }
 });
 
-// Mostrar ecualizador
+// Shows EQ
 $('#equalizer-panel').on({ click: onEqualizerPanel });
 
 // EQ settings options
-lang.eqStyles.forEach(v => {
+Object.keys(configFile.equalizer).forEach(v => {
   $('#eq-buttons').insert(
-    $('option').clone(true).val(v.toLowerCase()).text(v)
+    $('option').clone(true).val(v).text(v)
+    .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected:'selected' } : '')
   );
 });
 $('#eq-buttons').on({ change: setEQ });
 
-// Open the predefault browser of the OS
+// Check if the person want to add a new EQ setting
+$('#name-new-eq').on({
+  keyup: function() {
+    if (this.value.trim().length > 3) $('#_neweq').rmAttr('disabled');
+    else $('#_neweq').attr({ disabled: 'disabled' });
+  }
+});
+
+// Action to add a new EQ setting
+$('#_neweq').on({
+  click: function(e) {
+    e.preventDefault();
+    const eqStylesNames = Object.keys(configFile.equalizer);
+
+    if(eqStylesNames.indexOf($('#name-new-eq').val()) === -1) {
+      configFile.equalizer[$('#name-new-eq').val()] = newEQHrz;
+      editFile('config', configFile);
+    } else {
+      console.log('El nombres ya exíste o no es un nombre válido');
+    }
+  }
+});
+
+// Open the default browser of the OS
 $(':a').on({
   click: function (e) {
     e.preventDefault();
@@ -202,7 +212,7 @@ $(':a').on({
   }
 });
 
-// Mostrar legal
+// Show legal terms
 $('#terms').on({
   click: function() {
     animConfigPanel(this, lang.config.legal);

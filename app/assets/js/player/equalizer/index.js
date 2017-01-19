@@ -11,13 +11,6 @@ let pos = 0;
 let _db = 0;
 let _pos = 0;
 
-//---- constants ----
-const styles = {
-  rock: [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103],
-  electro: [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121],
-  acustic: [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90]
-};
-
 function onDragMove(fn) {
   $(document).on({
     mousemove: e => {
@@ -50,12 +43,10 @@ function onDragEnd(fn) {
 
 function onDragStart(el) {
   pos = $((range = el)).data('position');
-  return true;
 };
 
 module.exports = {
   onDragMove,
   onDragStart,
-  onDragEnd,
-  styles
+  onDragEnd
 };

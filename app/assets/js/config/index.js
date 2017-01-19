@@ -18,7 +18,6 @@ function createFiles(path) {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
   const CONFIG_PATH = `${path}/config.json`;
-  const EQ = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   fs.stat(CONFIG_PATH, (err, stats) => {
     if (err) {
@@ -27,7 +26,12 @@ function createFiles(path) {
         lang: 'us',
         shuffle: true,
         musicFolder: '',
-        equalizer: EQ,
+        equalizer: {
+          reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          rock: [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103],
+          electro: [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121],
+          acustic: [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90]
+        },
         equalizerConfig: 'reset'
       };
 
@@ -38,13 +42,11 @@ function createFiles(path) {
         fs.closeSync(fd);
       });
     } else {
-      // ONLY FOR VERSIONS LOWER THAN 1.3.2
-      let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
-      if (config.equalizer.length < 23) {
-        config.equalizer = EQ;
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null), { flag: 'w' });
+        // ONLY FOR VERSIONS LOWER THAN 1.3.2
+        let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
+        if (config.equalizer.length < 23)
+          fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null), { flag: 'w' });
       }
-    }
   });
 
   /* --------------------------------- File of songs --------------------------------- */
