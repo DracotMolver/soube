@@ -69,20 +69,20 @@ function findFiles(dir) {
 function addSongFolder(folder, fnStart, fnIter) {
   // Get the object from listsong.json - only if was already created it
   songs = Object.keys(listSongs).length === 0 ? [] : listSongs;
-
   const readAllFiles = readFiles => {
     if (songs.length < readFiles.length) { // Add songs
       files = readFiles.filter(f => {
         if (songs.find(v => v.filename === f) === undefined) return path.normalize(f);
       });
 
-      if (files.length > 0) {
-        fnStart();
-        extractMetadata(fnIter);
-      }
+      fnStart();
+      extractMetadata(fnIter);
     } else if(songs.length > readFiles.length) { // Remove songs
       songs = songs.filter(f => {
         if (readFiles.find(v => v === f.filename)) return f;
+      }).map((v, i) => {
+        v.position = i
+        return v
       });
 
       editFile('listSong', songs);
@@ -109,42 +109,60 @@ function addSongFolder(folder, fnStart, fnIter) {
 
 // Will get all the needed metadata from a song file
 function extractMetadata(fnIter) {
-  let readStream = null;
-  songs = [];
-  files.forEach(v => {
-    musicmetadata(fs.createReadStream(v), (error, data) => {
-      // In case of error, it will save data using what is inside the lang.json file
-      songs.push(
-        error ?
-        {
-          artist: lang.artist.trim().replace(/\s/g, '&nbsp;'),
-          album: lang.album.trim().replace(/\s/g, '&nbsp;'),
-          title: lang.title.trim().replace(/\s/g, '&nbsp;'),
-          filename: v
-        } :
-        {
-          artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).trim().replace(/\s/g, '&nbsp;'),
-          album: (data.album.trim().length !== 0 ? data.album : lang.album).trim().replace(/\s/g, '&nbsp;'),
-          title: (data.title.trim().length !== 0 ? data.title : lang.title).trim().replace(/\s/g, '&nbsp;'),
-          filename: v
-        }
-      );
+  // let songs = [];
+  // files.forEach(v => {
+  (function(f) {
+    let asyncForEach = {
+      init: 0,
+      end: 0,
+      loop: () => {
+        if (asyncForEach.init < asyncForEach.end) {
+          musicmetadata(fs.createReadStream(f[asyncForEach.init]), (error, data) => {
+            // In case of error, it will save data using what is inside the lang.json file
+            songs.push(
+              error ?
+              {
+                artist: lang.artist.trim().replace(/\s/g, '&nbsp;'),
+                album: lang.album.trim().replace(/\s/g, '&nbsp;'),
+                title: lang.title.trim().replace(/\s/g, '&nbsp;'),
+                filename: f[asyncForEach.init]
+              } :
+              {
+                artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).trim().replace(/\s/g, '&nbsp;'),
+                album: (data.album.trim().length !== 0 ? data.album : lang.album).trim().replace(/\s/g, '&nbsp;'),
+                title: (data.title.trim().length !== 0 ? data.title : lang.title).trim().replace(/\s/g, '&nbsp;'),
+                filename: f[asyncForEach.init]
+              }
+            );
 
-      fnIter(songs.length, files.length);
-      if (songs.length === files.length) {
-        editFile('listSong',
-          songs.sort((a, b) =>
-            // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
-            a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
-            a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
-          ).map((v, i) => {
-            v.position = i
-            return v
-          })
-        );
+            fnIter(asyncForEach.init + 1, asyncForEach.end);
+            if (asyncForEach.init + 1 === asyncForEach.end) {
+              editFile('listSong',
+                songs.sort((a, b) =>
+                  // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
+                  a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
+                  a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
+                ).map((v, i) => {
+                  v.position = i
+                  return v
+                })
+              );
+            } else {
+              asyncForEach.init++;
+              asyncForEach.loop();
+            }
+          });
+        }
+      },
+      steps: (init, end) => {
+        asyncForEach.end = end;
+        asyncForEach.init = init;
       }
-    });
-  });
+    };
+
+    asyncForEach.steps(0, f.length);
+    asyncForEach.loop();
+  })(files);
 }
 
 module.exports = addSongFolder;
