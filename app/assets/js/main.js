@@ -321,7 +321,7 @@ ipcRenderer.on('get-equalizer-filter', (e, a) => {
 
 // Makes the list of song when are exported from the config panel (adding the music folder)
 ipcRenderer.on('order-display-list', () => {
-  window.location.reload(false);
+  window.location.reload(true);
 });
 
 // Play or pause song [Ctrl + Up]

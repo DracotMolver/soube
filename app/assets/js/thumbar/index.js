@@ -5,45 +5,42 @@
  */
 
 function makeThumBar(win, imgs = {}) {
-  let generalObject = {
-    icon: null,
-    tooltip: '',
-    click: (fn) => { fn(); }
+  const play = {
+    icon: imgs.play,
+    tooltip: 'Play',
+    click: () => {
+      win.setThumbarButtons(pauseMomment);
+      win.webContents.send('thumbar-controls', 'play-pause');
+    }
   };
 
-  let play = Object.create(generalObject);
-  play.icon = imgs.play;
-  play.tooltip = 'Play';
-  play.click(() => {
-    win.setThumbarButtons(pauseMomment);
-    win.webContents.send('thumbar-controls', 'play-pause');
-  });
+  const prev = {
+    icon: imgs.prev,
+    tooltip: 'Prev',
+    click: () => win.webContents.send('thumbar-controls', 'prev')
+  };
 
-  let prev = Object.create(generalObject);
-  prev.icon = imgs.prev;
-  prev.tooltip = 'Prev';
-  prev.click(() => {
-    win.webContents.send('thumbar-controls', 'prev');
-  });
+  const next = {
+    icon: imgs.next,
+    tooltip: 'Next',
+    click: () => win.webContents.send('thumbar-controls', 'next')
+  };
 
-  let next = Object.create(generalObject);
-  next.icon = imgs.next;
-  next.tooltip = 'Next';
-  next.click(() => {
-    win.webContents.send('thumbar-controls', 'next');
-  });
+  const pause = {
+    icon: imgs.pause,
+    tooltip: 'Pause',
+    click: () => {
+      win.setThumbarButtons(playMomment);
+      win.webContents.send('thumbar-controls', 'play-pause');
+    }
+  }
 
-  let pause = Object.create(generalObject);
-  pause.icon = imgs.pause
-  pause.tooltip = 'Pause';
-  pause.click(() => {
-    win.setThumbarButtons(playMomment);
-    win.webContents.send('thumbar-controls', 'play-pause');
-  });
+  const playMomment = [prev, play, next];
+  const pauseMomment = [prev, pause, next];
 
   return {
-    playMomment: [prev, play, next],
-    pauseMomment: [prev, pause, next]
+    playMomment,
+    pauseMomment
   };
 }
 

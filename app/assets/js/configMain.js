@@ -65,7 +65,7 @@ function onClickChangeLang() {
     'click': function () {
       configFile.lang = $(this).data('lang');
       editFile('config', configFile);
-      window.location.reload(false);
+      window.location.reload(true);
     }
   });
 }
