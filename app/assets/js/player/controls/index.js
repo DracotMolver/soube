@@ -2,7 +2,6 @@
  * @author Diego Alberto Molina Vera
  * @copyright 12016 - 2017
  */
-
 /* --------------------------------------- Modules ------------------------------------------- */
 //---- nodejs ----
 const path = require('path');
@@ -74,11 +73,9 @@ const anim = {
   ]
 };
 
-// // let millisecond = 1;
 let interval = null;
-// let forward = 0;
 let millisecond = 0;
-// let percent = 0;
+let progressInterval = null;
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Enable shuffle
@@ -151,16 +148,17 @@ function startTimer() {
   // Progress bar
   progressBar.onmessage = e => {
     $('#progress-bar').css(e.data.w);
-  }; 
+  };
 
-  let progressInterval = setInterval(() => {
+  (function iter() {
     progressBar.postMessage({ action: 'start', per: lapse });
-  }, 1);
+    progressInterval = requestAnimationFrame(iter);
+  })();
 }
 
 // Clean the everything when the ended function is executed
 function stopTimer() {
-  // $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
+  $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
 
   if (!isMovingForward) {
     isSongPlaying = false;
@@ -246,7 +244,7 @@ function initSong() {
     time = ((duration = buffer.duration) / 60).toString();
     minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
     second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
-    lapse = 100 / (second * 1000); // Porcentaje a usar por cada segundo en la barra de progreso
+    lapse = 1 / (second * 1000); // Porcentaje a usar por cada segundo en la barra de progreso
     $('#time-end').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
 
     source.onended = stopTimer;
@@ -257,7 +255,7 @@ function initSong() {
     filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
 
     // Change the color the actual song
-    // $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
+    $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
 
     startTimer();
     source.start(0);
@@ -368,7 +366,8 @@ filters();
 function moveForward(event, element) {
   isMovingForward = true;
   var x =source.stop(0);
-  cancelAnimationFrame(interval);
+  cancelAnimationFrame(interval); // Time
+  ca
 
   forward = duration * event.offsetX / element.clientWidth;
   time = (forward / 60).toString();
