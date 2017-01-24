@@ -1,19 +1,19 @@
 /**
  * @author Diego Alberto Molina Vera
+ * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
-// Electron modules
+//---- electron ----
 const {
   shell,
   ipcRenderer,
   remote
 } = require('electron');
 
-// Own modules
+//---- own ----
 const factory = require('./factory');
 const player = factory('player');
 const EQ = factory('equilizer');
-
 const {
   configFile,
   langFile,
@@ -70,7 +70,7 @@ function onClickChangeLang() {
   });
 }
 
-// Get path song
+// Get the path song
 function saveSongList(parentFolder = '') {
   configFile.musicFolder = parentFolder;
   editFile('listSong', {});
@@ -78,7 +78,7 @@ function saveSongList(parentFolder = '') {
 
   $('#folder-status').child(0).text(parentFolder);
 
-  // Shows loading
+  // Show a loading
   // Read the content of the parent folder
   player.addSongFolder(parentFolder, () => {
     $('#loading').replaceClass('hide', '');
@@ -90,15 +90,13 @@ function saveSongList(parentFolder = '') {
     if (i === maxLength) {
       // Ocultar loading
       $('#loading').addClass('hide');
-      $($('.grid-container').get(0))
-        .rmAttr('style');
+      $($('.grid-container').get(0)).rmAttr('style');
       ipcRenderer.send('display-list');
     }
   });
 }
 
-// Animación de los botones sobre el panel ecualizador
-// Hace uso de la clase equalizer y sus métodos
+// Animation over the buttons in the EQ panel
 function onEqualizerPanel(e) {
   animConfigPanel(this, lang.config.equalizerSetting);
 
@@ -136,7 +134,7 @@ function setEQ () {
   });
 }
 
-/** --------------------------------------- Eventos --------------------------------------- **/
+/** --------------------------------------- Events --------------------------------------- **/
 // Refresh the window
 $('#_titleconfig').on({
   click: () => {
@@ -148,7 +146,6 @@ $('#_titleconfig').on({
       .replaceClass('hide', '');
 
       $('#config-container-values').addClass('hide');
-
       $('#_titlesubconfig').text('');
     }
   }
@@ -169,7 +166,7 @@ $('#add-songs').on({
   }
 });
 
-// Shows EQ
+// Show the EQ panel
 $('#equalizer-panel').on({ click: onEqualizerPanel });
 
 // EQ settings options

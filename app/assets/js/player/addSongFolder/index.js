@@ -1,19 +1,20 @@
 /**
  * @author Diego Alberto Molina Vera
+ * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
-// Nodejs modules
+//---- nodejs ----
 const fs = require('fs');
 const exec = require('child_process').exec;
 const path = require('path');
 
-// Electron modules
+//---- electron ----
 const dialog = require('electron').remote.dialog;
 
-// Others
+//---- other ----
 const musicmetadata = require('musicmetadata');
 
-// Own modules
+//---- own ----
 let {
   configFile,
   langFile,
@@ -80,26 +81,24 @@ function addSongFolder(folder, fnStart, fnIter) {
     } else if(songs.length > readFiles.length) { // Remove songs
       songs = songs.filter(f => {
         if (readFiles.find(v => v === f.filename)) return f;
-      }).map((v, i) => {
-        v.position = i
-        return v
-      });
+      }).map((v, i) => (v.position = i, v));
 
       editFile('listSong', songs);
       window.location.reload(true);
     }
   };
 
-  // Ejecutar linea de comando [Linux | Mac]
+  // command line [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
     const command = `find ${folder.replace(/\s/ig, '\\ ')} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
         dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
-      } else {
-        readAllFiles(stdout.trim().split('\n'));
+        return;
       }
+
+      readAllFiles(stdout.trim().split('\n'));
     });
   } else if (process.platform === 'win32') {
     // Only for windows
@@ -109,8 +108,6 @@ function addSongFolder(folder, fnStart, fnIter) {
 
 // Will get all the needed metadata from a song file
 function extractMetadata(fnIter) {
-  // let songs = [];
-  // files.forEach(v => {
   (function(f) {
     let asyncForEach = {
       init: 0,
@@ -142,10 +139,7 @@ function extractMetadata(fnIter) {
                   // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
                   a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
                   a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
-                ).map((v, i) => {
-                  v.position = i
-                  return v
-                })
+                ).map((v, i) => (v.position = i, v))
               );
             } else {
               asyncForEach.init++;

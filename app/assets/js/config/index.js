@@ -1,11 +1,12 @@
 /**
  * @author Diego Alberto Molina Vera
+ * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
-// Nodejs modules
+//---- nodejs ----
 const fs = require('fs');
 
-// Electron modules
+//---- electron ----
 const remote = require('electron').remote;
 
 /* --------------------------------- Functions --------------------------------- */
@@ -36,7 +37,10 @@ function createFiles(path) {
       };
 
       fs.open(CONFIG_PATH, 'w', (err, fd) => {
-        if (err) return;
+        if (err) {
+          remote.dialog.showErrorBox('Error [004]', `It was an error trying to create the configs needed files.\n${err}`);
+          return;
+        }
 
         fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG, null), { flag: 'w' });
         fs.closeSync(fd);
@@ -54,7 +58,10 @@ function createFiles(path) {
   fs.stat(LIST_SONG_PATH, (err, stats) => {
     if (err) {
       fs.open(LIST_SONG_PATH, 'w', (err, fd) => {
-        if (err) return;
+        if (err) {
+          remote.dialog.showErrorBox('Error [005]', `It was an error trying to create the configs needed files.\n${err}`);
+          return;
+        }
 
         fs.writeFileSync(LIST_SONG_PATH, JSON.stringify({}, null), { flag: 'w' });
         fs.closeSync(fd);

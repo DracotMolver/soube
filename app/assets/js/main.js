@@ -1,19 +1,16 @@
 /**
  * @author Diego Alberto Molina Vera
- * 
- * All the constants variables are Uppercase.
- * Except some exported modules
+ * @copyright 2016 - 2017
  */
-/** --------------------------------------- Módulos --------------------------------------- **/
-// Electron módulos
+/** --------------------------------------- Modules --------------------------------------- **/
+//---- Electron ----
 const {
   ipcRenderer,
   remote
 } = require('electron');
 
-// Módulos propios
+//---- own ----
 const PLAYER = require('./factory')('player');
-
 const {
     configFile,
     langFile,
@@ -49,7 +46,7 @@ let regex = null; // The name of the song to searching for as a regular expressi
 let list = null; // Filtered songs.
 
 /** --------------------------------------- Functions --------------------------------------- **/
-// Checks if there's a new versions to download
+// Check if there's a new version to download
 function getActualVersion() {
   const xhtr = new XMLHttpRequest();
   xhtr.open('GET', 'https://api.github.com/repos/dracotmolver/soube/releases/latest', true);
@@ -64,7 +61,6 @@ function getActualVersion() {
         `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
       );
 
-      // Para poder abrir en el navegador predeterminado y no dentro de la app
       $(':a').on({
         click: function (e) {
           e.preventDefault();
@@ -87,11 +83,9 @@ function getActualVersion() {
   xhtr.send(null);
 }
 
-// Una de las funciones importantes.
-// Se encarga de verificar si hay canciones que mostrar y arma lo
-// necesario para que el reproductor funciones
+// Main function!!
 function loadSongs() {
-  // Activar shuffle
+  // Enable shuffle
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
   getActualVersion();
@@ -100,7 +94,7 @@ function loadSongs() {
       `<div id="init-message">${lang.alerts.welcome}</div>`
     );
   } else {
-    // Desplegamos el listado de canciones con el estilo por defecto de tipo lista
+    // Render the list of songs
     PLAYER.createView(PLAYER);
   }
 }
@@ -115,14 +109,13 @@ function hideSearchInputData() {
   isSearchDisplayed = false;
 }
 
-
 // This function is use into the function itemSlide
 function selectedSong (position) {
   PLAYER.controls.playSongAtPosition(position);
   hideSearchInputData();
 }
 
-// This funciton will be executed every time the use hit down a keyword
+// will be executed every time the user hit down a keyword
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
   searchValue = this.value.trim();
@@ -138,12 +131,12 @@ function searchInputData(e) {
     regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}+`, 'ig');
     list = listSongs.filter(v => regex.test(v[searchBy]));
 
-  // Shows possibles results
+    // Show possibles results
     totalResults = list.length - 1;
     tempSlide = slide = totalResults > MAX_ELEMENTS ? Math.floor(totalResults / MAX_ELEMENTS) : 1;
     fragmentSlide = fragmentItems = document.createDocumentFragment();
 
-    // Makes an slide with all the filtered coincidences
+    // Make an slide with all the filtered coincidences
     const FILTERED_SONGS = totalResults < MAX_ELEMENTS ? totalResults + 1 : MAX_ELEMENTS;
     while (slide--) {
       for (var i = 0; i < FILTERED_SONGS; i++ , totalResults--) {
@@ -176,7 +169,7 @@ function searchInputData(e) {
     $('#pagination').replaceClass('hide', '').child(1).addClass('arrow-open-anim') :
     $('#pagination').addClass('hide');
 
-    // Displays all the filtered songs
+    // Display all the filtered songs
     $('#wrapper-results').empty()
     .insert(fragmentSlide)
     .css(`width:${tempSlide * document.body.clientWidth}px`);
@@ -186,14 +179,14 @@ function searchInputData(e) {
     $('#pagination').addClass('hide');
   }
 
-  // Shows the first coincidence to show as a ghost text
+  // Show the first coincidence to show as a "ghost text".
   $('#search-result').text(searchValue !== '' ? list[0][searchBy] : '');
 }
 
-// Chequear si hay nuevas canciones en el direcctorio para que sean agregadas
+// Check if there are new songs to be added
 function checkNewSongs() {
   PLAYER.addSongFolder(configFile.musicFolder, () => {
-    // Desplegar pop-up
+    // show pop-up
     $('#pop-up-container')
     .replaceClass('hide', '')
     .child(0)
@@ -202,7 +195,7 @@ function checkNewSongs() {
     $('#pop-up').text(`${langFile[configFile.lang].alerts.newSongsFound}${i} / ${maxlength}`);
 
     if (i === maxlength) {
-      // Ocultar pop-up
+      // hide pop-up
       $('#pop-up-container').addClass('hide').child(0).replaceClass('pop-up-anim');
       window.location.reload(true);
     }
@@ -210,13 +203,12 @@ function checkNewSongs() {
 }
 
 function clickBtnControls() {
-  // animación sobre los botones
   $(this).addClass('click-controls')
     .on({
       animationend: function () {
         $(this).replaceClass('click-controls', '');
       }
-  });
+    });
 
   if (listSongs.length !== 0) {
     switch (this.id) {
@@ -243,7 +235,7 @@ function clickBtnControls() {
 }
 
 /** --------------------------------------- Events --------------------------------------- **/
-// Scrolling al dar click en la canción para buscarla en el listado total
+// Scrolling the list of songs
 $('#song-title').on({
   click: function () {
     if (this.children[0].textContent.trim() !== '') {
@@ -252,16 +244,13 @@ $('#song-title').on({
       const ELEMENT = clickedElement.scrollTop;
       const TOP = positionElement.offsetTop;
       const TOPNAV = Math.round(document.getElementById('top-nav').offsetHeight);
-
-      if (ELEMENT !== TOP - (TOPNAV + 100))
-        clickedElement.scrollTop += (TOP - (TOPNAV + 100)) - ELEMENT;
-      else
-        clickedElement.scrollTop -= (TOP - (TOPNAV + 100)) - ELEMENT;
+      const DISTANCE = TOP - (TOPNAV + 100);
+      clickedElement.scrollTop += ELEMENT !== DISTANCE ? DISTANCE - ELEMENT : - (DISTANCE - ELEMENT);
     }
   }
 });
 
-// Choose an option to search by: 
+// Choose an option to search by: (new feature)
 // - Song
 // - Artist
 // - Album
@@ -280,7 +269,7 @@ $('#total-progress-bar').on({ click: function (e) { PLAYER.controls.moveForward(
 $('.arrow').on({
   click: function () {
     if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
-        if (countSlide < tempSlide) ++countSlide;
+      if (countSlide < tempSlide) ++countSlide;
     } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
       if (countSlide < tempSlide && countSlide > 0) --countSlide;
     }
@@ -300,7 +289,7 @@ $('.arrow').on({
 // Close the searching bar
 ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
 
-// Displays the searching bar [ctrl + F]
+// Display the searching bar [ctrl + F]
 ipcRenderer.on('search-song', () => {
   if (!isSearchDisplayed) {
     $('#search-container').replaceClass('hide', '');
@@ -314,12 +303,12 @@ ipcRenderer.on('search-song', () => {
   }
 });
 
-// Sends the values from the equalizer to the AudioContext [player/controls/index.js]
+// Send the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) => {
   PLAYER.controls.setFilterVal(...a);
 });
 
-// Makes the list of song when are exported from the config panel (adding the music folder)
+// Make the list of song when are exported from the config panel (adding the music folder)
 ipcRenderer.on('order-display-list', () => {
   window.location.reload(true);
 });

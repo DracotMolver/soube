@@ -1,6 +1,6 @@
 /**
- * DOM manipulation
  * @author Diego Alberto Molina Vera
+ * @copyright 2016 - 2017
  */
 module.exports = (_ => {
   /* --------------------------------- Variables --------------------------------- */
@@ -15,7 +15,8 @@ module.exports = (_ => {
     addClass: function(str) {
       const CLASS_NAME = this.element.className;
 
-      if (CLASS_NAME.indexOf(str) === -1) this.element.className += CLASS_NAME === '' ? `${str}` : ` ${str}`;
+      if (CLASS_NAME.indexOf(str) === -1)
+        this.element.className += CLASS_NAME === '' ? `${str}` : ` ${str}`;
 
       return this;
     },
@@ -26,20 +27,16 @@ module.exports = (_ => {
       return this;
     },
     text: function(str = null) {
-      if (str !== null) this.element.innerHTML = `${str}`;
-      else return this.element.textContent;
+      if (str === null) return this.element.textContent;
 
-      return this;
+      return this.element.innerHTML = `${str}`, this;
     },
     replaceClass: function(from, to) {
-      this.element.className = this.element.className.replace(from, to);
-      return this;
+      return this.element.className = this.element.className.replace(from, to), this;
     },
     child: function(pos = -1) {
-      if (pos !== -1) this.element = this.element.children[pos];
-      else this.element = Array.from(this.element.children);
-
-      return this;
+      return this.element = pos !== -1 ? this.element.children[pos] : Array.from(this.element.children),
+      this;
     },
     on: function(fn) {
       // Select element is like an array because of the options elements inside
@@ -67,7 +64,7 @@ module.exports = (_ => {
     },
     each: function(fn) {
       this.element.forEach((v, i) => {
-      fn.length === 1 ? fn(v) : fn(v, i);
+        fn.length === 1 ? fn(v) : fn(v, i);
       });
 
       return this;
@@ -77,30 +74,29 @@ module.exports = (_ => {
 
       if (el.length !== undefined) {
         el.forEach(e => {
-          if (e.style.cssText.indexOf(str)) e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
+          if (e.style.cssText.indexOf(str))
+            e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
         });
       } else {
-        if (el.style.cssText.indexOf(str)) el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
+        if (el.style.cssText.indexOf(str))
+          el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
       }
 
       return this;
     },
     clone: function(isCloned) {
       if (typeof this.element === 'string') {
-        this.element = getCreatedElement(this.element).cloneNode(isCloned);
-        return this;
+        return this.element = getCreatedElement(this.element).cloneNode(isCloned), this;
       } else {
-        event = Object.assign({}, EVENT);
-        event.element = this.element.cloneNode(isCloned);
-        return event;
+        return event = Object.assign({}, EVENT),
+        event.element = this.element.cloneNode(isCloned), event;
       }
     },
     get: function(pos = -1) {
       return pos === -1 ? this.element : this.element[pos];
     },
     rmAttr: function(attr) {
-      this.element.removeAttribute(attr);
-      return this;
+      return this.element.removeAttribute(attr), this;
     },
     attr: function (attr) {
       if (typeof attr === 'object')
@@ -115,13 +111,7 @@ module.exports = (_ => {
       return this;
     },
     val: function (v = null) {
-      if (v === null) {
-        return this.element.value;
-      } else {
-        this.element.value = v;
-
-        return this;
-      }
+      return v === null ? this.element.value : this.element.value = v, this;
     },
     has: function (s) {
       return this.element.className.indexOf(s) !== -1;
@@ -157,10 +147,6 @@ module.exports = (_ => {
     return poolOfElements[name];
   }
 
-//   //   rmChild: function (c) { // Remover hijo específico
-//   //     this._e.removeChild(this._e.children[c - 1]);
-//   //   },
-
   /* --------------------------------- Main Function --------------------------------- */
   // Get an string to search for an element into the DOM and its return an Object
   // with all the needed functions
@@ -183,8 +169,7 @@ module.exports = (_ => {
       }
     }
 
-    event.element = e;
-    return event;
+    return event.element = e, event;
   }
 
   _.$ = DOM;

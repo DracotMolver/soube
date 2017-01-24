@@ -1,18 +1,19 @@
 /**
  * @author Diego Molina Vera.
- * 
- * Calculate the time while the song is songing
+ * @copyright 2016 - 2017
  */
+/* --------------------------------- Variables --------------------------------- */
 let millisecond = 60;
 let second = 0;
 let minute = 0;
 let percent = 0;
 
+/* --------------------------------- Functions --------------------------------- */
 function formatDecimals(decimal) {
   return decimal > 9 ? `${decimal}` : `0${decimal}`;
 }
 
-function start(lapse) {
+function start() {
   if (++millisecond > 59) {
     millisecond = 0;
     if (++second > 59) {
@@ -21,8 +22,7 @@ function start(lapse) {
     }
 
     postMessage({
-      time: `${formatDecimals(minute)}:${formatDecimals(second)}`,
-      w: `width:${percent += lapse}%`
+      time: `${formatDecimals(minute)}:${formatDecimals(second)}`
     });
   }
 }
@@ -38,7 +38,7 @@ function moveFoward(d) {
 this.onmessage = e => {
   switch (e.data.action) {
     case 'start':
-    case 'resume': start(e.data.per); break;
+    case 'resume': start(/*e.data.per*/); break;
     case 'stop': stop(); break;
     case 'forward': moveFoward(e.data.d); break;
   }

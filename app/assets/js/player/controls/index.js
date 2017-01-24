@@ -1,14 +1,16 @@
 /**
  * @author Diego Alberto Molina Vera
+ * @copyright 12016 - 2017
  */
+
 /* --------------------------------------- Modules ------------------------------------------- */
-// Nodejs modules
+//---- nodejs ----
 const path = require('path');
 
-// Electron modules
+//---- electron ----
 const dialog = require('electron').remote.dialog;
 
-// Own modules
+//---- own ----
 const {
     configFile,
     langFile,
@@ -16,14 +18,16 @@ const {
     editFile
 } = require('./../../config').init();
 require('./../../dom');
+const timeWorker = new Worker(path.join(__dirname, '../../../', 'js/worker', 'timer.js'));
+const progressBar = new Worker(path.join(__dirname, '../../../', 'js/worker', 'progressBar.js'));
 
 /* --------------------------------------- Variables ------------------------------------------- */
 //---- normals ----
 let poolOfSongs = {}; // Will keep all the AudioBuffers
 let lang = langFile[configFile.lang];
-let isMovingForward = false; // Step the song time
+let isMovingForward = false; // if is using the progress bar of the song
 let isNextAble = false; // if the next song can be played (needed because AudioNode.stop() works with Promise)
-let isSongPlaying = false; // It's AudioNode playing
+let isSongPlaying = false; // It's the AudioNode playing
 let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
 let prevSongsToPlay = []; // Will keep all the filename of old songs
 let file = ''; // Will keep the data song info
@@ -70,29 +74,21 @@ const anim = {
   ]
 };
 
-// Workers
-const timeWorker = new Worker(path.join(__dirname, '../../../', 'js/worker', 'index.js'));
-
-
 // // let millisecond = 1;
 let interval = null;
 // let forward = 0;
 let millisecond = 0;
 // let percent = 0;
 
-// /** --------------------------------------- Functions --------------------------------------- **/
-
-// Activar shuffle
+/** --------------------------------------- Functions --------------------------------------- **/
+// Enable shuffle
 function shuffle() {
   configFile.shuffle = !configFile.shuffle;
   $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292');
   editFile('config', configFile);
 }
 
-// // Retorna un número aleatorio entre 0 y el total de canciones
-// function shuffle() { return Math.floor(Math.random() * songs.length); }
-
-// Animation of the play/pause button when it sets to play
+// Animation of the play/pause buttons
 function animPlayAndPause(animName) {
   const animAttr = i => {
     return animName === 'play' ?
@@ -140,20 +136,29 @@ function playSong() {
   }
 }
 
-// Lapse of the time
+// Lapse of time
 function startTimer() {
+  // Time
   timeWorker.onmessage = e => {
     $('#time-start').text(e.data.time);
-    $('#progress-bar').css(e.data.w);
   };
 
   (function iter() {
-    timeWorker.postMessage({ action:'start', per: lapse });
+    timeWorker.postMessage({ action:'start'});
     interval = requestAnimationFrame(iter);
   })();
+
+  // Progress bar
+  progressBar.onmessage = e => {
+    $('#progress-bar').css(e.data.w);
+  }; 
+
+  let progressInterval = setInterval(() => {
+    progressBar.postMessage({ action: 'start', per: lapse });
+  }, 1);
 }
 
-// Límpia el tiempo transcurrido
+// Clean the everything when the ended function is executed
 function stopTimer() {
   // $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
 
@@ -170,7 +175,7 @@ function stopTimer() {
     source = audioContext.createBufferSource();
     source.onended = stopTimer;
 
-    // Conectar todos los nodos
+    // connect all the nodes
     source.buffer = poolOfSongs[oldFile.filename];
     source.connect(filter[0]);
     filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
@@ -182,7 +187,7 @@ function stopTimer() {
   }
 }
 
-// Busca y despliega los datos de la canción
+// Show the data of the selected song
 function dataSong(file) {
   $('#time-start').text('00:00');
   $('#progress-bar').css('width:0');
@@ -190,7 +195,6 @@ function dataSong(file) {
   $('#artist').child().each(v => { $(v).text(file.artist); });
   $('#album').child().each(v => { $(v).text(file.album); });
 
-  // Mostrar notificación
   if (notification !== null) {
     notification.close();
     notification = null
@@ -205,16 +209,22 @@ function setBufferInPool(filePath, buffer) {
 }
 
 function getFile() {
-  // Revisar si está activado el shuffle o no
-  return listSongs[playedAtPosition ? position : (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : ++position)];
+  return listSongs[
+    playedAtPosition ? position :
+      (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : ++position
+    )];
+}
+
+function formatDecimals(decimal) {
+  return decimal > 9 ? `${decimal}` : `0${decimal}`;
 }
 
 function initSong() {
   animPlayAndPause('play');
 
-  // Obtener buffer de la canción
+  // Get the buffer of the song
   const getBuffer = (filePath, fnc) => {
-    // Leer erl achivo de audio
+    // Read the file
     xhtr.open('GET', `file://${filePath}`, true);
     xhtr.responseType = 'arraybuffer';
     xhtr.onload = () => {
@@ -228,24 +238,20 @@ function initSong() {
     xhtr.send(null);
   };
 
-  // Preparar todo para reproducir la canción
   const setSong = (buffer) => {
-    // Creamos un Buffer que contendrá la canción
     source = audioContext.createBufferSource();
 
-    // Para ser usado al momento de querer adelantar la canción
-    // El buffer nos entrega la duración de la canción.
-    // La duración de la cación está en segundos, por lo tanto, hay que pasarla a minutos.
+    // The buffer gives us the song's duration.
+    // The duration is in seconds, therefore we need to convert it to minutes
     time = ((duration = buffer.duration) / 60).toString();
     minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
     second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
-    lapse = 100 / duration; // Porcentaje a usar por cada segundo en la barra de progreso
-    $('#time-end').text(`${minute > 9 ? `${minute}` : `0${minute}`}${second > 9 ? `:${second}` : `:0${second}`}`);
+    lapse = 100 / (second * 1000); // Porcentaje a usar por cada segundo en la barra de progreso
+    $('#time-end').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
 
-    // Evento que se gatilla al terminar la canción
     source.onended = stopTimer;
 
-    // Conectar todos los nodos
+    // connect all the nodes
     source.buffer = buffer;
     source.connect(filter[0]);
     filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
@@ -253,43 +259,47 @@ function initSong() {
     // Change the color the actual song
     // $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
 
-    // Start timer
     startTimer();
     source.start(0);
     isSongPlaying = true;
   }
 
-  // Obtener los datos de la primera canción a reproducir
+  // Get the buffer of song if it is in the poolOfSongs
+  // Note: The oldFile is an important variable, because is saved into
+  // the prevSongsToPlay array, which has all the played songs.
   if (poolOfSongs[file.filename]) {
-    // Canción a tocar
+    // play the song and save it as an old song (oldFile)
     dataSong((oldFile = file));
-    setSong(poolOfSongs[file.filename]);
+    setSong(poolOfSongs[file.filename]); // Set the buffer
     playedAtPosition = false;
 
-    // Siguiente canción
+    // Next (possible) song to play
+    // if it is not saved into the buffer, we have to get it and save it
+    file = getFile();
+    if (!poolOfSongs[file.filename]) {
+      getBuffer(file.filename, data => {
+        if (!data) throw data;
+
+        isNextAble = true;
+        setBufferInPool(file.filename, data);
+      });
+    }
+  } else {
+    // Get the song to play
     file = getFile();
     getBuffer(file.filename, data => {
       if (!data) throw data;
 
-      isNextAble = true;
-      setBufferInPool(file.filename, data);
-    });
-  } else { // Se ejecuta una sola vez
-    // Canción a tocar
-    file = getFile();
-    getBuffer(file.filename, data => {
-      if (!data) throw data;
-
-      // Guardar buffer
+      // Save the buffer
       setBufferInPool(file.filename, data);
 
-      // Tocar canción
+      // Play the song and save it as old (oldFile)
       dataSong((oldFile = file));
       setSong(data);
       playedAtPosition = false;
 
-      // Siguiente canción.
-      // Si ya existe no guardar.
+      // Next (possible) song to play
+      // if it is not saved into the buffer, we have to get it and save it
       file = getFile();
       if (!poolOfSongs[file.filename]) {
         getBuffer(file.filename, data => {
@@ -303,31 +313,27 @@ function initSong() {
   }
 }
 
-// Reproduce la siguiente canción.
-// Esta función se comparte cuando se genera la lista de canciones,
-// ya que al dar click sobre una canción, la que se reproduce es otra ("siguiente").
 function nextSong() {
   if (isNextAble) {
+    // oldFile saved
     prevSongsToPlay.push(oldFile);
 
-    // Verificar si el contexto está pausado o no.
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
     if(source !== null) {
       source.stop(0);
       source = null;
     }
+
     isNextAble = false;
   }
 }
 
-// Reproducirá la canción anterior
 function prevSong() {
   if (prevSongsToPlay.length > 0 && isNextAble) {
     file = prevSongsToPlay.pop();
     position = file.position;
 
-    // Verificar si el contexto está pausado o no.
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
     if(source !== null) {
@@ -339,13 +345,10 @@ function prevSong() {
   }
 }
 
-// Cambia los valores en la frecuencia específica
 function setFilterVal(a, b) {
   filter[a].gain.setValueAtTime(b, audioContext.currentTime);
 }
 
-// Crea y asigna BiquadFilter de tipo peaking para las siguientes frequencias
-// [50, 100, 156, 220, 331, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000]
 function filters() {
   let f = null;
   let db = configFile.equalizer[configFile.equalizerConfig].map(v =>
@@ -353,11 +356,11 @@ function filters() {
   );
 
   filter = hrz.map((v, i) =>
-      (f = audioContext.createBiquadFilter(),
-      f.type = 'peaking',
-      f.frequency.value = v,
-      f.Q.value = 1,
-      f.gain.value = db[i], f)
+    (f = audioContext.createBiquadFilter(),
+    f.type = 'peaking',
+    f.frequency.value = v,
+    f.Q.value = 1,
+    f.gain.value = db[i], f)
   );
 }
 filters();
