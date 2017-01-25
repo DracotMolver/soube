@@ -126,10 +126,11 @@ function searchInputData(e) {
     if (e.key === 'ArrowRight' && searchValue.length > 1)
       this.value = $('#search-result').text();
 
-    if (e.key === 'Enter') selectedSong(list[0].position);
 
-    regex = new RegExp(`^${searchValue.replace(/\s+/g, '&nbsp;')}+`, 'ig');
+    regex = new RegExp(`${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
     list = listSongs.filter(v => regex.test(v[searchBy]));
+
+    if (e.key === 'Enter') selectedSong(list[list.length - 1].position);
 
     // Show possibles results
     totalResults = list.length - 1;
@@ -164,7 +165,7 @@ function searchInputData(e) {
       fragmentItems = document.createDocumentFragment();
     }
 
-    // Add pagination if there's more than one slide
+    // Add the pagination if there's more than one slide
     tempSlide > 1 ?
     $('#pagination').replaceClass('hide', '').child(1).addClass('arrow-open-anim') :
     $('#pagination').addClass('hide');
@@ -180,7 +181,7 @@ function searchInputData(e) {
   }
 
   // Show the first coincidence to show as a "ghost text".
-  $('#search-result').text(searchValue !== '' ? list[0][searchBy] : '');
+  $('#search-result').text(searchValue !== '' ? list[list.length - 1][searchBy] : '');
 }
 
 // Check if there are new songs to be added
