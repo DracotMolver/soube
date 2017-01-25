@@ -13,7 +13,7 @@ function formatDecimals(decimal) {
   return decimal > 9 ? `${decimal}` : `0${decimal}`;
 }
 
-function start() {
+function start(lapse) {
   if (++millisecond > 59) {
     millisecond = 0;
     if (++second > 59) {
@@ -22,7 +22,8 @@ function start() {
     }
 
     postMessage({
-      time: `${formatDecimals(minute)}:${formatDecimals(second)}`
+      time: `${formatDecimals(minute)}:${formatDecimals(second)}`,
+      w: `width:${percent += lapse}%`
     });
   }
 }
@@ -38,7 +39,7 @@ function moveFoward(d) {
 this.onmessage = e => {
   switch (e.data.action) {
     case 'start':
-    case 'resume': start(/*e.data.per*/); break;
+    case 'resume': start(e.data.per); break;
     case 'stop': stop(); break;
     case 'forward': moveFoward(e.data.d); break;
   }
