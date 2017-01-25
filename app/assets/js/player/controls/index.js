@@ -18,7 +18,6 @@ const {
 } = require('./../../config').init();
 require('./../../dom');
 const timeWorker = new Worker(path.join(__dirname, '../../../', 'js/worker', 'timer.js'));
-const progressBar = new Worker(path.join(__dirname, '../../../', 'js/worker', 'progressBar.js'));
 
 /* --------------------------------------- Variables ------------------------------------------- */
 //---- normals ----
@@ -40,6 +39,8 @@ let time = 0;
 let minute = 0;
 let second = 0;
 let notification = null;
+let interval = null;
+let millisecond = 0;
 let notifi = {
   lang: 'US',
   tag: 'song',
@@ -48,6 +49,7 @@ let notifi = {
 };
 
 //---- constants ----
+const SECONDS_U = 60;
 const audioContext = new window.AudioContext(); // Object AudioContext
 const xhtr = new XMLHttpRequest(); // Object XMLHttpRequest
 const hrz = [ // Frequencies
@@ -72,10 +74,6 @@ const anim = {
     'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
   ]
 };
-
-let interval = null;
-let millisecond = 0;
-let progressInterval = null;
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Enable shuffle
@@ -138,22 +136,14 @@ function startTimer() {
   // Time
   timeWorker.onmessage = e => {
     $('#time-start').text(e.data.time);
-  };
-
-  (function iter() {
-    timeWorker.postMessage({ action:'start'});
-    interval = requestAnimationFrame(iter);
-  })();
-
-  // Progress bar
-  progressBar.onmessage = e => {
     $('#progress-bar').css(e.data.w);
   };
 
-  (function iter() {
-    progressBar.postMessage({ action: 'start', per: lapse });
-    progressInterval = requestAnimationFrame(iter);
-  })();
+  const TIME_ITER = () => {
+    timeWorker.postMessage({ action:'start', per: lapse });
+    interval = requestAnimationFrame(TIME_ITER);
+  };
+  interval = requestAnimationFrame(TIME_ITER);
 }
 
 // Clean the everything when the ended function is executed
@@ -241,10 +231,10 @@ function initSong() {
 
     // The buffer gives us the song's duration.
     // The duration is in seconds, therefore we need to convert it to minutes
-    time = ((duration = buffer.duration) / 60).toString();
-    minute = parseInt(time.slice(0, time.lastIndexOf('.')), 10);
-    second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
-    lapse = 1 / (second * 1000); // Porcentaje a usar por cada segundo en la barra de progreso
+    time = ((duration = buffer.duration) / SECONDS_U).toString();
+    minute = parseInt(time.slice(0, time.lastIndexOf('.')));
+    second = Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U);
+    lapse = 100 / duration; // Porcentaje a usar por cada segundo en la barra de progreso
     $('#time-end').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
 
     source.onended = stopTimer;
