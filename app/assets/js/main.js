@@ -43,7 +43,7 @@ let fragmentSlide = null; // DocumentFragment() slide container
 let fragmentItems = null; // DocumentFragment() button container
 let slide = 0; // Amount of slides to make
 let regex = null; // The name of the song to searching for as a regular expression
-let list = null; // Filtered songs.
+let list = []; // Filtered songs.
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
@@ -54,7 +54,7 @@ function getActualVersion() {
     const RESPONSE = JSON.parse(xhtr.response);
     if (remote.app.getVersion().toString() !== RESPONSE.tag_name) {
       $('#pop-up-container')
-      .replaceClass('hide', '')
+      .removeClass('hide')
       .child(0)
       .addClass('pop-up-anim')
       .text(
@@ -72,7 +72,7 @@ function getActualVersion() {
         $('#pop-up-container')
         .addClass('hide')
         .child(0)
-        .replaceClass('pop-up-anim', '');
+        .removeClass('pop-up-anim');
 
         if (Object.keys(listSongs).length !== 0) checkNewSongs();
 
@@ -103,9 +103,9 @@ loadSongs();
 function hideSearchInputData() {
   $('#search-result').empty();
   $('#search-container').addClass('hide');
-  $('#search-wrapper').replaceClass('search-wrapper-anim', '');
+  $('#search-wrapper').removeClass('search-wrapper-anim');
   $($('.grid-container').get(0)).rmAttr('style');
-  $('#search').replaceClass('input-search-anim', '');
+  $('#search').removeClass('input-search-anim');
   isSearchDisplayed = false;
 }
 
@@ -118,6 +118,10 @@ function selectedSong (position) {
 // will be executed every time the user hit down a keyword
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
+  // Clean if there's no coincidence
+  $('#wrapper-results').removeClass('no-searching-found').empty();
+  $('#pagination').addClass('hide');
+
   searchValue = this.value.trim();
 
   if (searchValue !== '') {
@@ -139,65 +143,67 @@ function searchInputData(e) {
 
     // Make an slide with all the filtered coincidences
     const FILTERED_SONGS = totalResults < MAX_ELEMENTS ? totalResults + 1 : MAX_ELEMENTS;
-    while (slide--) {
-      for (var i = 0; i < FILTERED_SONGS; i++ , totalResults--) {
-        fragmentItems.appendChild(
-          BTN_FILTER_SONGS[0].clone(true)
-          .insert(
-            BTN_FILTER_SONGS[1].clone(true)
-            .text(list[totalResults][searchBy])
-          )
-          .data({ position: list[totalResults].position })
-          .on({
-            click: function() {
-              selectedSong($(this).data('position'));
-            }
-          }).get()
+    if (list.length > 0) {
+      while (slide--) {
+        for (var i = 0; i < FILTERED_SONGS; i++ , totalResults--) {
+          fragmentItems.appendChild(
+            BTN_FILTER_SONGS[0].clone(true)
+            .insert(
+              BTN_FILTER_SONGS[1].clone(true)
+              .text(list[totalResults][searchBy])
+            )
+            .data({ position: list[totalResults].position })
+            .on({
+              click: function() {
+                selectedSong($(this).data('position'));
+              }
+            }).get()
+          );
+        }
+
+        // All the buttons into the slides
+        fragmentSlide.appendChild(
+          BTN_FILTER_SONGS[2].clone(true)
+          .insert(fragmentItems)
+          .css(`width:${document.body.clientWidth}px`).get()
         );
+        fragmentItems = document.createDocumentFragment();
       }
 
-      // All the buttons into the slides
-      fragmentSlide.appendChild(
-        BTN_FILTER_SONGS[2].clone(true)
-        .insert(fragmentItems)
-        .css(`width:${document.body.clientWidth}px`).get()
-      );
-      fragmentItems = document.createDocumentFragment();
+      // Add the pagination if there's more than one slide
+      tempSlide > 1 ?
+      $('#pagination').removeClass('hide').child(1).addClass('arrow-open-anim') :
+      $('#pagination').addClass('hide');
+
+      // Display all the filtered songs
+      $('#wrapper-results').empty()
+      .insert(fragmentSlide)
+      .css(`width:${tempSlide * document.body.clientWidth}px`);
+
+    } else {
+      // Clean if there's no coincidence
+      $('#wrapper-results')
+      .text(':( It seems that you don\'t have what you\'re searching for.')
+      .addClass('no-searching-found');
+      $('#pagination').addClass('hide');
     }
-
-    // Add the pagination if there's more than one slide
-    tempSlide > 1 ?
-    $('#pagination').replaceClass('hide', '').child(1).addClass('arrow-open-anim') :
-    $('#pagination').addClass('hide');
-
-    // Display all the filtered songs
-    $('#wrapper-results').empty()
-    .insert(fragmentSlide)
-    .css(`width:${tempSlide * document.body.clientWidth}px`);
-  } else {
-    // Clean if there's no coincidence
-    $('#wrapper-results').empty();
-    $('#pagination').addClass('hide');
   }
 
   // Show the first coincidence to show as a "ghost text".
-  $('#search-result').text(searchValue !== '' ? list[list.length - 1][searchBy] : '');
+  $('#search-result').text(list.length > 0 ? list[list.length - 1][searchBy] : '');
 }
 
 // Check if there are new songs to be added
 function checkNewSongs() {
   PLAYER.addSongFolder(configFile.musicFolder, () => {
     // show pop-up
-    $('#pop-up-container')
-    .replaceClass('hide', '')
-    .child(0)
-    .addClass('pop-up-anim');
+    $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim');
   }, (i, maxlength) => {
     $('#pop-up').text(`${langFile[configFile.lang].alerts.newSongsFound}${i} / ${maxlength}`);
 
     if (i === maxlength) {
       // hide pop-up
-      $('#pop-up-container').addClass('hide').child(0).replaceClass('pop-up-anim');
+      $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim');
       window.location.reload(true);
     }
   });
@@ -207,7 +213,7 @@ function clickBtnControls() {
   $(this).addClass('click-controls')
     .on({
       animationend: function () {
-        $(this).replaceClass('click-controls', '');
+        $(this).removeClass('click-controls');
       }
     });
 
@@ -275,9 +281,9 @@ $('.arrow').on({
       if (countSlide < tempSlide && countSlide > 0) --countSlide;
     }
 
-    if (countSlide === tempSlide - 1) $('#right-arrow').replaceClass('arrow-open-anim', '');
+    if (countSlide === tempSlide - 1) $('#right-arrow').removeClass('arrow-open-anim');
     if (countSlide === 1) $('#left-arrow').addClass('arrow-open-anim');
-    if (countSlide === 0) $('#left-arrow').replaceClass('arrow-open-anim', '');
+    if (countSlide === 0) $('#left-arrow').removeClass('arrow-open-anim');
     if (countSlide === tempSlide - 2) $('#right-arrow').addClass('arrow-open-anim');
     if (countSlide < tempSlide && countSlide !== -1) {
       $('#wrapper-results').child()
@@ -293,7 +299,7 @@ ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInp
 // Display the searching bar [ctrl + F]
 ipcRenderer.on('search-song', () => {
   if (!isSearchDisplayed) {
-    $('#search-container').replaceClass('hide', '');
+    $('#search-container').removeClass('hide');
     $('#search-wrapper').addClass('search-wrapper-anim');
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
     $('#wrapper-results').empty();
@@ -301,6 +307,16 @@ ipcRenderer.on('search-song', () => {
     .on({ keyup: searchInputData }).val('').get().focus();
     isSearchDisplayed = true;
     countSlide = 0;
+
+    let resizeTimes;
+    window.onresize = function() {
+      clearTimeout(resizeTimes);
+      resizeTimes = setTimeout(() => {
+        $('#wrapper-results')
+        .css(`width:${tempSlide * document.body.clientWidth}px`);
+        $('.results').css(`width:${document.body.clientWidth}px`);
+      }, 160);
+    };
   }
 });
 
