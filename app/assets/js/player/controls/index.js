@@ -148,9 +148,8 @@ function startTimer() {
 
 // Clean the everything when the ended function is executed
 function stopTimer() {
-  $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
-
   if (!isMovingForward) {
+    $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
     isSongPlaying = false;
     cancelAnimationFrame(interval);
     timeWorker.postMessage({ action: 'stop' });
@@ -355,16 +354,14 @@ filters();
 
 function moveForward(event, element) {
   isMovingForward = true;
-  var x =source.stop(0);
-  cancelAnimationFrame(interval); // Time
-  ca
+  cancelAnimationFrame(interval);
 
   forward = duration * event.offsetX / element.clientWidth;
-  time = (forward / 60).toString();
+  time = (forward / SECONDS_U).toString();
 
-  // Calculate the time it should be playing the song
+  // Calculate the new time
   minute = parseInt(time.slice(0, time.lastIndexOf('.')));
-  second = Math.floor(time.slice(time.lastIndexOf('.')) * 60);
+  second = Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U);
   millisecond = forward * 100 + 1;
 
   // Calculate the percent of the progress bar
@@ -373,6 +370,7 @@ function moveForward(event, element) {
     action: 'forward',
     d: [minute, second, millisecond, percent]
   });
+  source.stop(0);
 }
 
 module.exports = {

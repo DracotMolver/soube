@@ -4,9 +4,9 @@
  */
 /* --------------------------------- Variables --------------------------------- */
 let millisecond = 60;
+let percent = 0;
 let second = 0;
 let minute = 0;
-let percent = 0;
 
 /* --------------------------------- Functions --------------------------------- */
 function formatDecimals(decimal) {

@@ -1,5 +1,6 @@
 /**
  * @author Diego Alberto Molina Vera
+ * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
 require('./../../dom');

@@ -23,7 +23,7 @@ let {
 } = require('./../../config').init();
 
 /* --------------------------------- Variables --------------------------------- */
-  //---- normals ----
+//---- normals ----
 let lang = langFile[configFile.lang];
 let songs = [];
 let files = [];
