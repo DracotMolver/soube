@@ -215,7 +215,7 @@ a {
   background-repeat: no-repeat;
   background-color: transparent;
   background-size: 1.6em;
-  border-bottom: .03em solid var(--darkGreyColor);
+  border-bottom: .1em solid var(--lightPinkColor);
   padding-left: 1.6em;
   line-height: 0;
   transform: scale(0);
@@ -267,6 +267,11 @@ a {
 #wrapper-results{
   height: 100%;
   float: left
+}
+
+.no-searching-found {
+  text-align: center;
+  font-size: 2.6em
 }
 
 /* ------------------------ PAGINACIÓN DEL INPUT SEARCH ------------------------ */
@@ -371,7 +376,7 @@ a {
 }
 
 .pop-up-anim {
-  animation:  showPopUp .3s ease-in-out forwards
+  animation: showPopUp .3s ease-in-out forwards
 }
 
 /* ------------------------ TOOLTIPS ------------------------ */
@@ -488,6 +493,11 @@ a {
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
 @media only screen and (max-width: 750px) {
+  /* ------------------------ BUSQUEDA DE CANCIONES ------------------------ */
+  .no-searching-found {
+    font-size: 2em
+  }
+
   /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
   #total-progress-bar{
       margin: .1em 1.3em .5em
