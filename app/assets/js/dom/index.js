@@ -31,8 +31,8 @@ module.exports = (_ => {
 
       return this.element.innerHTML = `${str}`, this;
     },
-    replaceClass: function(from, to) {
-      return this.element.className = this.element.className.replace(from, to), this;
+    removeClass: function(_class) {
+      return this.element.className = this.element.className.replace(_class, ''), this;
     },
     child: function(pos = -1) {
       return this.element = pos !== -1 ? this.element.children[pos] : Array.from(this.element.children),

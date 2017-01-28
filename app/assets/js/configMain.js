@@ -28,7 +28,6 @@ let newEQHrz = [];
 let actualPanel = null;
 
 /* --------------------------------- Functions --------------------------------- */
-
 // Change the text in the config window
 (function updateTextContet() {
   $('#_addsongfolder').text(lang.config.addSongFolder);
@@ -43,13 +42,13 @@ let actualPanel = null;
 
 // Animation of the panel when select an option
 function animConfigPanel(e, text) {
-  actualPanel = $(`#${$(e).data('action')}`).replaceClass('hide', '');
+  actualPanel = $(`#${$(e).data('action')}`).removeClass('hide');
 
   $('#config-container-options')
   .addClass('config-opt-anim')
   .on({
     'animationend': function () {
-      $('#config-container-values').replaceClass('hide', '');
+      $('#config-container-values').removeClass('hide');
       $(this).addClass('hide');
     }
   });
@@ -81,7 +80,7 @@ function saveSongList(parentFolder = '') {
   // Show a loading
   // Read the content of the parent folder
   player.addSongFolder(parentFolder, () => {
-    $('#loading').replaceClass('hide', '');
+    $('#loading').removeClass('hide');
     $($('.grid-container').get(0))
     .css('-webkit-filter:blur(2px)');
   }, (i, maxLength) => { // Iterator function
@@ -142,8 +141,8 @@ $('#_titleconfig').on({
       actualPanel.addClass('hide');
 
       $('#config-container-options')
-      .replaceClass('config-opt-anim', '')
-      .replaceClass('hide', '');
+      .removeClass('config-opt-anim')
+      .removeClass('hide');
 
       $('#config-container-values').addClass('hide');
       $('#_titlesubconfig').text('');
