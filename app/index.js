@@ -15,7 +15,6 @@ const {
 const path = require('path'); // Crear la ruta usando el separador por defecto del SO
 
 // Módulos propios
-const config = require('./../app/assets/js/config');
 const thumbar = require('./../app/assets/js/thumbar'); // [Windows]
 
 /* --------------------------------- Variables --------------------------------- */
@@ -91,16 +90,13 @@ function ready() {
         play: makeIcon('thumb-play.png')
       });
 
-      // Iniciación por defecto
+      // Thumbar Buttons
       mainWindow.setThumbarButtons(obj.playMomment);
     }
   });
-
-  // Crear archivos de configuración
-  config.createFiles(app.getPath('userData'));
 }
 
-/* --------------------------------- Electronjs Cosas O_o --------------------------------- */
+/* --------------------------------- Electronjs O_o --------------------------------- */
 app.on('window-all-closed', () => { app.quit(); })
 app.setName('Soube');
 app.on('ready', ready);

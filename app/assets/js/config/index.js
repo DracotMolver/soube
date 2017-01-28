@@ -9,16 +9,24 @@ const fs = require('fs');
 //---- electron ----
 const remote = require('electron').remote;
 
+//---- own ----
+const version = require('./../version');
+
+
+/* --------------------------------- Variables --------------------------------- */
+//---- constants ----
+const PATH = remote.app.getPath('userData');
+
 /* --------------------------------- Functions --------------------------------- */
 // Will create all the files needed by the music player.
 // Some old files (old soubes versions) will be overwritens.
 // This function will checks for two files:
 // - config.json
 // - listSong.json
-function createFiles(path) {
+function createFiles(/*path*/) {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
-  const CONFIG_PATH = `${path}/config.json`;
+  const CONFIG_PATH = `${PATH}/config.json`;
 
   fs.stat(CONFIG_PATH, (err, stats) => {
     if (err) {
@@ -46,15 +54,25 @@ function createFiles(path) {
         fs.closeSync(fd);
       });
     } else {
-        // ONLY FOR VERSIONS LOWER THAN 1.3.2
-        let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
-        if (config.equalizer.length < 23)
+      // ONLY FOR VERSIONS LOWER THAN 1.3.3
+      version(response => {
+        if (response === 'major' && remote.app.getVersion().toString() === '1.3.2') {
+          let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
+          config.equalizer = {
+            reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            rock: [70, 103, 105, 121, 145, 128, 125, 123, 122, 143, 163, 134, 135, 129, 139, 146, 144, 153, 152, 149, 124, 102, 103],
+            electro: [99, 133, 102, 122, 100, 139, 125, 151, 158, 152, 124, 116, 116, 117, 147, 100, 139, 173, 112, 135, 165, 85, 121],
+            acustic: [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90]
+          };
+          config.equalizerConfig = 'reset';
           fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null), { flag: 'w' });
-      }
+        }
+      });
+    }
   });
 
   /* --------------------------------- File of songs --------------------------------- */
-  const LIST_SONG_PATH = `${path}/listSong.json`;
+  const LIST_SONG_PATH = `${PATH}/listSong.json`;
   fs.stat(LIST_SONG_PATH, (err, stats) => {
     if (err) {
       fs.open(LIST_SONG_PATH, 'w', (err, fd) => {
@@ -72,7 +90,7 @@ function createFiles(path) {
 
 // Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data) {
-  fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
+  fs.writeFile(`${PATH}/${fileName}.json`, JSON.stringify(data, null), err => { });
 }
 
 // Will get all the config files.
@@ -82,8 +100,8 @@ function editFile(fileName, data) {
 function init() {
   return {
     editFile,
-    configFile: require(`${remote.app.getPath('userData')}/config.json`),
-    listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
+    configFile: require(`${PATH}/config.json`),
+    listSongs: require(`${PATH}/listSong.json`),
     langFile: require('./lang.json')
   }
 }

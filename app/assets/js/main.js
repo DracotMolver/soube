@@ -4,18 +4,17 @@
  */
 /** --------------------------------------- Modules --------------------------------------- **/
 //---- Electron ----
-const {
-  ipcRenderer,
-  remote
-} = require('electron');
+const ipcRenderer = require('electron').ipcRenderer;
 
 //---- own ----
 const PLAYER = require('./factory')('player');
+const version = require('./version');
+const config = require('./config');
 const {
     configFile,
     langFile,
     listSongs
-} = require('./config').init();
+} = config.init();
 require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
@@ -48,11 +47,8 @@ let list = []; // Filtered songs.
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
 function getActualVersion() {
-  const xhtr = new XMLHttpRequest();
-  xhtr.open('GET', 'https://api.github.com/repos/dracotmolver/soube/releases/latest', true);
-  xhtr.onload = () => {
-    const RESPONSE = JSON.parse(xhtr.response);
-    if (remote.app.getVersion().toString() !== RESPONSE.tag_name) {
+  version(response => {
+    if (response === 'major') {
       $('#pop-up-container')
       .removeClass('hide')
       .child(0)
@@ -79,8 +75,7 @@ function getActualVersion() {
         clearTimeout(tout);
       }, LAPSE_POPUP);
     }
-  };
-  xhtr.send(null);
+  });
 }
 
 // Main function!!
@@ -97,6 +92,9 @@ function loadSongs() {
     // Render the list of songs
     PLAYER.createView(PLAYER);
   }
+
+  // Make all the config files
+  config.createFiles();
 }
 loadSongs();
 
