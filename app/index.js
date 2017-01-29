@@ -91,7 +91,7 @@ function ready() {
       });
 
       // Thumbar Buttons
-      mainWindow.setThumbarButtons(obj.playMomment);
+      mainWindow.setThumbarButtons(thumbarButtons.playMomment);
     }
   });
 }

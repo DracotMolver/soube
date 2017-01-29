@@ -23,7 +23,7 @@ const PATH = remote.app.getPath('userData');
 // This function will checks for two files:
 // - config.json
 // - listSong.json
-function createFiles(/*path*/) {
+function createFiles() {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
   const CONFIG_PATH = `${PATH}/config.json`;

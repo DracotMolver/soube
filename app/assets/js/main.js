@@ -207,6 +207,21 @@ function checkNewSongs() {
   });
 }
 
+function btnActions(action) {
+  switch (action) {
+    case 'play-pause':
+      if (PLAYER.controls.playSong() === 'resume') {
+        if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
+      } else {
+        if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
+      }
+      break;
+    case 'next': PLAYER.controls.nextSong(); break;
+    case 'prev': PLAYER.controls.prevSong(); break;
+    case 'shuffle': PLAYER.controls.shuffle() ;break;
+  }
+}
+
 function clickBtnControls() {
   $(this).addClass('click-controls')
     .on({
@@ -216,20 +231,7 @@ function clickBtnControls() {
     });
 
   if (listSongs.length !== 0) {
-    switch (this.id) {
-      case 'play-pause':
-        if (PLAYER.controls.playSong() === 'resume') {
-          // Send a message to the thumbar buttons [Windows]
-  // //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'pauseMomment');
-        } else {
-          // Send a message to the thumbar buttons [Windows]
-  // //         if (process.platform) ipcRenderer.send('thumb-bar-update', 'playMomment');
-        }
-        break;
-      case 'next': PLAYER.controls.nextSong(); break;
-      case 'prev': PLAYER.controls.prevSong(); break;
-      case 'shuffle': PLAYER.controls.shuffle() ;break;
-    }
+    btnActions(this.id);
   } else {
       dialog.showMessageBox({
         type: 'info',
@@ -340,7 +342,5 @@ ipcRenderer.on('prev-song', PLAYER.controls.prevSong);
 // Shuffle [Ctrl + Down]
 ipcRenderer.on('shuffle', PLAYER.controls.shuffle);
 
-// // // ThumbarButtons [Windows]
-// // ipcRenderer.on('thumbar-controls', (e, a) => {
-// //   controlsActions(a);
-// // });
+// ThumbarButtons [Windows]
+ipcRenderer.on('thumbar-controls', (e, a) => { btnActions(a); });
