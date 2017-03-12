@@ -12,22 +12,17 @@ const remote = require('electron').remote;
 //---- own ----
 const version = require('./../version');
 
-
-/* --------------------------------- Variables --------------------------------- */
-//---- constants ----
-const PATH = remote.app.getPath('userData');
-
 /* --------------------------------- Functions --------------------------------- */
 // Will create all the files needed by the music player.
 // Some old files (old soubes versions) will be overwritens.
 // This function will checks for two files:
 // - config.json
 // - listSong.json
-function createFiles() {
+function createFiles(app) {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
+  const PATH = app.getPath('userData');
   const CONFIG_PATH = `${PATH}/config.json`;
-
   fs.stat(CONFIG_PATH, (err, stats) => {
     if (err) {
       // Values by default
@@ -90,7 +85,8 @@ function createFiles() {
 
 // Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data) {
-  fs.writeFile(`${PATH}/${fileName}.json`, JSON.stringify(data, null), err => { });
+//---- constants ----
+  fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
 }
 
 // Will get all the config files.
@@ -100,8 +96,8 @@ function editFile(fileName, data) {
 function init() {
   return {
     editFile,
-    configFile: require(`${PATH}/config.json`),
-    listSongs: require(`${PATH}/listSong.json`),
+    configFile: require(`${remote.app.getPath('userData')}/config.json`),
+    listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
     langFile: require('./lang.json')
   }
 }

@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'production';
 
-/* --------------------------------- Módulos --------------------------------- */
-// Electron módulos
+/* --------------------------------- Modules --------------------------------- */
+//---- Electron ----
 const {
   globalShortcut,
   BrowserWindow,
@@ -11,10 +11,11 @@ const {
   app
 } = require('electron');
 
-// Node módulos
-const path = require('path'); // Crear la ruta usando el separador por defecto del SO
+//---- Node ----
+const path = require('path');
 
-// Módulos propios
+//---- Own ----
+const config = require('./../app/assets/js/config');
 const thumbar = require('./../app/assets/js/thumbar'); // [Windows]
 
 /* --------------------------------- Variables --------------------------------- */
@@ -43,16 +44,16 @@ function registreKeys() {
   });
 }
 
-// Crear los iconos de la aplicación
+// Make the icon of the app
 function makeIcon(name) {
   return nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', name));
 }
 
 function ready() {
-  // Mostrará el icono de notificación
+  // Will shows the icon of the notificaion
   const appIcon = new Tray(path.join(__dirname, 'assets', 'img', 'icon.png'));
 
-  // Reproductor
+  // Player
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
@@ -78,7 +79,6 @@ function ready() {
   .on('focus', registreKeys)
   .on('blur', closeRegisteredKeys);
 
-  // Deslegar la ventana una vez esté cargado todo el contenido del DOM
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     // Thumbar-button [Windows]
@@ -93,6 +93,9 @@ function ready() {
       // Thumbar Buttons
       mainWindow.setThumbarButtons(thumbarButtons.playMomment);
     }
+
+    // Make all the config files
+    config.createFiles(app);
   });
 }
 
@@ -101,12 +104,10 @@ app.on('window-all-closed', () => { app.quit(); })
 app.setName('Soube');
 app.on('ready', ready);
 
-
 /* --------------------------------- Ipc Main --------------------------------- */
-// Desplegar la ventana de configuraciones
+// Config panel
 ipcMain.on('show-config', () => {
   if (configWindow === null) {
-    // Ventana de configuraciones
     configWindow = new BrowserWindow({
       autoHideMenuBar: true,
       defaultEncoding: 'utf-8',
@@ -127,17 +128,17 @@ ipcMain.on('show-config', () => {
   }
 });
 
-// Despliega la lista al actualizarla o al sobre-escribir la carpeta de las canciones
+// Displays the list of song after update or overwrite the song folder
 ipcMain.on('display-list', () => {
   mainWindow.webContents.send('order-display-list');
 });
 
-// Envío de datos desde el equalizador al AudioContext
+// Sending data from the EQ to the AudioContext
 ipcMain.on('equalizer-filter', (e, a) => {
   mainWindow.webContents.send('get-equalizer-filter', a);
 });
 
-// Actualizar los thumbar buttons
+// Updating of the thumbar buttons
 ipcMain.on('thumb-bar-update', (e, a) => {
   mainWindow.setThumbarButtons(thumbarButtons[a]);
 });
