@@ -3,32 +3,47 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
+//---- Node ----
+const https = require('https');
+
 //---- electron ----
 const remote = require('electron').remote;
 
 /* --------------------------------- Functions --------------------------------- */
 function getVersion(fn) {
-  const xhtr = new XMLHttpRequest();
-  xhtr.open('GET', 'https://api.github.com/repos/dracotmolver/soube/releases/latest', true);
-  xhtr.onload = () => {
-    const actualVersion = remote.app.getVersion().toString().split('.');
-    const newVersion = JSON.parse(xhtr.response).tag_name.split('.');
+  https.get({
+    host: 'api.github.com',
+    path: '/repos/dracotmolver/soube/releases/latest',
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'
+    }
+  }, res => {
+    var data = '';
+    res.setEncoding('utf8')
+    .on('data', d => {
+      data += d;
+    })
+    .on('end', () => {
+      const actualVersion = remote.app.getVersion().toString().split('.');
+      const newVersion = JSON.parse(data).tag_name.split('.');
 
-    const diff = (b, c) => {
-      let val = false;
-      for (var i = 0, s = c.length; i < s; i++) {
-        if (parseInt(c[i]) > parseInt(b[i])) {
-          val = true;
-          break;
+      const diff = (b, c) => {
+        let val = false;
+        for (var i = 0, s = c.length; i < s; i++) {
+          if (parseInt(c[i]) > parseInt(b[i])) {
+            val = true;
+            break;
+          }
         }
-      }
 
-      return val;
-    };
+        return val;
+      };
 
-    fn(diff(actualVersion, newVersion) ? 'major' : 'same');
-  };
-  xhtr.send(null);
+      fn(diff(actualVersion, newVersion) ? 'major' : 'same');
+    });
+  }).on('error', er => {
+    console.log('err', er);
+  }).end();
 }
 
 module.exports = getVersion;
