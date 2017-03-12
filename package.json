@@ -8,9 +8,9 @@
   },
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
-    "electron": "^1.5.0",
+    "electron": "^1.6.3",
     "electron-builder": "^10.17.3",
-    "electron-packager": "^8.5.1"
+    "electron-packager": "^8.5.2"
   },
   "build": {
     "copyright": "Copyright © 2016 Diego Molina Vera.",
@@ -29,7 +29,7 @@
         "Name": "Soube",
         "Exec": "soube",
         "Terminal": false,
-        "Version": "1.3.3",
+        "Version": "1.4.0",
         "Categories": "Audio;Music;Player;AudioVideo"
       }
     },
