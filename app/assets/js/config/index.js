@@ -45,7 +45,7 @@ function createFiles(app) {
   } else {
     // // ONLY FOR VERSIONS LOWER THAN 1.3.3
     version(response => {
-      if (response === 'major' && remote.app.getVersion().toString() === '1.3.2') {
+      if (response === 'major' && app.getVersion().toString() === '1.3.2') {
         let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
         config.equalizer = {
           reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
