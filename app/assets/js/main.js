@@ -92,9 +92,6 @@ function loadSongs() {
     // Render the list of songs
     PLAYER.createView(PLAYER);
   }
-
-  // Make all the config files
-  config.createFiles();
 }
 loadSongs();
 
@@ -127,7 +124,6 @@ function searchInputData(e) {
     // Complete the text
     if (e.key === 'ArrowRight' && searchValue.length > 1)
       this.value = $('#search-result').text();
-
 
     regex = new RegExp(`${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
     list = listSongs.filter(v => regex.test(v[searchBy]));
