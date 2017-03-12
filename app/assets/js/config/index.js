@@ -21,7 +21,7 @@ const version = require('./../version');
 function createFiles(app) {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
-  const PATH = app.getPath('userData');
+  const PATH = app.getPath('appData');
   const CONFIG_PATH = `${PATH}/config.json`;
   const LIST_SONG_PATH = `${PATH}/listSong.json`;
 
@@ -43,9 +43,10 @@ function createFiles(app) {
     fs.openSync(CONFIG_PATH, 'w');
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG, null), { flag: 'w' });
   } else {
-    // // ONLY FOR VERSIONS LOWER THAN 1.3.3
-    version(response => {
-      if (response === 'major' && app.getVersion().toString() === '1.3.2') {
+    // ONLY FOR VERSIONS LOWER THAN 1.3.3
+    var actualVersion = app.getVersion().toString();
+    version(actualVersion, response => {
+      if (response === 'major' && actualVersion === '1.3.2') {
         let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
         config.equalizer = {
           reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -69,7 +70,7 @@ function createFiles(app) {
 // Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data) {
 //---- constants ----
-  fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
+  fs.writeFile(`${remote.app.getPath('appData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
 }
 
 // Will get all the config files.
@@ -79,8 +80,8 @@ function editFile(fileName, data) {
 function init() {
   return {
     editFile,
-    configFile: require(`${remote.app.getPath('userData')}/config.json`),
-    listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
+    configFile: require(`${remote.app.getPath('appData')}/config.json`),
+    listSongs: require(`${remote.app.getPath('appData')}/listSong.json`),
     langFile: require('./lang.json')
   }
 }

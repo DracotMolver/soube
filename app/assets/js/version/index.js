@@ -6,11 +6,8 @@
 //---- Node ----
 const https = require('https');
 
-//---- electron ----
-const remote = require('electron').remote;
-
 /* --------------------------------- Functions --------------------------------- */
-function getVersion(fn) {
+function getActualVersion(version, fn) {
   https.get({
     host: 'api.github.com',
     path: '/repos/dracotmolver/soube/releases/latest',
@@ -24,7 +21,7 @@ function getVersion(fn) {
       data += d;
     })
     .on('end', () => {
-      const actualVersion = remote.app.getVersion().toString().split('.');
+      const actualVersion = version.split('.');
       const newVersion = JSON.parse(data).tag_name.split('.');
 
       const diff = (b, c) => {
@@ -46,4 +43,4 @@ function getVersion(fn) {
   }).end();
 }
 
-module.exports = getVersion;
+module.exports = getActualVersion;

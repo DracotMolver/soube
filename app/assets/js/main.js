@@ -4,7 +4,10 @@
  */
 /** --------------------------------------- Modules --------------------------------------- **/
 //---- Electron ----
-const ipcRenderer = require('electron').ipcRenderer;
+const {
+  ipcRenderer,
+  remote
+} = require('electron');
 
 //---- own ----
 const PLAYER = require('./factory')('player');
@@ -47,7 +50,7 @@ let list = []; // Filtered songs.
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
 function getActualVersion() {
-  version(response => {
+  version(remote.app.getVersion(), response => {
     if (response === 'major') {
       $('#pop-up-container')
       .removeClass('hide')
