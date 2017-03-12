@@ -50,6 +50,9 @@ function makeIcon(name) {
 }
 
 function ready() {
+  // Make all the config files
+  config.createFiles(app);
+
   // Will shows the icon of the notificaion
   const appIcon = new Tray(path.join(__dirname, 'assets', 'img', 'icon.png'));
 
@@ -93,9 +96,6 @@ function ready() {
       // Thumbar Buttons
       mainWindow.setThumbarButtons(thumbarButtons.playMomment);
     }
-
-    // Make all the config files
-    config.createFiles(app);
   });
 }
 
