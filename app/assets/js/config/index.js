@@ -21,7 +21,7 @@ const version = require('./../version');
 function createFiles(app) {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
-  const PATH = app.getPath('appData');
+  const PATH = app.getPath('userData');
   const CONFIG_PATH = `${PATH}/config.json`;
   const LIST_SONG_PATH = `${PATH}/listSong.json`;
 
@@ -70,7 +70,7 @@ function createFiles(app) {
 // Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data) {
 //---- constants ----
-  fs.writeFile(`${remote.app.getPath('appData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
+  fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => { });
 }
 
 // Will get all the config files.
@@ -80,8 +80,8 @@ function editFile(fileName, data) {
 function init() {
   return {
     editFile,
-    configFile: require(`${remote.app.getPath('appData')}/config.json`),
-    listSongs: require(`${remote.app.getPath('appData')}/listSong.json`),
+    configFile: require(`${remote.app.getPath('userData')}/config.json`),
+    listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
     langFile: require('./lang.json')
   }
 }
