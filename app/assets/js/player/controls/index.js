@@ -135,9 +135,9 @@ function playSong() {
 
 // Lapse of time
 function startTimer() {
-  interval = requestAnimationFrame(() => {
+  const UPDATE = () => {
     if (++millisecond > 59) {
-      millisecond = 0;lapse
+      millisecond = 0;
       if (++second > 59) {
         ++minute;
         second = 0;
@@ -146,7 +146,9 @@ function startTimer() {
       $('#time-start').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
       $('#progress-bar').css(`width:${percent += lapse}%`);
     }
-  });
+    interval = requestAnimationFrame(UPDATE);
+  };
+  interval = requestAnimationFrame(UPDATE);
 }
 
 // Clean the everything when the ended function is executed
@@ -162,16 +164,8 @@ function stopTimer() {
   } else if (isMovingForward) {
 
     // It must be created a new AudioNode, because the stop function delete the node.
-    source = audioContext.createBufferSource();
-    source.onended = stopTimer;
+    setAudioBuffer(poolOfSongs[oldFile.filename]);
 
-    // connect all the nodes
-    source.buffer = poolOfSongs[oldFile.filename];
-    source.connect(filter[0]);
-    filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
-
-    startTimer();
-    source.start(0, forward);
     isMovingForward = false;
     isSongPlaying = true;
   }
@@ -209,6 +203,18 @@ function formatDecimals(decimal) {
   return decimal > 9 ? `${decimal}` : `0${decimal}`;
 }
 
+function setAudioBuffer(buffer) {
+  source = audioContext.createBufferSource();
+  source.onended = stopTimer;
+  source.buffer = buffer;
+
+  // connect all the nodes
+  source.connect(filter[0]);
+  filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
+  startTimer();
+  isMovingForward ? source.start(0, forward) : source.start(0);
+}
+
 function initSong() {
   animPlayAndPause('play');
 
@@ -229,28 +235,20 @@ function initSong() {
   };
 
   const setSong = (buffer) => {
-    source = audioContext.createBufferSource();
-
     // The buffer gives us the song's duration.
     // The duration is in seconds, therefore we need to convert it to minutes
     time = ((duration = buffer.duration) / SECONDS_U).toString();
-    minute = parseInt(time.slice(0, time.lastIndexOf('.')));
-    second = Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U);
-    lapse = 100 / duration; // Porcentaje a usar por cada segundo en la barra de progreso
-    $('#time-end').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
+    lapse = 100 / duration;
 
-    source.onended = stopTimer;
+    $('#time-end').text(`
+    ${formatDecimals(parseInt(time.slice(0, time.lastIndexOf('.'))))}:${formatDecimals(Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U))}
+    `);
 
-    // connect all the nodes
-    source.buffer = buffer;
-    source.connect(filter[0]);
-    filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
+    setAudioBuffer(buffer);
 
     // Change the color the actual song
     $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
 
-    startTimer();
-    source.start(0);
     isSongPlaying = true;
   }
 
@@ -365,11 +363,21 @@ function moveForward(event, element) {
   // Calculate the new time
   minute = parseInt(time.slice(0, time.lastIndexOf('.')));
   second = Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U);
-  millisecond = forward * 100 + 1;
+  millisecond = forward * 100;
 
   // Calculate the percent of the progress bar
   percent = forward * (100 / duration);
   source.stop(0);
+}
+
+let lastCurrentTime = 0;
+function saveCurrentTime() {
+  lastCurrentTime = audioContext.currentTime;
+}
+
+function updateCurrentTime() {
+  second += Math.floor(audioContext.currentTime - lastCurrentTime);
+  percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
 }
 
 module.exports = {
@@ -379,5 +387,7 @@ module.exports = {
   shuffle,
   setFilterVal,
   moveForward,
-  playSongAtPosition
+  playSongAtPosition,
+  saveCurrentTime,
+  updateCurrentTime
 }

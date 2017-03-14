@@ -343,3 +343,9 @@ ipcRenderer.on('shuffle', PLAYER.controls.shuffle);
 
 // ThumbarButtons [Windows]
 ipcRenderer.on('thumbar-controls', (e, a) => { btnActions(a); });
+
+// Because the requestAnimationFrame is single thread in the window
+// We must save the actual time lapse when we minimized the Window
+// and then recalculate the time when we unminimized the window.
+ipcRenderer.on('save-current-time', PLAYER.controls.saveCurrentTime);
+ipcRenderer.on('update-current-time', PLAYER.controls.updateCurrentTime);

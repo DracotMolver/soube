@@ -71,7 +71,7 @@ function ready() {
   });
 
   mainWindow.setMenu(null);
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'));
   mainWindow.on('closed', () => {
     closeRegisteredKeys();
@@ -80,7 +80,13 @@ function ready() {
     mainWindow = configWindow = null;
   })
   .on('focus', registreKeys)
-  .on('blur', closeRegisteredKeys);
+  .on('blur', closeRegisteredKeys)
+  .on('minimize', () => {
+    mainWindow.webContents.send('save-current-time');
+  })
+  .on('restore', () => {
+    mainWindow.webContents.send('update-current-time');
+  });
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
@@ -120,7 +126,7 @@ ipcMain.on('show-config', () => {
     });
 
     configWindow.setMenu(null);
-    // configWindow.webContents.openDevTools();
+    configWindow.webContents.openDevTools();
     configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'));
     configWindow.on('closed', () => {
       configWindow = null;
