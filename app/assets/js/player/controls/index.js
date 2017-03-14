@@ -17,7 +17,6 @@ const {
     editFile
 } = require('./../../config').init();
 require('./../../dom');
-const timeWorker = new Worker(path.join(__dirname, '../../../', 'js/worker', 'timer.js'));
 
 /* --------------------------------------- Variables ------------------------------------------- */
 //---- normals ----
@@ -34,13 +33,16 @@ let playedAtPosition = false // If the song is clicked on from the list
 let filter = []; // Array for createBiquadFilter to use the Frequencies
 let duration = 0; // max duration of the song
 let source = null; // AudioNode object
+// Elapsed time
 let lapse = 0;
+let percent = 0;
+let millisecond = 0;
 let time = 0;
 let minute = 0;
 let second = 0;
-let notification = null;
 let interval = null;
-let millisecond = 0;
+// Notification
+let notification = null;
 let notifi = {
   lang: 'US',
   tag: 'song',
@@ -116,8 +118,8 @@ function playSong() {
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
     audioContext.suspend().then(() => {
       isSongPlaying = false;
-      cancelAnimationFrame(interval);
     });
+    cancelAnimationFrame(interval);
     animPlayAndPause('pause');
 
     return 'paused';
@@ -133,17 +135,18 @@ function playSong() {
 
 // Lapse of time
 function startTimer() {
-  // Time
-  timeWorker.onmessage = e => {
-    $('#time-start').text(e.data.time);
-    $('#progress-bar').css(e.data.w);
-  };
+  interval = requestAnimationFrame(() => {
+    if (++millisecond > 59) {
+      millisecond = 0;lapse
+      if (++second > 59) {
+        ++minute;
+        second = 0;
+      }
 
-  const TIME_ITER = () => {
-    timeWorker.postMessage({ action:'start', per: lapse });
-    interval = requestAnimationFrame(TIME_ITER);
-  };
-  interval = requestAnimationFrame(TIME_ITER);
+      $('#time-start').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
+      $('#progress-bar').css(`width:${percent += lapse}%`);
+    }
+  });
 }
 
 // Clean the everything when the ended function is executed
@@ -152,7 +155,7 @@ function stopTimer() {
     $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
     isSongPlaying = false;
     cancelAnimationFrame(interval);
-    timeWorker.postMessage({ action: 'stop' });
+    millisecond = second = minute = percent = 0;
 
     isNextAble = true;
     if (isNextAble && !isMovingForward) initSong();
@@ -366,10 +369,6 @@ function moveForward(event, element) {
 
   // Calculate the percent of the progress bar
   percent = forward * (100 / duration);
-  timeWorker.postMessage({
-    action: 'forward',
-    d: [minute, second, millisecond, percent]
-  });
   source.stop(0);
 }
 
