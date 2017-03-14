@@ -539,6 +539,13 @@ a {
       overflow: hidden
   }
 
+  #song-title > h1,
+  #artist > h2,
+  #album > h3 {
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
   #song-title > h1 {
       font-size: 1.16em
   }
