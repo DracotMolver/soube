@@ -157,8 +157,7 @@ function stopTimer() {
     $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
     isSongPlaying = false;
     cancelAnimationFrame(interval);
-    millisecond = second = minute = percent = 0;
-
+    millisecond = second = minute = percent = lapse = 0;
     isNextAble = true;
     if (isNextAble && !isMovingForward) initSong();
   } else if (isMovingForward) {
@@ -213,6 +212,7 @@ function setAudioBuffer(buffer) {
   filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
   startTimer();
   isMovingForward ? source.start(0, forward) : source.start(0);
+  lastCurrentTime = audioContext.currentTime;
 }
 
 function initSong() {
@@ -376,6 +376,7 @@ function saveCurrentTime() {
 }
 
 function updateCurrentTime() {
+  console.log(Math.floor(audioContext.currentTime - lastCurrentTime));
   second += Math.floor(audioContext.currentTime - lastCurrentTime);
   percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
 }
