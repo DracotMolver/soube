@@ -13,7 +13,15 @@
 * Al no ser una aplicación web "online", no debemos de preocuperanos, en parte,
 * por usar el comodín [*] para formatear todos los elementos HTML
 */
-* {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+div,
+p {
   -webkit-text-size-adjust: 100%;
   -webkit-font-smooth: antialiased;
   font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
@@ -43,14 +51,22 @@ ul {
 }
 
 body,
-html{
+html {
   overflow: hidden;
+  padding: 0;
+  margin: 0;
   bottom: 0;
   height: 100%;
   width: 100%;
   right: 0;
   left: 0;
   top: 0
+}
+
+img,
+svg,
+a {
+  cursor: pointer
 }
 
 .hide {
