@@ -13,7 +13,7 @@
     "electron-packager": "^8.5.2"
   },
   "build": {
-    "copyright": "Copyright © 2016 Diego Molina Vera.",
+    "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
     "asar": false,
     "linux": {
       "category": "Audio",
