@@ -158,9 +158,9 @@ module.exports = (_ => {
     } else {
       if ((r = /^(\.|#|:)/.exec(e))) {
         switch(r[0]) {
-          case '.': e = Array.from(document.getElementsByClassName(e.replace('.', ''))); break;
-          case '#': e = document.getElementById(e.replace('#', '')); break;
-          case ':': e = Array.from(document.getElementsByTagName(e.replace(':', ''))); break;
+          case '.': e = Array.from(document.getElementsByClassName(e.slice(1, e.length))); break;
+          case '#': e = document.getElementById(e.slice(1, e.length)); break;
+          case ':': e = Array.from(document.getElementsByTagName(e.slice(1, e.length))); break;
         }
 
         saveElementInPool(e);
