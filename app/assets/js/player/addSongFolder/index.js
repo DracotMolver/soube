@@ -36,24 +36,27 @@ function findFiles(dir) {
   let tmpFolders = [];
   let foldersSize = 0;
   let folders = [];
+  let baseFolder = '';
   const RGX_EXT = /(\.mp3|\.wmv|\.wav|\.ogg)$/ig;
 
   fs.readdirSync(dir).forEach(files => {
-    // Based folders.
-    if (fs.lstatSync(`${dir}/${files}`).isDirectory()) {
-      folders.push(`${dir}/${files}`);
-    } else if (fs.lstatSync(`${dir}/${files}`).isFile() && RGX_EXT.test(files)) {
-      allFiles.push(`${dir}/${files}`);
+    // Based folders
+    baseFolder = path.join(dir, files);
+    if (fs.lstatSync(baseFolder).isDirectory()) {
+      folders.push(baseFolder);
+    } else if (fs.lstatSync(baseFolder).isFile() && RGX_EXT.test(files)) {
+      allFiles.push(baseFolder);
     }
   });
 
   foldersSize = folders.length - 1;
   while (foldersSize > -1) {
     fs.readdirSync(folders[foldersSize]).forEach(files => {
-      if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isDirectory()) {
-        tmpFolders.push(`${folders[foldersSize]}/${files}`);
-      } else if (fs.lstatSync(`${folders[foldersSize]}/${files}`).isFile() && RGX_EXT.test(files)) {
-        allFiles.push(`${folders[foldersSize]}/${files}`);
+      baseFolder = path.join(folders[foldersSize], files);
+      if (fs.lstatSync(baseFolder).isDirectory()) {
+        tmpFolders.push(baseFolder);
+      } else if (fs.lstatSync(baseFolder).isFile() && RGX_EXT.test(files)) {
+        allFiles.push(baseFolder);
       }
     });
 
@@ -90,7 +93,7 @@ function addSongFolder(folder, fnStart, fnIter) {
 
   // command line [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
-    const command = `find ${folder.replace(/\s/ig, '\\ ')} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
+    const command = `find ${path.sep(folder)} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
