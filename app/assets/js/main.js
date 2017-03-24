@@ -50,7 +50,8 @@ let list = []; // Filtered songs.
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
 function getActualVersion() {
-  version(remote.app.getVersion(), response => {
+  version(remote.net, remote.app.getVersion(), response => {
+    console.log(repsonse)
     if (response === 'major') {
       $('#pop-up-container')
       .removeClass('hide')
@@ -73,8 +74,6 @@ function getActualVersion() {
         .child(0)
         .removeClass('pop-up-anim');
 
-        if (Object.keys(listSongs).length !== 0) checkNewSongs();
-
         clearTimeout(tout);
       }, LAPSE_POPUP);
     }
@@ -86,6 +85,7 @@ function loadSongs() {
   // Enable shuffle
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
+  checkNewSongs();
   getActualVersion();
   if (Object.keys(listSongs).length === 0) {
     $('#list-songs').text(

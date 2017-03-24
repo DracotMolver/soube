@@ -7,7 +7,10 @@
 const fs = require('fs');
 
 //---- electron ----
-const remote = require('electron').remote;
+const {
+  remote,
+  net
+} = require('electron');
 
 //---- own ----
 const version = require('./../version');
@@ -45,7 +48,7 @@ function createFiles(app) {
   } else {
     // ONLY FOR VERSIONS LOWER THAN 1.3.3
     var actualVersion = app.getVersion().toString();
-    version(actualVersion, response => {
+    version(net, actualVersion, response => {
       if (response === 'major' && actualVersion === '1.3.2') {
         let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
         config.equalizer = {
