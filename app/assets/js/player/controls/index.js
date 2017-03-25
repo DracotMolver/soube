@@ -25,14 +25,15 @@ let lang = langFile[configFile.lang];
 let isMovingForward = false; // if is using the progress bar of the song
 let isNextAble = false; // if the next song can be played (needed because AudioNode.stop() works with Promise)
 let isSongPlaying = false; // It's the AudioNode playing
+let isplayedAtPosition = false // If the song is clicked on from the list
 let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
 let prevSongsToPlay = []; // Will keep all the filename of old songs
 let file = ''; // Will keep the data song info
 let oldFile = ''; // Will keep the data of the song played
-let playedAtPosition = false // If the song is clicked on from the list
 let filter = []; // Array for createBiquadFilter to use the Frequencies
 let duration = 0; // max duration of the song
 let source = null; // AudioNode object
+
 // Elapsed time
 let lapse = 0;
 let percent = 0;
@@ -41,6 +42,8 @@ let time = 0;
 let minute = 0;
 let second = 0;
 let interval = null;
+let lastCurrentTime = 0;
+
 // Notification
 let notification = null;
 let notifi = {
@@ -80,6 +83,7 @@ const anim = {
 /** --------------------------------------- Functions --------------------------------------- **/
 // Enable shuffle
 function shuffle() {
+  file = '';
   configFile.shuffle = !configFile.shuffle;
   $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292');
   editFile('config', configFile);
@@ -104,8 +108,10 @@ function playSongAtPosition(pos = -1) {
     source = null;
   }
 
+  if (oldFile !== '') prevSongsToPlay.push(oldFile);
+
   file = '';
-  playedAtPosition = true;
+  isplayedAtPosition = true;
   position = pos;
   initSong();
 }
@@ -159,7 +165,7 @@ function stopTimer() {
     cancelAnimationFrame(interval);
     millisecond = second = minute = percent = lapse = 0;
     isNextAble = true;
-    if (isNextAble && !isMovingForward) initSong();
+    if (isNextAble && !isMovingForward && !isplayedAtPosition) initSong();
   } else if (isMovingForward) {
 
     // It must be created a new AudioNode, because the stop function delete the node.
@@ -193,9 +199,9 @@ function setBufferInPool(filePath, buffer) {
 
 function getFile() {
   return listSongs[
-    playedAtPosition ? position :
-      (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : ++position
-    )];
+  isplayedAtPosition ? position :
+    (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : ++position
+  )];
 }
 
 function formatDecimals(decimal) {
@@ -252,14 +258,9 @@ function initSong() {
     isSongPlaying = true;
   }
 
-  // Get the buffer of song if it is in the poolOfSongs
-  // Note: The oldFile is an important variable, because is saved into
-  // the prevSongsToPlay array, which has all the played songs.
-  if (poolOfSongs[file.filename]) {
-    // play the song and save it as an old song (oldFile)
-    dataSong((oldFile = file));
-    setSong(poolOfSongs[file.filename]); // Set the buffer
-    playedAtPosition = false;
+  const nextPossibleSong = () => {
+    isplayedAtPosition = false;
+    position = oldFile.position;
 
     // Next (possible) song to play
     // if it is not saved into the buffer, we have to get it and save it
@@ -272,6 +273,16 @@ function initSong() {
         setBufferInPool(file.filename, data);
       });
     }
+  };
+
+  // Get the buffer of song if it is in the poolOfSongs
+  // Note: The oldFile is an important variable, because is saved into
+  // the prevSongsToPlay array, which has all the played songs.
+  if (poolOfSongs[file.filename]) {
+    // play the song and save it as an old song (oldFile)
+    dataSong((oldFile = file));
+    setSong(poolOfSongs[file.filename]); // Set the buffer
+    nextPossibleSong();
   } else {
     // Get the song to play
     file = getFile();
@@ -284,19 +295,7 @@ function initSong() {
       // Play the song and save it as old (oldFile)
       dataSong((oldFile = file));
       setSong(data);
-      playedAtPosition = false;
-
-      // Next (possible) song to play
-      // if it is not saved into the buffer, we have to get it and save it
-      file = getFile();
-      if (!poolOfSongs[file.filename]) {
-        getBuffer(file.filename, data => {
-          if (!data) throw data;
-
-          isNextAble = true;
-          setBufferInPool(file.filename, data);
-        });
-      }
+      nextPossibleSong();
     });
   }
 }
@@ -370,18 +369,18 @@ function moveForward(event, element) {
   source.stop(0);
 }
 
-let lastCurrentTime = 0;
 function saveCurrentTime() {
   lastCurrentTime = audioContext.currentTime;
 }
 
 function updateCurrentTime() {
   let totalTime = Math.floor(audioContext.currentTime - lastCurrentTime);
-  if (totalTime > 60)
-    totalTime = (totalTime / 60).toString();
-    minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
-    second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * SECONDS_U);
-  percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
+  if (totalTime > 60){
+      totalTime = (totalTime / 60).toString();
+      minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
+      second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * SECONDS_U);
+    percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
+  }
 }
 
 module.exports = {

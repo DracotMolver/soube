@@ -94,7 +94,6 @@ function addSongFolder(folder, fnStart, fnIter) {
   // command line [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
     const command = `find ${path.normalize(folder)} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
-
     exec(command, (error, stdout, stderr) => {
       if (error) {
         dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
