@@ -22,6 +22,7 @@ require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 //---- constants ----
+const TIME_SCROLLING = 3.2; // Pixels per frame
 const LAPSE_POPUP = 4500; // Duration of info popups
 const LAPSE_SCROLLING = 60; // Lapse before do scrolling
 const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [searching bar]
@@ -46,6 +47,7 @@ let fragmentItems = null; // DocumentFragment() button container
 let slide = 0; // Amount of slides to make
 let regex = null; // The name of the song to searching for as a regular expression
 let list = []; // Filtered songs.
+let interval = 0;
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
@@ -85,15 +87,19 @@ function loadSongs() {
   // Enable shuffle
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
-  checkNewSongs();
   getActualVersion();
   if (Object.keys(listSongs).length === 0) {
     $('#list-songs').text(
       `<div id="init-message">${lang.alerts.welcome}</div>`
-    );
+    ).on({
+      click: () => {
+        ipcRenderer.send('config-panel');
+      }
+    });
   } else {
     // Render the list of songs
     PLAYER.createView(PLAYER);
+    checkNewSongs();
   }
 }
 loadSongs();
@@ -240,19 +246,42 @@ function clickBtnControls() {
   }
 }
 
+function scrollAnimation(direction) {
+  const ANIMATION = () => {
+    if (direction === 'up')
+      $('#list-songs').get().scrollTop -= TIME_SCROLLING;
+    else
+      $('#list-songs').get().scrollTop += TIME_SCROLLING;
+
+    interval = requestAnimationFrame(ANIMATION);
+  };
+  interval = requestAnimationFrame(ANIMATION);
+}
+
 /** --------------------------------------- Events --------------------------------------- **/
 // Scrolling the list of songs
 $('#song-title').on({
   click: function () {
     if (this.children[0].textContent.trim() !== '') {
-      clickedElement = document.getElementById('list-songs');
-      positionElement = document.getElementById($(this).data('position'));
+      clickedElement = $('#list-songs').get();
+      positionElement = $(`#${$(this).data('position')}`).get();
       const ELEMENT = clickedElement.scrollTop;
       const TOP = positionElement.offsetTop;
-      const TOPNAV = Math.round(document.getElementById('top-nav').offsetHeight);
+      const TOPNAV = Math.round($('#top-nav').get().offsetHeight);
       const DISTANCE = TOP - (TOPNAV + 100);
       clickedElement.scrollTop += ELEMENT !== DISTANCE ? DISTANCE - ELEMENT : - (DISTANCE - ELEMENT);
     }
+  }
+});
+
+// Scrolling the list of songs like it was the barscroll
+// of the browser
+$('.arrow-updown').on({
+  mousedown: function () {
+    scrollAnimation($(this).data('direction'));
+  },
+  mouseup: () => {
+    cancelAnimationFrame(interval);
   }
 });
 

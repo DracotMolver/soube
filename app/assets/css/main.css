@@ -1,5 +1,6 @@
 /**
 * @author Diego Alberto Molina Vera
+* @copyright 2016- 2017
 */
 /* ------------------------ GENERAL ------------------------*/
 .btn-controls::after,
@@ -9,6 +10,33 @@
 .tooltip::after  {
   position: absolute;
   content: ''
+}
+
+/* ------- CONTROL PARA MOVER LA LISTA DE CANCIONES --------*/
+#updown {
+  border-radius: 5px;
+  text-align: center;
+  background: var(--whiteColor);
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
+  position: absolute;
+  z-index: 2;
+  border: 1px solid var(--lightGreyColor);
+  height: 30px;
+  bottom: 10px;
+  width: 66px;
+  right: 22px
+}
+
+#updown:hover {
+  cursor: pointer
+}
+
+#updown .arrow-updown:first-child {
+  border-right: 1px solid var(--lightGreyColor)
+}
+
+#updown .arrow-updown{
+  line-height: 31px
 }
 
 /* ------------------------ TOP NAV ------------------------*/
@@ -492,61 +520,64 @@
 
   /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
   #total-progress-bar{
-      margin: .1em 1.3em .5em
+    margin: .1em 1.3em .5em
   }
 
   .prev-next::after {
-      left: 14.7%
+    left: 14.7%
   }
 
   /* ------------------------ TOP NAV ------------------------*/
   #config-container {
-      border-radius: 50%;
-      background: var(--pinkColor);
-      position: fixed;
-      padding: .46em;
-      bottom: 45px;
-      z-index: 4;
-      height: 3em;
-      width: 3em;
-      right: 16px
+    border-radius: 50%;
+    background: var(--pinkColor);
+    position: absolute;
+    padding: .3em;
+    bottom: 7px;
+    z-index: 4;
+    height: 2.6em;
+    width: 2.6em;
+    right: 16px
   }
 
   #config {
-      padding: 0;
-      margin: 0;
-      height: 100%;
-      width: 100%;
-      float: left
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    float: left
   }
 
+  #updown {
+    right: 70px
+  }
   /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
   #info-song {
-      text-align: left;
-      margin: .3em 1.2em;
-      width: 93%
+    text-align: left;
+    margin: .3em 1.2em;
+    width: 93%
   }
 
   #info-song > div {
-      overflow: hidden
+    overflow: hidden
   }
 
   #song-title > h1 {
-      font-size: 1.16em
+    font-size: 1.16em
   }
 
   #artist > h2,
   #album > h3 {
-      font-size: 1em
+    font-size: 1em
   }
 
   #time {
-      font-size: 1em;
-      margin: 0
+    font-size: 1em;
+    margin: 0
   }
 
   /* ------------------------ LISTADO DE CANCIONES ------------------------ */
   .list-song-container::after {
-      top: 193px
+    top: 193px
   }
 }
