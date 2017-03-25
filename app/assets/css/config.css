@@ -1,5 +1,6 @@
 /**
 * @author Diego Alberto Molina Vera
+* @copyright 2016- 2017
 */
 /* ------------------------ GENERALES ------------------------*/
 h1 {
@@ -245,7 +246,7 @@ a,
 /*---------------------------------- ANIMACIONES ----------------------------------*/
 @keyframes confSlide {
   100% {
-      transform: translateX(-100%);
-        opacity: 0
+    transform: translateX(-100%);
+    opacity: 0
   }
 }
