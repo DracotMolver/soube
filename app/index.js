@@ -1,3 +1,7 @@
+/**
+ * @author Diego Alberto Molina Vera
+ * @copyright 2016 - 2017
+ */
 process.env.NODE_ENV = 'production';
 
 /* --------------------------------- Modules --------------------------------- */
@@ -85,6 +89,7 @@ function ready() {
     mainWindow.webContents.send('save-current-time');
   })
   .on('restore', () => {
+    // This happens also when you reload the website (refresh)
     mainWindow.webContents.send('update-current-time');
   });
 
@@ -105,14 +110,7 @@ function ready() {
   });
 }
 
-/* --------------------------------- Electronjs O_o --------------------------------- */
-app.on('window-all-closed', () => { app.quit(); })
-app.setName('Soube');
-app.on('ready', ready);
-
-/* --------------------------------- Ipc Main --------------------------------- */
-// Config panel
-ipcMain.on('show-config', () => {
+function showConfigPanel() {
   if (configWindow === null) {
     configWindow = new BrowserWindow({
       autoHideMenuBar: true,
@@ -132,7 +130,16 @@ ipcMain.on('show-config', () => {
       configWindow = null;
     });
   }
-});
+}
+
+/* --------------------------------- Electronjs O_o --------------------------------- */
+app.on('window-all-closed', () => { app.quit(); })
+app.setName('Soube');
+app.on('ready', ready);
+
+/* --------------------------------- Ipc Main --------------------------------- */
+// Config panel
+ipcMain.on('show-config', showConfigPanel);
 
 // Displays the list of song after update or overwrite the song folder
 ipcMain.on('display-list', () => {
@@ -148,3 +155,6 @@ ipcMain.on('equalizer-filter', (e, a) => {
 ipcMain.on('thumb-bar-update', (e, a) => {
   mainWindow.setThumbarButtons(thumbarButtons[a]);
 });
+
+// Launch the config panel from the Player
+ipcMain.on('config-panel', showConfigPanel);
