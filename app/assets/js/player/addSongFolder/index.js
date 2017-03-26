@@ -9,7 +9,7 @@ const exec = require('child_process').exec;
 const path = require('path');
 
 //---- electron ----
-const dialog = require('electron').remote.dialog;
+const remote = require('electron').remote;
 
 //---- other ----
 const musicmetadata = require('musicmetadata');
@@ -87,16 +87,16 @@ function addSongFolder(folder, fnStart, fnIter) {
       }).map((v, i) => (v.position = i, v));
 
       editFile('listSong', songs);
-      window.location.reload(true);
+      remote.getCurrentWindow().reload();
     }
   };
 
   // command line [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
-    const command = `find ${path.normalize(folder)} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
+    const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
+        remote.dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
         return;
       }
 

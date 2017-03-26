@@ -142,9 +142,9 @@ app.on('ready', ready);
 ipcMain.on('show-config', showConfigPanel);
 
 // Displays the list of song after update or overwrite the song folder
-ipcMain.on('display-list', () => {
-  mainWindow.webContents.send('order-display-list');
-});
+// ipcMain.on('display-list', () => {
+//   mainWindow.webContents.send('order-display-list');
+// });
 
 // Sending data from the EQ to the AudioContext
 ipcMain.on('equalizer-filter', (e, a) => {

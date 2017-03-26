@@ -64,7 +64,7 @@ function onClickChangeLang() {
     'click': function () {
       configFile.lang = $(this).data('lang');
       editFile('config', configFile);
-      window.location.reload(true);
+      remote.getCurrentWindow().reload();
     }
   });
 }
@@ -90,7 +90,9 @@ function saveSongList(parentFolder = '') {
       // Ocultar loading
       $('#loading').addClass('hide');
       $($('.grid-container').get(0)).rmAttr('style');
-      ipcRenderer.send('display-list');
+      remote.BrowserWindow.getAllWindows()[0].reload()
+      // ipcRenderer.send('display-list');
+      // remote.webContents.getAllWebContents
     }
   });
 }

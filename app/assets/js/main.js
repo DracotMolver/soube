@@ -53,7 +53,6 @@ let interval = 0;
 // Check if there's a new version to download
 function getActualVersion() {
   version(remote.net, remote.app.getVersion(), response => {
-    console.log(repsonse)
     if (response === 'major') {
       $('#pop-up-container')
       .removeClass('hide')
@@ -207,7 +206,7 @@ function checkNewSongs() {
     if (i === maxlength) {
       // hide pop-up
       $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim');
-      window.location.reload(true);
+      remote.getCurrentWindow().reload();
     }
   });
 }
@@ -351,11 +350,6 @@ ipcRenderer.on('search-song', () => {
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) => {
   PLAYER.controls.setFilterVal(...a);
-});
-
-// Make the list of song when are exported from the config panel (adding the music folder)
-ipcRenderer.on('order-display-list', () => {
-  window.location.reload(true);
 });
 
 // Play or pause song [Ctrl + Up]
