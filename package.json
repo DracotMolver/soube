@@ -1,6 +1,6 @@
 {
   "name": "soube",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Simple music player",
   "author": {
     "email": "dracotm25@gmail.com",
@@ -8,9 +8,9 @@
   },
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
-    "electron": "^1.6.3",
+    "electron": "^1.6.4",
     "electron-builder": "^10.17.3",
-    "electron-packager": "^8.5.2"
+    "electron-packager": "^8.6.0"
   },
   "build": {
     "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
@@ -29,7 +29,7 @@
         "Name": "Soube",
         "Exec": "soube",
         "Terminal": false,
-        "Version": "1.4.1",
+        "Version": "1.4.2",
         "Categories": "Audio;Music;Player;AudioVideo"
       }
     },
