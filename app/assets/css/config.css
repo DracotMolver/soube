@@ -161,6 +161,7 @@ a,
 }
 
 #equalizer-container ul {
+  padding: 0;
   margin: .6em .2em;
   width: 100%;
   float: left
