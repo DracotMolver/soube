@@ -33,7 +33,7 @@ Soube is a simple and minimalist music player based on Electronjs.
  * Move the folder using the next command line.
 
  ```
-  sudo mv [Place_where_is_soube_folder]/[soube-linux-ia32 or soube-linux-x64] /op/soube
+  sudo mv [Place_where_is_soube_folder]/[soube-linux-ia32 or soube-linux-x64] /opt/soube
  ```
 
 #### step 3 
