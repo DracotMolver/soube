@@ -91,8 +91,6 @@ function saveSongList(parentFolder = '') {
       $('#loading').addClass('hide');
       $($('.grid-container').get(0)).rmAttr('style');
       remote.BrowserWindow.getAllWindows()[0].reload()
-      // ipcRenderer.send('display-list');
-      // remote.webContents.getAllWebContents
     }
   });
 }
@@ -155,6 +153,7 @@ $('#_titleconfig').on({
 // Change the language
 $('#change-lang').on({ click: onClickChangeLang });
 
+// const url = require('url');
 // Action to add the songs
 $('#add-songs').on({
   click: () => {
@@ -162,6 +161,7 @@ $('#add-songs').on({
       title: 'Add music folder',
       properties: ['openDirectory']
     }, parentFolder => {
+      // console.log(url.parse(parentFolder[0], true));
       if (parentFolder !== undefined) saveSongList(parentFolder[0]);
     });
   }

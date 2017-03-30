@@ -17,6 +17,7 @@ const {
 
 //---- Node ----
 const path = require('path');
+const url = require('url');
 
 //---- Own ----
 const config = require('./../app/assets/js/config');
@@ -76,7 +77,12 @@ function ready() {
 
   mainWindow.setMenu(null);
   mainWindow.webContents.openDevTools();
-  mainWindow.loadURL(path.join('file://', __dirname, 'views', 'main', 'index.html'));
+  mainWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, 'views', 'main', 'index.html'),
+      protocol: 'file:'
+    })
+  );
   mainWindow.on('closed', () => {
     closeRegisteredKeys();
     appIcon.destroy();
@@ -125,7 +131,12 @@ function showConfigPanel() {
 
     configWindow.setMenu(null);
     configWindow.webContents.openDevTools();
-    configWindow.loadURL(path.join('file://', __dirname, 'views', 'config-panel', 'config.html'));
+    configWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, 'views', 'config-panel', 'config.html'),
+        protocol: 'file:'
+      })
+    );
     configWindow.on('closed', () => {
       configWindow = null;
     });

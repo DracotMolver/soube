@@ -14,9 +14,9 @@ const PLAYER = require('./factory')('player');
 const version = require('./version');
 const config = require('./config');
 const {
-    configFile,
-    langFile,
-    listSongs
+  configFile,
+  langFile,
+  listSongs
 } = config.init();
 require('./dom');
 
@@ -228,20 +228,20 @@ function btnActions(action) {
 
 function clickBtnControls() {
   $(this).addClass('click-controls')
-    .on({
-      animationend: function () {
-        $(this).removeClass('click-controls');
-      }
-    });
+  .on({
+    animationend: function () {
+      $(this).removeClass('click-controls');
+    }
+  });
 
   if (listSongs.length !== 0) {
     btnActions(this.id);
   } else {
-      dialog.showMessageBox({
-        type: 'info',
-        buttons: ['Ok'],
-        message: lang.alerts.error_002
-      });
+    dialog.showMessageBox({
+      type: 'info',
+      buttons: ['Ok'],
+      message: lang.alerts.error_002
+    });
   }
 }
 
