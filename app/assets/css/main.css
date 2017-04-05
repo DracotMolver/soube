@@ -251,7 +251,9 @@
 #search,
 #search-result {
   font-weight: 300;
-  font-size: 1.6em
+  font-size: 1.6em;
+  padding-bottom: .16em;
+  padding-top: .16em
 }
 
 #search-result {
@@ -259,7 +261,7 @@
   position: absolute;
   z-index: -1;
   color: rgba(182, 182, 182, .4);
-  top: 3.9em
+  top: 3.76em
 }
 
 /*#searchBy {
