@@ -47,6 +47,8 @@ let fragmentItems = null; // DocumentFragment() button container
 let slide = 0; // Amount of slides to make
 let regex = null; // The name of the song to searching for as a regular expression
 let list = []; // Filtered songs.
+let newList = []; // Old filters songs
+let oldSearchedValue = ''; // The prev song that is being searching for
 let interval = 0;
 
 /** --------------------------------------- Functions --------------------------------------- **/
@@ -126,7 +128,6 @@ function searchInputData(e) {
   $('#pagination').addClass('hide');
 
   searchValue = this.value.trim();
-
   if (searchValue !== '') {
     countSlide = 0;
     // Complete the text
@@ -134,7 +135,18 @@ function searchInputData(e) {
       this.value = $('#search-result').text();
 
     regex = new RegExp(`${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
-    list = listSongs.filter(v => regex.test(v[searchBy]));
+
+    // if (oldSearchedValue.length > 0 && this.value.length > oldSearchedValue.length) {
+    // console.log('asdf')
+    //   list = newList.filter(v => regex.test(v[searchBy]));
+    //   oldSearchedValue = searchValue;
+    //   newList = list;
+    // } else {
+    // console.log('qwer')
+      list = listSongs.filter(v => regex.test(v[searchBy]));
+    //   oldSearchedValue = searchValue;
+    //   newList = list;
+    // }
 
     if (e.key === 'Enter') selectedSong(list[list.length - 1].position);
 
@@ -192,7 +204,7 @@ function searchInputData(e) {
   }
 
   // Show the first coincidence to show as a "ghost text".
-  $('#search-result').text(list.length > 0 ? list[list.length - 1][searchBy] : '');
+  $('#search-result').text(list.length > 0 && searchValue !== '' ? list[list.length - 1][searchBy] : '');
 }
 
 // Check if there are new songs to be added
