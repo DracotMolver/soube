@@ -1,6 +1,6 @@
 {
   "name": "soube",
-  "version": "1.4.1",
+  "version": "1.4.3",
   "description": "Simple music player",
   "author": {
     "email": "dracotm25@gmail.com",
@@ -8,8 +8,8 @@
   },
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
-    "electron": "^1.6.3",
-    "electron-builder": "^10.17.3",
+    "electron": "^1.6.5",
+    "electron-builder": "^16.6.1",
     "electron-packager": "^8.5.2"
   },
   "build": {
@@ -22,21 +22,20 @@
         "rpm",
         "deb"
       ],
-      "synopsis": "Soube — Simple music player",
+      "description": "Soube — Simple music player",
       "desktop": {
         "Type": "Application",
         "Encoding": "UTF-8",
         "Name": "Soube",
         "Exec": "soube",
-        "Terminal": false,
-        "Version": "1.4.1",
+        "Terminal": "false",
+        "Version": "1.4.3",
         "Categories": "Audio;Music;Player;AudioVideo"
       }
     },
     "win": {
       "target": [
-        "nsis",
-        "squirrel"
+        "nsis"
       ]
     },
     "mac": {
@@ -44,8 +43,24 @@
       "target": "dmg"
     }
   },
+  "fileAssociations": [
+    {
+      "ext": [
+        ".mp3",
+        ".wmv",
+        ".wav",
+        ".ogg"
+      ],
+      "description": "Music files extensions",
+      "role": "none",
+      "icon": "extIcons"
+    }
+  ],
+  "nsis": {
+    "perMachine": true
+  },
+  "postinstall": "install-app-deps",
   "scripts": {
-    "pack": "build --dir",
     "dist": "build",
     "build": "electron-packager ./app soube --out=dist --platform=linux --ignore='^/dist$' --arch=all --prune --icon='./app/assets/img/icon.png'"
   }
