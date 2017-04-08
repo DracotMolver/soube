@@ -200,7 +200,7 @@ function setBufferInPool(filePath, buffer) {
 function getFile() {
   return listSongs[
   isplayedAtPosition ? position :
-    (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : ++position
+    (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : (position === listSongs.length - 1 ? position = 0 : ++position)
   )];
 }
 
@@ -376,9 +376,9 @@ function saveCurrentTime() {
 function updateCurrentTime() {
   let totalTime = Math.floor(audioContext.currentTime - lastCurrentTime);
   if (totalTime > 60){
-      totalTime = (totalTime / 60).toString();
-      minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
-      second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * SECONDS_U);
+    totalTime = (totalTime / 60).toString();
+    minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
+    second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * SECONDS_U);
     percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
   }
 }

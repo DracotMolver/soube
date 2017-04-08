@@ -23,7 +23,7 @@ require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 //---- constants ----
-const TIME_SCROLLING = 3.2; // Pixels per frame
+const TIME_SCROLLING = 3.6; // Pixels per frame
 const LAPSE_POPUP = 4500; // Duration of info popups
 const LAPSE_SCROLLING = 60; // Lapse before do scrolling
 const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [searching bar]
@@ -98,7 +98,9 @@ function loadSongs() {
   if (Object.keys(listSongs).length === 0) {
     $('#list-songs').text(
       `<div id="init-message">${lang.alerts.welcome}</div>`
-    );
+    ).on({
+      click: menuAddFolder.loadFolder
+    });
   } else {
     // Render the list of songs
     PLAYER.createView(PLAYER);
@@ -243,18 +245,18 @@ function searchInputData(e) {
 
 // Check if there are new songs to be added
 // function checkNewSongs() {
-//   PLAYER.addSongFolder(configFile.musicFolder, () => {
-//     // show pop-up
-//     $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim');
-//   }, (i, maxlength) => {
-//     $('#pop-up').text(`${langFile[configFile.lang].alerts.newSongsFound}${i} / ${maxlength}`);
+// //   PLAYER.addSongFolder(configFile.musicFolder, () => {
+// //     // show pop-up
+// //     $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim');
+// //   }, (i, maxlength) => {
+// //     $('#pop-up').text(`${langFile[configFile.lang].alerts.newSongsFound}${i} / ${maxlength}`);
 
-//     if (i === maxlength) {
-//       // hide pop-up
-//       $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim');
-//       // remote.getCurrentWindow().reload();
-//     }
-//   });
+// //     if (i === maxlength) {
+// //       // hide pop-up
+// //       $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim');
+// //       // remote.getCurrentWindow().reload();
+// //     }
+// //   });
 // }
 
 function btnActions(action) {
@@ -334,9 +336,6 @@ $('.arrow-updown').on({
 // - Album
 // $('#searchBy').on({ change: function () { searchBy = this.value; } });
 
-// Open the window configuration
-// $('#config').on({ click: () => { ipcRenderer.send('show-config'); } });
-
 // Action when do click on over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ click: clickBtnControls });
 
@@ -402,17 +401,17 @@ ipcRenderer.on('get-equalizer-filter', (e, a) => {
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', () => {
-  if (listSongs.length) PLAYER.controls.playSong
+  if (listSongs.length) PLAYER.controls.playSong();
 });
 
 // Next song [Ctrl + Right]
 ipcRenderer.on('next-song', () => {
-  if (listSongs.length) PLAYER.controls.nextSong
+  if (listSongs.length) PLAYER.controls.nextSong();
 });
 
 // Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', () => {
-  if (listSongs.length) PLAYER.controls.prevSong
+  if (listSongs.length) PLAYER.controls.prevSong();
 });
 
 // Shuffle [Ctrl + Down]

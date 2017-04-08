@@ -21,7 +21,7 @@
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
             "newSongsFound": "Agregando nuevas canciones",
             "searchingResults": ":( Parece que no tienes la canción que andas buscando.",
-            "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música dando click en esta ventana blanca o  ir al menú (tres puntos) y dar click en \"Agregar carpeta de música\"",
+            "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música dando click en esta ventana blanca o ve a Canciones -> \"Agregar carpeta de música\"",
             "error_001": "Falta un archivo necesario para que funcione el reproductor. Ir a: https:\/\/github.com\/DracotMolver\/Soube y reportar el error. Gracias",
             "error_002": "No hay archivos para reproducir. Por favor, ir al menú (tres puntos) y dar click en \"Agregar carpeta de música\"",
             "error_003": "Se ha producido un error al intentar leer la carpeta: "
@@ -54,7 +54,7 @@
             "newVersion": "We've got a new version!. Click to download it.",
             "newSongsFound": "Adding new songs ",
             "searchingResults": ":( It seems the you don't have the song you're searching for.",
-            "welcome": "There is no music folder added.<br>Please, add your music folder doing click on this white frame or in the config icon",
+            "welcome": "There is no music folder added.<br>Please, add your music folder doing click on this white frame or goint to Songs -> Add new folder",
             "error_001": "Missed a file needed to use the music player. Go to: https:\/\/github.com\/DracotMolver\/Soube and report the error. Thanks.",
             "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",
             "error_003": "An error occured trying to read the folder: "
