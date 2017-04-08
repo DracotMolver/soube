@@ -37,7 +37,7 @@ function removeItem() {
 
 // Get the path song
 function saveSongList(parentFolder = '') {
-  $('#add-songs').text(lang.config.loadingSongFolder).attr('disabled', true);
+  $('#add-songs').attr('disabled', true);
   isLoadingSongs = true;
   configFile.musicFolder.push(parentFolder);
   editFile('config', configFile);
@@ -53,6 +53,7 @@ function saveSongList(parentFolder = '') {
   PLAYER.addSongFolder(parentFolder,
     () => { },
     (i, maxLength) => { // Iterator function
+      $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
       $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
       if (i === maxLength) PLAYER.updateSongList();
     }

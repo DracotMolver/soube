@@ -122,12 +122,13 @@ function updateSongList() {
 function removeSongFolder(folder) {
   // Get the object from listsong.json - only if was already created it
   const readAllFiles = readFiles => {
-    songs = listSongs.filter(f => {
-      if (readFiles.find(v => v !== f.filename)) return f;
+    songs = [];
+    listSongs.forEach((f, i, a) => {
+      if (readFiles.find(v => v === f.filename)) delete a[i];
+      else songs.push(f);
     });
 
-    console.log(songs)
-    // updateSongList();
+    updateSongList();
   };
 
   readParentFolder(folder, readAllFiles);
