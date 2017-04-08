@@ -1,218 +1,181 @@
-/**
- * @author Diego Alberto Molina Vera
- * @copyright 2016 - 2017
- */
-/* --------------------------------- Modules --------------------------------- */
-//---- electron ----
-const {
-  shell,
-  ipcRenderer,
-  remote
-} = require('electron');
+// /**
+//  * @author Diego Alberto Molina Vera
+//  * @copyright 2016 - 2017
+//  */
+// /* --------------------------------- Modules --------------------------------- */
+// //---- electron ----
+// const {
+//   shell,
+//   ipcRenderer,
+//   remote
+// } = require('electron');
 
-//---- own ----
-const factory = require('./factory');
-const player = factory('player');
-const EQ = factory('equilizer');
-const {
-  configFile,
-  langFile,
-  editFile
-} = require('./config').init();
-require('./dom');
+// //---- own ----
+// const factory = require('./factory');
+// const player = factory('player');
+// const EQ = factory('equilizer');
+// const {
+//   configFile,
+//   langFile,
+//   editFile
+// } = require('./config').init();
+// require('./dom');
 
-/* --------------------------------- Variables --------------------------------- */
-let lang = langFile[configFile.lang];
-let eqHrz = [];
-let newEQHrz = [];
-let actualPanel = null;
+// /* --------------------------------- Variables --------------------------------- */
+// let lang = langFile[configFile.lang];
+// let eqHrz = [];
+// let newEQHrz = [];
+// let actualPanel = null;
 
-/* --------------------------------- Functions --------------------------------- */
-// Change the text in the config window
-(function updateTextContet() {
-  $('#_addsongfolder').text(lang.config.addSongFolder);
-  $('#_statussongfolder').text(configFile.musicFolder === '' ? lang.config.statusSongFolder : configFile.musicFolder);
-  $('#_changelanguage').text(lang.config.changeLanguage);
-  $('#_statuslanguage').text(lang.config.statusLanguage);
-  $('#_titleconfig').text(lang.config.titleConfig);
-  $('#_equalizersetting').text(lang.config.equalizerSetting);
-  $('#_legal').text(lang.config.legal);
-  $('#_neweq').text(lang.config.newEQ);
-})();
+// /* --------------------------------- Functions --------------------------------- */
+// // Change the text in the config window
+// (function updateTextContet() {
+//   $('#_addsongfolder').text(lang.config.addSongFolder);
+//   $('#_statussongfolder').text(configFile.musicFolder === '' ? lang.config.statusSongFolder : configFile.musicFolder);
+//   $('#_changelanguage').text(lang.config.changeLanguage);
+//   $('#_statuslanguage').text(lang.config.statusLanguage);
+//   $('#_titleconfig').text(lang.config.titleConfig);
+//   $('#_equalizersetting').text(lang.config.equalizerSetting);
+//   $('#_legal').text(lang.config.legal);
+//   $('#_neweq').text(lang.config.newEQ);
+// })();
 
-// Animation of the panel when select an option
-function animConfigPanel(e, text) {
-  actualPanel = $(`#${$(e).data('action')}`).removeClass('hide');
+// // Animation of the panel when select an option
+// function animConfigPanel(e, text) {
+//   actualPanel = $(`#${$(e).data('action')}`).removeClass('hide');
 
-  $('#config-container-options')
-  .addClass('config-opt-anim')
-  .on({
-    'animationend': function () {
-      $('#config-container-values').removeClass('hide');
-      $(this).addClass('hide');
-    }
-  });
+//   $('#config-container-options')
+//   .addClass('config-opt-anim')
+//   .on({
+//     'animationend': function () {
+//       $('#config-container-values').removeClass('hide');
+//       $(this).addClass('hide');
+//     }
+//   });
 
-  $('#_titlesubconfig').text(` > ${text}`);
-}
+//   $('#_titlesubconfig').text(` > ${text}`);
+// }
 
-// Change the lang of the music player
-function onClickChangeLang() {
-  animConfigPanel(this, lang.config.changeLanguage);
+// // Change the lang of the music player
+// function onClickChangeLang() {
+//   animConfigPanel(this, lang.config.changeLanguage);
 
-  $('.lang-option').on({
-    'click': function () {
-      configFile.lang = $(this).data('lang');
-      editFile('config', configFile);
-      remote.getCurrentWindow().reload();
-    }
-  });
-}
+//   $('.lang-option').on({
+//     'click': function () {
+//       configFile.lang = $(this).data('lang');
+//       editFile('config', configFile);
+//       remote.getCurrentWindow().reload();
+//     }
+//   });
+// }
 
-// Get the path song
-function saveSongList(parentFolder = '') {
-  configFile.musicFolder = parentFolder;
-  editFile('listSong', {});
-  editFile('config', configFile);
 
-  $('#folder-status').child(0).text(parentFolder);
 
-  // Show a loading
-  // Read the content of the parent folder
-  player.addSongFolder(parentFolder, () => {
-    $('#loading').removeClass('hide');
-    $($('.grid-container').get(0))
-    .css('-webkit-filter:blur(2px)');
-  }, (i, maxLength) => { // Iterator function
-    $('#_loading-info').text(`${lang.config.loadingSongFolder.replace('%d1', i).replace('%d2', maxLength)}`);
+// // Animation over the buttons in the EQ panel
+// function onEqualizerPanel(e) {
+//   animConfigPanel(this, lang.config.equalizerSetting);
 
-    if (i === maxLength) {
-      // Ocultar loading
-      $('#loading').addClass('hide');
-      $($('.grid-container').get(0)).rmAttr('style');
-      remote.BrowserWindow.getAllWindows()[0].reload()
-    }
-  });
-}
+//   EQ.onDragMove(data => {
+//       ipcRenderer.send('equalizer-filter', data);
+//   });
 
-// Animation over the buttons in the EQ panel
-function onEqualizerPanel(e) {
-  animConfigPanel(this, lang.config.equalizerSetting);
+//   EQ.onDragEnd((pos, db) => {
+//     newEQHrz[pos] = db;
+//   });
 
-  EQ.onDragMove(data => {
-      ipcRenderer.send('equalizer-filter', data);
-  });
+//   // Set the EQ config choosen
+//   newEQHrz = eqHrz = configFile.equalizer[configFile.equalizerConfig];
+//   $('.range-circle').each((v, i) => {
+//     $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
+//   }).on({
+//     mousedown: function () {
+//       EQ.onDragStart(this);
+//     }
+//   });
+// }
 
-  EQ.onDragEnd((pos, db) => {
-    newEQHrz[pos] = db;
-  });
+// // Options to config the EQ
+// function setEQ () {
+//   configFile.equalizerConfig = this.value;
+//   editFile('config', configFile);
 
-  // Set the EQ config choosen
-  newEQHrz = eqHrz = configFile.equalizer[configFile.equalizerConfig];
-  $('.range-circle').each((v, i) => {
-    $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
-  }).on({
-    mousedown: function () {
-      EQ.onDragStart(this);
-    }
-  });
-}
+//   eqHrz = configFile.equalizer[configFile.equalizerConfig];
+//   $('.range-circle').each((v, i) => {
+//     $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
 
-// Options to config the EQ
-function setEQ () {
-  configFile.equalizerConfig = this.value;
-  editFile('config', configFile);
+//     ipcRenderer.send('equalizer-filter', [i,
+//       eqHrz[i] !== 0 ? parseFloat((eqHrz[i] < 130 ? 121 - eqHrz[i] : -eqHrz[i] + 140) / 10) : 0
+//     ]);
+//   });
+// }
 
-  eqHrz = configFile.equalizer[configFile.equalizerConfig];
-  $('.range-circle').each((v, i) => {
-    $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
+// /** --------------------------------------- Events --------------------------------------- **/
+// // Refresh the window
+// $('#_titleconfig').on({
+//   click: () => {
+//     if (actualPanel !== null) {
+//       actualPanel.addClass('hide');
 
-    ipcRenderer.send('equalizer-filter', [i,
-      eqHrz[i] !== 0 ? parseFloat((eqHrz[i] < 130 ? 121 - eqHrz[i] : -eqHrz[i] + 140) / 10) : 0
-    ]);
-  });
-}
+//       $('#config-container-options')
+//       .removeClass('config-opt-anim')
+//       .removeClass('hide');
 
-/** --------------------------------------- Events --------------------------------------- **/
-// Refresh the window
-$('#_titleconfig').on({
-  click: () => {
-    if (actualPanel !== null) {
-      actualPanel.addClass('hide');
+//       $('#config-container-values').addClass('hide');
+//       $('#_titlesubconfig').text('');
+//     }
+//   }
+// });
 
-      $('#config-container-options')
-      .removeClass('config-opt-anim')
-      .removeClass('hide');
+// // Change the language
+// $('#change-lang').on({ click: onClickChangeLang });
 
-      $('#config-container-values').addClass('hide');
-      $('#_titlesubconfig').text('');
-    }
-  }
-});
 
-// Change the language
-$('#change-lang').on({ click: onClickChangeLang });
+// // Show the EQ panel
+// $('#equalizer-panel').on({ click: onEqualizerPanel });
 
-// const url = require('url');
-// Action to add the songs
-$('#add-songs').on({
-  click: () => {
-    remote.dialog.showOpenDialog({
-      title: 'Add music folder',
-      properties: ['openDirectory']
-    }, parentFolder => {
-      // console.log(url.parse(parentFolder[0], true));
-      if (parentFolder !== undefined) saveSongList(parentFolder[0]);
-    });
-  }
-});
+// // EQ settings options
+// Object.keys(configFile.equalizer).forEach(v => {
+//   $('#eq-buttons').insert(
+//     $('option').clone(true).val(v).text(v)
+//     .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected:'selected' } : '')
+//   );
+// });
+// $('#eq-buttons').on({ change: setEQ });
 
-// Show the EQ panel
-$('#equalizer-panel').on({ click: onEqualizerPanel });
+// // Check if the person want to add a new EQ setting
+// $('#name-new-eq').on({
+//   keyup: function() {
+//     if (this.value.trim().length > 3) $('#_neweq').rmAttr('disabled');
+//     else $('#_neweq').attr({ disabled: 'disabled' });
+//   }
+// });
 
-// EQ settings options
-Object.keys(configFile.equalizer).forEach(v => {
-  $('#eq-buttons').insert(
-    $('option').clone(true).val(v).text(v)
-    .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected:'selected' } : '')
-  );
-});
-$('#eq-buttons').on({ change: setEQ });
+// // Action to add a new EQ setting
+// $('#_neweq').on({
+//   click: function(e) {
+//     e.preventDefault();
+//     const eqStylesNames = Object.keys(configFile.equalizer);
 
-// Check if the person want to add a new EQ setting
-$('#name-new-eq').on({
-  keyup: function() {
-    if (this.value.trim().length > 3) $('#_neweq').rmAttr('disabled');
-    else $('#_neweq').attr({ disabled: 'disabled' });
-  }
-});
+//     if(eqStylesNames.indexOf($('#name-new-eq').val()) === -1) {
+//       configFile.equalizer[$('#name-new-eq').val()] = newEQHrz;
+//       editFile('config', configFile);
+//     } else {
+//       console.log('El nombres ya exíste o no es un nombre válido');
+//     }
+//   }
+// });
 
-// Action to add a new EQ setting
-$('#_neweq').on({
-  click: function(e) {
-    e.preventDefault();
-    const eqStylesNames = Object.keys(configFile.equalizer);
+// // Open the default browser of the OS
+// $(':a').on({
+//   click: function (e) {
+//     e.preventDefault();
+//     shell.openExternal(this.href);
+//   }
+// });
 
-    if(eqStylesNames.indexOf($('#name-new-eq').val()) === -1) {
-      configFile.equalizer[$('#name-new-eq').val()] = newEQHrz;
-      editFile('config', configFile);
-    } else {
-      console.log('El nombres ya exíste o no es un nombre válido');
-    }
-  }
-});
-
-// Open the default browser of the OS
-$(':a').on({
-  click: function (e) {
-    e.preventDefault();
-    shell.openExternal(this.href);
-  }
-});
-
-// Show legal terms
-$('#terms').on({
-  click: function() {
-    animConfigPanel(this, lang.config.legal);
-  }
-});
+// // Show legal terms
+// $('#terms').on({
+//   click: function() {
+//     animConfigPanel(this, lang.config.legal);
+//   }
+// });

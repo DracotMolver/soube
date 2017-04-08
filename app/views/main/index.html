@@ -2,7 +2,6 @@
 <head>
     <meta charset="utf-8" />
     <link href="../../assets/css/unsemantic.css" rel="stylesheet">
-    <link href="../../assets/css/base.css" rel="stylesheet">
     <link href="../../assets/css/main.css" rel="stylesheet">
 </head>
 <body>
@@ -85,7 +84,7 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-80 mobile-grid-80">
+            <div class="grid-90 mobile-grid-80">
                 <div class="grid-100">
                     <!-- Info de la canción-->
                     <div class="grid-30">
@@ -104,7 +103,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid-70">
+                    <div class="grid-65">
                         <div id="time" class="grid-100">
                             <span id="time-start">00:00</span>&nbsp;<span style="color:white">-</span>&nbsp;<span id="time-end">00:00</span>
                         </div>
@@ -113,12 +112,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div id="config-container" class="grid-10">
-                <!-- configuración -->
-                <div id="config">
-                    <img class="img-tag" src="../../assets/img/config.svg" height="100%" width="100%">
                 </div>
             </div>
         </div>
@@ -152,6 +145,31 @@
     <!-- Pop up alerta de canciones nuevas -->
     <div id="pop-up-container" class="hide">
         <div id="pop-up"></div>
+    </div>
+    <!-- Display the menu to add more music folders -->
+    <div id="menu-add-songs" class="grid-100 parent-container-config hide">
+        <div id="container-add-songs" class="container-config">
+            <div class="close grid-100 border-bottom border-color-light-grey">
+                <div class="grid-70">
+                    <div id="_addsongfolder"></div>
+                </div>
+                <div class="grid-30"></div>
+            </div>
+            <div class="grid-100">
+                <div class="grid-40 mobile-grid-40">
+                    <button id="add-songs"></button>
+                    <button id="remove-songs" class="hide"></button>
+                </div>
+                <div class="grid-60 mobile-grid-60">
+                    <div id="song-progress"></div>
+                </div>
+            </div>
+            <div id="path-list" class="grid-100">
+                <ul id="path-list-container" class="list-song-container">
+                </ul>
+            </div>
+            <div id="folder-to-remove"></div>
+        </div>
     </div>
     <!--scripts-->
     <script>require('../../assets/js/main.js')</script>

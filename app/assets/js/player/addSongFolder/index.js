@@ -9,7 +9,7 @@ const exec = require('child_process').exec;
 const path = require('path');
 
 //---- electron ----
-const remote = require('electron').remote;
+const ipcRenderer = require('electron').ipcRenderer;
 
 //---- other ----
 const musicmetadata = require('musicmetadata');
@@ -74,91 +74,91 @@ function addSongFolder(folder, fnStart, fnIter) {
   // Get the object from listsong.json - only if was already created it
   songs = Object.keys(listSongs).length === 0 ? [] : listSongs;
   const readAllFiles = readFiles => {
-    if (songs.length < readFiles.length) { // Add songs
-      files = readFiles.filter(f => {
-        if (songs.find(v => v.filename === f) === undefined) return path.normalize(f);
-      });
-
+    if (readFiles.length) { // Add songs
+      files = readFiles.map(f => path.normalize(f));
       fnStart();
       extractMetadata(fnIter);
-    } else if(songs.length > readFiles.length) { // Remove songs
-      songs = songs.filter(f => {
-        if (readFiles.find(v => v === f.filename)) return f;
-      }).map((v, i) => (v.position = i, v));
-
-      editFile('listSong', songs);
-      remote.getCurrentWindow().reload();
     }
   };
 
-  // command line [Linux | Mac]
-  if (process.platform === 'darwin' || process.platform === 'linux') {
-    const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        remote.dialog.showErrorBox('Error [003]', `${lang.alerts.error_003} ${folder}\n${stderr}`);
-        return;
-      }
-
-      readAllFiles(stdout.trim().split('\n'));
-    });
-  } else if (process.platform === 'win32') {
-    // Only for windows
-    readAllFiles(findFiles(folder));
-  }
+  readParentFolder(folder, readAllFiles);
 }
 
 // Will get all the needed metadata from a song file
 function extractMetadata(fnIter) {
-  (function(f) {
-    let asyncForEach = {
-      init: 0,
-      end: 0,
-      loop: () => {
-        if (asyncForEach.init < asyncForEach.end) {
-          musicmetadata(fs.createReadStream(f[asyncForEach.init]), (error, data) => {
-            // In case of error, it will save data using what is inside the lang.json file
-            songs.push(
-              error ?
-              {
-                artist: lang.artist.trim().replace(/\s/g, '&nbsp;'),
-                album: lang.album.trim().replace(/\s/g, '&nbsp;'),
-                title: lang.title.trim().replace(/\s/g, '&nbsp;'),
-                filename: f[asyncForEach.init]
-              } :
-              {
-                artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).trim().replace(/\s/g, '&nbsp;'),
-                album: (data.album.trim().length !== 0 ? data.album : lang.album).trim().replace(/\s/g, '&nbsp;'),
-                title: (data.title.trim().length !== 0 ? data.title : lang.title).trim().replace(/\s/g, '&nbsp;'),
-                filename: f[asyncForEach.init]
-              }
-            );
-
-            fnIter(asyncForEach.init + 1, asyncForEach.end);
-            if (asyncForEach.init + 1 === asyncForEach.end) {
-              editFile('listSong',
-                songs.sort((a, b) =>
-                  // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
-                  a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
-                  a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
-                ).map((v, i) => (v.position = i, v))
-              );
-            } else {
-              asyncForEach.init++;
-              asyncForEach.loop();
-            }
-          });
+  let count = 0;
+  files.forEach(f => {
+    musicmetadata(fs.createReadStream(f), (error, data) => {
+      count++;
+      // In case of empty data, it will save data using what is inside the lang.json file
+      songs.push(
+        error ?
+        {
+          artist: lang.artist.trim().replace(/\s/g, '&nbsp;'),
+          album: lang.album.trim().replace(/\s/g, '&nbsp;'),
+          title: lang.title.trim().replace(/\s/g, '&nbsp;'),
+          filename: f
+        } :
+        {
+          artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).trim().replace(/\s/g, '&nbsp;'),
+          album: (data.album.trim().length !== 0 ? data.album : lang.album).trim().replace(/\s/g, '&nbsp;'),
+          title: (data.title.trim().length !== 0 ? data.title : lang.title).trim().replace(/\s/g, '&nbsp;'),
+          filename: f
         }
-      },
-      steps: (init, end) => {
-        asyncForEach.end = end;
-        asyncForEach.init = init;
-      }
-    };
-
-    asyncForEach.steps(0, f.length);
-    asyncForEach.loop();
-  })(files);
+      );
+      fnIter(count, files.length);
+    });
+  });
 }
 
-module.exports = addSongFolder;
+function updateSongList() {
+  editFile('listSong', songs.sort((a, b) =>
+    // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
+    a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
+      a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
+  ).map((v, i) => (v.position = i, v)));
+}
+
+function removeSongFolder(folder) {
+  // Get the object from listsong.json - only if was already created it
+  const readAllFiles = readFiles => {
+    songs = listSongs.filter(f => {
+      if (readFiles.find(v => v !== f.filename)) return f;
+    });
+
+    console.log(songs)
+    // updateSongList();
+  };
+
+  readParentFolder(folder, readAllFiles);
+}
+
+function readParentFolder(folder, fn) {
+      // command line [Linux | Mac]
+  if (process.platform === 'darwin' || process.platform === 'linux') {
+    const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        ipcRenderer.send('display-msg', {
+          type: 'info',
+          message: lang.alerts.error_003,
+          detail: stderr,
+          buttons: ['Ok']
+        });
+
+        return;
+      }
+
+      fn(stdout.trim().split('\n'));
+    });
+  } else if (process.platform === 'win32') {
+    // Only for windows
+    fn(findFiles(folder));
+  }
+}
+
+module.exports = Object.freeze({
+  removeSongFolder,
+  addSongFolder,
+  updateSongList
+});

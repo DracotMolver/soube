@@ -3,11 +3,184 @@
 * @copyright 2016- 2017
 */
 /* ------------------------ GENERAL ------------------------*/
+@font-face {
+  font-family: 'Hind';
+  src: url(../files/Hind-Regular.ttf)
+}
+
+/**
+* Se realizan reset pero de los atributos más importantes
+* que vamos a usar en Chromium.
+* Al no ser una aplicación web "online", no debemos de preocuperanos, en parte,
+* por usar el comodín [*] para formatear todos los elementos HTML
+*/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+div,
+p {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smooth: antialiased;
+  font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
+  font-stretch: condensed;
+  font-family: 'Hind', sans-serif;
+  font-weight: normal;
+  line-height: 1.35em;
+  font-size: 100%;
+  padding: 0;
+  margin: 0;
+  cursor: default;
+  color:  var(--blackColor)
+}
+
+input,
+button {
+  border: none;
+  cursor: pointer
+}
+
+input:focus,
+button:focus {
+  outline-width: 0
+}
+
+ul {
+  list-style: none
+}
+
+body,
+html {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  right: 0;
+  left: 0;
+  top: 0
+}
+
+img,
+svg,
+a {
+  cursor: pointer
+}
+
+.hide {
+  display: none
+}
+
+/* ------------------------ VARIABLES ------------------------ */
+:root {
+  --lightGreyColor: #F4F6F6;
+  --darkGreyColor: #979A9A;
+  --darkPinkColor: #d81b60;
+  --lightPinkColor: #f06292;
+  --whiteColor: #FBFCFC;
+  --blackColor: #424949;
+  --pinkColor: #e91e63
+}
+
+/* ------------------------ GENERALES ------------------------ */
+.border-bottom,
+.border-left,
+.border-right {
+  border-width: 0;
+  border-style:  solid;
+  box-sizing:  border-box;
+}
+
+.border-bottom {
+  border-bottom-width: .01em
+}
+
+.border-left {
+  border-left-width: .01em
+}
+
+.border-right {
+  border-right-width: .01em 
+}
+
+.border-color-dark-pink {
+  border-color: var(--darkPinkColor)
+}
+
+.border-color-light-grey {
+  border-color: var(--lightGreyColor)
+}
+
+.border-color-dark-grey {
+  border-color: var(--darkGreyColor)
+}
+
+.border-color-white {
+  border-color: var(--whiteColor)
+}
+
+.border-color-black {
+  border-color: var(--blackColor)
+}
+
+.border-color-pink {
+  border-color: var(--pinkColor)
+}
+
+.border-color-light-pink {
+  border-color: var(--lightPinkColor)
+}
+
+.parent-container-config {
+  position: absolute;
+  z-index: 3;
+  top: 100px
+}
+
+.container-config {
+  padding: 0 1em 1em;
+  border-radius: 5px;
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
+  background: var(--whiteColor);
+  position: relative;
+  margin: 0 auto;
+  border: .1em solid rgba(245, 245, 245, .3);
+}
+
+.close {
+  padding-bottom: .6em;
+  margin-bottom: .6em;
+  padding-top: .6em;
+}
+
+button {
+  padding-right: .6em;
+  padding-left: .6em;
+  line-height: 1.9em;
+  background: var(--darkGreyColor);
+  color: var(--whiteColor)
+}
+
+/* ------------------------ SCROLLBAR ------------------------ */
+::-webkit-scrollbar {
+  background-color: var(--whiteColor);
+  width: .8em
+}
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+  background:  var(--blackColor)
+}
+
 .btn-controls::after,
 .arrow::after,
 .arrow::before,
 .list-song-container::after,
-.tooltip::after  {
+.tooltip::after {
   position: absolute;
   content: ''
 }
@@ -27,7 +200,7 @@
   right: 22px
 }
 
-#updown:hover {
+#updown:hover{
   cursor: pointer
 }
 
@@ -42,13 +215,6 @@
 /* ------------------------ TOP NAV ------------------------*/
 #top-nav {
   background: var(--pinkColor)
-}
-
-#config {
-  margin-top: 1.9em;
-  padding-right: 35%;
-  padding-left: 35%;
-  height: 2em
 }
 
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
@@ -170,7 +336,6 @@
 #artist > h2,
 #time-end,
 #time-start
-/*#searchBy > option */
 {
   color: var(--whiteColor);
 }
@@ -189,11 +354,13 @@
   float: left
 }
 
-.list-song-container:nth-child(odd) {
+.list-song-container:nth-child(odd),
+.list-song-container > li:nth-child(odd){
   background: var(--lightGreyColor)
 }
 
-.list-song-container:nth-child(even) {
+.list-song-container:nth-child(even),
+.list-song-container > li:nth-child(odd){
   background: var(--whiteColor)
 }
 
@@ -264,16 +431,6 @@
   top: 3.76em
 }
 
-/*#searchBy {
-  border-radius: 4px;
-  padding-left: 7px;
-  background: var(--darkGreyColor);
-  height: 42px;
-  border: none;
-  width: 75%;
-  color: var(--whiteColor);
-}*/
-
 .search-anim {
   animation: showInputUp .5s ease-in forwards
 }
@@ -295,7 +452,8 @@
 
 .no-searching-found {
   text-align: center;
-  font-size: 2.6em
+  font-size: 2.6em;
+  width: 100%
 }
 
 /* ------------------------ PAGINACIÓN DEL INPUT SEARCH ------------------------ */
@@ -326,7 +484,10 @@
 
 #left-arrow,
 #right-arrow {
+  margin-top: -23px;
+  height: 54px;
   cursor: pointer;
+  width: 45px
 }
 
 #left-arrow {
@@ -454,6 +615,37 @@
   top: 188px
 }
 
+/* ------------------------ ADD SONGS ------------------------ */
+#container-add-songs{
+  width: 500px
+}
+
+#path-list {
+  background: var(--whiteColor);
+  margin-top: 6px;
+  border: 1px solid var(--lightGreyColor);
+}
+
+#path-list > ul {
+  overflow: hidden;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0
+}
+
+#song-progress {
+  margin-top: 1.45em;
+  background: var(--pinkColor);
+  height: 3px;
+  width: 0
+}
+
+#folder-to-remove {
+  margin-top: 1em;
+  font-size: .8em;
+  color: var(--darkPinkColor);
+}
+
 /* ------------------------ ANIMACIONES ------------------------ */
 @keyframes showToolTip {
   100% {
@@ -529,34 +721,10 @@
     left: 14.7%
   }
 
-  /* ------------------------ TOP NAV ------------------------*/
-  #config-container {
-    border-radius: 50%;
-    background: var(--pinkColor);
-    position: absolute;
-    padding: .3em;
-    bottom: 7px;
-    z-index: 4;
-    height: 2.6em;
-    width: 2.6em;
-    right: 16px
-  }
-
-  #config {
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    float: left
-  }
-
-  #updown {
-    right: 70px
-  }
   /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
   #info-song {
     text-align: left;
-    margin: .3em 1.2em;
+    margin: .19em 1.2em;
     width: 93%
   }
 

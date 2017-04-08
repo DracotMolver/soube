@@ -11,6 +11,8 @@ const {
   BrowserWindow,
   nativeImage,
   ipcMain,
+  dialog,
+  Menu,
   Tray,
   app
 } = require('electron');
@@ -19,12 +21,8 @@ const {
 const path = require('path');
 const url = require('url');
 
-//---- Own ----
-const config = require('./../app/assets/js/config');
-const thumbar = require('./../app/assets/js/thumbar'); // [Windows]
-
 /* --------------------------------- Variables --------------------------------- */
-let configWindow = null;
+// let configWindow = null;
 let mainWindow = null;
 const shortKeys = {
   'CommandOrControl+F': 'search-song', // Input search
@@ -56,7 +54,10 @@ function makeIcon(name) {
 
 function ready() {
   // Make all the config files
-  config.createFiles(app);
+  require('./../app/assets/js/config').createFiles(app);
+
+  // Set the menu
+  const menu = Menu.buildFromTemplate(require('./../app/assets/js/menu')(app));
 
   // Will shows the icon of the notificaion
   const appIcon = new Tray(path.join(__dirname, 'assets', 'img', 'icon.png'));
@@ -75,7 +76,8 @@ function ready() {
     icon: makeIcon('icon.png')
   });
 
-  mainWindow.setMenu(null);
+  mainWindow.setMenu(menu);
+  mainWindow.setMenuBarVisibility(true);
   mainWindow.webContents.openDevTools();
   mainWindow.loadURL(
     url.format({
@@ -86,8 +88,7 @@ function ready() {
   mainWindow.on('closed', () => {
     closeRegisteredKeys();
     appIcon.destroy();
-    BrowserWindow.getAllWindows().forEach(v => { v.close(); });
-    mainWindow = configWindow = null;
+    mainWindow = null;
   })
   .on('focus', registreKeys)
   .on('blur', closeRegisteredKeys)
@@ -103,7 +104,7 @@ function ready() {
     mainWindow.show();
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {
-     thumbarButtons = thumbar.makeThumBar(mainWindow, {
+      thumbarButtons = require('./../app/assets/js/thumbar').makeThumBar(mainWindow, {
         next: makeIcon('thumb-next.png'),
         pause: makeIcon('thumb-pause.png'),
         prev: makeIcon('thumb-prev.png'),
@@ -116,47 +117,12 @@ function ready() {
   });
 }
 
-function showConfigPanel() {
-  if (configWindow === null) {
-    configWindow = new BrowserWindow({
-      autoHideMenuBar: true,
-      defaultEncoding: 'utf-8',
-      useContentSize: true,
-      resizable: false,
-      height: 500,
-      center: true,
-      width: 1125,
-      icon: makeIcon('icon.png')
-    });
-
-    configWindow.setMenu(null);
-    configWindow.webContents.openDevTools();
-    configWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, 'views', 'config-panel', 'config.html'),
-        protocol: 'file:'
-      })
-    );
-    configWindow.on('closed', () => {
-      configWindow = null;
-    });
-  }
-}
-
 /* --------------------------------- Electronjs O_o --------------------------------- */
 app.on('window-all-closed', () => { app.quit(); })
 app.setName('Soube');
 app.on('ready', ready);
 
 /* --------------------------------- Ipc Main --------------------------------- */
-// Config panel
-ipcMain.on('show-config', showConfigPanel);
-
-// Displays the list of song after update or overwrite the song folder
-// ipcMain.on('display-list', () => {
-//   mainWindow.webContents.send('order-display-list');
-// });
-
 // Sending data from the EQ to the AudioContext
 ipcMain.on('equalizer-filter', (e, a) => {
   mainWindow.webContents.send('get-equalizer-filter', a);
@@ -167,5 +133,18 @@ ipcMain.on('thumb-bar-update', (e, a) => {
   mainWindow.setThumbarButtons(thumbarButtons[a]);
 });
 
-// Launch the config panel from the Player
-ipcMain.on('config-panel', showConfigPanel);
+// Displays messages dialogs
+// types of messages: none, info, error, question or warning.
+ipcMain.on('display-msg', (e, a) => {
+  dialog.showMessageBox({
+    type: a.type,
+    message: a.message,
+    detail: a.detail,
+    buttons: a.buttons
+  });
+});
+
+// Reload the main windows
+ipcMain.on('update-browser', (e, a) => {
+  mainWindow.reload();
+});
