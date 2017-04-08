@@ -5,18 +5,20 @@
 module.exports = (_ => {
   /* --------------------------------- Variables --------------------------------- */
   //---- normals ----
-  var createdElements = {};
-  var poolOfElements = {};
-  var event = {};
+  let createdElements = {};
+  let poolOfElements = {};
+  let event = {};
 
   /* --------------------------------- Events --------------------------------- */
   const EVENT = {
     element: null,
     addClass: function(str) {
-      const CLASS_NAME = this.element.className;
+      let className = this.element.className.split(' ');
 
-      if (CLASS_NAME.indexOf(str) === -1)
-        this.element.className += CLASS_NAME === '' ? `${str}` : ` ${str}`;
+      if (className.indexOf(str) === -1) {
+        className.push(str);
+        this.element.className = className.join(' ');
+      }
 
       return this;
     },
@@ -74,12 +76,10 @@ module.exports = (_ => {
 
       if (el.length !== undefined) {
         el.forEach(e => {
-          if (e.style.cssText.indexOf(str))
-            e.style.cssText += e.style.cssText === '' ? `${str};` : ` ${str};`;
+          if (e.style.cssText.indexOf(str)) e.style.cssText += `${str};`;
         });
       } else {
-        if (el.style.cssText.indexOf(str))
-          el.style.cssText += el.style.cssText === '' ? `${str};` : ` ${str};`;
+        if (el.style.cssText.indexOf(str)) el.style.cssText += `${str};`;
       }
 
       return this;
