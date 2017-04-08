@@ -14,7 +14,7 @@
   },
   "build": {
     "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
-    "asar": false,
+    "asar": true,
     "linux": {
       "category": "Audio",
       "packageCategory": "sound",
