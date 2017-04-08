@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="59.844292mm"
-   height="59.18895mm"
+   width="55.84428mm"
+   height="55.84428mm"
    viewBox="0 0 0 1052.3622"
    id="svg4163"
    version="1.1"
    inkscape:version="0.92.1 r15371"
-   inkscape:export-filename="/home/dmolina/Documentos/ElectronJS_Projects/Soube/electron/resources/app/assets/img/icon.png"
-   inkscape:export-xdpi="25.4"
-   inkscape:export-ydpi="25.4"
+   inkscape:export-filename="C:\Users\diego\Documents\ElectronJS Projects\Soube\build\icon.png"
+   inkscape:export-xdpi="116.44"
+   inkscape:export-ydpi="116.44"
    sodipodi:docname="soube-icon.svg">
   <defs
      id="defs4165">
@@ -94,8 +94,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="120.03817"
-     inkscape:cy="113.57205"
+     inkscape:cx="-19.3066"
+     inkscape:cy="106.01298"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -106,10 +106,10 @@
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true"
-     fit-margin-top="2"
-     fit-margin-left="2"
-     fit-margin-right="2"
-     fit-margin-bottom="2" />
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata4168">
     <rdf:RDF>
@@ -126,16 +126,16 @@
      inkscape:label="Capa 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(20.918246,-920.67147)">
+     transform="translate(13.35919,-925.75366)">
     <rect
-       style="opacity:1;fill:#212121;fill-opacity:1;fill-rule:nonzero;stroke:#d81b60;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#212121;fill-opacity:1;fill-rule:nonzero;stroke:#d81b60;stroke-width:2.01183939;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4757"
-       width="209.06503"
-       height="206.58815"
-       x="-12.359191"
-       y="929.23053"
-       rx="27.339993"
-       ry="27.339993" />
+       width="209.05316"
+       height="209.05316"
+       x="-12.353271"
+       y="926.75958"
+       rx="27.33844"
+       ry="27.666214" />
     <g
        id="g4543"
        transform="translate(-1.7825799,5.8584189)">
