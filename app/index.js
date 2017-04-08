@@ -78,6 +78,8 @@ function ready() {
 
   mainWindow.setMenu(menu);
   mainWindow.setMenuBarVisibility(true);
+  mainWindow.setAutoHideMenuBar(false);
+  mainWindow.center();
   mainWindow.webContents.openDevTools();
   mainWindow.loadURL(
     url.format({

@@ -79,7 +79,7 @@ module.exports = (app) => {
             label: 'Change idiom'
           },
           {
-            label: 'Chamge player color'
+            label: 'Chagge player color'
           },
           {
             type: 'separator'
