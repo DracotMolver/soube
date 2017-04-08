@@ -28,6 +28,7 @@ p {
   font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
   font-stretch: condensed;
   font-family: 'Hind', sans-serif;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.106);
   font-weight: normal;
   line-height: 1.35em;
   font-size: 100%;
@@ -136,9 +137,11 @@ a {
 }
 
 .parent-container-config {
+  padding-top: 100px;
   position: absolute;
   z-index: 3;
-  top: 100px
+  height: 100%;
+  top: 0
 }
 
 .container-config {
@@ -167,7 +170,7 @@ button {
 
 /* ------------------------ SCROLLBAR ------------------------ */
 ::-webkit-scrollbar {
-  background-color: var(--whiteColor);
+  background-color: var(--darkGreyColor);
   width: .8em
 }
 
