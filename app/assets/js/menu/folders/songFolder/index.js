@@ -20,7 +20,7 @@ let {
   langFile,
   listSongs,
   editFile
-} = require('./../../config').init();
+} = require('./../../../config').init();
 
 /* --------------------------------- Variables --------------------------------- */
 //---- normals ----

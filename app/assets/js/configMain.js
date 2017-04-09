@@ -130,18 +130,6 @@
 // $('#change-lang').on({ click: onClickChangeLang });
 
 
-// // Show the EQ panel
-// $('#equalizer-panel').on({ click: onEqualizerPanel });
-
-// // EQ settings options
-// Object.keys(configFile.equalizer).forEach(v => {
-//   $('#eq-buttons').insert(
-//     $('option').clone(true).val(v).text(v)
-//     .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected:'selected' } : '')
-//   );
-// });
-// $('#eq-buttons').on({ change: setEQ });
-
 // // Check if the person want to add a new EQ setting
 // $('#name-new-eq').on({
 //   keyup: function() {

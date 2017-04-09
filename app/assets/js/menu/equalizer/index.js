@@ -3,8 +3,16 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
+const {
+  configFile,
+  langFile,
+  editFile
+} = require('./../../config').init();
 require('./../../dom');
+
+/* --------------------------------- Variables --------------------------------- */
 //---- normals ----
+let lang = langFile[configFile.lang];
 let range = null;
 let y = 0;
 let db = 0;
@@ -46,8 +54,22 @@ function onDragStart(el) {
   pos = $((range = el)).data('position');
 };
 
+function showEqualizer() {
+  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
+  $('#menu-equalizer').removeClass('hide');
+  $('#_equalizerSetting').text(lang.config.equalizerSetting);
+
+  
+// EQ settings options
+  Object.keys(configFile.equalizer).forEach(v => {
+    $('#eq-buttons').insert(
+      $('option').clone(true).val(v).text(v)
+      .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected: 'selected' } : '')
+    );
+  });
+  // $('#eq-buttons').on({ change: setEQ });
+}
+
 module.exports = {
-  onDragMove,
-  onDragStart,
-  onDragEnd
+  showEqualizer
 };

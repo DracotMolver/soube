@@ -54,7 +54,7 @@ let notifi = {
 };
 
 //---- constants ----
-const SECONDS_U = 60;
+const seconds_u = 60;
 const audioContext = new window.AudioContext(); // Object AudioContext
 const xhtr = new XMLHttpRequest(); // Object XMLHttpRequest
 const hrz = [ // Frequencies
@@ -141,7 +141,7 @@ function playSong() {
 
 // Lapse of time
 function startTimer() {
-  const UPDATE = () => {
+  const update = () => {
     if (++millisecond > 59) {
       millisecond = 0;
       if (++second > 59) {
@@ -152,9 +152,9 @@ function startTimer() {
       $('#time-start').text(`${formatDecimals(minute)}:${formatDecimals(second)}`);
       $('#progress-bar').css(`width:${percent += lapse}%`);
     }
-    interval = requestAnimationFrame(UPDATE);
+    interval = requestAnimationFrame(update);
   };
-  interval = requestAnimationFrame(UPDATE);
+  interval = requestAnimationFrame(update);
 }
 
 // Clean the everything when the ended function is executed
@@ -243,11 +243,11 @@ function initSong() {
   const setSong = (buffer) => {
     // The buffer gives us the song's duration.
     // The duration is in seconds, therefore we need to convert it to minutes
-    time = ((duration = buffer.duration) / SECONDS_U).toString();
+    time = ((duration = buffer.duration) / seconds_u).toString();
     lapse = 100 / duration;
 
     $('#time-end').text(`
-    ${formatDecimals(parseInt(time.slice(0, time.lastIndexOf('.'))))}:${formatDecimals(Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U))}
+    ${formatDecimals(parseInt(time.slice(0, time.lastIndexOf('.'))))}:${formatDecimals(Math.floor(time.slice(time.lastIndexOf('.')) * seconds_u))}
     `);
 
     setAudioBuffer(buffer);
@@ -357,11 +357,11 @@ function moveForward(event, element) {
   cancelAnimationFrame(interval);
 
   forward = duration * event.offsetX / element.clientWidth;
-  time = (forward / SECONDS_U).toString();
+  time = (forward / seconds_u).toString();
 
   // Calculate the new time
   minute = parseInt(time.slice(0, time.lastIndexOf('.')));
-  second = Math.floor(time.slice(time.lastIndexOf('.')) * SECONDS_U);
+  second = Math.floor(time.slice(time.lastIndexOf('.')) * seconds_u);
   millisecond = forward * 100;
 
   // Calculate the percent of the progress bar
@@ -378,7 +378,7 @@ function updateCurrentTime() {
   if (totalTime > 60){
     totalTime = (totalTime / 60).toString();
     minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
-    second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * SECONDS_U);
+    second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * seconds_u);
     percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
   }
 }

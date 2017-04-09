@@ -10,7 +10,7 @@ module.exports = (_ => {
   let event = {};
 
   /* --------------------------------- Events --------------------------------- */
-  const EVENT = {
+  const event_ = {
     element: null,
     addClass: function(str) {
       let className = this.element.className.split(' ');
@@ -88,7 +88,7 @@ module.exports = (_ => {
       if (typeof this.element === 'string') {
         return this.element = getCreatedElement(this.element).cloneNode(isCloned), this;
       } else {
-        return event = Object.assign({}, EVENT),
+        return event = Object.assign({}, event_),
         event.element = this.element.cloneNode(isCloned), event;
       }
     },
@@ -140,7 +140,7 @@ module.exports = (_ => {
   }
 
   function inPool(name) {
-    return poolOfElements[name] === EVENT.element;
+    return poolOfElements[name] === event_.element;
   }
 
   function getElementInPool(name) {
@@ -150,8 +150,8 @@ module.exports = (_ => {
   /* --------------------------------- Main Function --------------------------------- */
   // Get an string to search for an element into the DOM and its return an Object
   // with all the needed functions
-  const DOM = e => {
-    event = Object.assign({}, EVENT);
+  const dom = e => {
+    event = Object.assign({}, event_);
 
     if (inPool(e)) {
       event.element = getElementInPool(e);
@@ -172,5 +172,5 @@ module.exports = (_ => {
     return event.element = e, event;
   }
 
-  _.$ = DOM;
+  _.$ = dom;
 })(global);

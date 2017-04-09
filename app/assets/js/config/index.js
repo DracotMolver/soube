@@ -25,13 +25,13 @@ const version = require('./../version');
 function createFiles(app) {
   /* --------------------------------- Configuration --------------------------------- */
   //---- constants ----
-  const PATH = app.getPath('userData');
-  const CONFIG_PATH = `${PATH}/config.json`;
-  const LIST_SONG_PATH = `${PATH}/listSong.json`;
+  const path = app.getPath('userData');
+  const configPath = `${path}/config.json`;
+  const listSongPath = `${path}/listSong.json`;
 
-  if (!fs.existsSync(CONFIG_PATH)) {
+  if (!fs.existsSync(configPath)) {
     // Values by default
-    const CONFIG = {
+    const config = {
       lang: 'us',
       shuffle: true,
       musicFolder: [],
@@ -44,25 +44,25 @@ function createFiles(app) {
       equalizerConfig: 'reset'
     };
 
-    fs.openSync(CONFIG_PATH, 'w');
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG, null), { flag: 'w' });
+    fs.openSync(configPath, 'w');
+    fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
   }
    else {
     // ONLY TO UPDATE THE CONFIG FILE
     var actualVersion = app.getVersion().toString();
     version(net, actualVersion, response => {
       if (response === 'major') {
-        let config = JSON.parse(fs.readFileSync(CONFIG_PATH).toString());
+        let config = JSON.parse(fs.readFileSync(configPath).toString());
         config.musicFolder = [config.musicFolder];
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null), { flag: 'w' });
+        fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
       }
     });
   }
 
   /* --------------------------------- File of songs --------------------------------- */
-  if (!fs.existsSync(LIST_SONG_PATH)) {
-    fs.openSync(LIST_SONG_PATH, 'w');
-    fs.writeFileSync(LIST_SONG_PATH, JSON.stringify({}, null), { flag: 'w' });
+  if (!fs.existsSync(listSongPath)) {
+    fs.openSync(listSongPath, 'w');
+    fs.writeFileSync(listSongPath, JSON.stringify({}, null), { flag: 'w' });
   }
 }
 

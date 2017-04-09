@@ -10,10 +10,12 @@ const {
 } = require('electron');
 
 //---- Own ----
-const PLAYER = require('./factory')('player');
+const player = require('./player');
 const version = require('./version');
 const config = require('./config');
-const menuAddFolder = require('./menu/menuAddFolder.js');
+const folders = require('./menu/folders');
+const equalizer = require('./menu/equalizer');
+
 const {
   configFile,
   langFile,
@@ -23,11 +25,10 @@ require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 //---- constants ----
-const TIME_SCROLLING = 3.6; // Pixels per frame
-const LAPSE_POPUP = 4500; // Duration of info popups
-const LAPSE_SCROLLING = 60; // Lapse before do scrolling
-const MAX_ELEMENTS = 20; // Max of elementos to display when is filtering a song [searching bar]
-const BTN_FILTER_SONGS = [ // Elements to use as a items into the slide
+const timeScrolling = 3.6; // Pixels per frame
+const lapsePopup = 4500; // Duration of info popups
+const maxElements = 20; // Max of elementos to display when is filtering a song [searching bar]
+const bntFilterSongs = [ // Elements to use as a items into the slide
   $('div').clone(false).addClass('grid-25 mobile-grid-25'),
   $('div').clone(false).addClass('search-results'),
   $('div').clone(false).addClass('results')
@@ -84,7 +85,7 @@ function getActualVersion() {
         .removeClass('pop-up-anim');
 
         clearTimeout(tout);
-      }, LAPSE_POPUP);
+      }, lapsePopup);
     }
   });
 }
@@ -99,11 +100,11 @@ function loadSongs() {
     $('#list-songs').text(
       `<div id="init-message">${lang.alerts.welcome}</div>`
     ).on({
-      click: menuAddFolder.loadFolder
+      click: folders.loadFolder
     });
   } else {
     // Render the list of songs
-    PLAYER.createView(PLAYER);
+    player.createView(player);
     // checkNewSongs();
   }
 }
@@ -132,15 +133,15 @@ function makeItemSlide() {
   itemSlide = [];
   listSongs.forEach(v => {
     itemSlide.push(
-      BTN_FILTER_SONGS[0].clone(true) // <div class="grid-25 mobile-grid-25">
+      bntFilterSongs[0].clone(true) // <div class="grid-25 mobile-grid-25">
       .insert(
-        BTN_FILTER_SONGS[1].clone(true) // <div class="search-results">
+        bntFilterSongs[1].clone(true) // <div class="search-results">
         .text(v.title)
       )
       .data({ position: v.position })
       .on({
         click: function () {
-          PLAYER.controls.playSongAtPosition($(this).data('position'));
+          player.controls.playSongAtPosition($(this).data('position'));
           hideSearchInputData();
         }
       }).get()
@@ -178,13 +179,13 @@ function searchInputData(e) {
     // }
 
     if (e.key === 'Enter') {
-      PLAYER.controls.playSongAtPosition($(list[list.length - 1]).data('position'));
+      player.controls.playSongAtPosition($(list[list.length - 1]).data('position'));
       hideSearchInputData();
     }
 
     // Show possibles results
     totalResults = list.length - 1;
-    slide = totalResults > MAX_ELEMENTS ? Math.round(totalResults / MAX_ELEMENTS) : 1;
+    slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
     // Add the pagination if there's more than one slide
     slide > 1 ?
       $('#pagination').removeClass('hide').child(1).addClass('arrow-open-anim') :
@@ -192,7 +193,7 @@ function searchInputData(e) {
     
     // fragmentSlide = fragmentItems = document.createDocumentFragment();
     // Make an slide with all the filtered coincidences
-    // const FILTERED_SONGS = totalResults < MAX_ELEMENTS ? this.length : MAX_ELEMENTS;
+    // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
     if (list.length > 0) {
       var i = 0;
       var size = 0;
@@ -202,9 +203,9 @@ function searchInputData(e) {
         i = (size = slide * size) - size;
         for (; i < size; i++, countItem++) {
     //       fragmentItems.appendChild(
-    //         BTN_FILTER_SONGS[0].clone(true)
+    //         bntFilterSongs[0].clone(true)
     //         .insert(
-    //           BTN_FILTER_SONGS[1].clone(true)
+    //           bntFilterSongs[1].clone(true)
     //           .text(list[totalResults][searchBy])
     //         )
     //         .data({ position: list[totalResults].position })
@@ -218,7 +219,7 @@ function searchInputData(e) {
 
     //     // All the buttons into the slides
     //     fragmentSlide.appendChild(
-    //       BTN_FILTER_SONGS[2].clone(true)
+    //       bntFilterSongs[2].clone(true)
     //       .insert(fragmentItems)
     //       .css(`width:${document.body.clientWidth}px`).get()
     //     );
@@ -245,7 +246,7 @@ function searchInputData(e) {
 
 // Check if there are new songs to be added
 // function checkNewSongs() {
-// //   PLAYER.addSongFolder(configFile.musicFolder, () => {
+// //   player.addSongFolder(configFile.musicFolder, () => {
 // //     // show pop-up
 // //     $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim');
 // //   }, (i, maxlength) => {
@@ -262,15 +263,15 @@ function searchInputData(e) {
 function btnActions(action) {
   switch (action) {
     case 'play-pause':
-      if (PLAYER.controls.playSong() === 'resume') {
+      if (player.controls.playSong() === 'resume') {
         if (process.platform === 'win32') ipcRenderer.send('thumb-bar-update', 'pauseMomment');
       } else {
         if (process.platform === 'win32') ipcRenderer.send('thumb-bar-update', 'playMomment');
       }
       break;
-    case 'next': PLAYER.controls.nextSong(); break;
-    case 'prev': PLAYER.controls.prevSong(); break;
-    case 'shuffle': PLAYER.controls.shuffle() ;break;
+    case 'next': player.controls.nextSong(); break;
+    case 'prev': player.controls.prevSong(); break;
+    case 'shuffle': player.controls.shuffle() ;break;
   }
 }
 
@@ -295,13 +296,13 @@ function clickBtnControls() {
 }
 
 function scrollAnimation(direction) {
-  const ANIMATION = () => {
+  const animation = () => {
     $('#list-songs').get().scrollTop +=
-      direction === 'up' ? -(TIME_SCROLLING) : TIME_SCROLLING;
+      direction === 'up' ? -(timeScrolling) : timeScrolling;
 
-    interval = requestAnimationFrame(ANIMATION);
+    interval = requestAnimationFrame(animation);
   };
-  interval = requestAnimationFrame(ANIMATION);
+  interval = requestAnimationFrame(animation);
 }
 
 /** --------------------------------------- Events --------------------------------------- **/
@@ -311,10 +312,10 @@ $('#song-title').on({
     if (this.children[0].textContent.trim() !== '') {
       clickedElement = $('#list-songs').get();
       positionElement = $(`#${$(this).data('position')}`).get();
-      const ELEMENT = clickedElement.scrollTop;
-      const TOP = positionElement.offsetTop;
-      const DISTANCE = TOP - (Math.round($('#top-nav').get().offsetHeight) + 100);
-      clickedElement.scrollTop += ELEMENT !== DISTANCE ? DISTANCE - ELEMENT : - (DISTANCE - ELEMENT);
+      const element = clickedElement.scrollTop;
+      const top = positionElement.offsetTop;
+      const distance = top - (Math.round($('#top-nav').get().offsetHeight) + 100);
+      clickedElement.scrollTop += element !== distance ? distance - element : - (distance - element);
     }
   }
 });
@@ -340,7 +341,7 @@ $('.arrow-updown').on({
 $('.btn-controls').on({ click: clickBtnControls });
 
 // step forward or step back the song using the progress bar
-$('#total-progress-bar').on({ click: function (e) { PLAYER.controls.moveForward(e, this); } });
+$('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(e, this); } });
 
 // Action over the pagination
 // $('.arrow').on({
@@ -396,26 +397,26 @@ ipcRenderer.on('search-song', () => {
 
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) => {
-  PLAYER.controls.setFilterVal(...a);
+  player.controls.setFilterVal(...a);
 });
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', () => {
-  if (listSongs.length) PLAYER.controls.playSong();
+  if (listSongs.length) player.controls.playSong();
 });
 
 // Next song [Ctrl + Right]
 ipcRenderer.on('next-song', () => {
-  if (listSongs.length) PLAYER.controls.nextSong();
+  if (listSongs.length) player.controls.nextSong();
 });
 
 // Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', () => {
-  if (listSongs.length) PLAYER.controls.prevSong();
+  if (listSongs.length) player.controls.prevSong();
 });
 
 // Shuffle [Ctrl + Down]
-ipcRenderer.on('shuffle', PLAYER.controls.shuffle);
+ipcRenderer.on('shuffle', player.controls.shuffle);
 
 // ThumbarButtons [Windows]
 ipcRenderer.on('thumbar-controls', (e, a) => { btnActions(a); });
@@ -423,8 +424,11 @@ ipcRenderer.on('thumbar-controls', (e, a) => { btnActions(a); });
 // Because the requestAnimationFrame is single thread in the window
 // We must save the actual time lapse when we minimized the Window
 // and then recalculate the time when we unminimized the window.
-ipcRenderer.on('save-current-time', PLAYER.controls.saveCurrentTime);
-ipcRenderer.on('update-current-time', PLAYER.controls.updateCurrentTime);
+ipcRenderer.on('save-current-time', player.controls.saveCurrentTime);
+ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
 
 // Display the windows to add musics folders
-ipcRenderer.on('menu-add-folder', menuAddFolder.loadFolder);
+ipcRenderer.on('menu-add-folder', folders.loadFolder);
+
+// Display the equalizer
+ipcRenderer.on('menu-equalizer', equalizer.showEqualizer)

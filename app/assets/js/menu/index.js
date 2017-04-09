@@ -5,6 +5,9 @@
 module.exports = (app) => {
   const configFile = require(`${app.getPath('userData')}/config.json`);
 
+  const newFolder = browserWindow => browserWindow.webContents.send('menu-add-folder');
+  const showEQ = browserWindow => browserWindow.webContents.send('menu-equalizer');
+
   const template = {
     es: [
       {
@@ -12,9 +15,7 @@ module.exports = (app) => {
         submenu: [
           {
             label: 'Agregar nueva carpeta',
-            click(menuItem, browerWindow, event) {
-              browerWindow.webContents.send('menu-add-folder');
-            }
+            click(menuItem, browserWindow, event) { newFolder(browserWindow); }
           },
           {
             label: 'Cargar carpeta'
@@ -28,10 +29,11 @@ module.exports = (app) => {
         ]
       },
       {
-        label: 'Equalizador'
+        label: 'Equalizador',
+        click(menuItem, browserWindow, event) { showEQ(browserWindow); }
       },
       {
-        label: 'Opciones',
+        label: 'Preferencias',
         submenu: [
           {
             label: 'Cambiar idioma'
@@ -54,9 +56,7 @@ module.exports = (app) => {
         submenu: [
           {
             label: 'Add new folder',
-            click(menuItem, browerWindow, event) {
-              browerWindow.webContents.send('menu-add-folder');
-            }
+            click(menuItem, browserWindow, event) { newFolder(browserWindow); }
           },
           {
             label: 'Load folder'
@@ -70,10 +70,11 @@ module.exports = (app) => {
         ]
       },
       {
-        label: 'Equalizer'
+        label: 'Equalizer',
+        click(menuItem, browserWindow, event) { showEQ(browserWindow); }
       },
       {
-        label: 'Options',
+        label: 'Preferences',
         submenu: [
           {
             label: 'Change idiom'
@@ -91,6 +92,7 @@ module.exports = (app) => {
       }
     ]
   }
+
 
   return template[configFile.lang];
 };

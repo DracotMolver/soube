@@ -618,6 +618,22 @@ button {
   top: 188px
 }
 
+/* ------------------------ EQUALIZER ------------------------ */
+#container-equalizer {
+  width: 900px
+}
+
+
+#eq-buttons {
+  background: var(--whiteColor)
+}
+
+#eq-buttons {
+  border: 1px solid rgba(0,0,0,.14);
+  border-radius: 4px;
+  margin: 1em 0 .5em 1em
+}
+
 /* ------------------------ ADD SONGS ------------------------ */
 #container-add-songs{
   width: 500px
@@ -652,26 +668,26 @@ button {
 /* ------------------------ ANIMACIONES ------------------------ */
 @keyframes showToolTip {
   100% {
-      transform: scale(1);
-      opacity: 1
+    transform: scale(1);
+    opacity: 1
   }
 }
 
 @keyframes showPopUp {
   100% {
-      transform: scale(1)
+    transform: scale(1)
   }
 }
 
 @keyframes displayInputSearch {
   100% {
-      width: 75%
+    width: 75%
   }
 }
 
 @keyframes showInputUp {
   100% {
-      transform: scale(1)
+    transform: scale(1)
   }
 }
 
@@ -684,7 +700,7 @@ button {
   }
   100% {
     transform: scale3d(1.2, 1.2, 1);
-        opacity: 0
+    opacity: 0
   }
 }
 

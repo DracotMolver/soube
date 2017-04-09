@@ -12,14 +12,14 @@ const {
 // ---- Nodejs ----
 const url = require('url');
 
-//----Oown ----
-const PLAYER = require('./../factory')('player');
+//----Own ----
+const songFolder = require('./songFolder');
 const {
   configFile,
   langFile,
   editFile
-} = require('./../config').init();
-require('./../dom');
+} = require('./../../config').init();
+require('./../../dom');
 
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
@@ -37,7 +37,7 @@ function removeItem() {
 
 // Get the path song
 function saveSongList(parentFolder = '') {
-  $('#add-songs').attr('disabled', true);
+  $('#add-songs').attr({ disabled: true });
   isLoadingSongs = true;
   configFile.musicFolder.push(parentFolder);
   editFile('config', configFile);
