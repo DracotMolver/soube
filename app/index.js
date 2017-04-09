@@ -36,14 +36,12 @@ let thumbarButtons = {};
 
 /* --------------------------------- Funciones --------------------------------- */
 function closeRegisteredKeys() {
-  Object.keys(shortKeys).forEach(v => { globalShortcut.unregister(v); });
+  Object.keys(shortKeys).forEach(v => globalShortcut.unregister(v));
 }
 
 function registreKeys() {
   Object.keys(shortKeys).forEach(v => {
-    globalShortcut.register(v, () => {
-      mainWindow.webContents.send(shortKeys[v]);
-    });
+    globalShortcut.register(v, () => mainWindow.webContents.send(shortKeys[v]));
   });
 }
 
@@ -94,13 +92,9 @@ function ready() {
   })
   .on('focus', registreKeys)
   .on('blur', closeRegisteredKeys)
-  .on('minimize', () => {
-    mainWindow.webContents.send('save-current-time');
-  })
-  .on('restore', () => {
-    // This happens also when you reload the website (refresh)
-    mainWindow.webContents.send('update-current-time');
-  });
+  .on('minimize', () => mainWindow.webContents.send('save-current-time'))
+  // This happens also when you reload the website (refresh)
+  .on('restore', () => mainWindow.webContents.send('update-current-time'));
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
@@ -120,33 +114,27 @@ function ready() {
 }
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
-app.on('window-all-closed', () => { app.quit(); })
+app.on('window-all-closed', () => app.quit());
 app.setName('Soube');
 app.on('ready', ready);
 
 /* --------------------------------- Ipc Main --------------------------------- */
 // Sending data from the EQ to the AudioContext
-ipcMain.on('equalizer-filter', (e, a) => {
-  mainWindow.webContents.send('get-equalizer-filter', a);
-});
+ipcMain.on('equalizer-filter', (e, a) => mainWindow.webContents.send('get-equalizer-filter', a));
 
 // Updating of the thumbar buttons
-ipcMain.on('thumb-bar-update', (e, a) => {
-  mainWindow.setThumbarButtons(thumbarButtons[a]);
-});
+ipcMain.on('thumb-bar-update', (e, a) => mainWindow.setThumbarButtons(thumbarButtons[a]));
 
 // Displays messages dialogs
 // types of messages: none, info, error, question or warning.
-ipcMain.on('display-msg', (e, a) => {
+ipcMain.on('display-msg', (e, a) =>
   dialog.showMessageBox({
     type: a.type,
     message: a.message,
     detail: a.detail,
     buttons: a.buttons
-  });
-});
+  })
+);
 
 // Reload the main windows
-ipcMain.on('update-browser', (e, a) => {
-  mainWindow.reload();
-});
+ipcMain.on('update-browser', (e, a) => mainWindow.reload());

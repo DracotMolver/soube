@@ -17,9 +17,7 @@ function getActualVersion(net, version, fn) {
 
   request.chunkedEncoding = true;
   request.on('response', response => {
-    response.on('data', chunk => {
-      data += chunk;
-    });
+    response.on('data', chunk => data += chunk);
     response.on('end', () => {
       const actualVersion = version.split('.');
       const newVersion = JSON.parse(data).tag_name.split('.');

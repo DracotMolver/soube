@@ -40,13 +40,13 @@ function onDragMove(fn) {
 
 function onDragEnd(fn) {
   $(document).on({
-    mouseup: () => {
-      _pos = pos
-      _db = db;
-      range = null;
-      y = db = pos = 0;
-      return fn(_pos, _db);
-    }
+    mouseup: () => (
+      _pos = pos,
+      _db = db,
+      range = null,
+      y = db = pos = 0,
+      fn(_pos, _db)
+    )
   });
 }
 

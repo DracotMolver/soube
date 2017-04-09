@@ -12,13 +12,18 @@ module.exports = (_ => {
   /* --------------------------------- Events --------------------------------- */
   const event_ = {
     element: null,
-    addClass: function(str) {
-      let className = this.element.className.split(' ');
+    addClass: function (str) {
+      const changeClassName = e => {
+          let className = e.className.split(' ');
 
-      if (className.indexOf(str) === -1) {
-        className.push(str);
-        this.element.className = className.join(' ');
-      }
+          if (className.indexOf(str) === -1) {
+            className.push(str);
+            e.className = className.join(' ');
+          }
+      };
+
+      if (this.element.length) this.element.forEach(v => changeClassName(v));
+      else changeClassName(this.element);
 
       return this;
     },
@@ -42,7 +47,7 @@ module.exports = (_ => {
     },
     on: function(fn) {
       // Select element is like an array because of the options elements inside
-      if (this.element.length !== undefined && this.element.nodeName !== 'SELECT') {
+      if (this.element.length && this.element.nodeName !== 'SELECT') {
         this.element.forEach(e => onFunction(e, fn));
       } else {
         onFunction(this.element, fn);
@@ -57,30 +62,21 @@ module.exports = (_ => {
         else if (/^\d+(\.+)\d+$/.test(d)) return parseFloat(d);
         else if (/^(\w|\s)+$/.test(d)) return d.toString();
       } else {
-        Object.keys(data).forEach(v => {
-          this.element.dataset[v] = data[v];
-        });
+        Object.keys(data).forEach(v => this.element.dataset[v] = data[v]);
       }
 
       return this;
     },
-    each: function(fn) {
-      this.element.forEach((v, i) => {
-        fn.length === 1 ? fn(v) : fn(v, i);
-      });
-
-      return this;
+    each: function (fn) {
+      return this.element.forEach((v, i) => fn.length === 1 ? fn(v) : fn(v, i)), this;
     },
-    css: function(str) {
-      let el = this.element;
-
-      if (el.length !== undefined) {
-        el.forEach(e => {
+    css: function (str) {
+      const cssChange = e => {
           if (e.style.cssText.indexOf(str)) e.style.cssText += `${str};`;
-        });
-      } else {
-        if (el.style.cssText.indexOf(str)) el.style.cssText += `${str};`;
       }
+
+      if (this.element.length) el.forEach(e => cssChange(e));
+      else cssChange(this.element);
 
       return this;
     },
@@ -107,8 +103,7 @@ module.exports = (_ => {
       return this;
     },
     insert: function (...a) {
-      a.forEach(v => { this.element.appendChild('element' in v ? v.element : v); });
-      return this;
+      return a.forEach(v => this.element.appendChild('element' in v ? v.element : v)), this;
     },
     val: function (v = null) {
       return v === null ? this.element.value : this.element.value = v, this;

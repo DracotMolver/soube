@@ -326,9 +326,7 @@ $('.arrow-updown').on({
   mousedown: function () {
     scrollAnimation($(this).data('direction'));
   },
-  mouseup: () => {
-    cancelAnimationFrame(interval);
-  }
+  mouseup: () => cancelAnimationFrame(interval)
 });
 
 // Choose an option to search by: (new feature)
@@ -363,6 +361,10 @@ $('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(
 //   }
 // });
 
+$('.close').on({
+  click: () => $('.parent-container-config').addClass('hide')
+})
+
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the searching bar
 ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
@@ -396,9 +398,7 @@ ipcRenderer.on('search-song', () => {
 });
 
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
-ipcRenderer.on('get-equalizer-filter', (e, a) => {
-  player.controls.setFilterVal(...a);
-});
+ipcRenderer.on('get-equalizer-filter', (e, a) => player.controls.setFilterVal(...a));
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', () => {
@@ -419,7 +419,7 @@ ipcRenderer.on('prev-song', () => {
 ipcRenderer.on('shuffle', player.controls.shuffle);
 
 // ThumbarButtons [Windows]
-ipcRenderer.on('thumbar-controls', (e, a) => { btnActions(a); });
+ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
 
 // Because the requestAnimationFrame is single thread in the window
 // We must save the actual time lapse when we minimized the Window
@@ -431,4 +431,4 @@ ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
 ipcRenderer.on('menu-add-folder', folders.loadFolder);
 
 // Display the equalizer
-ipcRenderer.on('menu-equalizer', equalizer.showEqualizer)
+ipcRenderer.on('menu-equalizer', equalizer.showEqualizer);

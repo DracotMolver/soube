@@ -50,12 +50,12 @@ function saveSongList(parentFolder = '') {
 
   // Show a loading
   // Read the content of the parent folder
-  PLAYER.addSongFolder(parentFolder,
+  songFolder.addSongFolder(parentFolder,
     () => { },
     (i, maxLength) => { // Iterator function
       $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
       $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
-      if (i === maxLength) PLAYER.updateSongList();
+      if (i === maxLength) songFolder.updateSongList();
     }
   );
 }
@@ -94,7 +94,7 @@ function loadFolder() {
       editFile('config', configFile);
       itemToRemove.remove();
       $('#remove-songs').addClass('hide');
-      PLAYER.removeSongFolder(folderToRemove);
+      songFolder.removeSongFolder(folderToRemove);
     }
   }).text(lang.config.removeSongBtn);
 }
