@@ -4,8 +4,18 @@
 */
 /* ------------------------ GENERAL ------------------------*/
 @font-face {
-  font-family: 'Hind';
-  src: url(../files/Hind-Regular.ttf)
+  font-family: 'Muli-Bold';
+  src: url(../files/Muli-Bold.ttf)
+}
+
+@font-face {
+  font-family: 'Muli-Light';
+  src: url(../files/Muli-Light.ttf)
+}
+
+@font-face {
+  font-family: 'Muli-Regular';
+  src: url(../files/Muli-Regular.ttf)
 }
 
 /**
@@ -23,12 +33,11 @@ h6,
 span,
 div,
 p {
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smooth: antialiased;
+  -webkit-font-smoothing: subpixel-antialiased;
   font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
   font-stretch: condensed;
-  font-family: 'Hind', sans-serif;
-  text-shadow: 0 0 1px rgba(0, 0, 0, 0.106);
+  font-family: 'Muli-Regular', sans-serif;
+  text-shadow: 0 0 0px rgba(0, 0, 0, .06);
   font-weight: normal;
   line-height: 1.35em;
   font-size: 100%;
@@ -82,12 +91,18 @@ a {
   --darkGreyColor: #979A9A;
   --darkPinkColor: #d81b60;
   --lightPinkColor: #f06292;
-  --whiteColor: #FBFCFC;
+  --whiteColor: #fff;
   --blackColor: #424949;
   --pinkColor: #e91e63
 }
 
 /* ------------------------ GENERALES ------------------------ */
+.warning {
+  margin-top: 1em;
+  font-size: .73em;
+  color: var(--darkPinkColor);
+}
+
 .border-bottom,
 .border-left,
 .border-right {
@@ -154,18 +169,56 @@ a {
   border: .1em solid rgba(245, 245, 245, .3);
 }
 
-.close {
+.title-container {
   padding-bottom: .6em;
   margin-bottom: .6em;
-  padding-top: .6em;
+  padding-top: .6em
+}
+
+.close {
+  height: 14px;
+  cursor: pointer;
+  float: right;
+  width: 14px
+}
+
+.close:hover:before,
+.close:hover:after {
+  background: var(--darkGreyColor);
+}
+
+.close:before,
+.close:after {
+  background: var(--blackColor);
+  height: 14px;
+  width: 2px;
+  right: 25px
+}
+
+.close:before {
+  transform: rotate(45deg)
+}
+
+.close:after {
+  transform: rotate(-45deg)
 }
 
 button {
+  transform-origin: center;
+  transform-style: preserve-3d;
   padding-right: .6em;
   padding-left: .6em;
   line-height: 1.9em;
+  perspective: 1000px;
+  transition: all .3s ease-in-out;
   background: var(--darkGreyColor);
   color: var(--whiteColor)
+}
+
+button:hover {
+  backface-visibility: hidden;
+  box-shadow: 0 2px 3px 1px rgba(0, 0, 0, 0.106);
+  zoom: 101%
 }
 
 /* ------------------------ SCROLLBAR ------------------------ */
@@ -183,7 +236,9 @@ button {
 .arrow::after,
 .arrow::before,
 .list-song-container::after,
-.tooltip::after {
+.tooltip::after,
+.close:before,
+.close:after {
   position: absolute;
   content: ''
 }
@@ -223,6 +278,7 @@ button {
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
 .btn-controls {
   text-align: center;
+  cursor: pointer;
   margin: .3em 0;
   height: 1.2em;
   float: left
@@ -298,10 +354,11 @@ button {
 
 #info-song {
   -webkit-user-select: none;
+  user-select: none
 }
 
 #song-title > h1 {
-  font-weight: 500;
+  font-family: 'Muli-Bold';
   font-size: 1.6em
 }
 
@@ -310,7 +367,6 @@ button {
 }
 
 #album > h3 {
-  font-weight: 300;
   font-size: 1em
 }
 
@@ -331,7 +387,7 @@ button {
 #time-start,
 #time-end,
 #artist > h2 {
-  font-weight: 400
+  font-family: 'Muli-Regular'
 }
 
 #song-title > h1,
@@ -370,13 +426,14 @@ button {
 .song-info {
   text-overflow: ellipsis;
   padding-left: .6em;
-  font-weight: 300;
+  font-family: 'Muli-Regular';
   line-height: 2em;
-  font-size: .906em;
+  font-size: .87em;
   overflow: hidden
 }
 
 .miscelaneo {
+  font-family: 'Muli-Light';
   margin-right: .6em;
   color: var(--darkGreyColor)
 }
@@ -420,7 +477,6 @@ button {
 
 #search,
 #search-result {
-  font-weight: 300;
   font-size: 1.6em;
   padding-bottom: .16em;
   padding-top: .16em
@@ -652,17 +708,18 @@ button {
   margin: 0
 }
 
+#path-list > ul > li {
+  padding-left: .6em;
+  line-height: 2em;
+  font-size: .8em;
+  color: var(--darkGreyColor);
+}
+
 #song-progress {
   margin-top: 1.45em;
   background: var(--pinkColor);
   height: 3px;
   width: 0
-}
-
-#folder-to-remove {
-  margin-top: 1em;
-  font-size: .8em;
-  color: var(--darkPinkColor);
 }
 
 /* ------------------------ ANIMACIONES ------------------------ */
