@@ -7,7 +7,11 @@
 const path = require('path');
 
 //---- electron ----
-const dialog = require('electron').remote.dialog;
+const {
+  ipcRenderer
+  // BrowserWindow,
+  // dialog
+} = require('electron');
 
 //---- own ----
 const {
@@ -208,6 +212,8 @@ function formatDecimals(decimal) {
   return decimal > 9 ? `${decimal}` : `0${decimal}`;
 }
 
+// This function recive the buffer of the song to be played
+// Also start the song
 function setAudioBuffer(buffer) {
   source = audioContext.createBufferSource();
   source.onended = stopTimer;
@@ -219,6 +225,9 @@ function setAudioBuffer(buffer) {
   startTimer();
   isMovingForward ? source.start(0, forward) : source.start(0);
   lastCurrentTime = audioContext.currentTime;
+
+  // Set the name of the song in the top bar
+  ipcRenderer.send('update-title', `${file.title.replace('&nbsp;', ' ')} - ${file.artist.replace('&nbsp;', ' ')} - Soube`);
 }
 
 function initSong() {
@@ -233,7 +242,7 @@ function initSong() {
       audioContext.decodeAudioData(xhtr.response).then(buffer => {
         fnc(buffer);
       }, reason => {
-        dialog.showErrorBox('Error [002]', `${lang.alerts.playSong}\n${reason}`);
+        // dialog.showErrorBox('Error [001]', `${lang.alerts.playSong}\n${reason}`);
         fnc(false);
       });
     }

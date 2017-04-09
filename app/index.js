@@ -62,6 +62,7 @@ function ready() {
 
   // Player
   mainWindow = new BrowserWindow({
+    title: 'Soube',
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
@@ -115,7 +116,6 @@ function ready() {
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
 app.on('window-all-closed', () => app.quit());
-app.setName('Soube');
 app.on('ready', ready);
 
 /* --------------------------------- Ipc Main --------------------------------- */
@@ -138,3 +138,6 @@ ipcMain.on('display-msg', (e, a) =>
 
 // Reload the main windows
 ipcMain.on('update-browser', (e, a) => mainWindow.reload());
+
+// Change the title of the window
+ipcMain.on('update-title', (e, a) => mainWindow.setTitle(a));
