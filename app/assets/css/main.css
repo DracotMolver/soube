@@ -161,12 +161,20 @@ a {
 
 .container-config {
   padding: 0 1em 1em;
-  border-radius: 5px;
   box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
   background: var(--whiteColor);
   position: relative;
+  border-radius: 50%;
+  transform-origin: center;
+  transform: scale(0);
+  overflow: hidden;
   margin: 0 auto;
-  border: .1em solid rgba(245, 245, 245, .3);
+  border: .1em solid rgba(245, 245, 245, .3)
+}
+
+.container-config-anim {
+  animation: showModal 1s cubic-bezier(.78,.03,.59,.99) forwards,
+             popups .5s cubic-bezier(1,.02,.66,1.011) forwards;
 }
 
 .title-container {
@@ -204,6 +212,8 @@ a {
 }
 
 button {
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px 1px rgba(33, 33, 33, 0.14);
   transform-origin: center;
   transform-style: preserve-3d;
   padding-right: .6em;
@@ -217,8 +227,8 @@ button {
 
 button:hover {
   backface-visibility: hidden;
-  box-shadow: 0 2px 3px 1px rgba(0, 0, 0, 0.106);
-  zoom: 101%
+  box-shadow: 0 3px 5px 1px rgba(33, 33, 33, 0.18);
+  transform: scale(1.04)
 }
 
 /* ------------------------ SCROLLBAR ------------------------ */
@@ -778,6 +788,27 @@ button:hover {
   100% {
     transform: rotate(-40deg);
     opacity: 1
+  }
+}
+
+@keyframes showModal {
+  60% {
+     transform: scale(1.16)
+  }
+  70% {
+     transform: scale(1.1)
+  }
+  80% {
+     transform: scale(1.05)
+  }
+  100% {
+     transform: scale(1)
+  }
+}
+
+@keyframes popups {
+  100% {
+    border-radius: 5px
   }
 }
 
