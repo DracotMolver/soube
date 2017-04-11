@@ -362,7 +362,10 @@ $('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(
 // });
 
 $('.close').on({
-  click: () => $('.parent-container-config').addClass('hide')
+  click: () => {
+    $($('.grid-container').get(0)).rmAttr('style');
+    $('.parent-container-config').addClass('hide');
+  }
 })
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/

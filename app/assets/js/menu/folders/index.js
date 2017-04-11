@@ -62,7 +62,7 @@ function saveSongList(parentFolder = '') {
 
 function loadFolder() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
-  $('#menu-add-songs').removeClass('hide');
+  $('#menu-add-songs').removeClass('hide').child(0).addClass('container-config-anim');
   $('#_addsongfolder').text(lang.config.addSongFolder);
 
   configFile.musicFolder.forEach(v => {

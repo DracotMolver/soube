@@ -249,7 +249,7 @@ function initSong() {
     xhtr.send(null);
   };
 
-  const setSong = (buffer) => {
+  const setSong = buffer => {
     // The buffer gives us the song's duration.
     // The duration is in seconds, therefore we need to convert it to minutes
     time = ((duration = buffer.duration) / seconds_u).toString();
