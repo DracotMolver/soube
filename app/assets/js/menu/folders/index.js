@@ -24,8 +24,8 @@ require('./../../dom');
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
 let folderToRemove = '';
+let isLoadingSongs = false;
 let itemToRemove;
-let isLoadingSongs = false
 
 /* --------------------------------- Functions --------------------------------- */
 function removeItem() {
@@ -43,9 +43,7 @@ function saveSongList(parentFolder = '') {
   editFile('config', configFile);
 
   $('#path-list-container').insert(
-    $('li').clone(true).text(parentFolder).on({
-      click: removeItem
-    })
+    $('li').clone(true).text(parentFolder).on({ click: removeItem })
   );
 
   // Show a loading
@@ -55,6 +53,7 @@ function saveSongList(parentFolder = '') {
     (i, maxLength) => { // Iterator function
       $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
       $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
+
       if (i === maxLength) songFolder.updateSongList();
     }
   );
@@ -62,9 +61,13 @@ function saveSongList(parentFolder = '') {
 
 function loadFolder() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
-  $('#menu-add-songs').removeClass('hide').child(0).addClass('container-config-anim');
   $('#_addsongfolder').text(lang.config.addSongFolder);
+  $($('.parent-container-config').get(0))
+    .removeClass('hide')
+    .child(0)
+    .addClass('container-config-anim');
 
+  $('#path-list-container').empty();
   configFile.musicFolder.forEach(v => {
     $('#path-list-container').insert(
       $('li').clone(true).text(v).on({
@@ -92,9 +95,11 @@ function loadFolder() {
     click: () => {
       configFile.musicFolder = configFile.musicFolder.filter(v => folderToRemove !== v);
       editFile('config', configFile);
+ 
       itemToRemove.remove();
-      $('#remove-songs').addClass('hide');
       songFolder.removeSongFolder(folderToRemove);
+
+      $('#remove-songs').addClass('hide');
     }
   }).text(lang.config.removeSongBtn);
 }

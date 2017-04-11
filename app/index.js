@@ -40,9 +40,9 @@ function closeRegisteredKeys() {
 }
 
 function registreKeys() {
-  Object.keys(shortKeys).forEach(v => {
-    globalShortcut.register(v, () => mainWindow.webContents.send(shortKeys[v]));
-  });
+  Object.keys(shortKeys).forEach(v =>
+    globalShortcut.register(v, () => mainWindow.webContents.send(shortKeys[v]))
+  );
 }
 
 // Make the icon of the app

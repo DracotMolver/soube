@@ -19,9 +19,6 @@ function getActualVersion(net, version, fn) {
   request.on('response', response => {
     response.on('data', chunk => data += chunk);
     response.on('end', () => {
-      const actualVersion = version.split('.');
-      const newVersion = JSON.parse(data).tag_name.split('.');
-
       const diff = (b, c) => {
         let val = false;
         for (var i = 0, s = c.length; i < s; i++) {
@@ -33,7 +30,7 @@ function getActualVersion(net, version, fn) {
 
         return val;
       };
-      fn(diff(actualVersion, newVersion) ? 'major' : 'same');
+      fn(diff(version.split('.'), JSON.parse(data).tag_name.split('.')) ? 'major' : 'same');
     });
   });
 

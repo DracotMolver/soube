@@ -14,11 +14,11 @@ require('./../../dom');
 //---- normals ----
 let lang = langFile[configFile.lang];
 let range = null;
-let y = 0;
-let db = 0;
+let _pos = 0;
 let pos = 0;
 let _db = 0;
-let _pos = 0;
+let db = 0;
+let y = 0;
 
 function onDragMove(fn) {
   $(document).on({
@@ -56,10 +56,12 @@ function onDragStart(el) {
 
 function showEqualizer() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
-  $('#menu-equalizer').removeClass('hide');
   $('#_equalizerSetting').text(lang.config.equalizerSetting);
+  $($('.parent-container-config').get(1))
+    .removeClass('hide')
+    .child(0)
+    .addClass('container-config-anim');
 
-  
 // EQ settings options
   Object.keys(configFile.equalizer).forEach(v => {
     $('#eq-buttons').insert(

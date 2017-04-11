@@ -10,16 +10,16 @@ const {
 } = require('electron');
 
 //---- Own ----
-const player = require('./player');
-const version = require('./version');
-const config = require('./config');
-const folders = require('./menu/folders');
 const equalizer = require('./menu/equalizer');
+const version = require('./version');
+const folders = require('./menu/folders');
+const player = require('./player');
+const config = require('./config');
 
 const {
   configFile,
-  langFile,
-  listSongs
+  listSongs,
+  langFile
 } = config.init();
 require('./dom');
 
@@ -45,15 +45,15 @@ let positionElement = null; // Where is the song that you clicked on.
 //---- searching input ----
 let isSearchDisplayed = false; // Checks if it was launched the searching bar
 let totalResults = 0; // Amount of songs filtered
-let searchValue = ''; // The input text to search for
 // let fragmentSlide = null; // DocumentFragment() slide container
 // let countSlide = 0;
-let countItem = 0;
 let itemSlide = [];
-let fragmentItems = null; // DocumentFragment() button container
-let slide = 0; // Amount of slides to make
-let regex = null; // The name of the song to search for as a regular expression
 let list = []; // Filtered songs.
+let fragmentItems = null; // DocumentFragment() button container
+let regex = null; // The name of the song to search for as a regular expression
+let countItem = 0;
+let slide = 0; // Amount of slides to make
+let searchValue = ''; // The input text to search for
 let searchBy = 'title';
 // let newList = []; // Old filters songs
 // let oldSearchedValue = ''; // The prev song that is being searching for
@@ -64,12 +64,12 @@ function getActualVersion() {
   version(remote.net, remote.app.getVersion(), response => {
     if (response === 'major') {
       $('#pop-up-container')
-      .removeClass('hide')
-      .child(0)
-      .addClass('pop-up-anim')
-      .text(
-        `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
-      );
+        .removeClass('hide')
+        .child(0)
+        .addClass('pop-up-anim')
+        .text(
+          `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
+        );
 
       $(':a').on({
         click: function (e) {
@@ -80,9 +80,9 @@ function getActualVersion() {
 
       let tout = setTimeout(() => {
         $('#pop-up-container')
-        .addClass('hide')
-        .child(0)
-        .removeClass('pop-up-anim');
+          .addClass('hide')
+          .child(0)
+          .removeClass('pop-up-anim');
 
         clearTimeout(tout);
       }, lapsePopup);
@@ -96,12 +96,11 @@ function loadSongs() {
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
   getActualVersion();
+
   if (Object.keys(listSongs).length === 0) {
     $('#list-songs').text(
       `<div id="init-message">${lang.alerts.welcome}</div>`
-    ).on({
-      click: folders.loadFolder
-    });
+    ).on({ click: folders.loadFolder });
   } else {
     // Render the list of songs
     player.createView(player);
@@ -116,6 +115,7 @@ function hideSearchInputData() {
   $('#search-wrapper').removeClass('search-wrapper-anim');
   $($('.grid-container').get(0)).rmAttr('style');
   $('#search').removeClass('input-search-anim');
+
   isSearchDisplayed = false;
 }
 
@@ -153,7 +153,9 @@ function makeItemSlide() {
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
   // Clean if there's no coincidence
-  $('#wrapper-results').removeClass('no-searching-found').empty();
+  $('#wrapper-results')
+    .removeClass('no-searching-found')
+    .empty();
   $('#pagination').addClass('hide');
 
   searchValue = this.value.trim();
@@ -186,11 +188,14 @@ function searchInputData(e) {
     // Show possibles results
     totalResults = list.length - 1;
     slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
+
     // Add the pagination if there's more than one slide
     slide > 1 ?
-      $('#pagination').removeClass('hide').child(1).addClass('arrow-open-anim') :
-      $('#pagination').addClass('hide');
-    
+      $('#pagination')
+        .removeClass('hide')
+        .child(1)
+        .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
+
     // fragmentSlide = fragmentItems = document.createDocumentFragment();
     // Make an slide with all the filtered coincidences
     // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
@@ -234,8 +239,8 @@ function searchInputData(e) {
     } else {
       // Clean if there's no coincidence
       $('#wrapper-results')
-      .text(lang.alerts.searchingResults)
-      .addClass('no-searching-found');
+        .text(lang.alerts.searchingResults)
+        .addClass('no-searching-found');
       $('#pagination').addClass('hide');
     }
   }
@@ -260,6 +265,7 @@ function searchInputData(e) {
 // //   });
 // }
 
+// actons over the play, netxt, prev and shuffle buttons
 function btnActions(action) {
   switch (action) {
     case 'play-pause':
@@ -275,6 +281,7 @@ function btnActions(action) {
   }
 }
 
+// Add animations and the functions to the play, next, prev and shuffle buttons
 function clickBtnControls() {
   $(this).addClass('click-controls')
   .on({
@@ -295,6 +302,7 @@ function clickBtnControls() {
   }
 }
 
+// Will scroll the list of songs using the arrows
 function scrollAnimation(direction) {
   const animation = () => {
     $('#list-songs').get().scrollTop +=
@@ -312,10 +320,12 @@ $('#song-title').on({
     if (this.children[0].textContent.trim() !== '') {
       clickedElement = $('#list-songs').get();
       positionElement = $(`#${$(this).data('position')}`).get();
+
       const element = clickedElement.scrollTop;
       const top = positionElement.offsetTop;
       const distance = top - (Math.round($('#top-nav').get().offsetHeight) + 100);
-      clickedElement.scrollTop += element !== distance ? distance - element : - (distance - element);
+
+      clickedElement.scrollTop += element !== distance ? distance - element : -(distance - element);
     }
   }
 });
@@ -364,7 +374,9 @@ $('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(
 $('.close').on({
   click: () => {
     $($('.grid-container').get(0)).rmAttr('style');
-    $('.parent-container-config').addClass('hide');
+    $('.parent-container-config')
+      .addClass('hide')
+      .each(v => $(v).child(0).removeClass('container-config-anim'));
   }
 })
 
@@ -379,8 +391,13 @@ ipcRenderer.on('search-song', () => {
     $('#search-wrapper').addClass('search-wrapper-anim');
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
     $('#wrapper-results').empty();
-    $('#search').addClass('search-anim')
-    .on({ keyup: searchInputData }).val('').get().focus();
+    $('#search')
+      .addClass('search-anim')
+      .on({ keyup: searchInputData })
+      .val('')
+      .get()
+      .focus();
+
     isSearchDisplayed = true;
     // countSlide = 0;
 

@@ -26,15 +26,16 @@ require('./../../dom');
 //---- normals ----
 let poolOfSongs = {}; // Will keep all the AudioBuffers
 let lang = langFile[configFile.lang];
+
 let isMovingForward = false; // if is using the progress bar of the song
 let isNextAble = false; // if the next song can be played (needed because AudioNode.stop() works with Promise)
 let isSongPlaying = false; // It's the AudioNode playing
 let isplayedAtPosition = false // If the song is clicked on from the list
-let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
 let prevSongsToPlay = []; // Will keep all the filename of old songs
+let filter = []; // Array for createBiquadFilter to use the Frequencies
 let file = ''; // Will keep the data song info
 let oldFile = ''; // Will keep the data of the song played
-let filter = []; // Array for createBiquadFilter to use the Frequencies
+let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
 let duration = 0; // max duration of the song
 let source = null; // AudioNode object
 
@@ -45,8 +46,8 @@ let millisecond = 0;
 let time = 0;
 let minute = 0;
 let second = 0;
-let interval = null;
 let lastCurrentTime = 0;
+let interval = null;
 
 // Notification
 let notification = null;
@@ -90,6 +91,7 @@ function shuffle() {
   file = '';
   configFile.shuffle = !configFile.shuffle;
   $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292');
+
   editFile('config', configFile);
 }
 
@@ -101,9 +103,7 @@ function animPlayAndPause(animName) {
     { from: anim.to[i], to: anim.from[i] };
   };
 
-  $('.anim-play').each((v, i) => {
-    $(v).attr(animAttr(i)).get().beginElement();
-  });
+  $('.anim-play').each((v, i) => $(v).attr(animAttr(i)).get().beginElement());
 }
 
 function playSongAtPosition(pos = -1) {
@@ -117,6 +117,7 @@ function playSongAtPosition(pos = -1) {
   file = '';
   isplayedAtPosition = true;
   position = pos;
+
   initSong();
 }
 
@@ -129,12 +130,14 @@ function playSong() {
     audioContext.suspend().then(() => {
       isSongPlaying = false;
     });
+
     cancelAnimationFrame(interval);
     animPlayAndPause('pause');
 
     return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
+
     startTimer();
     audioContext.resume();
     animPlayAndPause('play');
@@ -165,10 +168,13 @@ function startTimer() {
 function stopTimer() {
   if (!isMovingForward) {
     $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
+
     isSongPlaying = false;
-    cancelAnimationFrame(interval);
-    millisecond = second = minute = percent = lapse = 0;
     isNextAble = true;
+    millisecond = second = minute = percent = lapse = 0;
+
+    cancelAnimationFrame(interval);
+
     if (isNextAble && !isMovingForward && !isplayedAtPosition) initSong();
   } else if (isMovingForward) {
 
@@ -203,8 +209,10 @@ function setBufferInPool(filePath, buffer) {
 
 function getFile() {
   return listSongs[
-  isplayedAtPosition ? position :
-    (configFile.shuffle ? Math.floor(Math.random() * listSongs.length) : (position === listSongs.length - 1 ? position = 0 : ++position)
+    isplayedAtPosition ? position :
+      (configFile.shuffle ?
+        Math.floor(Math.random() * listSongs.length) :
+          (position === listSongs.length - 1 ? position = 0 : ++position)
   )];
 }
 
@@ -363,6 +371,7 @@ filters();
 
 function moveForward(event, element) {
   isMovingForward = true;
+
   cancelAnimationFrame(interval);
 
   forward = duration * event.offsetX / element.clientWidth;
@@ -384,7 +393,8 @@ function saveCurrentTime() {
 
 function updateCurrentTime() {
   let totalTime = Math.floor(audioContext.currentTime - lastCurrentTime);
-  if (totalTime > 60){
+
+  if (totalTime > 60) {
     totalTime = (totalTime / 60).toString();
     minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
     second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * seconds_u);

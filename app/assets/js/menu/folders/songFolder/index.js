@@ -4,9 +4,9 @@
  */
 /* --------------------------------- Modules --------------------------------- */
 //---- nodejs ----
-const fs = require('fs');
 const exec = require('child_process').exec;
 const path = require('path');
+const fs = require('fs');
 
 //---- electron ----
 const ipcRenderer = require('electron').ipcRenderer;
@@ -17,8 +17,8 @@ const musicmetadata = require('musicmetadata');
 //---- own ----
 let {
   configFile,
-  langFile,
   listSongs,
+  langFile,
   editFile
 } = require('./../../../config').init();
 
@@ -34,8 +34,8 @@ let files = [];
 function findFiles(dir) {
   let allFiles = [];
   let tmpFolders = [];
-  let foldersSize = 0;
   let folders = [];
+  let foldersSize = 0;
   let baseFolder = '';
 
   fs.readdirSync(dir).forEach(files => {
@@ -160,6 +160,6 @@ function readParentFolder(folder, fn) {
 
 module.exports = Object.freeze({
   removeSongFolder,
-  addSongFolder,
-  updateSongList
+  updateSongList,
+  addSongFolder
 });
