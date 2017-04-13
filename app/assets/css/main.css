@@ -47,12 +47,6 @@ p {
   color:  var(--blackColor)
 }
 
-input,
-button {
-  border: none;
-  cursor: pointer
-}
-
 input:focus,
 button:focus {
   outline-width: 0
@@ -77,7 +71,9 @@ html {
 
 img,
 svg,
-a {
+input,
+button {
+  border: none;
   cursor: pointer
 }
 
@@ -173,7 +169,7 @@ a {
 }
 
 .container-config-anim {
-  animation: showModal 1s cubic-bezier(.78,.03,.59,.99) forwards,
+  animation: showModal .8s cubic-bezier(.78,.03,.59,.99) forwards,
              popups .5s cubic-bezier(1,.02,.66,1.011) forwards;
 }
 
@@ -211,15 +207,25 @@ a {
   transform: rotate(-45deg)
 }
 
-button {
+button,
+select {
   box-sizing: border-box;
-  box-shadow: 0 1px 3px 1px rgba(33, 33, 33, 0.14);
+  box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .14);
+  padding-right: .6em;
+  padding-left: .6em
+}
+
+select {
+  border: 1px solid rgba(0,0,0,.14);
+  cursor: pointer;
+  height: 2.15em
+}
+
+button {
   transform-origin: center;
   transform-style: preserve-3d;
-  padding-right: .6em;
-  padding-left: .6em;
-  line-height: 1.9em;
   perspective: 1000px;
+  line-height: 2em;
   transition: all .3s ease-in-out;
   background: var(--darkGreyColor);
   color: var(--whiteColor)
@@ -248,7 +254,9 @@ button:hover {
 .list-song-container::after,
 .tooltip::after,
 .close:before,
-.close:after {
+.close:after,
+.hz::before,
+.range-circle::before{
   position: absolute;
   content: ''
 }
@@ -424,12 +432,12 @@ button:hover {
 }
 
 .list-song-container:nth-child(odd),
-.list-song-container > li:nth-child(odd){
+#path-list-container > li:nth-child(odd){
   background: var(--lightGreyColor)
 }
 
 .list-song-container:nth-child(even),
-.list-song-container > li:nth-child(odd){
+#path-list-container > li:nth-child(even){
   background: var(--whiteColor)
 }
 
@@ -686,19 +694,112 @@ button:hover {
 
 /* ------------------------ EQUALIZER ------------------------ */
 #container-equalizer {
-  width: 900px
+  width: 982px
 }
 
-
-#eq-buttons {
-  background: var(--whiteColor)
+.range-container {
+  border-radius: 3px; 
+  background: var(--darkGreyColor);
+  margin-right: 1.03515em;
+  margin-left: 1.03515em;
+  padding: 0;
+  opacity: .5;
+  height: 18em;
+  width: .6em;
+  float: left
 }
 
-#eq-buttons {
-  border: 1px solid rgba(0,0,0,.14);
-  border-radius: 4px;
-  margin: 1em 0 .5em 1em
+.range-container:hover{
+  opacity: 1
 }
+
+.range-circle {
+  background: rgba(233,30,99, .14);
+  border-radius: 50%;
+  position: relative;
+  border: .1em solid var(--lightPinkColor);
+  cursor: pointer;
+  height: 1.8em;
+  width: 1.8em;
+  left: -10px;
+  top: 130px;
+  box-sizing: border-box
+}
+
+.range-circle::before {
+  border-radius: 50%;
+  box-shadow: 0 1px 2px 1px rgba(0,0,0,.14);
+  background: var(--darkPinkColor);
+  border: .1em solid var(--pinkColor);
+  height: .7em;
+  width: .7em;
+  left: 7px;
+  top: 7px
+}
+
+#equalizer-container {
+  margin-top: 1em;
+  height: 100%;
+  width: 100%;
+  float: left
+}
+
+#equalizer-container ul {
+  padding: 0;
+  margin: .6em .2em;
+  width: 100%;
+  float: left
+}
+
+#equalizer-container ul > li {
+  text-align: center;
+  font-size: .86em;
+  display: inline-block;
+  width: 2.8em
+}
+
+.hz {
+  padding-right: .5em;
+  padding-left: .5em;
+  background: var(--whiteColor);
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  width: 32px
+}
+
+.hz:first-child {
+  margin-right: 14.5em;
+  margin-left: 14.5em
+}
+
+.hz:last-child {
+  margin-right: 13em;
+  margin-left: 13em
+}
+
+.hz::before {
+  background: var(--lightGreyColor);
+  z-index: -1;
+  height: 2px;
+  top: 11px
+}
+
+.hz:first-child::before {
+  width: 31em;
+  left: -14em;
+}
+
+.hz:last-child::before {
+  width: 27.4em;
+  left: -12.2em
+}
+
+/*#_neweq[disabled]{
+  background: var(--whiteColor);
+  color: #d4d4d4
+}*/
+
 
 /* ------------------------ ADD SONGS ------------------------ */
 #container-add-songs{
