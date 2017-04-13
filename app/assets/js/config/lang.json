@@ -13,7 +13,8 @@
             "loadingSongFolder": "Cargando canciones ... ",
             "removingSongFolder": "Aviso!, Se va a remover la carpeta ",
             "legal": "Términos legales",
-            "newEQ": "Nuevo",
+            "newEQ": "Agregar",
+            "addNewEQSetting": "Agregar other...",
             "addSongBtn": "Agregar carpeta",
             "removeSongBtn": "Borrar carpeta"
         },
@@ -46,7 +47,8 @@
             "loadingSongFolder": "Loading songs ... ",
             "removingSongFolder": "Warning!, It's going to remove the folder ",
             "legal": "Legal terms",
-            "newEQ": "New",
+            "newEQ": "Add",
+            "addNewEQSetting": "Add other...",
             "addSongBtn": "Add folder",
             "removeSongBtn": "Remove folder"
         },
