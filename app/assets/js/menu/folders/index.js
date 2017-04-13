@@ -105,6 +105,13 @@ function loadFolder() {
     .addClass('container-config-anim');
 }
 
+function close() {
+  folderToRemove = '';
+  isLoadingSongs = false;
+  itemToRemove = null;
+}
+
 module.exports = Object.freeze({
-  loadFolder
+  loadFolder,
+  close
 });
