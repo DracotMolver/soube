@@ -55,6 +55,10 @@ module.exports = (_ => {
 
       return this;
     },
+    rmEvent: function (...str) {
+      str.forEach(s => this.element[`on${s.toLowerCase()}`] = null)
+      return this;
+    },
     data: function(data = null) {
       if (typeof data === 'string') {
         let d = this.element.dataset[data];
@@ -114,9 +118,14 @@ module.exports = (_ => {
   };
 
   /* --------------------------------- Functions --------------------------------- */
-  function onFunction (el, fn) {
-    Object.keys(fn).forEach(v => el.addEventListener(v.toLowerCase(), fn[v]));
+   function onFunction (el, fn) {
+    Object.keys(fn).forEach(v => {
+      /animation/.test(v) ?
+        el.addEventListener(v.toLowerCase(), fn[v]) :
+        el[`on${v.toLowerCase()}`] = fn[v];
+    })
   }
+
 
   function saveCreatedElement(name) {
     if (!createdElements[name]) createdElements[name] = document.createElement(name);

@@ -25,12 +25,14 @@ const url = require('url');
 // let configWindow = null;
 let mainWindow = null;
 const shortKeys = {
-  'CommandOrControl+F': 'search-song', // Input search
-  'Esc': 'close-search-song', // Cerrar input search
-  'CommandOrControl+Up': 'play-and-pause-song', // Play & Pause
-  'CommandOrControl+Right': 'next-song', // Next
-  'CommandOrControl+Left': 'prev-song', // Prev
-  'CommandOrControl+Down': 'shuffle' // Shuffle
+  'CommandOrControl+F': 'search-song',
+  'Esc': 'close-search-song',
+  'CommandOrControl+Up': 'play-and-pause-song',
+  'CommandOrControl+Right': 'next-song',
+  'CommandOrControl+Left': 'prev-song',
+  'CommandOrControl+Down': 'shuffle',
+  'CommandOrControl+E': 'menu-equalizer',
+  'CommandOrControl+N': 'menu-add-folder'
 };
 let thumbarButtons = {};
 

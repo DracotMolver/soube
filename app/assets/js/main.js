@@ -378,6 +378,10 @@ $('.close').on({
       .addClass('hide')
       .each(v => $(v).child(0).removeClass('container-config-anim'));
 
+    // Clean all the used variables by the config panels
+    folders.close();
+    equalizer.close();
+
     // Remove the EventListener when the EQ pannel is close
     // This is because the event to drag and move the circules
     // Is attached to the document so, before closing the EQ pannel

@@ -76,34 +76,54 @@ function showEqualizer() {
   // Set the EQ choosen config
   // let newEQHrz = 
   eqHrz = configFile.equalizer[configFile.equalizerConfig];
-  $('.range-circle').each(
-    (v, i) => $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`)
-  ).on({
+  $('.range-circle')
+    // .each(
+    // (v, i) => $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`)
+  // )
+  .on({
     mousedown: function () {
       pos = $((range = this)).data('position');
     },
   });
 
-  $(document).on({
-  //   mouseup: () => {
-  //     console.log(pos, db, range)
-  //   },
+  $('.range-container').on({
     mousemove: e => {
       if (range !== null) {
-        y = parseInt(window.getComputedStyle(range).getPropertyValue('top'));
-        db = (e.clientY + range.offsetTop) + y;
-
-        if (db > 0 && db < 261) $(range).css(`top:${db}px`);
-  //       // console.log($(range).data('position'), db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0);
-  //       // return fn([
-  //         // $(range).data('position'),
-  //         // db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0
-  //       // ]);
+        // if (e.movementY <= -1) db++;
+        // else if (e.movementY >= 1) db--;
+        db = e.screenY - range.offsetTop;
+        console.log(db)
+        // console.log(e.screenY - (range.offsetTop - (range.clientHeight / 2)))
+        // $(range).css(`margin-top:${db}px`);
+        // y = e.offsetY / 10;
+        // if (y >= 0 && y <= 10) console.log('up');
+        // else if (y >= 1 && y <= 24) console.log('down')
       }
     }
   });
+  // $(document).on({
+  // //   mouseup: () => {
+  // //     console.log(pos, db, range)
+  // //   },
+  //   mousemove: e => {
+  //       // if (db > 0 && db < 261)
+  //       // $(range).css(`top:${db}px`);
+  // //       // console.log($(range).data('position'), db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0);
+  // //       // return fn([
+  // //         // $(range).data('position'),
+  // //         // db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0
+  // //       // ]);
+  //     }
+  //   }
+  // });
+}
+
+function close() {
+  range = null;
+  eqHrz = _pos = pos = _db = db = y = 0;
 }
 
 module.exports = {
-  showEqualizer
+  showEqualizer,
+  close
 };
