@@ -37,7 +37,6 @@
 //   $('#_titleconfig').text(lang.config.titleConfig);
 //   $('#_equalizersetting').text(lang.config.equalizerSetting);
 //   $('#_legal').text(lang.config.legal);
-//   $('#_neweq').text(lang.config.newEQ);
 // })();
 
 // // Animation of the panel when select an option
@@ -73,7 +72,6 @@
 
 // // Animation over the buttons in the EQ panel
 // function onEqualizerPanel(e) {
-//   animConfigPanel(this, lang.config.equalizerSetting);
 
 //   EQ.onDragMove(data => {
 //       ipcRenderer.send('equalizer-filter', data);
@@ -83,31 +81,10 @@
 //     newEQHrz[pos] = db;
 //   });
 
-//   // Set the EQ config choosen
-//   newEQHrz = eqHrz = configFile.equalizer[configFile.equalizerConfig];
-//   $('.range-circle').each((v, i) => {
-//     $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
-//   }).on({
-//     mousedown: function () {
-//       EQ.onDragStart(this);
-//     }
-//   });
+
 // }
 
-// // Options to config the EQ
-// function setEQ () {
-//   configFile.equalizerConfig = this.value;
-//   editFile('config', configFile);
 
-//   eqHrz = configFile.equalizer[configFile.equalizerConfig];
-//   $('.range-circle').each((v, i) => {
-//     $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
-
-//     ipcRenderer.send('equalizer-filter', [i,
-//       eqHrz[i] !== 0 ? parseFloat((eqHrz[i] < 130 ? 121 - eqHrz[i] : -eqHrz[i] + 140) / 10) : 0
-//     ]);
-//   });
-// }
 
 // /** --------------------------------------- Events --------------------------------------- **/
 // // Refresh the window
