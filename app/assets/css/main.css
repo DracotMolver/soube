@@ -148,7 +148,7 @@ button {
 }
 
 .parent-container-config {
-  padding-top: 100px;
+  padding-top: 62px;
   position: absolute;
   z-index: 3;
   height: 100%;
@@ -704,7 +704,7 @@ button:hover {
   margin-left: 1.03515em;
   padding: 0;
   opacity: .5;
-  height: 18em;
+  height: 289px;
   width: .6em;
   float: left
 }
@@ -714,16 +714,15 @@ button:hover {
 }
 
 .range-circle {
-  background: rgba(233,30,99, .14);
   border-radius: 50%;
+  background: rgba(233,30,99, .14);
+  margin-top: 120px;
   position: relative;
   border: .1em solid var(--lightPinkColor);
   cursor: pointer;
   height: 1.8em;
   width: 1.8em;
   left: -10px;
-  top: 130px;
-  box-sizing: border-box
 }
 
 .range-circle::before {
@@ -739,7 +738,6 @@ button:hover {
 
 #equalizer-container {
   margin-top: 1em;
-  height: 100%;
   width: 100%;
   float: left
 }
