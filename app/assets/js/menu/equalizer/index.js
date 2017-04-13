@@ -14,62 +14,94 @@ require('./../../dom');
 //---- normals ----
 let lang = langFile[configFile.lang];
 let range = null;
+let eqHrz = 0;
 let _pos = 0;
 let pos = 0;
 let _db = 0;
 let db = 0;
 let y = 0;
 
-function onDragMove(fn) {
-  $(document).on({
-    mousemove: e => {
-      if (range !== null) {
-        y = parseInt(window.getComputedStyle(range).getPropertyValue('top'));
-        db = (e.clientY - range.offsetTop) + y;
+/* --------------------------------- Functions --------------------------------- */
+// Options to config the EQ
+function setEQ () {
+  configFile.equalizerConfig = this.value;
+  editFile('config', configFile);
 
-        if (db > 0 && db < 261) $(range).css(`top:${db}px`);
+  eqHrz = configFile.equalizer[configFile.equalizerConfig];
+  $('.range-circle').each((v, i) => {
+    $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
 
-        return fn([
-          $(range).data('position'),
-          db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0
-        ]);
-      }
-    }
-  });
-};
-
-function onDragEnd(fn) {
-  $(document).on({
-    mouseup: () => (
-      _pos = pos,
-      _db = db,
-      range = null,
-      y = db = pos = 0,
-      fn(_pos, _db)
-    )
+    ipcRenderer.send('equalizer-filter', [i,
+      eqHrz[i] !== 0 ? parseFloat((eqHrz[i] < 130 ? 121 - eqHrz[i] : -eqHrz[i] + 140) / 10) : 0
+    ]);
   });
 }
-
-function onDragStart(el) {
-  pos = $((range = el)).data('position');
-};
 
 function showEqualizer() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
   $('#_equalizerSetting').text(lang.config.equalizerSetting);
+  // $('#_neweq').text(lang.config.newEQ);
+
+  // EQ select settings options
+  const fragment = document.createDocumentFragment();
+  Object.keys(configFile.equalizer).forEach(v => {
+    fragment.appendChild(
+      $('option')
+        .clone(true)
+        .val(v)
+        .text(v)
+        .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected: 'selected' } : '')
+        .get()
+    )
+  });
+
+  // Option to add a new EQ  
+  fragment.appendChild(
+    $('option')
+      .clone(true)
+      .val('new')
+      .text(lang.config.addNewEQSetting)
+      .get()
+  );
+
+  $('#eq-buttons')
+    .insert(fragment)
+    .on({ change: setEQ });
+
   $($('.parent-container-config').get(1))
     .removeClass('hide')
     .child(0)
     .addClass('container-config-anim');
 
-// EQ settings options
-  Object.keys(configFile.equalizer).forEach(v => {
-    $('#eq-buttons').insert(
-      $('option').clone(true).val(v).text(v)
-      .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected: 'selected' } : '')
-    );
+  // Set the EQ choosen config
+  // let newEQHrz = 
+  eqHrz = configFile.equalizer[configFile.equalizerConfig];
+  $('.range-circle').each(
+    (v, i) => $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`)
+  ).on({
+    mousedown: function () {
+      pos = $((range = this)).data('position');
+    },
   });
-  // $('#eq-buttons').on({ change: setEQ });
+
+  $(document).on({
+  //   mouseup: () => {
+  //     console.log(pos, db, range)
+  //   },
+    mousemove: e => {
+      if (range !== null) {
+        y = parseInt(window.getComputedStyle(range).getPropertyValue('top'));
+        db = (e.clientY + range.offsetTop) + y;
+
+        if (db > 0 && db < 261) $(range).css(`top:${db}px`);
+  //       // console.log($(range).data('position'), db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0);
+  //       // return fn([
+  //         // $(range).data('position'),
+  //         // db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0
+  //       // ]);
+      }
+    }
+  });
 }
 
 module.exports = {

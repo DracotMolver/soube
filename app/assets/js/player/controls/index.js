@@ -235,7 +235,7 @@ function setAudioBuffer(buffer) {
   lastCurrentTime = audioContext.currentTime;
 
   // Set the name of the song in the top bar
-  ipcRenderer.send('update-title', `${file.title.replace('&nbsp;', ' ')} - ${file.artist.replace('&nbsp;', ' ')} - Soube`);
+  ipcRenderer.send('update-title', `${file.title.replace(/\&nbsp;/g, ' ')} - ${file.artist.replace(/\&nbsp;/g, ' ')} - Soube`);
 }
 
 function initSong() {
@@ -350,6 +350,7 @@ function prevSong() {
 }
 
 function setFilterVal(a, b) {
+  console.log(a, b);
   filter[a].gain.setValueAtTime(b, audioContext.currentTime);
 }
 

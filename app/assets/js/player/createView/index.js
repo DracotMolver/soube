@@ -11,8 +11,8 @@ require('./../../dom');
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function createView(player) {
-  const child = $('div').clone(false).addClass('grid-33 mobile-grid-33 song-info');
-  const parentContainer = $('div').clone(false).addClass('list-song-container');
+  const child = $('div').clone(true).addClass('grid-33 mobile-grid-33 song-info');
+  const parentContainer = $('div').clone(true).addClass('list-song-container');
   const f = document.createDocumentFragment();
   let title = null;
   let album = null;

@@ -29,9 +29,9 @@ const timeScrolling = 3.6; // Pixels per frame
 const lapsePopup = 4500; // Duration of info popups
 const maxElements = 20; // Max of elementos to display when is filtering a song [searching bar]
 const bntFilterSongs = [ // Elements to use as a items into the slide
-  $('div').clone(false).addClass('grid-25 mobile-grid-25'),
-  $('div').clone(false).addClass('search-results'),
-  $('div').clone(false).addClass('results')
+  $('div').clone(true).addClass('grid-25 mobile-grid-25'),
+  $('div').clone(true).addClass('search-results'),
+  $('div').clone(true).addClass('results')
 ];
 
 //---- normals ----
@@ -377,6 +377,13 @@ $('.close').on({
     $('.parent-container-config')
       .addClass('hide')
       .each(v => $(v).child(0).removeClass('container-config-anim'));
+
+    // Remove the EventListener when the EQ pannel is close
+    // This is because the event to drag and move the circules
+    // Is attached to the document so, before closing the EQ pannel
+    // It will still be running these events, and we don't want that
+    // if it was closed
+    // $(document).rmEvent('mouseup', 'mousemove');
   }
 })
 

@@ -35,8 +35,10 @@ module.exports = (_ => {
     },
     text: function(str = null) {
       if (str === null) return this.element.textContent;
+      if (this.element.length) this.element.forEach(e => e.innerHTML = `${str}`);
+      else this.element.innerHTML = `${str}`;
 
-      return this.element.innerHTML = `${str}`, this;
+      return this;
     },
     removeClass: function(_class) {
       return this.element.className = this.element.className.replace(_class, '').trim(), this;
@@ -47,11 +49,9 @@ module.exports = (_ => {
     },
     on: function(fn) {
       // Select element is like an array because of the options elements inside
-      if (this.element.length && this.element.nodeName !== 'SELECT') {
+      if (this.element.length && this.element.nodeName !== 'SELECT')
         this.element.forEach(e => onFunction(e, fn));
-      } else {
-        onFunction(this.element, fn);
-      }
+      else onFunction(this.element, fn);
 
       return this;
     },
@@ -115,11 +115,7 @@ module.exports = (_ => {
 
   /* --------------------------------- Functions --------------------------------- */
   function onFunction (el, fn) {
-    Object.keys(fn).forEach(v => {
-      /animation/.test(v) ?
-        el.addEventListener(v.toLowerCase(), fn[v]) :
-        el[`on${v.toLowerCase()}`] = fn[v];
-    })
+    Object.keys(fn).forEach(v => el.addEventListener(v.toLowerCase(), fn[v]));
   }
 
   function saveCreatedElement(name) {
