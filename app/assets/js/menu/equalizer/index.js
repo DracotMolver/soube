@@ -3,6 +3,7 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
+//---- Own ----
 const {
   configFile,
   langFile,
@@ -10,31 +11,50 @@ const {
 } = require('./../../config').init();
 require('./../../dom');
 
+//---- Electronjs ----
+const ipcRenderer = require('electron').ipcRenderer;
+
 /* --------------------------------- Variables --------------------------------- */
 //---- normals ----
 let lang = langFile[configFile.lang];
-let range = null;
+let interval;
+let percent = 0;
 let eqHrz = 0;
-let _pos = 0;
 let pos = 0;
-let _db = 0;
 let db = 0;
-let y = 0;
 
 /* --------------------------------- Functions --------------------------------- */
 // Options to config the EQ
-function setEQ () {
-  configFile.equalizerConfig = this.value;
-  editFile('config', configFile);
+function setEQ(value) {
+  switch (value) {
+    case 'new': console.log('add new'); break;
+    case 'reset':
+      $('.db-up').each((v, i) => {
+        $(`#range-${$(v).data('position')}`)
+          .css(`top:120px`)
+          .data({ 'db': 0 });
+      });
+      configFile.equalizerConfig = value;
+      editFile('config', configFile);
 
-  eqHrz = configFile.equalizer[configFile.equalizerConfig];
-  $('.range-circle').each((v, i) => {
-    $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`);
+      break;
+    case 'rock':
+    case 'electro':
+    case 'acustic':
+      configFile.equalizerConfig = value;
+      editFile('config', configFile);
 
-    ipcRenderer.send('equalizer-filter', [i,
-      eqHrz[i] !== 0 ? parseFloat((eqHrz[i] < 130 ? 121 - eqHrz[i] : -eqHrz[i] + 140) / 10) : 0
-    ]);
-  });
+      eqHrz = configFile.equalizer[configFile.equalizerConfig];
+      $('.db-up').each((v, i) => {
+        $(`#range-${$(v).data('position')}`)
+          .css(`top:${eqHrz[i]}px`)
+          .data({ 'db': (12 - (eqHrz[i] / 10)).toFixed(1) });
+
+        ipcRenderer.send('equalizer-filter', [i, (12 - (eqHrz[i] / 10)).toFixed(1)]);
+      });
+
+      break;
+  }
 }
 
 function showEqualizer() {
@@ -42,20 +62,29 @@ function showEqualizer() {
   $('#_equalizerSetting').text(lang.config.equalizerSetting);
   // $('#_neweq').text(lang.config.newEQ);
 
-  // EQ select settings options
   const fragment = document.createDocumentFragment();
+  fragment.appendChild(
+    $('option')
+      .clone(true)
+      .text(lang.config.selectEQSeting)
+      .get()
+  );
+
+  // EQ select settings options
   Object.keys(configFile.equalizer).forEach(v => {
     fragment.appendChild(
       $('option')
         .clone(true)
         .val(v)
         .text(v)
-        .attr(configFile.equalizerConfig === v.toLowerCase() ? { selected: 'selected' } : '')
-        .get()
+        .attr(
+          configFile.equalizerConfig === v.toLowerCase() &&
+          configFile.equalizerConfig !== 'reset' ? { selected: 'selected' } : ''
+        ).get()
     )
   });
 
-  // Option to add a new EQ  
+  // Option to add a new EQ setting
   fragment.appendChild(
     $('option')
       .clone(true)
@@ -66,61 +95,54 @@ function showEqualizer() {
 
   $('#eq-buttons')
     .insert(fragment)
-    .on({ change: setEQ });
+    .on({
+      change: function () { setEQ(this.value); }
+    });
 
   $($('.parent-container-config').get(1))
     .removeClass('hide')
     .child(0)
     .addClass('container-config-anim');
 
-  // Set the EQ choosen config
-  // let newEQHrz = 
+  setEQ(configFile.equalizerConfig);
   eqHrz = configFile.equalizer[configFile.equalizerConfig];
-  $('.range-circle')
-    // .each(
-    // (v, i) => $(v).css(`top:${eqHrz[i] === 0 ? 130 : eqHrz[i]}px`)
-  // )
-  .on({
+  $('.db-up').on({
     mousedown: function () {
-      pos = $((range = this)).data('position');
+      dbSetting(this, true);
     },
+    mouseup: () => clearTimeout(interval)
   });
 
-  $('.range-container').on({
-    mousemove: e => {
-      if (range !== null) {
-        // if (e.movementY <= -1) db++;
-        // else if (e.movementY >= 1) db--;
-        db = e.screenY - range.offsetTop;
-        console.log(db)
-        // console.log(e.screenY - (range.offsetTop - (range.clientHeight / 2)))
-        // $(range).css(`margin-top:${db}px`);
-        // y = e.offsetY / 10;
-        // if (y >= 0 && y <= 10) console.log('up');
-        // else if (y >= 1 && y <= 24) console.log('down')
-      }
-    }
+  $('.db-down').on({
+    mousedown: function () {
+      dbSetting(this, false);
+    },
+    mouseup: () => clearTimeout(interval)
   });
-  // $(document).on({
-  // //   mouseup: () => {
-  // //     console.log(pos, db, range)
-  // //   },
-  //   mousemove: e => {
-  //       // if (db > 0 && db < 261)
-  //       // $(range).css(`top:${db}px`);
-  // //       // console.log($(range).data('position'), db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0);
-  // //       // return fn([
-  // //         // $(range).data('position'),
-  // //         // db !== 0 ? parseFloat((db < 130 ? 121 - db : -db + 140) / 10) : 0
-  // //       // ]);
-  //     }
-  //   }
-  // });
+}
+
+function dbSetting(el, orientation) {
+  pos = $(el).data('position');
+  percent = parseInt($(`#range-${pos}`).cssValue()[0].replace('px', ''));
+
+  const animation = () => {
+    if (percent) {
+      $(`#range-${pos}`)
+        .css(`top:${orientation ? --percent : ++percent}px`)
+        .data({ 'db': (12 - (percent / 10)).toFixed(1) });
+      ipcRenderer.send('equalizer-filter', [pos, (12 - (percent / 10)).toFixed(1)]);
+
+      interval = setTimeout(animation, 100);
+    } else {
+      clearTimeout(interval);
+    }
+  };
+  interval = setTimeout(animation, 100);
 }
 
 function close() {
-  range = null;
-  eqHrz = _pos = pos = _db = db = y = 0;
+  clearInterval(interval);
+  percent = eqHrz = pos = db = 0;
 }
 
 module.exports = {
