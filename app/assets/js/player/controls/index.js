@@ -7,11 +7,7 @@
 const path = require('path');
 
 //---- electron ----
-const {
-  ipcRenderer
-  // BrowserWindow,
-  // dialog
-} = require('electron');
+const ipcRenderer = require('electron').ipcRenderer;
 
 //---- own ----
 const {
@@ -250,7 +246,6 @@ function initSong() {
       audioContext.decodeAudioData(xhtr.response).then(buffer => {
         fnc(buffer);
       }, reason => {
-        // dialog.showErrorBox('Error [001]', `${lang.alerts.playSong}\n${reason}`);
         fnc(false);
       });
     }
@@ -350,15 +345,12 @@ function prevSong() {
 }
 
 function setFilterVal(a, b) {
-  console.log(a, b);
   filter[a].gain.setValueAtTime(b, audioContext.currentTime);
 }
 
 function filters() {
   let f = null;
-  let db = configFile.equalizer[configFile.equalizerConfig].map(v =>
-    v !== 0 ? parseFloat((v < 130 ? 121 - v : -v + 140) / 10) : 0
-  );
+  let db = configFile.equalizer[configFile.equalizerConfig].map(v => (12 - (v / 10)).toFixed(1));
 
   filter = hrz.map((v, i) =>
     (f = audioContext.createBiquadFilter(),
