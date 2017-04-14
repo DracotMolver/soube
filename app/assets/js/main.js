@@ -44,6 +44,7 @@ let positionElement = null; // Where is the song that you clicked on.
 
 //---- searching input ----
 let isSearchDisplayed = false; // Checks if it was launched the searching bar
+let isModalOpen = false; 
 let totalResults = 0; // Amount of songs filtered
 // let fragmentSlide = null; // DocumentFragment() slide container
 // let countSlide = 0;
@@ -313,6 +314,19 @@ function scrollAnimation(direction) {
   interval = requestAnimationFrame(animation);
 }
 
+function closeModals() {
+  $($('.grid-container').get(0)).rmAttr('style');
+  $('.parent-container-config')
+    .addClass('hide')
+    .each(v => $(v).child(0).removeClass('container-config-anim'));
+
+  // Clean all the used variables by the config panels
+  folders.close();
+  equalizer.close();
+
+  isModalOpen = false;
+}
+
 /** --------------------------------------- Events --------------------------------------- **/
 // Scrolling the list of songs
 $('#song-title').on({
@@ -371,29 +385,14 @@ $('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(
 //   }
 // });
 
-$('.close').on({
-  click: () => {
-    $($('.grid-container').get(0)).rmAttr('style');
-    $('.parent-container-config')
-      .addClass('hide')
-      .each(v => $(v).child(0).removeClass('container-config-anim'));
-
-    // Clean all the used variables by the config panels
-    folders.close();
-    equalizer.close();
-
-    // Remove the EventListener when the EQ pannel is close
-    // This is because the event to drag and move the circules
-    // Is attached to the document so, before closing the EQ pannel
-    // It will still be running these events, and we don't want that
-    // if it was closed
-    // $(document).rmEvent('mouseup', 'mousemove');
-  }
-})
+$('.close').on({ click: closeModals });
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
-// Close the searching bar
-ipcRenderer.on('close-search-song', () => { if (isSearchDisplayed) hideSearchInputData(); });
+// Close the searching bar and all the configs modals
+ipcRenderer.on('close-search-song', () => {
+  if (isSearchDisplayed) hideSearchInputData(); // Searching bar
+  closeModals();
+});
 
 // Display the searching bar [ctrl + F]
 ipcRenderer.on('search-song', () => {
@@ -459,7 +458,17 @@ ipcRenderer.on('save-current-time', player.controls.saveCurrentTime);
 ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
 
 // Display the windows to add musics folders
-ipcRenderer.on('menu-add-folder', folders.loadFolder);
+ipcRenderer.on('menu-add-folder', () => {
+  if (!isModalOpen) {
+    folders.loadFolder();
+    isModalOpen = true;
+  }
+});
 
 // Display the equalizer
-ipcRenderer.on('menu-equalizer', equalizer.showEqualizer);
+ipcRenderer.on('menu-equalizer', () => {
+  if (!isModalOpen) {
+    equalizer.showEqualizer();
+    isModalOpen = true;
+  }
+});
