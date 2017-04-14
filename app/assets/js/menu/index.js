@@ -45,6 +45,9 @@ module.exports = (app) => {
             type: 'separator'
           },
           {
+            label: 'Documentación'
+          },
+          {
             label: 'Acerca de Soube'
           }
         ]
@@ -84,6 +87,9 @@ module.exports = (app) => {
           },
           {
             type: 'separator'
+          },
+          {
+            label: 'Documentation'
           },
           {
             label: 'About Soube'

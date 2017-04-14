@@ -114,6 +114,10 @@ module.exports = (_ => {
     },
     has: function (s) {
       return this.element.className.indexOf(s) !== -1;
+    },
+    cssValue: function () {
+      const values = this.element.style.cssText;
+      return values.slice(0, values.length - 1).split(';').map(v => v.replace(/^[\w+\-]+\:\s+/g, ''));
     }
   };
 
