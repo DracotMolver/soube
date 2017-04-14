@@ -47,6 +47,15 @@ p {
   color:  var(--blackColor)
 }
 
+* {
+  -webkit-user-select: none;
+  user-select: none
+}
+
+h5 {
+  font-size: .84em
+}
+
 input:focus,
 button:focus {
   outline-width: 0
@@ -255,8 +264,7 @@ button:hover {
 .tooltip::after,
 .close:before,
 .close:after,
-.hz::before,
-.range-circle::before{
+.hz::before {
   position: absolute;
   content: ''
 }
@@ -368,11 +376,6 @@ button:hover {
   margin: .1em 1.2em;
   width: 85%;
   float: left
-}
-
-#info-song {
-  -webkit-user-select: none;
-  user-select: none
 }
 
 #song-title > h1 {
@@ -698,14 +701,9 @@ button:hover {
 }
 
 .range-container {
-  border-radius: 3px; 
-  background: var(--darkGreyColor);
-  margin-right: 1.03515em;
-  margin-left: 1.03515em;
-  padding: 0;
+  text-align: center;
   opacity: .5;
-  height: 289px;
-  width: .6em;
+  margin: .45em .45em 0 .45em;
   float: left
 }
 
@@ -713,47 +711,37 @@ button:hover {
   opacity: 1
 }
 
-.range-circle {
-  border-radius: 50%;
-  background: rgba(233,30,99, .14);
-  margin-top: 120px;
+.range-percent {
+  border-radius: 3px;
+  background: var(--lightGreyColor);
+  box-shadow: 0 0 2px 0 rgba(33, 33, 33, 0.18) inset;
   position: relative;
-  border: .1em solid var(--lightPinkColor);
-  cursor: pointer;
-  height: 1.8em;
-  width: 1.8em;
-  left: -10px;
-}
-
-.range-circle::before {
-  border-radius: 50%;
-  box-shadow: 0 1px 2px 1px rgba(0,0,0,.14);
-  background: var(--darkPinkColor);
-  border: .1em solid var(--pinkColor);
-  height: .7em;
-  width: .7em;
-  left: 7px;
-  top: 7px
-}
-
-#equalizer-container {
-  margin-top: 1em;
-  width: 100%;
-  float: left
-}
-
-#equalizer-container ul {
+  overflow: hidden;
   padding: 0;
-  margin: .6em .2em;
-  width: 100%;
-  float: left
+  margin: 0 auto;
+  height: 240px;
+  width: .6em
 }
 
-#equalizer-container ul > li {
-  text-align: center;
-  font-size: .86em;
-  display: inline-block;
-  width: 2.8em
+.range-total-percent {
+  background: var(--pinkColor);
+  position: relative;
+  height: 100%;
+  top: 120px
+}
+
+.db-up,
+.db-down {
+  border-radius: 3px;
+  font-weight: bolder;
+  box-sizing: border-box;
+  font-size: 1.1em;
+  border: 1px solid var(--darkGreyColor);
+  margin: .3em 0;
+  cursor: pointer;
+  width: 28px;
+  float: left;
+  color: var(--pinkColor)
 }
 
 .hz {
@@ -792,12 +780,6 @@ button:hover {
   width: 27.4em;
   left: -12.2em
 }
-
-/*#_neweq[disabled]{
-  background: var(--whiteColor);
-  color: #d4d4d4
-}*/
-
 
 /* ------------------------ ADD SONGS ------------------------ */
 #container-add-songs{
