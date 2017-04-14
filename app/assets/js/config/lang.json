@@ -14,6 +14,7 @@
             "removingSongFolder": "Aviso!, Se va a remover la carpeta ",
             "legal": "Términos legales",
             "newEQ": "Agregar",
+            "selectEQSeting": "Seleccione un estilo",
             "addNewEQSetting": "Agregar other...",
             "addSongBtn": "Agregar carpeta",
             "removeSongBtn": "Borrar carpeta"
@@ -48,6 +49,7 @@
             "removingSongFolder": "Warning!, It's going to remove the folder ",
             "legal": "Legal terms",
             "newEQ": "Add",
+            "selectEQSeting": "Choose an style",
             "addNewEQSetting": "Add other...",
             "addSongBtn": "Add folder",
             "removeSongBtn": "Remove folder"
