@@ -24,34 +24,29 @@ let pos = 0;
 let db = 0;
 
 /* --------------------------------- Functions --------------------------------- */
+function getDB(value) {
+  return value === 0 ? 0 : (value === 12 ? 12 : (12 - (value / 10)).toFixed(1));
+}
+
 // Options to config the EQ
 function setEQ(value) {
   switch (value) {
     case 'new': console.log('add new'); break;
     case 'reset':
-      $('.db-up').each((v, i) => {
-        $(`#range-${$(v).data('position')}`)
-          .css(`top:120px`)
-          .data({ 'db': 0 });
-      });
-      configFile.equalizerConfig = value;
-      editFile('config', configFile);
-
-      break;
     case 'rock':
     case 'electro':
     case 'acustic':
       configFile.equalizerConfig = value;
       editFile('config', configFile);
 
-      eqHrz = configFile.equalizer[configFile.equalizerConfig];
-      $('.db-up').each((v, i) => {
-        $(`#range-${$(v).data('position')}`)
-          .css(`top:${eqHrz[i]}px`)
-          .data({ 'db': (12 - (eqHrz[i] / 10)).toFixed(1) });
+      eqHrz = configFile.equalizer[value];
+      for (var i = 0; i < 15; i++) {
+        $(`#range-${i}`)
+          .css(`top:${eqHrz[i] === 0 ? 120 : eqHrz[i]}px`)
+          .data({ 'db': getDB(eqHrz[i]) });
 
-        ipcRenderer.send('equalizer-filter', [i, (12 - (eqHrz[i] / 10)).toFixed(1)]);
-      });
+        ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
+      }
 
       break;
   }
@@ -94,31 +89,32 @@ function showEqualizer() {
   );
 
   $('#eq-buttons')
+    .empty()
     .insert(fragment)
     .on({
       change: function () { setEQ(this.value); }
     });
 
+
+  eqHrz = configFile.equalizer[configFile.equalizerConfig];
+
+  for (var i = 0; i < 15; i++) {
+    $(`#range-${i}`)
+      .css(`top:${eqHrz[i] === 0 ? 120 : eqHrz[i]}px`)
+      .data({ 'db': getDB(eqHrz[i]) });
+  }
+
+  $('.db-up-down').on({
+    mousedown: function () {
+      dbSetting(this, $(this).data('orientation'));
+    },
+    mouseup: () => clearTimeout(interval)
+  })
+
   $($('.parent-container-config').get(1))
     .removeClass('hide')
     .child(0)
     .addClass('container-config-anim');
-
-  setEQ(configFile.equalizerConfig);
-  eqHrz = configFile.equalizer[configFile.equalizerConfig];
-  $('.db-up').on({
-    mousedown: function () {
-      dbSetting(this, true);
-    },
-    mouseup: () => clearTimeout(interval)
-  });
-
-  $('.db-down').on({
-    mousedown: function () {
-      dbSetting(this, false);
-    },
-    mouseup: () => clearTimeout(interval)
-  });
 }
 
 function dbSetting(el, orientation) {
@@ -128,16 +124,18 @@ function dbSetting(el, orientation) {
   const animation = () => {
     if (percent) {
       $(`#range-${pos}`)
-        .css(`top:${orientation ? --percent : ++percent}px`)
-        .data({ 'db': (12 - (percent / 10)).toFixed(1) });
-      ipcRenderer.send('equalizer-filter', [pos, (12 - (percent / 10)).toFixed(1)]);
+        .css(`top:${orientation === 'up' ? --percent : ++percent}px`)
+        .data({ 'db': getDB(percent) });
 
-      interval = setTimeout(animation, 100);
+      $(`#db-${pos}`).text(`${getDB(percent)} dB`)
+
+      interval = setTimeout(animation, 120);
+      ipcRenderer.send('equalizer-filter', [pos, getDB(percent)]);
     } else {
       clearTimeout(interval);
     }
   };
-  interval = setTimeout(animation, 100);
+  interval = setTimeout(animation, 120);
 }
 
 function close() {

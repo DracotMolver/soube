@@ -59,10 +59,7 @@ const seconds_u = 60;
 const audioContext = new window.AudioContext(); // Object AudioContext
 const xhtr = new XMLHttpRequest(); // Object XMLHttpRequest
 const hrz = [ // Frequencies
- 40, 80, 90, 100, 120, 150, 200,
- 300, 400, 500, 600, 800, 1000,
- 1600, 2000, 3000, 4000, 5000, 6000,
- 7000, 8000, 10000, 16000
+ 50, 100, 156, 220, 311, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000
 ];
 
 // Cords to generate the animation
@@ -350,7 +347,8 @@ function setFilterVal(a, b) {
 
 function filters() {
   let f = null;
-  let db = configFile.equalizer[configFile.equalizerConfig].map(v => (12 - (v / 10)).toFixed(1));
+  let db = configFile.equalizer[configFile.equalizerConfig]
+    .map(v => v === 0 ? 0 : (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)));
 
   filter = hrz.map((v, i) =>
     (f = audioContext.createBiquadFilter(),

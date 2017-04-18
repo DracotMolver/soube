@@ -157,7 +157,7 @@ button {
 }
 
 .parent-container-config {
-  padding-top: 62px;
+  padding-top: 45px;
   position: absolute;
   z-index: 3;
   height: 100%;
@@ -700,10 +700,14 @@ button:hover {
   width: 982px
 }
 
+#eq-buttons {
+  text-transform: capitalize
+}
+
 .range-container {
   text-align: center;
   opacity: .5;
-  margin: .45em .45em 0 .45em;
+  margin: .45em 1.15em 0 1.15em;
   float: left
 }
 
@@ -730,18 +734,22 @@ button:hover {
   top: 120px
 }
 
-.db-up,
-.db-down {
+.db-up-down {
   border-radius: 3px;
   font-weight: bolder;
   box-sizing: border-box;
   font-size: 1.1em;
+  position: relative;
   border: 1px solid var(--darkGreyColor);
-  margin: .3em 0;
+  margin: .3em auto;
   cursor: pointer;
   width: 28px;
-  float: left;
   color: var(--pinkColor)
+}
+
+.db-desc {
+  font-size: .66em;
+  color: var(--darkPinkColor)
 }
 
 .hz {
