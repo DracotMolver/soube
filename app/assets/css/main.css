@@ -70,9 +70,14 @@ html {
   overflow: hidden;
   padding: 0;
   margin: 0;
-  bottom: 0;
   height: 100%;
   width: 100%;
+}
+
+body,
+html,
+#spinner {
+  bottom: 0;
   right: 0;
   left: 0;
   top: 0
@@ -90,17 +95,6 @@ button {
   display: none
 }
 
-/* ------------------------ VARIABLES ------------------------ */
-:root {
-  --lightGreyColor: #F4F6F6;
-  --darkGreyColor: #979A9A;
-  --darkPinkColor: #d81b60;
-  --lightPinkColor: #f06292;
-  --whiteColor: #fff;
-  --blackColor: #424949;
-  --pinkColor: #e91e63
-}
-
 /* ------------------------ GENERALES ------------------------ */
 .warning {
   margin-top: 1em;
@@ -112,8 +106,8 @@ button {
 .border-left,
 .border-right {
   border-width: 0;
-  border-style:  solid;
-  box-sizing:  border-box;
+  border-style: solid;
+  box-sizing: border-box
 }
 
 .border-bottom {
@@ -429,7 +423,7 @@ button:hover {
   background-attachment: local, scroll;
   overflow: hidden;
   overflow-y: scroll;
-  height: calc(100% - 95px);
+  height: calc(100% - 89px);
   width: 100%;
   float: left
 }
@@ -498,9 +492,9 @@ button:hover {
 
 #search,
 #search-result {
-  font-size: 1.6em;
   padding-bottom: .16em;
-  padding-top: .16em
+  padding-top: .16em;
+  font-size: 1.6em
 }
 
 #search-result {
@@ -661,15 +655,19 @@ button:hover {
   color: var(--whiteColor);
 }
 
+.tooltip::after,
+.list-song-container::after {
+  margin: 0 auto;
+  width: 0;
+  right: 0;
+  left: 0
+}
+
 .tooltip::after {
   border-style: solid;
   border-width: 0 8px 11px 8px;
   border-color: transparent transparent hsla(180, 5%, 27%, .8) transparent;
   height: 0;
-  margin: 0 auto;
-  width: 0;
-  right: 0;
-  left: 0;
   top: -11px
 }
 
@@ -688,10 +686,6 @@ button:hover {
   border-radius: 25px;
   background: rgba(66, 73, 73, 0);
   height: 28px;
-  margin: 0 auto;
-  width: 0;
-  right: 0;
-  left: 0;
   top: 188px
 }
 
@@ -821,6 +815,52 @@ button:hover {
   width: 0
 }
 
+/* ------------------------ SPINNER ------------------------ */
+#spinner {
+  position: absolute;
+  margin: auto;
+  height: 80px;
+  width: 6.6em
+}
+
+.spinner-item {
+  transform-origin: center;
+  background: var(--darkGreyColor);
+  transform: scale(0, 0);
+  height: 100%;
+  margin: 0 .16em;
+  width: 1em;
+  float: left
+}
+
+.spinner-anim > .spinner-item {
+  animation-name: spinnerAnim;
+  animation-duration: 1.2s;
+  animation-direction: linear;
+  animation-iteration-count: infinite
+}
+
+#spinner-item-1 {
+  animation-delay: .12s
+}
+
+#spinner-item-2 {
+  animation-delay: .36s
+}
+
+#spinner-item-3 {
+  animation-delay: .52s
+}
+
+#spinner-item-4 {
+  animation-delay: .6s
+}
+
+#spinner-item-5 {
+  animation-delay: .82s
+}
+
+
 /* ------------------------ ANIMACIONES ------------------------ */
 @keyframes showToolTip {
   100% {
@@ -901,14 +941,22 @@ button:hover {
   }
 }
 
+@keyframes spinnerAnim {
+  0%, 100%{
+    transform: scale(1, 0)
+  }
+
+  50% {
+    transform: scale(1, 1)
+  }
+}
+
 /* ------------------------ MEDIA QUERIES ------------------------ */
-@media only screen and (max-width: 750px) {
-  /* ------------------------ BUSQUEDA DE CANCIONES ------------------------ */
+/*@media only screen and (max-width: 750px) {
   .no-searching-found {
     font-size: 2em
   }
 
-  /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
   #total-progress-bar{
     margin: .1em 1.3em .5em
   }
@@ -917,7 +965,6 @@ button:hover {
     left: 14.7%
   }
 
-  /* ------------------------ DETALLES DE LA CANCIÓN ------------------------ */
   #info-song {
     text-align: left;
     margin: .19em 1.2em;
@@ -942,8 +989,7 @@ button:hover {
     margin: 0
   }
 
-  /* ------------------------ LISTADO DE CANCIONES ------------------------ */
   .list-song-container::after {
     top: 193px
   }
-}
+}*/
