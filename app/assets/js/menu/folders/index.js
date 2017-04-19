@@ -27,6 +27,8 @@ let folderToRemove = '';
 let isLoadingSongs = false;
 let itemToRemove;
 
+let li = CreateElement('li');
+
 /* --------------------------------- Functions --------------------------------- */
 function removeItem() {
   $('#remove-songs').removeClass('hide');
@@ -42,8 +44,8 @@ function saveSongList(parentFolder = '') {
   configFile.musicFolder.push(parentFolder);
   editFile('config', configFile);
 
-  $('#path-list-container').insert(
-    $('li').clone(true).text(parentFolder).on({ click: removeItem })
+  $('#path-list-container').append(
+    li.clone().text(parentFolder).on({ click: removeItem })
   );
 
   // Show a loading
@@ -66,8 +68,8 @@ function loadFolder() {
   $('#path-list-container').empty();
 
   configFile.musicFolder.forEach(v => {
-    $('#path-list-container').insert(
-      $('li').clone(true).text(v).on({ click: removeItem })
+    $('#path-list-container').append(
+      li.clone().text(v).on({ click: removeItem })
     )
   });
 

@@ -23,6 +23,8 @@ let eqHrz = 0;
 let pos = 0;
 let db = 0;
 
+let option = CreateElement('option');
+
 /* --------------------------------- Functions --------------------------------- */
 function getDB(value) {
   return value === 0 ? 0 : (value === 12 ? 12 : (12 - (value / 10)).toFixed(1));
@@ -59,17 +61,17 @@ function showEqualizer() {
 
   const fragment = document.createDocumentFragment();
   fragment.appendChild(
-    $('option')
-      .clone(true)
+    option
+      .clone()
       .text(lang.config.selectEQSeting)
       .get()
   );
 
   // EQ select settings options
-  Object.keys(configFile.equalizer).forEach(v => {
+  Object.keys(configFile.equalizer).forEach(v =>
     fragment.appendChild(
-      $('option')
-        .clone(true)
+      option
+        .clone()
         .val(v)
         .text(v)
         .attr(
@@ -77,12 +79,12 @@ function showEqualizer() {
           configFile.equalizerConfig !== 'reset' ? { selected: 'selected' } : ''
         ).get()
     )
-  });
+  );
 
   // Option to add a new EQ setting
   fragment.appendChild(
-    $('option')
-      .clone(true)
+    option
+      .clone()
       .val('new')
       .text(lang.config.addNewEQSetting)
       .get()
@@ -90,7 +92,7 @@ function showEqualizer() {
 
   $('#eq-buttons')
     .empty()
-    .insert(fragment)
+    .append(fragment)
     .on({
       change: function () { setEQ(this.value); }
     });

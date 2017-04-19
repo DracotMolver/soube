@@ -11,38 +11,39 @@ require('./../../dom');
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function createView(player) {
-  const child = $('div').clone(true).addClass('grid-33 mobile-grid-33 song-info');
-  const parentContainer = $('div').clone(true).addClass('list-song-container');
   const f = document.createDocumentFragment();
-  let title = null;
-  let album = null;
-  let artist = null;
+
+  // Buil the basic structure of elements
+  // The parent element must be created because we will attach a function to it.
+  // The rest of the elements, the childNodes, are not needed to create them, they
+  // can be just text.
+  let parent = CreateElement('div').addClass('list-song-container')
+
+  const playSong = function () {
+    player.controls.playSongAtPosition($(this).data('position'));
+  };
 
   listSongs.forEach((v, i) => {
-    title = child.clone(true).text(v.title);
-    artist = child.clone(true).text(`<span class="miscelaneo">by</span>${v.artist}`);
-    album = child.clone(true).text(`<span class="miscelaneo">from</span>${v.album}`);
-
     f.appendChild(
-      parentContainer.clone(true)
-      .attr({id: i})
-      .data({
-        position: i,
-        artist: v.artist,
-        title: v.title,
-        album: v.album,
-        url: v.filename
-      })
-      .insert(title, artist, album)
-      .on({
-        click: function() {
-          player.controls.playSongAtPosition($(this).data('position'));
-        }
-      }).get()
+      parent.clone()
+        .attr({ id: i })
+        .text(`
+          <div class="grid-33 mobile-grid-33 song-info">${v.title}</div>
+          <div class="grid-33 mobile-grid-33 song-info"><span class="miscelaneo">by</span>${v.artist}</div>
+          <div class="grid-33 mobile-grid-33 song-info"><span class="miscelaneo">from</span>${v.album}</div>
+        `)
+        .data({
+          position: i,
+          artist: v.artist,
+          title: v.title,
+          album: v.album,
+          url: v.filename
+        })
+        .on({ click: playSong }).get()
     );
   });
 
-  $('#list-songs').insert(f);
+  $('#list-songs').append(f);
 }
 
 module.exports = createView;
