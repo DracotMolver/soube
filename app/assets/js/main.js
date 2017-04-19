@@ -28,11 +28,6 @@ require('./dom');
 const timeScrolling = 3.6; // Pixels per frame
 const lapsePopup = 4500; // Duration of info popups
 const maxElements = 20; // Max of elementos to display when is filtering a song [searching bar]
-const bntFilterSongs = [ // Elements to use as a items into the slide
-  $('div').clone(true).addClass('grid-25 mobile-grid-25'),
-  $('div').clone(true).addClass('search-results'),
-  $('div').clone(true).addClass('results')
-];
 
 //---- normals ----
 let lang = langFile[configFile.lang];
@@ -53,11 +48,12 @@ let list = []; // Filtered songs.
 let fragmentItems = null; // DocumentFragment() button container
 let regex = null; // The name of the song to search for as a regular expression
 let countItem = 0;
+let totalItem = 0;
+let stepItem = 0;
 let slide = 0; // Amount of slides to make
 let searchValue = ''; // The input text to search for
-let searchBy = 'title';
-// let newList = []; // Old filters songs
-// let oldSearchedValue = ''; // The prev song that is being searching for
+let newList = []; // Old filters songs
+let oldSearchedValue = ''; // The prev song that is being searching for
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
@@ -111,7 +107,6 @@ function loadSongs() {
 loadSongs();
 
 function hideSearchInputData() {
-  $('#search-result').empty();
   $('#search-container').addClass('hide');
   $('#search-wrapper').removeClass('search-wrapper-anim');
   $($('.grid-container').get(0)).rmAttr('style');
@@ -132,20 +127,21 @@ function makeItemSlide() {
    * </div>
    */
   itemSlide = [];
+  let parent = CreateElement('div').addClass('grid-25 mobile-grid-25');
+  
+  const playSong = function() {
+    player.controls.playSongAtPosition($(this).data('position'));
+    hideSearchInputData();
+  };
+
   listSongs.forEach(v => {
     itemSlide.push(
-      bntFilterSongs[0].clone(true) // <div class="grid-25 mobile-grid-25">
-      .insert(
-        bntFilterSongs[1].clone(true) // <div class="search-results">
-        .text(v.title)
-      )
-      .data({ position: v.position })
-      .on({
-        click: function () {
-          player.controls.playSongAtPosition($(this).data('position'));
-          hideSearchInputData();
-        }
-      }).get()
+      parent.clone(false)
+        .text(`
+          <div class="search-results">${v.title}</div>
+        `)
+        .data({ position: v.position })
+        .on({ click: playSong }).get()
     );
   });
 }
@@ -153,98 +149,87 @@ function makeItemSlide() {
 // will be executed every time the user hit down a keyword
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
-  // Clean if there's no coincidence
-  $('#wrapper-results')
-    .removeClass('no-searching-found')
-    .empty();
+  $('#wrapper-results').empty();
   $('#pagination').addClass('hide');
 
   searchValue = this.value.trim();
   if (searchValue !== '') {
-    // countSlide = 0;
-    // Complete the text
-    if (e.key === 'ArrowRight' && searchValue.length > 1)
-      this.value = $('#search-result').text();
+  //   // countSlide = 0;
+  //   // Complete the text
+    regex = new RegExp(searchValue.replace(/\s+/g,'').trim(), 'ig');
 
-    regex = new RegExp(`${searchValue.replace(/\s+/g, '&nbsp;')}`, 'ig');
-
-    // if (newList.length > 0) {
-    //   console.log(newList.length);
-    // } else {
-    //   list = newList.filter(v => regex.test(v[searchBy]));
-    //   oldSearchedValue = searchValue;
-    //   newList = list;
-    // } else {
-    // console.log('qwer')
-      list = itemSlide.filter(v => regex.test(v.textContent));
-    //   oldSearchedValue = searchValue;
-    //   newList = list;
-    // }
-
-    if (e.key === 'Enter') {
-      player.controls.playSongAtPosition($(list[list.length - 1]).data('position'));
-      hideSearchInputData();
+    if (newList.length > 0 && searchValue.length > oldSearchedValue.length) {
+      list = newList.filter(v => regex.test(v.textContent.replace(/\s+/g,'').trim()));
+    } else {
+      oldSearchedValue = searchValue;
+      newList = list = itemSlide.filter(v => regex.test(v.textContent.replace(/\s+/g,'').trim()));
     }
 
     // Show possibles results
-    totalResults = list.length - 1;
+    totalResults = list.length;
     slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
 
-    // Add the pagination if there's more than one slide
-    slide > 1 ?
-      $('#pagination')
-        .removeClass('hide')
-        .child(1)
-        .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
+  //   // Add the pagination if there's more than one slide
+  //   slide > 1 ?
+  //     $('#pagination')
+  //       .removeClass('hide')
+  //       .child(1)
+  //       .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
 
-    // fragmentSlide = fragmentItems = document.createDocumentFragment();
-    // Make an slide with all the filtered coincidences
-    // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
+  //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
+  //   // Make an slide with all the filtered coincidences
+  //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
     if (list.length > 0) {
-      var i = 0;
-      var size = 0;
       while (slide--) {
-        countItem = 0;
-        size = totalResults - countItem > 20 ? 20 : totalResults - countItem;
-        i = (size = slide * size) - size;
-        for (; i < size; i++, countItem++) {
-    //       fragmentItems.appendChild(
-    //         bntFilterSongs[0].clone(true)
-    //         .insert(
-    //           bntFilterSongs[1].clone(true)
-    //           .text(list[totalResults][searchBy])
-    //         )
-    //         .data({ position: list[totalResults].position })
-    //         .on({
-    //           click: function() {
-    //             selectedSong($(this).data('position'));
-    //           }
-    //         }).get()
-          // );
+        totalItem = totalResults - countItem > maxElements ? maxElements : totalResults - countItem;
+        for (stepItem = 0; stepItem < totalItem; stepItem++, countItem++) {
+
         }
-
-    //     // All the buttons into the slides
-    //     fragmentSlide.appendChild(
-    //       bntFilterSongs[2].clone(true)
-    //       .insert(fragmentItems)
-    //       .css(`width:${document.body.clientWidth}px`).get()
-    //     );
-    //     fragmentItems = document.createDocumentFragment();
       }
+    }
+  //     var i = 0;
+  //     while (slide--) {
+  //       countItem = 0;
 
-    //   // Display all the filtered songs
-    //   $('#wrapper-results').empty()
-    //   .insert(fragmentSlide)
-    //   .css(`width:${tempSlide * document.body.clientWidth}px`);
+  //       size = totalResults - countItem > 20 ? 20 : totalResults - countItem;
+  //       i = (size = slide * size) - size;
+  //       for (; i < size; i++, countItem++) {
+  //   //       fragmentItems.appendChild(
+  //   //         bntFilterSongs[0].clone(true)
+  //   //         .insert(
+  //   //           bntFilterSongs[1].clone(true)
+  //   //           .text(list[totalResults][searchBy])
+  //   //         )
+  //   //         .data({ position: list[totalResults].position })
+  //   //         .on({
+  //   //           click: function() {
+  //   //             selectedSong($(this).data('position'));
+  //   //           }
+  //   //         }).get()
+  //         // );
+  //       }
+
+  //   //     // All the buttons into the slides
+  //   //     fragmentSlide.appendChild(
+  //   //       bntFilterSongs[2].clone(true)
+  //   //       .insert(fragmentItems)
+  //   //       .css(`width:${document.body.clientWidth}px`).get()
+  //   //     );
+  //   //     fragmentItems = document.createDocumentFragment();
+  //     }
+
+  //   //   // Display all the filtered songs
+  //   //   $('#wrapper-results').empty()
+  //   //   .insert(fragmentSlide)
+  //   //   .css(`width:${tempSlide * document.body.clientWidth}px`);
 
     } else {
-      // Clean if there's no coincidence
-      $('#wrapper-results')
-        .text(lang.alerts.searchingResults)
-        .addClass('no-searching-found');
-      $('#pagination').addClass('hide');
+  //     // Clean if there's no coincidence
+  //     $('#wrapper-results')
+  //       .text(lang.alerts.searchingResults)
+  //       .addClass('no-searching-found');
+  //     $('#pagination').addClass('hide');
     }
-  }
 
   // Show the first coincidence to show as a "ghost text".
   // $('#search-result').text(list.length > 0 && searchValue !== '' ? list[list.length - 1][searchBy] : '');
@@ -352,12 +337,6 @@ $('.arrow-updown').on({
   },
   mouseup: () => cancelAnimationFrame(interval)
 });
-
-// Choose an option to search by: (new feature)
-// - Song
-// - Artist
-// - Album
-// $('#searchBy').on({ change: function () { searchBy = this.value; } });
 
 // Action when do click on over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ click: clickBtnControls });
