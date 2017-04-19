@@ -5,18 +5,20 @@
 /* --------------------------------------- Modules ------------------------------------------- */
 //---- nodejs ----
 const path = require('path');
+const url = require('url');
 
 //---- electron ----
 const ipcRenderer = require('electron').ipcRenderer;
 
 //---- own ----
-const {
-    configFile,
-    langFile,
-    listSongs,
-    editFile
-} = require('./../../config').init();
 require('./../../dom');
+const {
+  configFile,
+  langFile,
+  listSongs,
+  editFile
+} = require('./../../config').init();
+const songWorker = new Worker(path.join(__dirname, 'workerSong.js'));
 
 /* --------------------------------------- Variables ------------------------------------------- */
 //---- normals ----
@@ -39,11 +41,11 @@ let source = null; // AudioNode object
 let lapse = 0;
 let percent = 0;
 let millisecond = 0;
-let time = 0;
 let minute = 0;
 let second = 0;
 let lastCurrentTime = 0;
 let interval = null;
+let time = {};
 
 // Notification
 let notification = null;
@@ -172,7 +174,7 @@ function stopTimer() {
   } else if (isMovingForward) {
 
     // It must be created a new AudioNode, because the stop function delete the node.
-    setAudioBuffer(poolOfSongs[oldFile.filename]);
+    setAudioBufferToPlay(poolOfSongs[oldFile.filename]);
 
     isMovingForward = false;
     isSongPlaying = true;
@@ -192,8 +194,8 @@ function dataSong(file) {
     notification = null
   }
 
-  notifi.body = `${file.artist.replace(/\&nbsp;/g, ' ')} from ${file.album.replace(/\&nbsp;/g, ' ')}`;
-  notification = new Notification(file.title.replace(/\&nbsp;/g, ' '), notifi);
+  notifi.body = `${nbspToSpace(file.artist)} from ${nbspToSpace(file.album)}`;
+  notification = new Notification(nbspToSpace(file.title), notifi);
 }
 
 function setBufferInPool(filePath, buffer) {
@@ -215,7 +217,7 @@ function formatDecimals(decimal) {
 
 // This function recive the buffer of the song to be played
 // Also start the song
-function setAudioBuffer(buffer) {
+function setAudioBufferToPlay(buffer) {
   source = audioContext.createBufferSource();
   source.onended = stopTimer;
   source.buffer = buffer;
@@ -226,40 +228,53 @@ function setAudioBuffer(buffer) {
   startTimer();
   isMovingForward ? source.start(0, forward) : source.start(0);
   lastCurrentTime = audioContext.currentTime;
+  $($('.grid-container').get(0)).rmAttr('style');
+  $('#spinner').switchClass('spinner-anim', 'hide');
 
   // Set the name of the song in the top bar
-  ipcRenderer.send('update-title', `${file.title.replace(/\&nbsp;/g, ' ')} - ${file.artist.replace(/\&nbsp;/g, ' ')} - Soube`);
+  ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`);
 }
 
 function initSong() {
   animPlayAndPause('play');
 
+  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
+  $('#spinner').switchClass('hide', 'spinner-anim');
+
   // Get the buffer of the song
-  const getBuffer = (filePath, fnc) => {
+  const getBuffer = (_path, fnc) => {
+    // // Read the file
+    // songWorker.postMessage({
+    //   action: 'getBuffer',
+    //   filePath: _path
+    //   // url.format({
+    //   //   pathname: _path,
+    //   //   protocol: 'file:'
+    //   // })
+    // });
+
+    // songWorker.onmessage = e => {
+    //   audioContext.decodeAudioData(e.response).then(buffer => fnc(buffer), reason => fnc(false));
+    // };
     // Read the file
-    xhtr.open('GET', `file://${filePath}`, true);
+    xhtr.open('GET', `file://${_path}`, true);
     xhtr.responseType = 'arraybuffer';
-    xhtr.onload = () => {
-      audioContext.decodeAudioData(xhtr.response).then(buffer => {
-        fnc(buffer);
-      }, reason => {
-        fnc(false);
-      });
-    }
+    xhtr.onload = () => audioContext
+        .decodeAudioData(xhtr.response)
+        .then(buffer => fnc(buffer), reason => fnc(false));
+
     xhtr.send(null);
   };
 
   const setSong = buffer => {
+    setAudioBufferToPlay(buffer);
+
     // The buffer gives us the song's duration.
     // The duration is in seconds, therefore we need to convert it to minutes
-    time = ((duration = buffer.duration) / seconds_u).toString();
+    time = timeParse((duration = buffer.duration));
     lapse = 100 / duration;
 
-    $('#time-end').text(`
-    ${formatDecimals(parseInt(time.slice(0, time.lastIndexOf('.'))))}:${formatDecimals(Math.floor(time.slice(time.lastIndexOf('.')) * seconds_u))}
-    `);
-
-    setAudioBuffer(buffer);
+    $('#time-end').text(`${formatDecimals(time.minute)}:${formatDecimals(time.second)}`);
 
     // Change the color the actual song
     $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
@@ -289,8 +304,8 @@ function initSong() {
   // the prevSongsToPlay array, which has all the played songs.
   if (poolOfSongs[file.filename]) {
     // play the song and save it as an old song (oldFile)
+    setSong(poolOfSongs[file.filename]);
     dataSong((oldFile = file));
-    setSong(poolOfSongs[file.filename]); // Set the buffer
     nextPossibleSong();
   } else {
     // Get the song to play
@@ -302,18 +317,14 @@ function initSong() {
       setBufferInPool(file.filename, data);
 
       // Play the song and save it as old (oldFile)
-      dataSong((oldFile = file));
       setSong(data);
+      dataSong((oldFile = file));
       nextPossibleSong();
     });
   }
 }
 
-function nextSong() {
-  if (isNextAble) {
-    // oldFile saved
-    prevSongsToPlay.push(oldFile);
-
+function checkNextAndPrevSong() {
     if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
     if(source !== null) {
@@ -322,6 +333,14 @@ function nextSong() {
     }
 
     isNextAble = false;
+}
+
+function nextSong() {
+  if (isNextAble) {
+    // oldFile saved
+    prevSongsToPlay.push(oldFile);
+
+    checkNextAndPrevSong();
   }
 }
 
@@ -330,14 +349,7 @@ function prevSong() {
     file = prevSongsToPlay.pop();
     position = file.position;
 
-    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
-
-    if(source !== null) {
-      source.stop(0);
-      source = null;
-    }
-
-    isNextAble = false;
+    checkNextAndPrevSong();
   }
 }
 
@@ -366,11 +378,11 @@ function moveForward(event, element) {
   cancelAnimationFrame(interval);
 
   forward = duration * event.offsetX / element.clientWidth;
-  time = (forward / seconds_u).toString();
+  time = timeParse(forward);
 
   // Calculate the new time
-  minute = parseInt(time.slice(0, time.lastIndexOf('.')));
-  second = Math.floor(time.slice(time.lastIndexOf('.')) * seconds_u);
+  minute = time.minute;
+  second = time.second;
   millisecond = forward * 100;
 
   // Calculate the percent of the progress bar
@@ -385,12 +397,25 @@ function saveCurrentTime() {
 function updateCurrentTime() {
   let totalTime = Math.floor(audioContext.currentTime - lastCurrentTime);
 
-  if (totalTime > 60) {
-    totalTime = (totalTime / 60).toString();
-    minute += parseInt(totalTime.slice(0, totalTime.lastIndexOf('.')));
-    second += Math.floor(totalTime.slice(totalTime.lastIndexOf('.')) * seconds_u);
+  if (totalTime > seconds_u) {
+    time =  timeParse(totalTime);
+    minute += time.minute;
+    second += time.second;
     percent += lapse * Math.floor(audioContext.currentTime - lastCurrentTime);
   }
+}
+
+function timeParse(_time) {
+  _time = (_time / seconds_u).toString();
+
+  return {
+    minute: parseInt(_time.slice(0, _time.lastIndexOf('.'))),
+    second: Math.floor(_time.slice(_time.lastIndexOf('.')) * seconds_u)
+  }
+}
+
+function nbspToSpace(value) {
+  return value.replace(/\&nbsp;/g, ' ');
 }
 
 module.exports = {
