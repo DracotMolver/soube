@@ -27,12 +27,7 @@
             "error_001": "Ha ocurrido un error inesperado. Por favor, ir a: https:\/\/github.com\/DracotMolver\/Soube y reportar el error. Gracias.",
             "error_002": "No hay archivos para reproducir. Por favor, ir al menú (tres puntos) y dar click en \"Agregar carpeta de música\"",
             "error_003": "Se ha producido un error al intentar leer la carpeta: "
-        },
-        "searchBy": [
-            "Canción",
-            "Artista",
-            "Álbum"
-        ]
+        }
     },
     "us": {
         "title": "Unknown",
@@ -62,11 +57,6 @@
             "error_001": "An unexpected error occurred. Please, go to: https:\/\/github.com\/DracotMolver\/Soube and report the error. Thanks.",
             "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",
             "error_003": "An error occurred trying to read the folder: "
-        },
-        "searchBy": [
-            "Song",
-            "Artist",
-            "Album"
-        ]
+        }
     }
 }
