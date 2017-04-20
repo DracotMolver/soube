@@ -501,6 +501,7 @@ button:hover {
   padding-left: 1.6em;
   position: absolute;
   z-index: -1;
+  cursor: poninter;
   color: rgba(182, 182, 182, .4);
   top: 3.76em
 }
