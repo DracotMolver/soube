@@ -13,7 +13,6 @@ const {
   ipcMain,
   dialog,
   Menu,
-  Tray,
   app
 } = require('electron');
 
@@ -22,7 +21,6 @@ const path = require('path');
 const url = require('url');
 
 /* --------------------------------- Variables --------------------------------- */
-// let configWindow = null;
 let mainWindow = null;
 const shortKeys = {
   'CommandOrControl+F': 'search-song',
@@ -59,9 +57,6 @@ function ready() {
   // Set the menu
   const menu = Menu.buildFromTemplate(require('./../app/assets/js/menu')(app));
 
-  // Will shows the icon of the notificaion
-  const appIcon = new Tray(path.join(__dirname, 'assets', 'img', 'icon.png'));
-
   // Player
   mainWindow = new BrowserWindow({
     title: 'Soube',
@@ -74,7 +69,10 @@ function ready() {
     center: true,
     width: 1200,
     show: false,
-    icon: makeIcon('icon.png')
+    icon: makeIcon('icon.png'),
+    webPreferences: {
+      nodeIntegrationInWorker : true
+    }
   });
 
   mainWindow.setMenu(menu);
@@ -90,7 +88,6 @@ function ready() {
   );
   mainWindow.on('closed', () => {
     closeRegisteredKeys();
-    appIcon.destroy();
     mainWindow = null;
   })
   .on('focus', registreKeys)
