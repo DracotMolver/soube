@@ -127,7 +127,7 @@ function btnPlaySong() {
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
   parentSlideItem = CreateElement('div').addClass('grid-25 mobile-grid-25');
-  containerSlider = CreateElement('div').addClass('results').css(`width:${document.body.clientWidth}px`);
+  containerSlider = CreateElement('div').addClass('results').css(`width:${document.body.clientWidth - 100}px`);
 
   $('#wrapper-results').empty();
   $('#pagination').addClass('hide');
@@ -183,7 +183,7 @@ function searchInputData(e) {
       // Display all the filtered songs
       $('#wrapper-results')
         .empty()
-        .append(slideContainer).css(`width:${countSlide * document.body.clientWidth}px`);
+        .append(slideContainer).css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
       slideContainer = document.createDocumentFragment();
     } else {
       // Clean if there's no coincidence
@@ -337,6 +337,7 @@ ipcRenderer.on('search-song', () => {
     $('#search-container').removeClass('hide');
     $('#search-wrapper').addClass('search-wrapper-anim');
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
+    $('#container-results').css(`width:${document.body.clientWidth - 100}px`);
     $('#wrapper-results').empty();
     $('#search')
       .addClass('search-anim')

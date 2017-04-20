@@ -515,14 +515,16 @@ button:hover {
 }
 
 #container-results {
-  overflow: hidden;
-  height: 370px
+  overflow: scroll;
+  position: relative;
+  height: 370px;
+  margin: 0 auto
 }
 
-.results,
-#wrapper-results{
-  height: 100%;
-  float: left
+#wrapper-results,
+.results {
+  height: 100%; 
+  float: left;
 }
 
 .no-searching-found {
