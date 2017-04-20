@@ -1,0 +1,26 @@
+{
+    "es": {
+        "songs": {
+            "menu": "Canciones",
+            "submenu": [
+                "Agregar nueva carpeta",
+                "Reproducir contenido de una carpeta",
+                "Reproducir una canción"
+            ]
+        },
+        "eq": {
+            "menu": "Equalizador"
+        },
+        "options": {
+            "menu": "Preferencias",
+            "submenu": [
+                "Configuraciones",
+                "Documentación",
+                "Acerca de Soube"
+            ]
+        }
+    },
+    "us": {
+
+    }
+}

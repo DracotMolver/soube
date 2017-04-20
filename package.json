@@ -8,9 +8,8 @@
   },
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
-    "electron": "^1.6.5",
-    "electron-builder": "^16.6.1",
-    "electron-packager": "^8.5.2"
+    "electron": "^1.6.7",
+    "electron-builder": "^17.0.1"
   },
   "build": {
     "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
@@ -61,7 +60,6 @@
   },
   "postinstall": "install-app-deps",
   "scripts": {
-    "dist": "build",
-    "build": "electron-packager ./app soube --out=dist --platform=linux --ignore='^/dist$' --arch=all --prune --icon='./app/assets/img/icon.png'"
+    "dist": "build"
   }
 }

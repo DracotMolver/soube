@@ -52,10 +52,10 @@ function makeIcon(name) {
 
 function ready() {
   // Make all the config files
-  require('./../app/assets/js/config').createFiles(app);
+  require(path.join(__dirname, 'assets', 'js', 'config')).createFiles(app);
 
   // Set the menu
-  const menu = Menu.buildFromTemplate(require('./../app/assets/js/menu')(app));
+  const menu = Menu.buildFromTemplate(require(path.join(__dirname, 'assets', 'js', 'menu'))(app));
 
   // Player
   mainWindow = new BrowserWindow({
@@ -71,7 +71,8 @@ function ready() {
     show: false,
     icon: makeIcon('icon.png'),
     webPreferences: {
-      nodeIntegrationInWorker : true
+      nodeIntegrationInWorker: true,
+      preload: path.join(__dirname, 'assets', 'js', 'config', 'theme.js')
     }
   });
 
@@ -100,7 +101,7 @@ function ready() {
     mainWindow.show();
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {
-      thumbarButtons = require('./../app/assets/js/thumbar').makeThumBar(mainWindow, {
+      thumbarButtons = require(path.join(__dirname, 'assets', 'js', 'thumbar')).makeThumBar(mainWindow, {
         next: makeIcon('thumb-next.png'),
         pause: makeIcon('thumb-pause.png'),
         prev: makeIcon('thumb-prev.png'),

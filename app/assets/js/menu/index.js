@@ -4,101 +4,51 @@
  */
 module.exports = (app) => {
   const configFile = require(`${app.getPath('userData')}/config.json`);
+  let menuLang = require('./menuLang');
 
-  const newFolder = browserWindow => browserWindow.webContents.send('menu-add-folder');
-  const showEQ = browserWindow => browserWindow.webContents.send('menu-equalizer');
-
-  const template = {
-    es: [
-      {
-        label: 'Canciones',
-        submenu: [
-          {
-            label: 'Agregar nueva carpeta',
-            click(menuItem, browserWindow, event) { newFolder(browserWindow); }
-          },
-          {
-            label: 'Cargar carpeta'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Cargar canción'
+  return [
+    {
+      label: menuLang.songs.menu,
+      submenu: [
+        {
+          label: menuLang.songs.submenu[0],
+          click(menuItem, browserWindow, event) {
+            browserWindow.webContents.send('menu-add-folder');
           }
-        ]
-      },
-      {
-        label: 'Equalizador',
-        click(menuItem, browserWindow, event) { showEQ(browserWindow); }
-      },
-      {
-        label: 'Preferencias',
-        submenu: [
-          {
-            label: 'Cambiar idioma'
-          },
-          {
-            label: 'Cambiar color del reproductor'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Documentación'
-          },
-          {
-            label: 'Acerca de Soube'
-          }
-        ]
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: menuLang.songs.submenu[1]
+        },
+        {
+          label: menuLang.songs.submenu[2]
+        }
+      ]
+    },
+    {
+      label: menuLang.eq.menu,
+      click(menuItem, browserWindow, event) {
+        browserWindow.webContents.send('menu-equalizer')
       }
-    ],
-    us: [
-      {
-        label: 'Songs',
-        submenu: [
-          {
-            label: 'Add new folder',
-            click(menuItem, browserWindow, event) { newFolder(browserWindow); }
-          },
-          {
-            label: 'Load folder'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Load song'
-          }
-        ]
-      },
-      {
-        label: 'Equalizer',
-        click(menuItem, browserWindow, event) { showEQ(browserWindow); }
-      },
-      {
-        label: 'Preferences',
-        submenu: [
-          {
-            label: 'Change idiom'
-          },
-          {
-            label: 'Chagge player color'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Documentation'
-          },
-          {
-            label: 'About Soube'
-          }
-        ]
-      }
-    ]
-  }
-
-
-  return template[configFile.lang];
+    },
+    {
+      label: menuLang.options.menu,
+      submenu: [
+        {
+          label: menuLang.options.submenu[0]
+        },
+        {
+          label: menuLang.options.submenu[1]
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: menuLang.options.submenu[2]
+        }
+      ]
+    }
+  ];
 };
