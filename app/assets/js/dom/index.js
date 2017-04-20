@@ -23,7 +23,7 @@ module.exports = (_ => {
 
           if (className.indexOf(str) === -1) {
             className.push(str);
-            e.className = className.join(' ');
+            e.className = className.join(' ').trim();
           }
       };
 
@@ -89,14 +89,6 @@ module.exports = (_ => {
 
       return this;
     },
-    // clone: function(isCloned) {
-    //   if (typeof this.element === 'string') {
-    //     return this.element = getCreatedElement(this.element).cloneNode(isCloned), this;
-    //   } else {
-    //     return event = Object.assign({}, event_),
-    //     event.element = this.element.cloneNode(isCloned), event;
-    //   }
-    // },
     get: function(pos = -1) {
       return pos === -1 ? this.element : this.element[pos];
     },
@@ -134,14 +126,12 @@ module.exports = (_ => {
     })
   }
 
-  // function saveCreatedElement(name) {
-  //   if (!createdElements[name]) createdElements[name] = document.createElement(name);
-  // }
-
   function getCreatedElement(name) {
-    return !createdElements[name] ?
-      (createdElements[name] = document.createElement(name), createdElements[name]) :
-      createdElements[name].cloneNode(false);
+    if (!createdElements[name]) {
+      createdElements[name] = document.createElement(name)
+    }
+
+    return createdElements[name].cloneNode(false);
   }
 
   function saveElementInPool(name, element) {
@@ -174,9 +164,6 @@ module.exports = (_ => {
 
         saveElementInPool(e);
       }
-      // else if (typeof e === 'string') {
-      //   saveCreatedElement(e);
-      // }
     }
 
     return event.element = e, event;
@@ -187,7 +174,7 @@ module.exports = (_ => {
   _.CreateElement = str => {
     return event = Object.assign({
       clone: function (deep = false) {
-        return this.element = getCreatedElement(this.element.nodeName.toLowerCase()).cloneNode(deep), this;
+        return this.element = this.element.cloneNode(deep), this;
       }
     }, event_), event.element = getCreatedElement(str.toLowerCase()), event;
   };
