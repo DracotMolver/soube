@@ -25,35 +25,36 @@ require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 //---- constants ----
-const timeScrolling = 3.6; // Pixels per frame
-const lapsePopup = 4500; // Duration of info popups
-const maxElements = 20; // Max of elementos to display when is filtering a song [searching bar]
+const timeScrolling = 3.6;
+const lapsePopup = 4500;
+const maxElements = 20;
 
 //---- normals ----
 let lang = langFile[configFile.lang];
 let interval = 0;
 
 //---- scrolling element ----
-let clickedElement = null; // When you do click on the name of the song
-let positionElement = null; // Where is the song that you clicked on.
+let clickedElement = null;
+let positionElement = null;
 
 //---- searching input ----
-let isSearchDisplayed = false; // Checks if it was launched the searching bar
+let isSearchDisplayed = false;
 let isModalOpen = false; 
-let totalResults = 0; // Amount of songs filtered
-// let fragmentSlide = null; // DocumentFragment() slide container
-// let countSlide = 0;
-let itemSlide = [];
-let list = []; // Filtered songs.
-let fragmentItems = null; // DocumentFragment() button container
-let regex = null; // The name of the song to search for as a regular expression
+let totalResults = 0;
+let countSlide = 0;
+let parentSlideItem;
 let countItem = 0;
 let totalItem = 0;
 let stepItem = 0;
-let slide = 0; // Amount of slides to make
-let searchValue = ''; // The input text to search for
-let newList = []; // Old filters songs
-let oldSearchedValue = ''; // The prev song that is being searching for
+let slide = 0;
+let containerSlider;
+let slideContainer = document.createDocumentFragment();
+let itemSlide = document.createDocumentFragment();
+let list = [];
+let newList = [];
+let regex = null;
+let searchValue = '';
+let oldSearchedValue = '';
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
@@ -115,59 +116,36 @@ function hideSearchInputData() {
   isSearchDisplayed = false;
 }
 
-// This function will makes the HTML items songs for the slides
-function makeItemSlide() {
-  /**
-   * HTML structure
-   *
-   * <div class="grid-25 mobile-grid-25">
-   *  <div class="search-results">
-   *    title of the song
-   *  </div>
-   * </div>
-   */
-  itemSlide = [];
-  let parent = CreateElement('div').addClass('grid-25 mobile-grid-25');
-  
-  const playSong = function() {
-    player.controls.playSongAtPosition($(this).data('position'));
-    hideSearchInputData();
-  };
 
-  listSongs.forEach(v => {
-    itemSlide.push(
-      parent.clone(false)
-        .text(`
-          <div class="search-results">${v.title}</div>
-        `)
-        .data({ position: v.position })
-        .on({ click: playSong }).get()
-    );
-  });
+// Play the song clicked in the search results
+function btnPlaySong() {
+  player.controls.playSongAtPosition($(this).data('position'));
+  hideSearchInputData();
 }
 
 // will be executed every time the user hit down a keyword
 // So, I carefully tried to do a clean, cheaper and faster code :).
 function searchInputData(e) {
+  parentSlideItem = CreateElement('div').addClass('grid-25 mobile-grid-25');
+  containerSlider = CreateElement('div').addClass('results').css(`width:${document.body.clientWidth}px`);
+
   $('#wrapper-results').empty();
   $('#pagination').addClass('hide');
 
   searchValue = this.value.trim();
   if (searchValue !== '') {
-  //   // countSlide = 0;
-  //   // Complete the text
-    regex = new RegExp(searchValue.replace(/\s+/g,'').trim(), 'ig');
+    regex = new RegExp(searchValue.replace(/\s/g,'\&nbsp;').trim(), 'ig');
 
     if (newList.length > 0 && searchValue.length > oldSearchedValue.length) {
-      list = newList.filter(v => regex.test(v.textContent.replace(/\s+/g,'').trim()));
+      list = newList.filter(v => regex.test(v.title));
     } else {
       oldSearchedValue = searchValue;
-      newList = list = itemSlide.filter(v => regex.test(v.textContent.replace(/\s+/g,'').trim()));
+      newList = list = listSongs.filter(v => regex.test(v.title));
     }
 
     // Show possibles results
     totalResults = list.length;
-    slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
+    countSlide = slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
 
   //   // Add the pagination if there's more than one slide
   //   slide > 1 ?
@@ -179,60 +157,40 @@ function searchInputData(e) {
   //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
   //   // Make an slide with all the filtered coincidences
   //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
-    if (list.length > 0) {
-      while (slide--) {
-        totalItem = totalResults - countItem > maxElements ? maxElements : totalResults - countItem;
-        for (stepItem = 0; stepItem < totalItem; stepItem++, countItem++) {
 
+      if (list.length > 0) {
+        countItem = 0;
+        while (slide--) {
+          totalItem = totalResults - countItem > maxElements ? maxElements : totalResults - countItem;
+          for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
+            itemSlide.appendChild(
+              parentSlideItem.clone(false)
+                .text(`<div class="search-results">${list[countItem].title}</div>`)
+                .data({ position: list[countItem].position })
+                .on({ click: btnPlaySong }).get()
+            );
+          }
+
+          slideContainer.appendChild(
+            containerSlider
+              .clone(false)
+              .append(itemSlide).get()
+          )
+          itemSlide = document.createDocumentFragment();
         }
       }
-    }
-  //     var i = 0;
-  //     while (slide--) {
-  //       countItem = 0;
 
-  //       size = totalResults - countItem > 20 ? 20 : totalResults - countItem;
-  //       i = (size = slide * size) - size;
-  //       for (; i < size; i++, countItem++) {
-  //   //       fragmentItems.appendChild(
-  //   //         bntFilterSongs[0].clone(true)
-  //   //         .insert(
-  //   //           bntFilterSongs[1].clone(true)
-  //   //           .text(list[totalResults][searchBy])
-  //   //         )
-  //   //         .data({ position: list[totalResults].position })
-  //   //         .on({
-  //   //           click: function() {
-  //   //             selectedSong($(this).data('position'));
-  //   //           }
-  //   //         }).get()
-  //         // );
-  //       }
-
-  //   //     // All the buttons into the slides
-  //   //     fragmentSlide.appendChild(
-  //   //       bntFilterSongs[2].clone(true)
-  //   //       .insert(fragmentItems)
-  //   //       .css(`width:${document.body.clientWidth}px`).get()
-  //   //     );
-  //   //     fragmentItems = document.createDocumentFragment();
-  //     }
-
-  //   //   // Display all the filtered songs
-  //   //   $('#wrapper-results').empty()
-  //   //   .insert(fragmentSlide)
-  //   //   .css(`width:${tempSlide * document.body.clientWidth}px`);
-
+      // Display all the filtered songs
+      $('#wrapper-results')
+        .empty()
+        .append(slideContainer).css(`width:${countSlide * document.body.clientWidth}px`);
+      slideContainer = document.createDocumentFragment();
     } else {
-  //     // Clean if there's no coincidence
-  //     $('#wrapper-results')
-  //       .text(lang.alerts.searchingResults)
-  //       .addClass('no-searching-found');
-  //     $('#pagination').addClass('hide');
+      // Clean if there's no coincidence
+      $('#wrapper-results')
+        .text(lang.alerts.searchingResults)
+        .addClass('no-searching-found');
     }
-
-  // Show the first coincidence to show as a "ghost text".
-  // $('#search-result').text(list.length > 0 && searchValue !== '' ? list[list.length - 1][searchBy] : '');
 }
 
 // Check if there are new songs to be added
@@ -388,12 +346,7 @@ ipcRenderer.on('search-song', () => {
       .focus();
 
     isSearchDisplayed = true;
-    // countSlide = 0;
 
-    // Make the HTML structure of the items in the slide.
-    // this will help us to save resources because we will append, as text, the
-    // HTML already made.
-    makeItemSlide();
     // let resizeTimes;
     // window.onresize = function() {
     //   clearTimeout(resizeTimes);
