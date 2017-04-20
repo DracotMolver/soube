@@ -4,7 +4,7 @@
             "menu": "Canciones",
             "submenu": [
                 "Agregar nueva carpeta",
-                "Reproducir contenido de una carpeta",
+                "Reproducir canciones de una carpeta",
                 "Reproducir una canción"
             ]
         },
@@ -21,6 +21,24 @@
         }
     },
     "us": {
-
+        "songs": {
+            "menu": "Songs",
+            "submenu": [
+                "Add a new folder",
+                "Play songs from a folder",
+                "Play a single song"
+            ]
+        },
+        "eq": {
+            "menu": "Equalizer"
+        },
+        "options": {
+            "menu": "Preferences",
+            "submenu": [
+                "Configurations",
+                "Documentation",
+                "About Soube"
+            ]
+        }
     }
 }

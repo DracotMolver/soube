@@ -4,7 +4,7 @@
  */
 module.exports = (app) => {
   const configFile = require(`${app.getPath('userData')}/config.json`);
-  let menuLang = require('./menuLang');
+  let menuLang = require('./../config/menuLang')[configFile.lang];
 
   return [
     {
