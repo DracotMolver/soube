@@ -2,6 +2,7 @@
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  */
+
 module.exports = (app) => {
   const configFile = require(`${app.getPath('userData')}/config.json`);
   let menuLang = require('./../config/menuLang')[configFile.lang];

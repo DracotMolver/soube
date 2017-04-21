@@ -14,13 +14,11 @@ const equalizer = require('./menu/equalizer');
 const version = require('./version');
 const folders = require('./menu/folders');
 const player = require('./player');
-const config = require('./config');
-
 const {
   configFile,
   listSongs,
   langFile
-} = config.init();
+} = require('./config').init()
 require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
@@ -29,7 +27,6 @@ const timeScrolling = 3.6;
 const lapsePopup = 4500;
 const maxElements = 20;
 
-//---- normals ----
 let lang = langFile[configFile.lang];
 let interval = 0;
 
@@ -37,7 +34,7 @@ let interval = 0;
 let clickedElement = null;
 let positionElement = null;
 
-//---- searching input ----
+//---- searching bar ----
 let isSearchDisplayed = false;
 let isModalOpen = false; 
 let totalResults = 0;
@@ -107,6 +104,7 @@ function loadSongs() {
 }
 loadSongs();
 
+// Hide the searching bar
 function hideSearchInputData() {
   $('#search-container').addClass('hide');
   $('#search-wrapper').removeClass('search-wrapper-anim');
@@ -123,8 +121,8 @@ function btnPlaySong() {
   hideSearchInputData();
 }
 
-// will be executed every time the user hit down a keyword
-// So, I carefully tried to do a clean, cheaper and faster code :).
+// Will be executed every time the user hit down a keyword
+// So, I carefully tried to code a clean and faster code :).
 function searchInputData(e) {
   parentSlideItem = CreateElement('div').addClass('grid-25 mobile-grid-25');
   containerSlider = CreateElement('div').addClass('results').css(`width:${document.body.clientWidth - 100}px`);
@@ -172,8 +170,7 @@ function searchInputData(e) {
           }
 
           slideContainer.appendChild(
-            containerSlider
-              .clone(false)
+            containerSlider.clone(false)
               .append(itemSlide).get()
           )
           itemSlide = document.createDocumentFragment();
@@ -183,7 +180,9 @@ function searchInputData(e) {
       // Display all the filtered songs
       $('#wrapper-results')
         .empty()
-        .append(slideContainer).css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
+        .append(slideContainer)
+        .css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
+
       slideContainer = document.createDocumentFragment();
     } else {
       // Clean if there's no coincidence
@@ -209,7 +208,7 @@ function searchInputData(e) {
 // //   });
 // }
 
-// actons over the play, netxt, prev and shuffle buttons
+// Actions over the play, netxt, prev and shuffle buttons
 function btnActions(action) {
   switch (action) {
     case 'play-pause':
@@ -225,7 +224,7 @@ function btnActions(action) {
   }
 }
 
-// Add animations and the functions to the play, next, prev and shuffle buttons
+// Add animations to the play, next, prev and shuffle buttons
 function clickBtnControls() {
   $(this).addClass('click-controls')
   .on({
@@ -246,7 +245,7 @@ function clickBtnControls() {
   }
 }
 
-// Will scroll the list of songs using the arrows
+// Scroll the list of songs using the arrows
 function scrollAnimation(direction) {
   const animation = () => {
     $('#list-songs').get().scrollTop +=
@@ -257,6 +256,7 @@ function scrollAnimation(direction) {
   interval = requestAnimationFrame(animation);
 }
 
+// Close the config modals
 function closeModals() {
   $($('.grid-container').get(0)).rmAttr('style');
   $('.parent-container-config')
@@ -271,7 +271,7 @@ function closeModals() {
 }
 
 /** --------------------------------------- Events --------------------------------------- **/
-// Scrolling the list of songs
+// Scrolling the list of songs when click on the song title
 $('#song-title').on({
   click: function () {
     if (this.children[0].textContent.trim() !== '') {
@@ -281,8 +281,8 @@ $('#song-title').on({
       const element = clickedElement.scrollTop;
       const top = positionElement.offsetTop;
       const distance = top - (Math.round($('#top-nav').get().offsetHeight) + 100);
-
-      clickedElement.scrollTop += element !== distance ? distance - element : -(distance - element);
+      const _c = distance - element;
+      clickedElement.scrollTop += element !== distance ?  _c : -(_c);
     }
   }
 });
@@ -296,10 +296,10 @@ $('.arrow-updown').on({
   mouseup: () => cancelAnimationFrame(interval)
 });
 
-// Action when do click on over the buttons play, next, prev and shuffle
+// Actions over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ click: clickBtnControls });
 
-// step forward or step back the song using the progress bar
+// Step forward or step back the song using the progress bar
 $('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(e, this); } });
 
 // Action over the pagination
@@ -322,10 +322,11 @@ $('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(
 //   }
 // });
 
+// Event to close all the config modals
 $('.close').on({ click: closeModals });
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
-// Close the searching bar and all the configs modals
+// Close the searching bar and all the config modals
 ipcRenderer.on('close-search-song', () => {
   if (isSearchDisplayed) hideSearchInputData(); // Searching bar
   closeModals();
@@ -390,7 +391,7 @@ ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
 ipcRenderer.on('save-current-time', player.controls.saveCurrentTime);
 ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
 
-// Display the windows to add musics folders
+// Display the windows to add a musics folders
 ipcRenderer.on('menu-add-folder', () => {
   if (!isModalOpen) {
     folders.loadFolder();

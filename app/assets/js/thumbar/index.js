@@ -3,6 +3,9 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Functions --------------------------------- */
+// Will create the thumbar with three buttons:
+// Play/Pause, Prev, Next.
+// [Windows only!]
 function makeThumBar(win, imgs = {}) {
   const play = {
     icon: imgs.play,

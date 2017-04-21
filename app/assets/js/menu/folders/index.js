@@ -9,8 +9,9 @@ const {
   remote
 } = require('electron');
 
-// ---- Nodejs ----
+// ---- Node ----
 const url = require('url');
+const path = require('path');
 
 //----Own ----
 const songFolder = require('./songFolder');
@@ -18,8 +19,8 @@ const {
   configFile,
   langFile,
   editFile
-} = require('./../../config').init();
-require('./../../dom');
+} = require(path.join(__dirname, '../../', 'config')).init();
+require(path.join(__dirname, '../../', 'dom'));
 
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
@@ -45,13 +46,13 @@ function saveSongList(parentFolder = '') {
   editFile('config', configFile);
 
   $('#path-list-container').append(
-    li.clone().text(parentFolder).on({ click: removeItem })
+    li.clone(true).text(parentFolder).on({ click: removeItem })
   );
 
   // Show a loading
   // Read the content of the parent folder
   songFolder.addSongFolder(parentFolder,
-    () => { },
+    () => $('#add-songs').text(lang.config.loadingSongFolder),
     (i, maxLength) => { // Iterator function
       $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
       $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
@@ -69,7 +70,7 @@ function loadFolder() {
 
   configFile.musicFolder.forEach(v => {
     $('#path-list-container').append(
-      li.clone().text(v).on({ click: removeItem })
+      li.clone(true).text(v).on({ click: removeItem })
     )
   });
 

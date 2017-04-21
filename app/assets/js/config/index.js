@@ -5,6 +5,7 @@
 /* --------------------------------- Modules --------------------------------- */
 //---- nodejs ----
 const fs = require('fs');
+const path = require('path');
 
 //---- electron ----
 const {
@@ -12,9 +13,6 @@ const {
   remote,
   net
 } = require('electron');
-
-//---- own ----
-const version = require('./../version');
 
 /* --------------------------------- Functions --------------------------------- */
 // Will create all the files needed by the music player.
@@ -36,7 +34,7 @@ function createFiles(app) {
       shuffle: true,
       musicFolder: [],
       equalizer: {
-        reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         rock: [],
         electro: [],
         acustic: []
@@ -47,25 +45,23 @@ function createFiles(app) {
     fs.openSync(configPath, 'w');
     fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
   }
-   else {
-    // ONLY TO UPDATE THE CONFIG FILE
-    var actualVersion = app.getVersion().toString();
-    version(net, actualVersion, response => {
-      if (response === 'major') {
-        let config = JSON.parse(fs.readFileSync(configPath).toString());
-        if (typeof config.musicFolder === 'string') {
-          config.equalizer = {
-            reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            rock: [],
-            electro: [],
-            acustic: [104, 124, 141, 0, 0, 104, 0, 104, 117, 0, 0, 0, 107, 104, 109, 123, 92, 107, 0, 154, 113, 84, 90]
-          };
-          config.musicFolder = [config.musicFolder];
-          fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
-        }  
-      }
-    });
-  }
+  //  else {
+  //   // ONLY TO UPDATE THE CONFIG FILE
+  //   var actualVersion = app.getVersion().toString();
+  //   if (response === 'major') {
+  //     let config = JSON.parse(fs.readFileSync(configPath).toString());
+  //     if (typeof config.musicFolder === 'string') {
+  //       config.equalizer = {
+  //         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //         rock: [],
+  //         electro: [],
+  //         acustic: []
+  //       };
+  //       config.musicFolder = [config.musicFolder];
+  //       fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
+  //     }
+  //   }
+  // }
 
   /* --------------------------------- File of songs --------------------------------- */
   if (!fs.existsSync(listSongPath)) {

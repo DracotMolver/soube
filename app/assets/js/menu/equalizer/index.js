@@ -3,13 +3,16 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
+// ---- Node ----
+const path = require('path');
+
 //---- Own ----
 const {
   configFile,
   langFile,
   editFile
-} = require('./../../config').init();
-require('./../../dom');
+} = require(path.join(__dirname, '../../', 'config')).init();
+require(path.join(__dirname, '../../', 'dom'));
 
 //---- Electronjs ----
 const ipcRenderer = require('electron').ipcRenderer;
@@ -61,17 +64,14 @@ function showEqualizer() {
 
   const fragment = document.createDocumentFragment();
   fragment.appendChild(
-    option
-      .clone()
-      .text(lang.config.selectEQSeting)
-      .get()
+    option.clone()
+      .text(lang.config.selectEQSeting).get()
   );
 
   // EQ select settings options
   Object.keys(configFile.equalizer).forEach(v =>
     fragment.appendChild(
-      option
-        .clone()
+      option.clone(true)
         .val(v)
         .text(v)
         .attr(
@@ -83,11 +83,9 @@ function showEqualizer() {
 
   // Option to add a new EQ setting
   fragment.appendChild(
-    option
-      .clone()
+    option.clone()
       .val('new')
-      .text(lang.config.addNewEQSetting)
-      .get()
+      .text(lang.config.addNewEQSetting).get()
   );
 
   $('#eq-buttons')

@@ -3,21 +3,25 @@
  * @copyright 2016 - 2017
  */
 /** --------------------------------------- Modules --------------------------------------- **/
-// Own modules
+//---- Electron ----
+const path = require('path');
+
+//---- Own ----
 const {
     listSongs
-} = require('./../../config').init();
-require('./../../dom');
+} = require(path.join(__dirname, '../../', 'config')).init();
+require(path.join(__dirname, '../../' , 'dom'));
 
 /** --------------------------------------- Functions --------------------------------------- **/
+// Will create and render the list of songs
 function createView(player) {
   const f = document.createDocumentFragment();
 
   // Buil the basic structure of elements
-  // The parent element must be created because we will attach a function to it.
-  // The rest of the elements, the childNodes, are not needed to create them, they
-  // can be just text.
-  let parent = CreateElement('div').addClass('list-song-container')
+  // The parent element must be created, because we will attach a function to it.
+  // The rest of the elements, the childNodes, are not need to create them.
+  // They can be just text.
+  let parent = CreateElement('div').addClass('list-song-container');
 
   const playSong = function () {
     player.controls.playSongAtPosition($(this).data('position'));

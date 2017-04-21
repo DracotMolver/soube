@@ -3,51 +3,50 @@
  * @copyright 12016 - 2017
  */
 /* --------------------------------------- Modules ------------------------------------------- */
-//---- nodejs ----
+//---- Node ----
 const path = require('path');
 const url = require('url');
 
-//---- electron ----
+//---- Electron ----
 const ipcRenderer = require('electron').ipcRenderer;
 
-//---- own ----
-require('./../../dom');
+//---- Own ----
 const {
   configFile,
   langFile,
   listSongs,
   editFile
-} = require('./../../config').init();
-const songWorker = new Worker(path.join(__dirname, 'workerSong.js'));
+} = require(path.join(__dirname, '../../', 'config')).init();
+require(path.join(__dirname, '../../', 'dom'));
 
 /* --------------------------------------- Variables ------------------------------------------- */
-//---- normals ----
-let poolOfSongs = {}; // Will keep all the AudioBuffers
+let poolOfSongs = {};                                        // Will keep all the AudioBuffers
 let lang = langFile[configFile.lang];
 
-let isMovingForward = false; // if is using the progress bar of the song
-let isNextAble = false; // if the next song can be played (needed because AudioNode.stop() works with Promise)
-let isSongPlaying = false; // It's the AudioNode playing
-let isplayedAtPosition = false // If the song is clicked on from the list
-let prevSongsToPlay = []; // Will keep all the filename of old songs
-let filter = []; // Array for createBiquadFilter to use the Frequencies
-let file = ''; // Will keep the data song info
-let oldFile = ''; // Will keep the data of the song played
+//---- Song ----
+let isplayedAtPosition = false                               // If the song is clicked on from the list
+let isMovingForward = false;                                 // if is using the progress bar of the song
+let isSongPlaying = false;                                   // It's the AudioNode playing
+let isNextAble = false;                                      // if the next song can be played
+let prevSongsToPlay = [];                                    // Will keep all the filename of old songs
+let filter = [];                                             // Array for createBiquadFilter to use the Frequencies
+let oldFile = '';                                            // Will keep the data of the song played
+let file = '';                                               // Will keep the data song info
 let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
-let duration = 0; // max duration of the song
-let source = null; // AudioNode object
+let duration = 0;                                            // max duration of the song
+let source = null;                                           // AudioNode object
 
-// Elapsed time
-let lapse = 0;
-let percent = 0;
+//---- Elapsed time ----
+let lastCurrentTime = 0;
 let millisecond = 0;
+let percent = 0;
 let minute = 0;
 let second = 0;
-let lastCurrentTime = 0;
+let lapse = 0;
 let interval = null;
 let time = {};
 
-// Notification
+//---- Notification ----
 let notification = null;
 let notifi = {
   lang: 'US',
@@ -58,9 +57,9 @@ let notifi = {
 
 //---- constants ----
 const seconds_u = 60;
-const audioContext = new window.AudioContext(); // Object AudioContext
-const xhtr = new XMLHttpRequest(); // Object XMLHttpRequest
-const hrz = [ // Frequencies
+const audioContext = new window.AudioContext();
+const xhtr = new XMLHttpRequest();
+const hrz = [
  50, 100, 156, 220, 311, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000
 ];
 
@@ -85,7 +84,7 @@ const anim = {
 function shuffle() {
   file = '';
   configFile.shuffle = !configFile.shuffle;
-  $('#shuffle-icon').css(configFile.shuffle ? 'fill:#FBFCFC' : 'fill:#f06292');
+  $('#shuffle-icon').css(`fill:${configFile.shuffle ? '#FBFCFC' : '#f06292'}`);
 
   editFile('config', configFile);
 }
@@ -243,25 +242,10 @@ function initSong() {
 
   // Get the buffer of the song
   const getBuffer = (_path, fnc) => {
-    // // Read the file
-    // songWorker.postMessage({
-    //   action: 'getBuffer',
-    //   filePath: _path
-    //   // url.format({
-    //   //   pathname: _path,
-    //   //   protocol: 'file:'
-    //   // })
-    // });
-
-    // songWorker.onmessage = e => {
-    //   audioContext.decodeAudioData(e.response).then(buffer => fnc(buffer), reason => fnc(false));
-    // };
     // Read the file
     xhtr.open('GET', `file://${_path}`, true);
     xhtr.responseType = 'arraybuffer';
-    xhtr.onload = () => audioContext
-        .decodeAudioData(xhtr.response)
-        .then(buffer => fnc(buffer), reason => fnc(false));
+    xhtr.onload = () => audioContext.decodeAudioData(xhtr.response).then(buffer => fnc(buffer), reason => fnc(false));
 
     xhtr.send(null);
   };

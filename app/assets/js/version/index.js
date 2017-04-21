@@ -3,6 +3,8 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Functions --------------------------------- */
+// Check if there's a new version to download.
+// Will return 'major' if there's a new version or 'same' if it's the same version
 function getActualVersion(net, version, fn) {
   var data = '';
   const request = new net.ClientRequest({
