@@ -15,12 +15,13 @@ const ipcRenderer = require('electron').ipcRenderer;
 const musicmetadata = require('musicmetadata');
 
 //---- own ----
-let {
+const {
   configFile,
   listSongs,
   langFile,
   editFile
-} = require('./../../../config').init();
+} = require(path.join(__dirname, '../../../' ,'config')).init();
+const worker = new Worker(path.join(__dirname, 'workerPaths.js')); 
 
 /* --------------------------------- Variables --------------------------------- */
 //---- normals ----
@@ -29,45 +30,6 @@ let songs = [];
 let files = [];
 
 /* --------------------------------- Functions --------------------------------- */
-// List of files and sub-files
-// In this way, we avoid to use recursion
-function findFiles(dir) {
-  let allFiles = [];
-  let tmpFolders = [];
-  let folders = [];
-  let foldersSize = 0;
-  let baseFolder = '';
-
-  fs.readdirSync(dir).forEach(files => {
-    // Based folders
-    baseFolder = path.join(dir, files);
-    if (fs.lstatSync(baseFolder).isDirectory()) {
-      folders.push(baseFolder);
-    } else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wmv|wav|ogg)$/ig.test(baseFolder.trim())) {
-      allFiles.push(baseFolder);
-    }
-  });
-
-  foldersSize = folders.length - 1;
-  var count = 0;
-  while (foldersSize > -1) {
-    fs.readdirSync(folders[foldersSize]).forEach(files => {
-      baseFolder = path.join(folders[foldersSize], files);
-      if (fs.lstatSync(baseFolder).isDirectory()) {
-        tmpFolders.push(baseFolder);
-      } else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wmv|wav|ogg)$/ig.test(baseFolder.trim())) {
-        allFiles.push(baseFolder);
-      }
-    });
-
-    folders.pop();
-    folders = folders.concat(tmpFolders);
-    foldersSize = folders.length - 1;
-  }
-
-  return allFiles;
-}
-
 // Will get all this songs files.
 // It will compare if there's more or few songs
 function addSongFolder(folder, fnStart, fnIter) {
@@ -80,7 +42,6 @@ function addSongFolder(folder, fnStart, fnIter) {
       extractMetadata(fnIter);
     }
   };
-
   readParentFolder(folder, readAllFiles);
 }
 
@@ -92,17 +53,10 @@ function extractMetadata(fnIter) {
       count++;
       // In case of empty data, it will save data using what is inside the lang.json file
       songs.push(
-        error ?
         {
-          artist: lang.artist.trim().replace(/\s/g, '&nbsp;'),
-          album: lang.album.trim().replace(/\s/g, '&nbsp;'),
-          title: lang.title.trim().replace(/\s/g, '&nbsp;'),
-          filename: f
-        } :
-        {
-          artist: (data.artist.length !== 0 ? data.artist[0] : lang.artist).trim().replace(/\s/g, '&nbsp;'),
-          album: (data.album.trim().length !== 0 ? data.album : lang.album).trim().replace(/\s/g, '&nbsp;'),
-          title: (data.title.trim().length !== 0 ? data.title : lang.title).trim().replace(/\s/g, '&nbsp;'),
+          artist: spaceToNbsp(data.artist.length === 0 || error ? lang.artist : data.artist[0]),
+          album: spaceToNbsp(data.album.trim().length === 0 || error ?  lang.album : data.album),
+          title: spaceToNbsp(data.title.trim().length === 0 || error ? lang.title : data.title),
           filename: f
         }
       );
@@ -112,10 +66,10 @@ function extractMetadata(fnIter) {
 }
 
 function updateSongList() {
+  // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
   editFile('listSong', songs.sort((a, b) =>
-    // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
     a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
-      a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
+    a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
   ).map((v, i) => (v.position = i, v)));
 }
 
@@ -135,7 +89,7 @@ function removeSongFolder(folder) {
 }
 
 function readParentFolder(folder, fn) {
-      // command line [Linux | Mac]
+  // command line [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
     const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
     exec(command, (error, stdout, stderr) => {
@@ -153,9 +107,14 @@ function readParentFolder(folder, fn) {
       fn(stdout.trim().split('\n'));
     });
   } else if (process.platform === 'win32') {
-    // Only for windows
-    fn(findFiles(folder));
+    // // Only for windows
+    worker.postMessage({ 'folder': folder });
+    worker.onmessage = e => fn(e.data.files.split('|'));
   }
+}
+
+function spaceToNbsp(str) {
+  return str.trim().replace(/\s/g, '&nbsp;');
 }
 
 module.exports = Object.freeze({
