@@ -43,8 +43,7 @@ p {
   font-size: 100%;
   padding: 0;
   margin: 0;
-  cursor: default;
-  color:  var(--blackColor)
+  color: var(--blackColor)
 }
 
 * {
@@ -213,13 +212,13 @@ button {
 button,
 select {
   box-sizing: border-box;
-  box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .14);
+  box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .18);
   padding-right: .6em;
   padding-left: .6em
 }
 
 select {
-  border: 1px solid rgba(0,0,0,.14);
+  border: 1px solid rgba(0,0,0,.18);
   cursor: pointer;
   height: 2.15em
 }
@@ -254,7 +253,6 @@ button:hover {
 .btn-controls::after,
 .arrow::after,
 .arrow::before,
-.list-song-container::after,
 .tooltip::after,
 .close:before,
 .close:after,
@@ -298,7 +296,6 @@ button:hover {
 /* ------------------------ CONTROLES DEL REPRODUCTOR ------------------------ */
 .btn-controls {
   text-align: center;
-  cursor: pointer;
   margin: .3em 0;
   height: 1.2em;
   float: left
@@ -469,7 +466,7 @@ button:hover {
 
 #search-wrapper {
   position: relative;
-  padding: 6em 0 3.5em 0;
+  padding: 4em 0 3.5em 0;
   margin: auto;
   height: auto;
   width: 11%
@@ -490,20 +487,12 @@ button:hover {
   color: var(--blackColor)
 }
 
-#search,
-#search-result {
+#search {
   padding-bottom: .16em;
   padding-top: .16em;
+  background: var(--whiteColor);
+  box-shadow: 0 0 5px 0 rgba(33, 33, 33, .14);
   font-size: 1.6em
-}
-
-#search-result {
-  padding-left: 1.6em;
-  position: absolute;
-  z-index: -1;
-  cursor: poninter;
-  color: rgba(182, 182, 182, .4);
-  top: 3.76em
 }
 
 .search-anim {
@@ -534,68 +523,6 @@ button:hover {
 }
 
 /* ------------------------ PAGINACIÓN DEL INPUT SEARCH ------------------------ */
-#pagination {
-  position: relative;
-  height: 30px;
-  margin: 0 auto;
-  width: 400px;
-  top: 1em
-}
-
-.arrow::after,
-.arrow::before {
-  border-radius: 25px;
-  background: var(--blackColor);
-  opacity: .2;
-  height:.3em;
-  width: 10%
-}
-
-.arrow-open-anim::after {
-  animation: openArrowDown .6s ease-out forwards
-}
-
-.arrow-open-anim::before {
-  animation: openArrowUp .6s ease-out forwards
-}
-
-#left-arrow,
-#right-arrow {
-  margin-top: -23px;
-  height: 54px;
-  cursor: pointer;
-  width: 45px
-}
-
-#left-arrow {
-  float: left
-}
-
-#left-arrow::before,
-#left-arrow::after {
-  transform-origin: left
-}
-
-#right-arrow::before,
-#right-arrow::after {
-  transform-origin: right
-}
-
-/* -------------------------------------- */
-#right-arrow::after,
-#left-arrow::before { /* Para obtener una mejor simetría en los ejes que se unen */
-  top: 2px
-}
-
-#right-arrow::before,
-#left-arrow::after { /* Para obtener una mejor simetría en los ejes que se unen */
-  top: 0
-}
-
-/* -------------------------------------- */
-#right-arrow {
-  float: right
-}
 
 /* ------------------------ MENSAJE DE BIENVENIDA ------------------------ */
 #init-message {
@@ -658,19 +585,15 @@ button:hover {
   color: var(--whiteColor);
 }
 
-.tooltip::after,
-.list-song-container::after {
-  margin: 0 auto;
-  width: 0;
-  right: 0;
-  left: 0
-}
-
 .tooltip::after {
   border-style: solid;
   border-width: 0 8px 11px 8px;
   border-color: transparent transparent hsla(180, 5%, 27%, .8) transparent;
   height: 0;
+  margin: 0 auto;
+  width: 0;
+  right: 0;
+  left: 0;
   top: -11px
 }
 
@@ -681,15 +604,7 @@ button:hover {
 /* ------------------------ CANCIÓN SELECCIONADA ------------------------ */
 .list-song-container {
   width: 100%;
-  float: left;
-  cursor: pointer
-}
-
-.list-song-container::after {
-  border-radius: 25px;
-  background: rgba(66, 73, 73, 0);
-  height: 28px;
-  top: 188px
+  float: left
 }
 
 /* ------------------------ EQUALIZER ------------------------ */
@@ -715,7 +630,7 @@ button:hover {
 .range-percent {
   border-radius: 3px;
   background: var(--lightGreyColor);
-  box-shadow: 0 0 2px 0 rgba(33, 33, 33, 0.18) inset;
+  box-shadow: 0 0 2px 0 rgba(33, 33, 33, .18) inset;
   position: relative;
   overflow: hidden;
   padding: 0;
@@ -826,17 +741,25 @@ button:hover {
   width: 6.6em
 }
 
-.spinner-item {
-  transform-origin: center;
-  background: var(--darkGreyColor);
-  transform: scale(0, 0);
-  height: 100%;
+.spinner-container {
   margin: 0 .16em;
+  height: 100%;
   width: 1em;
   float: left
 }
 
-.spinner-anim > .spinner-item {
+.spinner-item {
+  transform-origin: center;
+  background: var(--darkGreyColor);
+  transform: scale(0, 0);
+  position: absolute;
+  margin: auto;
+  bottom: 0;
+  width: 1em;
+  top: 0
+}
+
+.spinner-anim > .spinner-container > .spinner-item {
   animation-name: spinnerAnim;
   animation-duration: 1.2s;
   animation-direction: linear;
@@ -844,23 +767,28 @@ button:hover {
 }
 
 #spinner-item-1 {
-  animation-delay: .12s
+  animation-delay: .12s;
+  height: 70%
 }
 
 #spinner-item-2 {
-  animation-delay: .36s
+  animation-delay: .36s;
+  height: 80%
 }
 
 #spinner-item-3 {
-  animation-delay: .52s
+  animation-delay: .52s;
+  height: 100%
 }
 
 #spinner-item-4 {
-  animation-delay: .6s
+  animation-delay: .6s;
+  height: 80%
 }
 
 #spinner-item-5 {
-  animation-delay: .82s
+  animation-delay: .82s;
+  height: 70%
 }
 
 
@@ -903,26 +831,6 @@ button:hover {
   }
 }
 
-@keyframes openArrowDown {
-  0% {
-    transform: rotate(0)
-  }
-  100% {
-    transform: rotate(40deg);
-    opacity: 1
-  }
-}
-
-@keyframes openArrowUp {
-  0% {
-    transform: rotate(0)
-  }
-  100% {
-    transform: rotate(-40deg);
-    opacity: 1
-  }
-}
-
 @keyframes showModal {
   60% {
      transform: scale(1.16)
@@ -956,43 +864,4 @@ button:hover {
 
 /* ------------------------ MEDIA QUERIES ------------------------ */
 /*@media only screen and (max-width: 750px) {
-  .no-searching-found {
-    font-size: 2em
-  }
-
-  #total-progress-bar{
-    margin: .1em 1.3em .5em
-  }
-
-  .prev-next::after {
-    left: 14.7%
-  }
-
-  #info-song {
-    text-align: left;
-    margin: .19em 1.2em;
-    width: 93%
-  }
-
-  #info-song > div {
-    overflow: hidden
-  }
-
-  #song-title > h1 {
-    font-size: 1.16em
-  }
-
-  #artist > h2,
-  #album > h3 {
-    font-size: 1em
-  }
-
-  #time {
-    font-size: 1em;
-    margin: 0
-  }
-
-  .list-song-container::after {
-    top: 193px
-  }
 }*/
