@@ -403,6 +403,9 @@ ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
 // Display the windows to add a musics folders
 ipcRenderer.on('menu-add-folder', () => isModalOpened(folders.loadFolder));
 
+// Display the album to be played
+ipcRenderer.on('menu-play-album', () => isModalOpened(folders.loadFullAlbum));
+
 // Display the equalizer
 ipcRenderer.on('menu-equalizer', () => isModalOpened(equalizer.showEqualizer));
 

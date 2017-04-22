@@ -34,7 +34,8 @@ const shortKeys = {
   'CommandOrControl+Down': 'shuffle',
   'CommandOrControl+E': 'menu-equalizer',
   'CommandOrControl+N': 'menu-add-folder',
-  'CommandOrControl+O': 'menu-configurations'
+  'CommandOrControl+O': 'menu-configurations',
+  'CommandOrControl+A': 'menu-play-album'
 };
 let thumbarButtons = {};
 

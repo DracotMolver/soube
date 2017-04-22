@@ -21,7 +21,10 @@ module.exports = (app) => {
           type: 'separator'
         },
         {
-          label: menuLang.songs.submenu[1] // play an album from a folder
+          label: menuLang.songs.submenu[1], // play an album from a folder
+          click(menuItem, browserWindow, event) {
+            browserWindow.webContents.send('menu-play-album');
+          }
         },
         {
           label: menuLang.songs.submenu[2] // play a son - form a folder

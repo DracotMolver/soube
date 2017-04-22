@@ -117,8 +117,16 @@ function spaceToNbsp(str) {
   return str.trim().replace(/\s/g, '&nbsp;');
 }
 
+function getAllSongs() {
+  return songs.sort((a, b) =>
+    a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
+    a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
+  ).map((v, i) => (v.position = i, v));
+}
+
 module.exports = Object.freeze({
   removeSongFolder,
   updateSongList,
-  addSongFolder
+  addSongFolder,
+  getAllSongs
 });

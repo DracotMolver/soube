@@ -14,6 +14,7 @@ const url = require('url');
 const path = require('path');
 
 //----Own ----
+const albumFolder = require('./albumFolder');
 const songFolder = require('./songFolder');
 const {
   configFile,
@@ -114,6 +115,7 @@ function close() {
 }
 
 module.exports = Object.freeze({
+  loadFullAlbum: albumFolder.loadFullAlbum,
   loadFolder,
   close
 });

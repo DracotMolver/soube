@@ -408,10 +408,46 @@ button:hover {
   color: var(--whiteColor);
 }
 
+/* ------------------------ ALBUN A TOCAR ------------------------ */
+#album-to-play {
+  background: var(--whiteColor);
+  position: absolute;
+  overflow: auto;
+  height: calc(100% - 89px);
+  float: none
+}
+
+
+#album-title-artist,
+#album-title-album,
+.album-title-song {
+  padding-left: 1em;
+  line-height: 2em;
+}
+
+#album-title-artist {
+  font-family: Muli-Bold;
+  font-size: 2em
+}
+
+#album-title-album {
+  font-size: 1.2em
+}
+
+.album-title-song {
+  font-family: Muli-light;
+  font-size: .86em;
+  cursor: pointer
+}
+
+.album-title-song:hover {
+  background: var(--lightGreyColor)
+}
+
 /* ------------------------ LISTADO DE CANCIONES ------------------------ */
 #list-songs {
-  background: linear-gradient(var(--whiteColor) 30%, transparent),
-              radial-gradient(at 50% 0, rgba(66,73,73, .3), transparent 80%);
+  background: linear-gradient(var(--lightGreyColor) 30%, transparent),
+              radial-gradient(at 50% 0, rgba(66,73,73, .3), transparent 30%);
   background-repeat: no-repeat;
   background-size: 100% 50px, 100% 15px;
   background-attachment: local, scroll;
