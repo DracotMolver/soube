@@ -45,9 +45,8 @@ function saveSongList(parentFolder = '') {
   configFile.musicFolder.push(parentFolder);
   editFile('config', configFile);
 
-  $('#path-list-container').append(
-    li.clone(true).text(parentFolder).on({ click: removeItem })
-  );
+  $('#path-list-container')
+    .append(li.clone(true).text(parentFolder).on({ click: removeItem }));
 
   // Show a loading
   // Read the content of the parent folder

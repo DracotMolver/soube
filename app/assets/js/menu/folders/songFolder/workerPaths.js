@@ -11,8 +11,8 @@ const fs = require('fs');
 // List of files and sub-files
 // In this way, we avoid to use recursion
 function findFiles(dir) {
-  let allFiles = [];
   let tmpFolders = [];
+  let allFiles = [];
   let folders = [];
   let foldersSize = 0;
   let baseFolder = '';

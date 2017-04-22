@@ -48,11 +48,11 @@ let slide = 0;
 let containerSlider;
 let slideContainer = document.createDocumentFragment();
 let itemSlide = document.createDocumentFragment();
-let list = [];
 let newList = [];
+let list = [];
 let regex = null;
-let searchValue = '';
 let oldSearchedValue = '';
+let searchValue = '';
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
@@ -94,9 +94,9 @@ function loadSongs() {
   getActualVersion();
 
   if (Object.keys(listSongs).length === 0) {
-    $('#list-songs').text(
-      `<div id="init-message">${lang.alerts.welcome}</div>`
-    ).on({ click: folders.loadFolder });
+    $('#list-songs')
+      .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
+      .on({ click: folders.loadFolder });
   } else {
     // Render the list of songs
     player.createView(player);
@@ -354,9 +354,7 @@ ipcRenderer.on('search-song', () => {
     $('#search')
       .addClass('search-anim')
       .on({ keyup: searchInputData })
-      .val('')
-      .get()
-      .focus();
+      .val('').get().focus();
 
     isSearchDisplayed = true;
 

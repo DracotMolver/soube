@@ -140,7 +140,7 @@ function playSong() {
   }
 }
 
-// Lapse of time
+// ELapse of time
 function startTimer() {
   const update = () => {
     if (++millisecond > 59) {
@@ -234,54 +234,62 @@ function setAudioBufferToPlay(buffer) {
   ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`);
 }
 
+// Get the buffer of the song
+function getBuffer(_path, fnc) {
+  // Read the file
+  xhtr.open('GET', url.format({
+    pathname: _path,
+    protocol: 'file:'
+  }), true);
+  xhtr.responseType = 'arraybuffer';
+  xhtr.onload = () => audioContext.decodeAudioData(xhtr.response).then(buffer => fnc(buffer), reason => fnc(false));
+
+  xhtr.send(null);
+}
+
+function setSong(buffer) {
+  setAudioBufferToPlay(buffer);
+
+  // The buffer gives us the song's duration.
+  // The duration is in seconds, therefore we need to convert it to minutes
+  time = timeParse((duration = buffer.duration));
+  lapse = 100 / duration;
+
+  $('#time-end').text(`${formatDecimals(time.minute)}:${formatDecimals(time.second)}`);
+
+  // Change the color the actual song
+  $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
+
+  isSongPlaying = true;
+}
+
+// Load the "possible" next song.
+// This is for a faster loading.
+// It doesn't work if you click on a song of the list
+// or by choosing one by the filtered song list using
+// the searching bar
+function nextPossibleSong() {
+  isplayedAtPosition = false;
+  position = oldFile.position;
+
+  // Next (possible) song to play
+  // if it is not saved into the buffer, we have to get it and save it
+  file = getFile();
+  if (!poolOfSongs[file.filename]) {
+    getBuffer(file.filename, data => {
+      if (!data) throw data;
+
+      isNextAble = true;
+      setBufferInPool(file.filename, data);
+    });
+  }
+}
+
 function initSong() {
   animPlayAndPause('play');
 
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
   $('#spinner').switchClass('hide', 'spinner-anim');
-
-  // Get the buffer of the song
-  const getBuffer = (_path, fnc) => {
-    // Read the file
-    xhtr.open('GET', `file://${_path}`, true);
-    xhtr.responseType = 'arraybuffer';
-    xhtr.onload = () => audioContext.decodeAudioData(xhtr.response).then(buffer => fnc(buffer), reason => fnc(false));
-
-    xhtr.send(null);
-  };
-
-  const setSong = buffer => {
-    setAudioBufferToPlay(buffer);
-
-    // The buffer gives us the song's duration.
-    // The duration is in seconds, therefore we need to convert it to minutes
-    time = timeParse((duration = buffer.duration));
-    lapse = 100 / duration;
-
-    $('#time-end').text(`${formatDecimals(time.minute)}:${formatDecimals(time.second)}`);
-
-    // Change the color the actual song
-    $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
-
-    isSongPlaying = true;
-  }
-
-  const nextPossibleSong = () => {
-    isplayedAtPosition = false;
-    position = oldFile.position;
-
-    // Next (possible) song to play
-    // if it is not saved into the buffer, we have to get it and save it
-    file = getFile();
-    if (!poolOfSongs[file.filename]) {
-      getBuffer(file.filename, data => {
-        if (!data) throw data;
-
-        isNextAble = true;
-        setBufferInPool(file.filename, data);
-      });
-    }
-  };
 
   // Get the buffer of song if it is in the poolOfSongs
   // Note: The oldFile is an important variable, because is saved into
@@ -309,14 +317,14 @@ function initSong() {
 }
 
 function checkNextAndPrevSong() {
-    if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+  if (!isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
 
-    if(source !== null) {
-      source.stop(0);
-      source = null;
-    }
+  if(source !== null) {
+    source.stop(0);
+    source = null;
+  }
 
-    isNextAble = false;
+  isNextAble = false;
 }
 
 function nextSong() {

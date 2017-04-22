@@ -34,17 +34,17 @@ function getDB(value) {
 }
 
 // Options to config the EQ
-function setEQ(value) {
-  switch (value) {
+function setEQ() {
+  switch (this.value) {
     case 'new': console.log('add new'); break;
     case 'reset':
     case 'rock':
     case 'electro':
     case 'acustic':
-      configFile.equalizerConfig = value;
+      configFile.equalizerConfig = this.value;
       editFile('config', configFile);
 
-      eqHrz = configFile.equalizer[value];
+      eqHrz = configFile.equalizer[this.value];
       for (var i = 0; i < 15; i++) {
         $(`#range-${i}`)
           .css(`top:${eqHrz[i] === 0 ? 120 : eqHrz[i]}px`)
@@ -91,9 +91,7 @@ function showEqualizer() {
   $('#eq-buttons')
     .empty()
     .append(fragment)
-    .on({
-      change: function () { setEQ(this.value); }
-    });
+    .on({ change: setEQ });
 
 
   eqHrz = configFile.equalizer[configFile.equalizerConfig];
@@ -141,6 +139,7 @@ function dbSetting(el, orientation) {
 function close() {
   clearInterval(interval);
   percent = eqHrz = pos = db = 0;
+  option = null;
 }
 
 module.exports = {
