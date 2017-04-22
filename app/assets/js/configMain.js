@@ -29,16 +29,6 @@
 
 // /* --------------------------------- Functions --------------------------------- */
 // // Change the text in the config window
-// (function updateTextContet() {
-//   $('#_addsongfolder').text(lang.config.addSongFolder);
-//   $('#_statussongfolder').text(configFile.musicFolder === '' ? lang.config.statusSongFolder : configFile.musicFolder);
-//   $('#_changelanguage').text(lang.config.changeLanguage);
-//   $('#_statuslanguage').text(lang.config.statusLanguage);
-//   $('#_titleconfig').text(lang.config.titleConfig);
-//   $('#_equalizersetting').text(lang.config.equalizerSetting);
-//   $('#_legal').text(lang.config.legal);
-// })();
-
 // // Animation of the panel when select an option
 // function animConfigPanel(e, text) {
 //   actualPanel = $(`#${$(e).data('action')}`).removeClass('hide');
@@ -57,7 +47,6 @@
 
 // // Change the lang of the music player
 // function onClickChangeLang() {
-//   animConfigPanel(this, lang.config.changeLanguage);
 
 //   $('.lang-option').on({
 //     'click': function () {
