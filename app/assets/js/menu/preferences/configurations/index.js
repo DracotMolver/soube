@@ -3,6 +3,11 @@
  * @copyright 2016 - 2017
  */
 /** --------------------------------------- Modules --------------------------------------- **/
+//---- Electron ----
+const {
+  ipcRenderer
+} = require('electron');
+
 //---- Node ----
 const path = require('path');
 
@@ -22,16 +27,50 @@ let option = CreateElement('option');
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function displayOption() {
+  $('#theme-colours').addClass('hide');
+  $('#idiom').addClass('hide');
+
   switch (this.value) {
     case '1': showColoursTheme(); break;
-    case '2':
+    case '2': showLanguage(); break;
     case '3':
   }
 }
 
+// Change the idiom of the app
+function showLanguage() {
+  $('#idiom').removeClass('hide');
+  let i = '';
+  switch (configFile.lang) {
+    case 'es': i = 'Español<div class="checked-colour"></div>'; break;
+    case 'us': i = 'English<div class="checked-colour"></div>'; break;
+    case 'de': i = 'Deutsch<div class="checked-colour"></div>'; break;
+  }
+
+  $(`#${configFile.lang}`).text(i).css('background:#fcfcfc');
+}
+
+function choosenIdiom() {
+  configFile.lang = this.id;
+  editFile('config', configFile);
+
+  let i = '';
+  switch (configFile.lang) {
+    case 'es': i = 'Español'; break;
+    case 'us': i = 'English'; break;
+    case 'de': i = 'Deutsch'; break;
+  }
+
+  $(`#${configFile.lang}`).text(i).rmAttr('style');
+  $(`#${this.id}`).text(`${i}<div class="checked-colour"></div>`).css('background:#fcfcfc');
+
+  setTimeout(() => ipcRenderer.send('restart-app'), 460);
+}
+
+// Change the color of the app
 function showColoursTheme() {
   $('#theme-colours').removeClass('hide');
-  $(`#${configFile.theme}`).text('<div id="checked-colour"></div>');
+  $(`#${configFile.theme}`).text('<div class="checked-colour"></div>');
 }
 
 function choosenColor() {
@@ -39,7 +78,7 @@ function choosenColor() {
   configFile.theme = this.id;
   editFile('config', configFile);
   editFile(path.join(__dirname, '../../../../css', 'color.css'), coloursFile[this.id], true);
-  $(`#${this.id}`).text('<div id="checked-colour"></div>');
+  $(`#${this.id}`).text('<div class="checked-colour"></div>');
 }
 
 function showConfigurations() {
@@ -64,6 +103,8 @@ function showConfigurations() {
 
   $('.colour').on({ click: choosenColor });
 
+  // idiom.
+  $('.idiom-item').on({ click: choosenIdiom });
 
   $($('.parent-container-config').get(2))
     .removeClass('hide')

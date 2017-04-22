@@ -256,7 +256,7 @@ button:hover {
 .close:before,
 .close:after,
 .hz::before,
-#checked-colour::after {
+.checked-colour::before {
   position: absolute;
   content: ''
 }
@@ -712,6 +712,7 @@ button:hover {
   height: 40px;
   width: 40px
 }
+
 .colour-name {
   font-size: .85em;
   color: var(--darkGreyColor)
@@ -744,7 +745,21 @@ button:hover {
   background: #e0e0e0
 }
 
-#checked-colour {
+.idiom-item {
+  margin-bottom: 1em;
+  margin-top: 1em;
+  line-height: 3em;
+  font-family: 'Muli-Bold';
+  text-align: center;
+  position: relative;
+  cursor: pointer
+}
+
+.idiom-item:hover {
+  background: var(--lightGreyColor)
+}
+
+.checked-colour {
   box-shadow: 0 3px 2px 0 rgba(0, 0, 0, .18);
   border-radius: 2px;
   background: #64DD17;
@@ -755,16 +770,17 @@ button:hover {
   top: -6px
 }
 
-#checked-colour::after {
-    height: 8px;
-    width: 12px;
-    position: absolute;
+.checked-colour::before {
     border-style: solid;
     border-color: var(--whiteColor);
     border-right: 3px;
     border-top: 3px;
     box-sizing: border-box;
     transform: rotate(-51deg);
+    position: absolute;
+    z-index: 9;
+    height: 8px;
+    width: 12px;
     left: 2px;
     top: 2px
 }
