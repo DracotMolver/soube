@@ -30,7 +30,8 @@ const shortKeys = {
   'CommandOrControl+Left': 'prev-song',
   'CommandOrControl+Down': 'shuffle',
   'CommandOrControl+E': 'menu-equalizer',
-  'CommandOrControl+N': 'menu-add-folder'
+  'CommandOrControl+N': 'menu-add-folder',
+  'CommandOrControl+O': 'menu-configurations'
 };
 let thumbarButtons = {};
 
@@ -71,8 +72,7 @@ function ready() {
     show: false,
     icon: makeIcon('icon.png'),
     webPreferences: {
-      nodeIntegrationInWorker: true,
-      preload: path.join(__dirname, 'assets', 'js', 'config', 'theme.js')
+      nodeIntegrationInWorker: true
     }
   });
 
