@@ -65,7 +65,7 @@ function showEqualizer() {
   const fragment = document.createDocumentFragment();
   fragment.appendChild(
     option.clone()
-      .text(lang.config.selectEQSeting).get()
+      .text(lang.config.selectEQSetting).get()
   );
 
   // EQ select settings options

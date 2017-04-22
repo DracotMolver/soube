@@ -9,10 +9,10 @@ module.exports = (app) => {
 
   return [
     {
-      label: menuLang.songs.menu,
+      label: menuLang.songs.menu, // Archivos
       submenu: [
         {
-          label: menuLang.songs.submenu[0],
+          label: menuLang.songs.submenu[0], // new folder
           click(menuItem, browserWindow, event) {
             browserWindow.webContents.send('menu-add-folder');
           }
@@ -21,33 +21,36 @@ module.exports = (app) => {
           type: 'separator'
         },
         {
-          label: menuLang.songs.submenu[1]
+          label: menuLang.songs.submenu[1] // play an album from a folder
         },
         {
-          label: menuLang.songs.submenu[2]
+          label: menuLang.songs.submenu[2] // play a son - form a folder
         }
       ]
     },
     {
-      label: menuLang.eq.menu,
+      label: menuLang.eq.menu, // Equalizer
       click(menuItem, browserWindow, event) {
-        browserWindow.webContents.send('menu-equalizer')
+        browserWindow.webContents.send('menu-equalizer');
       }
     },
     {
-      label: menuLang.options.menu,
+      label: menuLang.options.menu, // Preferences
       submenu: [
         {
-          label: menuLang.options.submenu[0]
+          label: menuLang.options.submenu[0], // Configurations
+          click(menuItem, browserWindow, event) {
+            browserWindow.webContents.send('menu-configurations');
+          }
         },
         {
-          label: menuLang.options.submenu[1]
+          label: menuLang.options.submenu[1] // Documentation
         },
         {
           type: 'separator'
         },
         {
-          label: menuLang.options.submenu[2]
+          label: menuLang.options.submenu[2] // About
         }
       ]
     }

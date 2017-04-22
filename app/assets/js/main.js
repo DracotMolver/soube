@@ -11,6 +11,7 @@ const {
 
 //---- Own ----
 const equalizer = require('./menu/equalizer');
+const preferences = require('./menu/preferences');
 const version = require('./version');
 const folders = require('./menu/folders');
 const player = require('./player');
@@ -264,10 +265,20 @@ function closeModals() {
     .each(v => $(v).child(0).removeClass('container-config-anim'));
 
   // Clean all the used variables by the config panels
+  $('.warning').empty();
   folders.close();
   equalizer.close();
+  preferences.configurations.close();
 
   isModalOpen = false;
+}
+
+// Display anay modal from the menu option
+function isModalOpened(fc) {
+  if (!isModalOpen) {
+    fc();
+    isModalOpen = true;
+  }
 }
 
 /** --------------------------------------- Events --------------------------------------- **/
@@ -392,17 +403,10 @@ ipcRenderer.on('save-current-time', player.controls.saveCurrentTime);
 ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
 
 // Display the windows to add a musics folders
-ipcRenderer.on('menu-add-folder', () => {
-  if (!isModalOpen) {
-    folders.loadFolder();
-    isModalOpen = true;
-  }
-});
+ipcRenderer.on('menu-add-folder', () => isModalOpened(folders.loadFolder));
 
 // Display the equalizer
-ipcRenderer.on('menu-equalizer', () => {
-  if (!isModalOpen) {
-    equalizer.showEqualizer();
-    isModalOpen = true;
-  }
-});
+ipcRenderer.on('menu-equalizer', () => isModalOpened(equalizer.showEqualizer));
+
+// Display the configurations panel
+ipcRenderer.on('menu-configurations', () => isModalOpened(preferences.configurations.showConfigurations));
