@@ -1,7 +1,7 @@
 {
     "es": {
         "songs": {
-            "menu": "Canciones",
+            "menu": "Archivos",
             "submenu": [
                 "Agregar nueva carpeta",
                 "Reproducir canciones de una carpeta",
@@ -22,7 +22,7 @@
     },
     "us": {
         "songs": {
-            "menu": "Songs",
+            "menu": "Files",
             "submenu": [
                 "Add a new folder",
                 "Play songs from a folder",

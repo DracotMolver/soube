@@ -5,19 +5,17 @@
         "album": "Desconocido",
         "config": {
             "addSongFolder": "Carpeta de música",
-            "changeLanguage": "Cambiar idioma",
-            "statusLanguage": "Español",
             "titleConfig": "Configuración",
-            "addAccounts": "Cuentas",
             "equalizerSetting": "Ecualizador",
             "loadingSongFolder": "Cargando canciones ... ",
-            "removingSongFolder": "Aviso!, Se va a remover la carpeta ",
-            "legal": "Términos legales",
+            "removingSongFolder": "Atención!, Estás intentando remover la carpeta",
+            "about": "Sobre",
             "newEQ": "Agregar",
-            "selectEQSeting": "Seleccione un estilo",
+            "selectEQSetting": "Seleccione un estilo",
             "addNewEQSetting": "Agregar other...",
             "addSongBtn": "Agregar carpeta",
-            "removeSongBtn": "Borrar carpeta"
+            "removeSongBtn": "Borrar carpeta",
+            "configurations": "Configuraciones"
         },
         "alerts": {
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
@@ -35,19 +33,17 @@
         "album": "Unknown",
         "config": {
             "addSongFolder": "Music folder",
-            "changeLanguage": "Change language",
-            "statusLanguage": "English",
             "titleConfig": "Configuration",
-            "addAccounts": "Accounts",
             "equalizerSetting": "Equalizer",
             "loadingSongFolder": "Loading songs ... ",
-            "removingSongFolder": "Warning!, It's going to remove the folder ",
-            "legal": "Legal terms",
+            "removingSongFolder": "Atention!, You're trying to remove the folder ",
+            "about": "Abot",
             "newEQ": "Add",
-            "selectEQSeting": "Choose an style",
+            "selectEQSetting": "Choose an style",
             "addNewEQSetting": "Add other...",
             "addSongBtn": "Add folder",
-            "removeSongBtn": "Remove folder"
+            "removeSongBtn": "Remove folder",
+            "configurations": "Configuraciones"
         },
         "alerts": {
             "newVersion": "We've got a new version!. Click to download it.",
