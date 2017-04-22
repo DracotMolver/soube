@@ -39,7 +39,8 @@ function createFiles(app) {
         electro: [],
         acustic: []
       },
-      equalizerConfig: 'reset'
+      equalizerConfig: 'reset',
+      theme: 'pink-theme'
     };
 
     fs.openSync(configPath, 'w');

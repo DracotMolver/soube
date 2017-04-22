@@ -1,0 +1,6 @@
+{
+    "pink-theme": ":root{--lightGreyColor:#F4F6F6;--darkGreyColor:#979A9A;--darkPinkColor:#d81b60;--lightPinkColor:#f06292;--whiteColor:#fff;--blackColor:#333;--pinkColor:#e91e63}",
+    "black-theme": ":root{--lightGreyColor:#eee;--darkGreyColor:#979A9A;--darkPinkColor:#212121;--lightPinkColor:#757575;--whiteColor:#fff;--blackColor:#000;--pinkColor:#333}",
+    "orange-theme": ":root{--lightGreyColor:#F4F6F6;--darkGreyColor:#979A9A;--darkPinkColor:#FF6F00;--lightPinkColor:#FFD54F;--whiteColor:#fff;--blackColor:#333;--pinkColor:#FF9800}",
+    "grry-theme": ":root{--lightGreyColor:#F4F6F6;--darkGreyColor:#9E9E9E;--darkPinkColor:#bdbdbd;--lightPinkColor:#eee;--whiteColor:#fff;--blackColor:#333;--pinkColor:#e0e0e0}"
+}
