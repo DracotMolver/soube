@@ -58,9 +58,6 @@ function ready() {
   // Make all the config files
   require(path.join(__dirname, 'assets', 'js', 'config')).createFiles(app);
 
-  // Set the menu
-  const menu = Menu.buildFromTemplate(require(path.join(__dirname, 'assets', 'js', 'menu'))(app));
-
   // Player
   mainWindow = new BrowserWindow({
     title: 'Soube',
@@ -79,7 +76,7 @@ function ready() {
     }
   });
 
-  mainWindow.setMenu(menu);
+  mainWindow.setMenu(Menu.buildFromTemplate(require(path.join(__dirname, 'assets', 'js', 'menu'))(app)));
   mainWindow.setMenuBarVisibility(true);
   mainWindow.setAutoHideMenuBar(false);
   mainWindow.center();
@@ -144,3 +141,9 @@ ipcMain.on('update-browser', (e, a) => mainWindow.reload());
 
 // Change the title of the window
 ipcMain.on('update-title', (e, a) => mainWindow.setTitle(a));
+
+// Restart the app after change the idiom
+ipcMain.on('restart-app', (e, a) => {
+  app.relaunch();
+  app.exit();
+});
