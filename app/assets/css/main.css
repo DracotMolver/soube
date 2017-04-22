@@ -255,7 +255,8 @@ button:hover {
 .tooltip::after,
 .close:before,
 .close:after,
-.hz::before {
+.hz::before,
+#checked-colour::after {
   position: absolute;
   content: ''
 }
@@ -698,6 +699,74 @@ button:hover {
 .hz:last-child::before {
   width: 27.4em;
   left: -12.2em
+}
+
+/* ------------------------ PREFERENCES ------------------------ */
+#configurations {
+  width: 640px
+}
+
+.colour-box {
+  position: relative;
+  margin: 1em auto;
+  height: 40px;
+  width: 40px
+}
+.colour-name {
+  font-size: .85em;
+  color: var(--darkGreyColor)
+}
+
+#theme-colours {
+  text-align: center
+}
+
+.colour {
+  position: relative;
+  cursor: pointer;
+  height: 100%;
+  width: 100%
+}
+
+#pink-theme {
+  background: #e91e63
+}
+
+#black-theme {
+  background: #333
+}
+
+#orange-theme {
+  background: #FF9800
+}
+
+#grey-theme {
+  background: #e0e0e0
+}
+
+#checked-colour {
+  box-shadow: 0 3px 2px 0 rgba(0, 0, 0, .18);
+  border-radius: 2px;
+  background: #64DD17;
+  position: absolute;
+  height: 16px;
+  right: -6px;
+  width: 16px;
+  top: -6px
+}
+
+#checked-colour::after {
+    height: 8px;
+    width: 12px;
+    position: absolute;
+    border-style: solid;
+    border-color: var(--whiteColor);
+    border-right: 3px;
+    border-top: 3px;
+    box-sizing: border-box;
+    transform: rotate(-51deg);
+    left: 2px;
+    top: 2px
 }
 
 /* ------------------------ ADD SONGS ------------------------ */

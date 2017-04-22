@@ -15,7 +15,13 @@
             "addNewEQSetting": "Agregar other...",
             "addSongBtn": "Agregar carpeta",
             "removeSongBtn": "Borrar carpeta",
-            "configurations": "Configuraciones"
+            "configurations": "Configuraciones",
+            "configurationsOpt": [
+                "Seleccione una opción",
+                "Temas de colores",
+                "Idioma",
+                "Tamaño de pantalla"
+            ]
         },
         "alerts": {
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
@@ -39,11 +45,17 @@
             "removingSongFolder": "Atention!, You're trying to remove the folder ",
             "about": "Abot",
             "newEQ": "Add",
-            "selectEQSetting": "Choose an style",
+            "selectEQSetting": "Select an style",
             "addNewEQSetting": "Add other...",
             "addSongBtn": "Add folder",
             "removeSongBtn": "Remove folder",
-            "configurations": "Configuraciones"
+            "configurations": "Configuraciones",
+            "configurationsOpt": [
+                "Select an option",
+                "Colours themes",
+                "Idiom",
+                "Screen size"
+            ]
         },
         "alerts": {
             "newVersion": "We've got a new version!. Click to download it.",

@@ -72,11 +72,14 @@ function createFiles(app) {
 }
 
 // Will save the files config.json and listSong.json if needed.
-function editFile(fileName, data) {
-//---- constants ----
-  fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => {
-    if (fileName === 'listSong') ipcRenderer.send('update-browser');
-  });
+function editFile(fileName, data, fullPath = false) {
+  if (fullPath) {
+    fs.writeFile(fileName, data, err => ipcRenderer.send('update-browser'));
+  } else {
+    fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => {
+      if (fileName === 'listSong') ipcRenderer.send('update-browser');
+    });
+  }
 }
 
 // Will get all the config files.
@@ -88,7 +91,8 @@ function init() {
     editFile,
     configFile: require(`${remote.app.getPath('userData')}/config.json`),
     listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
-    langFile: require('./lang.json')
+    langFile: require('./lang'),
+    coloursFile: require('./colours')
   }
 }
 
