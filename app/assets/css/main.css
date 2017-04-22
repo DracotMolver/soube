@@ -86,8 +86,7 @@ img,
 svg,
 input,
 button {
-  border: none;
-  cursor: pointer
+  border: none
 }
 
 .hide {
@@ -214,12 +213,12 @@ select {
   box-sizing: border-box;
   box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .18);
   padding-right: .6em;
-  padding-left: .6em
+  padding-left: .6em;
+  cursor: pointer
 }
 
 select {
   border: 1px solid rgba(0,0,0,.18);
-  cursor: pointer;
   height: 2.15em
 }
 
@@ -272,12 +271,9 @@ button:hover {
   border: 1px solid var(--lightGreyColor);
   height: 30px;
   bottom: 10px;
+  cursor: pointer;
   width: 66px;
   right: 22px
-}
-
-#updown:hover{
-  cursor: pointer
 }
 
 #updown .arrow-updown:first-child {
@@ -427,12 +423,14 @@ button:hover {
 
 .list-song-container:nth-child(odd),
 #path-list-container > li:nth-child(odd){
-  background: var(--lightGreyColor)
+  background: var(--lightGreyColor);
+  cursor: pointer
 }
 
 .list-song-container:nth-child(even),
 #path-list-container > li:nth-child(even){
-  background: var(--whiteColor)
+  background: var(--whiteColor);
+  cursor: pointer
 }
 
 .song-info {
@@ -452,6 +450,7 @@ button:hover {
 
 /* ------------------------ BUSQUEDA DE CANCIONES ------------------------ */
 .search-results {
+  cursor: pointer;
   margin: 1em
 }
 
