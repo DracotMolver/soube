@@ -25,7 +25,7 @@ let mainWindow = null;
 const shortKeys = {
   'CommandOrControl+F': 'search-song',
   'Esc': 'close-search-song',
-  'CommandOrControl+Up': 'play-and-pause-song',
+  'Space': 'play-and-pause-song',
   'MediaPlayPause': 'play-and-pause-song',
   'CommandOrControl+Right': 'next-song',
   'MediaNextTrack': 'next-song',
