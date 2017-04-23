@@ -10,7 +10,15 @@ const { dialog } = require('electron').remote;
 const path = require('path');
 
 //---- Own ----
-const songFolder = require('./../songFolder');
+const songFolder = require(path.join(__dirname, '../', 'songFolder'));
+const {
+  configFile,
+  langFile
+} = require(path.join(__dirname, '../../../', 'config')).init();
+let player = require(path.join(__dirname, '../../../', 'player'));
+
+/* --------------------------------- Variables --------------------------------- */
+const lang = langFile[configFile.lang];
 
 /* --------------------------------- Functions --------------------------------- */
 function loadFullAlbum() {
@@ -24,35 +32,19 @@ function loadFullAlbum() {
 
 function getSongs(parentFolder) {
   songFolder.addSongFolder(parentFolder,
-    () => {}/*=> $('#add-songs').text(lang.config.loadingSongFolder)*/,
-    (i, maxLength) => { // Iterator function
-      // $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
-      // $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
-
-      if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
-    }
-  );
+  () => $('#album-to-play-container').removeClass('hide'),
+  (i, maxLength) => { // Iterator function
+    $('#album-to-play').removeClass('hide').text(
+      `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
+    );
+    
+    if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
+  }, true);
 }
 
 function createView(folder, songs) {
-  let div = CreateElement('div').addClass('grid-100');
-
-  const fragment = document.createDocumentFragment();
-
-  // Name of the band or artist
-  fragment.appendChild(
-    div.clone(true).attr({ id: 'album-title-artist' }).text(songs[0].artist).get()
-  );
-
-  // Name of the album
-  fragment.appendChild(
-    div.clone(true).attr({ id: 'album-title-album' }).text(path.basename(folder)).get()
-  );
-  
-  // List of songs
-  songs.forEach(s => fragment.appendChild(div.clone(false).addClass('album-title-song').rmAttr('id').text(s.title).get()));
-
-  $('#album-to-play').append(fragment);
+  player.controls.stopSong();
+  player.createAlbumView(Object.assign({}, player), folder, songs);
 }
 
 module.exports = Object.freeze({

@@ -11,7 +11,7 @@ const url = require('url');
 const ipcRenderer = require('electron').ipcRenderer;
 
 //---- Own ----
-const {
+let {
   configFile,
   langFile,
   listSongs,
@@ -24,7 +24,8 @@ let poolOfSongs = {};                                        // Will keep all th
 let lang = langFile[configFile.lang];
 
 //---- Song ----
-let isplayedAtPosition = false                               // If the song is clicked on from the list
+let isplayedAtPosition = false;                               // If the song is clicked on from the list
+let stopImmediately = false;
 let isMovingForward = false;                                 // if is using the progress bar of the song
 let isSongPlaying = false;                                   // It's the AudioNode playing
 let isNextAble = false;                                      // if the next song can be played
@@ -110,12 +111,14 @@ function playSongAtPosition(pos = -1) {
 
   file = '';
   isplayedAtPosition = true;
+  stopImmediately = false;
   position = pos;
 
   initSong();
 }
 
 function playSong() {
+  stopImmediately = false;
   if (!isSongPlaying && audioContext.state === 'running') { // Reproducción única
     initSong();
 
@@ -160,24 +163,26 @@ function startTimer() {
 
 // Clean the everything when the ended function is executed
 function stopTimer() {
-  if (!isMovingForward) {
-    $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
+  if (!stopImmediately) {
+    if (!isMovingForward) {
+      $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
 
-    isSongPlaying = false;
-    isNextAble = true;
-    millisecond = second = minute = percent = lapse = 0;
+      isSongPlaying = false;
+      isNextAble = true;
+      millisecond = second = minute = percent = lapse = 0;
 
-    cancelAnimationFrame(interval);
+      cancelAnimationFrame(interval);
 
-    if (isNextAble && !isMovingForward && !isplayedAtPosition) initSong();
-  } else if (isMovingForward) {
+      if (isNextAble && !isMovingForward && !isplayedAtPosition) initSong();
+    } else if (isMovingForward) {
 
-    // It must be created a new AudioNode, because the stop function delete the node.
-    setAudioBufferToPlay(poolOfSongs[oldFile.filename]);
+      // It must be created a new AudioNode, because the stop function delete the node.
+      setAudioBufferToPlay(poolOfSongs[oldFile.filename]);
 
-    isMovingForward = false;
-    isSongPlaying = true;
-  }
+      isMovingForward = false;
+      isSongPlaying = true;
+    }
+  }  
 }
 
 // Show the data of the selected song
@@ -258,7 +263,7 @@ function setSong(buffer) {
   $('#time-end').text(`${formatDecimals(time.minute)}:${formatDecimals(time.second)}`);
 
   // Change the color the actual song
-  $(`#${file.position}`).child().each(v => { $(v).css('color:#e91e63'); });
+  $(`#${file.position}`).child().each(v => { $(v).css('color:var(--pinkColor)'); });
 
   isSongPlaying = true;
 }
@@ -410,14 +415,28 @@ function nbspToSpace(value) {
   return value.replace(/\&nbsp;/g, ' ');
 }
 
+function setAlbumSongs(albumSongs) {
+  listSongs = albumSongs;
+}
+
+function stopSong() {
+  if (source !== null) {
+    source.stop(0);
+    source = null;
+  }
+  stopImmediately = true;
+}
+
 module.exports = {
+  playSongAtPosition,
+  updateCurrentTime,
+  saveCurrentTime,
+  setAlbumSongs,
+  setFilterVal,
+  moveForward,
+  stopSong,
   nextSong,
   prevSong,
   playSong,
-  shuffle,
-  setFilterVal,
-  moveForward,
-  playSongAtPosition,
-  saveCurrentTime,
-  updateCurrentTime
+  shuffle
 }

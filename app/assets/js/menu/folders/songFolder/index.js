@@ -32,9 +32,9 @@ let files = [];
 /* --------------------------------- Functions --------------------------------- */
 // Will get all this songs files.
 // It will compare if there's more or few songs
-function addSongFolder(folder, fnStart, fnIter) {
+function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
   // Get the object from listsong.json - only if was already created it
-  songs = Object.keys(listSongs).length === 0 ? [] : listSongs;
+  songs = Object.keys(listSongs).length === 0 || newInstance ? [] : listSongs;
   const readAllFiles = readFiles => {
     if (readFiles.length) { // Add songs
       files = readFiles.map(f => path.normalize(f));
@@ -67,10 +67,7 @@ function extractMetadata(fnIter) {
 
 function updateSongList() {
   // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
-  editFile('listSong', songs.sort((a, b) =>
-    a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
-    a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
-  ).map((v, i) => (v.position = i, v)));
+  editFile('listSong', getAllSongs());
 }
 
 function removeSongFolder(folder) {

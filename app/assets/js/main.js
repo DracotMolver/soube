@@ -91,7 +91,7 @@ function loadSongs() {
   // Enable shuffle
   if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
 
-  getActualVersion();
+  // getActualVersion();
 
   if (Object.keys(listSongs).length === 0) {
     $('#list-songs')

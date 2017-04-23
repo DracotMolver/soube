@@ -5,7 +5,13 @@
 /** --------------------------------------- // --------------------------------------- **/
 // Basically this will load the neede modules to display the songs
 // and play them.
+const {
+  createAlbumView,
+  createView
+} = require('./createView');
+
 module.exports = Object.freeze({
-  createView: require('./createView'),
+  createAlbumView,
+  createView,
   controls: require('./controls')
 });

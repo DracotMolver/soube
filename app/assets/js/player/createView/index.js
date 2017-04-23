@@ -13,6 +13,10 @@ const {
 require(path.join(__dirname, '../../' , 'dom'));
 
 /** --------------------------------------- Functions --------------------------------------- **/
+function playSong(_t, player) {
+  player.controls.playSongAtPosition($(_t).data('position'));
+};
+
 // Will create and render the list of songs
 function createView(player) {
   const f = document.createDocumentFragment();
@@ -22,10 +26,6 @@ function createView(player) {
   // The rest of the elements, the childNodes, are not need to create them.
   // They can be just text.
   let parent = CreateElement('div').addClass('list-song-container');
-
-  const playSong = function () {
-    player.controls.playSongAtPosition($(this).data('position'));
-  };
 
   listSongs.forEach((v, i) => {
     f.appendChild(
@@ -41,13 +41,59 @@ function createView(player) {
           artist: v.artist,
           title: v.title,
           album: v.album,
-          url: v.filename
+          url: v.filename,
+          from: 'player'
         })
-        .on({ click: playSong }).get()
+        .on({ click: function() { playSong(this, player); }}).get()
     );
   });
 
   $('#list-songs').append(f);
 }
 
-module.exports = createView;
+function createAlbumView(player, folder, listSongs) {
+  let div = CreateElement('div').addClass('grid-100');
+  const fragment = document.createDocumentFragment();
+
+  player.controls.setAlbumSongs(listSongs);  
+
+  // Name of the band or artist
+  fragment.appendChild(
+    div.clone(true).attr({ id: 'album-title-artist' }).text(listSongs[0].artist).get()
+  );
+
+  // Name of the album
+  fragment.appendChild(
+    div.clone(true).attr({ id: 'album-title-album' }).text(path.basename(folder)).get()
+  );
+
+  // List of songs
+  listSongs.forEach((s, i) =>
+    fragment.appendChild(
+      div.clone(false)
+        .addClass('album-title-song')
+        .rmAttr('id')
+        .data({
+          position: i,
+          artist: s.artist,
+          title: s.title,
+          album: s.album,
+          url: s.filename,
+          from: 'album'
+        })
+        .on({
+          click: function () {
+            playSong(this, player);
+          }
+        })
+        .text(s.title).get()
+    )
+  );
+
+  $('#album-to-play').empty().append(fragment);
+}
+
+module.exports = Object.freeze({
+  createAlbumView,
+  createView
+});
