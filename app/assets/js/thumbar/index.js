@@ -37,9 +37,12 @@ function makeThumBar(win, imgs = {}) {
     }
   }
 
+  const playMomment = [prev, play, next];
+  const pauseMomment = [prev, pause, next];
+
   return {
-    playMomment: [prev, play, next],
-    pauseMomment: [prev, pause, next]
+    playMomment,
+    pauseMomment
   };
 }
 

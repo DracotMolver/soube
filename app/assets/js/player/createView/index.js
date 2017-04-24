@@ -19,6 +19,8 @@ function playSong(_t, player) {
 
 // Will create and render the list of songs
 function createView(player) {
+  player.setMediaControl('player', player);
+
   const f = document.createDocumentFragment();
 
   // Buil the basic structure of elements
@@ -41,8 +43,7 @@ function createView(player) {
           artist: v.artist,
           title: v.title,
           album: v.album,
-          url: v.filename,
-          from: 'player'
+          url: v.filename
         })
         .on({ click: function() { playSong(this, player); }}).get()
     );
@@ -52,10 +53,13 @@ function createView(player) {
 }
 
 function createAlbumView(player, folder, listSongs) {
+  player.controls.setAlbumSongs(listSongs);
+  player.setMediaControl('album', player);
+  player.setUsingMediaControl('album');
+
   let div = CreateElement('div').addClass('grid-100');
   const fragment = document.createDocumentFragment();
 
-  player.controls.setAlbumSongs(listSongs);  
 
   // Name of the band or artist
   fragment.appendChild(
@@ -72,17 +76,17 @@ function createAlbumView(player, folder, listSongs) {
     fragment.appendChild(
       div.clone(false)
         .addClass('album-title-song')
-        .rmAttr('id')
+        .attr({ 'id': `al-${i}` })
         .data({
           position: i,
           artist: s.artist,
           title: s.title,
           album: s.album,
-          url: s.filename,
-          from: 'album'
+          url: s.filename
         })
         .on({
           click: function () {
+            player.controls.setFrom('album');
             playSong(this, player);
           }
         })

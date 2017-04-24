@@ -36,6 +36,7 @@ let file = '';                                               // Will keep the da
 let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
 let duration = 0;                                            // max duration of the song
 let source = null;                                           // AudioNode object
+let playedFrom = '';
 
 //---- Elapsed time ----
 let lastCurrentTime = 0;
@@ -92,13 +93,18 @@ function shuffle() {
 
 // Animation of the play/pause buttons
 function animPlayAndPause(animName) {
-  const animAttr = i => {
-    return animName === 'play' ?
-    { from: anim.from[i], to: anim.to[i] } :
-    { from: anim.to[i], to: anim.from[i] };
-  };
+  if (process.platform === 'win32') {
+    animName === 'play' ?
+      ipcRenderer.send('thumb-bar-update', 'pauseMomment') :
+      ipcRenderer.send('thumb-bar-update', 'playMomment');
+  }
 
-  $('.anim-play').each((v, i) => $(v).attr(animAttr(i)).get().beginElement());
+
+  $('.anim-play').each((v, i) =>
+    $(v).attr(animName === 'play' ?
+      { from: anim.from[i], to: anim.to[i] } :
+      { from: anim.to[i], to: anim.from[i] }
+  ).get().beginElement());
 }
 
 function playSongAtPosition(pos = -1) {
@@ -121,8 +127,6 @@ function playSong() {
   stopImmediately = false;
   if (!isSongPlaying && audioContext.state === 'running') { // Reproducción única
     initSong();
-
-    return 'resume';
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
     audioContext.suspend().then(() => {
       isSongPlaying = false;
@@ -130,16 +134,12 @@ function playSong() {
 
     cancelAnimationFrame(interval);
     animPlayAndPause('pause');
-
-    return 'paused';
   } else if (!isSongPlaying && audioContext.state === 'suspended') { // Pausado
     isSongPlaying = true;
 
     startTimer();
     audioContext.resume();
     animPlayAndPause('play');
-
-    return 'resume';
   }
 }
 
@@ -165,7 +165,8 @@ function startTimer() {
 function stopTimer() {
   if (!stopImmediately) {
     if (!isMovingForward) {
-      $(`#${oldFile.position}`).child().each(v => { $(v).css('color:#424949'); });
+      if (playedFrom === 'album') $(`#al-${oldFile.position}`).css('color:var(--blackColor)');
+      else $(`#${oldFile.position}`).child().each(v => { $(v).css('color:var(--blackColor)'); });
 
       isSongPlaying = false;
       isNextAble = true;
@@ -200,6 +201,9 @@ function dataSong(file) {
 
   notifi.body = `${nbspToSpace(file.artist)} from ${nbspToSpace(file.album)}`;
   notification = new Notification(nbspToSpace(file.title), notifi);
+
+  // Set the name of the song in the top bar
+  ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`);
 }
 
 function setBufferInPool(filePath, buffer) {
@@ -234,9 +238,6 @@ function setAudioBufferToPlay(buffer) {
   lastCurrentTime = audioContext.currentTime;
   $($('.grid-container').get(0)).rmAttr('style');
   $('#spinner').switchClass('spinner-anim', 'hide');
-
-  // Set the name of the song in the top bar
-  ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`);
 }
 
 // Get the buffer of the song
@@ -263,7 +264,8 @@ function setSong(buffer) {
   $('#time-end').text(`${formatDecimals(time.minute)}:${formatDecimals(time.second)}`);
 
   // Change the color the actual song
-  $(`#${file.position}`).child().each(v => { $(v).css('color:var(--pinkColor)'); });
+  if (playedFrom === 'album') $(`#al-${file.position}`).css('color:var(--pinkColor)');
+  else $(`#${file.position}`).child().each(v => { $(v).css('color:var(--pinkColor)'); });
 
   isSongPlaying = true;
 }
@@ -350,10 +352,6 @@ function prevSong() {
   }
 }
 
-function setFilterVal(a, b) {
-  filter[a].gain.setValueAtTime(b, audioContext.currentTime);
-}
-
 function filters() {
   let f = null;
   let db = configFile.equalizer[configFile.equalizerConfig]
@@ -387,10 +385,6 @@ function moveForward(event, element) {
   source.stop(0);
 }
 
-function saveCurrentTime() {
-  lastCurrentTime = audioContext.currentTime;
-}
-
 function updateCurrentTime() {
   let totalTime = Math.floor(audioContext.currentTime - lastCurrentTime);
 
@@ -415,28 +409,28 @@ function nbspToSpace(value) {
   return value.replace(/\&nbsp;/g, ' ');
 }
 
-function setAlbumSongs(albumSongs) {
-  listSongs = albumSongs;
-}
-
 function stopSong() {
+  stopImmediately = true;
+  cancelAnimationFrame(interval);
+  millisecond = second = minute = percent = lapse = 0;
+
   if (source !== null) {
     source.stop(0);
     source = null;
   }
-  stopImmediately = true;
 }
 
 module.exports = {
   playSongAtPosition,
   updateCurrentTime,
-  saveCurrentTime,
-  setAlbumSongs,
-  setFilterVal,
+  saveCurrentTime: lastCurrentTime => audioContext.currentTime,
+  setAlbumSongs: albumSongs => listSongs = albumSongs,
+  setFilterVal: (a, b) => filter[a].gain.setValueAtTime(b, audioContext.currentTime),
   moveForward,
   stopSong,
   nextSong,
   prevSong,
   playSong,
+  setFrom: from => playedFrom = from,
   shuffle
 }

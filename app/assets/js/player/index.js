@@ -10,7 +10,15 @@ const {
   createView
 } = require('./createView');
 
+/** --------------------------------------- Variables --------------------------------------- **/
+let usingMediaControl = 'player';
+let mediaControl = {};
+
 module.exports = Object.freeze({
+  setUsingMediaControl: media => usingMediaControl = media,
+  getUsingMediaControl: () => usingMediaControl,
+  setMediaControl: (option, value) => mediaControl[option] = value,
+  getMediaControl: media => mediaControl[media],
   createAlbumView,
   createView,
   controls: require('./controls')

@@ -32,9 +32,9 @@ function loadFullAlbum() {
 
 function getSongs(parentFolder) {
   songFolder.addSongFolder(parentFolder,
-  () => $('#album-to-play-container').removeClass('hide'),
+    () => $('#album-to-play-container').removeClass('hide'),
   (i, maxLength) => { // Iterator function
-    $('#album-to-play').removeClass('hide').text(
+    $('#album-to-play').text(
       `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
     );
     
