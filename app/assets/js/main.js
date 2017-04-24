@@ -212,16 +212,10 @@ function searchInputData(e) {
 // Actions over the play, netxt, prev and shuffle buttons
 function btnActions(action) {
   switch (action) {
-    case 'play-pause':
-      if (player.controls.playSong() === 'resume') {
-        if (process.platform === 'win32') ipcRenderer.send('thumb-bar-update', 'pauseMomment');
-      } else {
-        if (process.platform === 'win32') ipcRenderer.send('thumb-bar-update', 'playMomment');
-      }
-      break;
-    case 'next': player.controls.nextSong(); break;
-    case 'prev': player.controls.prevSong(); break;
-    case 'shuffle': player.controls.shuffle() ;break;
+    case 'play-pause': player.getMediaControl(player.getUsingMediaControl()).controls.playSong(); break;
+    case 'next': player.getMediaControl(player.getUsingMediaControl()).controls.nextSong(); break;
+    case 'prev': player.getMediaControl(player.getUsingMediaControl()).controls.prevSong(); break;
+    case 'shuffle': player.getMediaControl(player.getUsingMediaControl()).controls.shuffle() ;break;
   }
 }
 
@@ -375,21 +369,24 @@ ipcRenderer.on('get-equalizer-filter', (e, a) => player.controls.setFilterVal(..
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', () => {
-  if (listSongs.length) player.controls.playSong();
+  if (listSongs.length)
+    player.getMediaControl(player.getUsingMediaControl()).controls.playSong();
 });
 
 // Next song [Ctrl + Right]
 ipcRenderer.on('next-song', () => {
-  if (listSongs.length) player.controls.nextSong();
+  if (listSongs.length)
+    player.getMediaControl(player.getUsingMediaControl()).controls.nextSong();
 });
 
 // Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', () => {
-  if (listSongs.length) player.controls.prevSong();
+  if (listSongs.length)
+    player.getMediaControl(player.getUsingMediaControl()).controls.prevSong();
 });
 
 // Shuffle [Ctrl + Down]
-ipcRenderer.on('shuffle', player.controls.shuffle);
+ipcRenderer.on('shuffle', player.getMediaControl(player.getUsingMediaControl()).controls.shuffle);
 
 // ThumbarButtons [Windows]
 ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
