@@ -9,9 +9,7 @@
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
     "electron": "^1.6.7",
-    "electron-builder": "^17.0.1",
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^3.0.4"
+    "electron-builder": "^17.0.1"
   },
   "build": {
     "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
