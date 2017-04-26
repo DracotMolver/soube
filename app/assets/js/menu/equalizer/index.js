@@ -142,7 +142,7 @@ function close() {
   option = null;
 }
 
-module.exports = {
+module.exports = Object.freeze({
   showEqualizer,
   close
-};
+});

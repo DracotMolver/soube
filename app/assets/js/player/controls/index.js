@@ -33,10 +33,10 @@ let prevSongsToPlay = [];                                    // Will keep all th
 let filter = [];                                             // Array for createBiquadFilter to use the Frequencies
 let oldFile = '';                                            // Will keep the data of the song played
 let file = '';                                               // Will keep the data song info
-let position = Math.floor(Math.random() * listSongs.length); // Position of the song to play for the very first time.
+let position = 0;                                            // Position of the song to play for the very first time.
 let duration = 0;                                            // max duration of the song
 let source = null;                                           // AudioNode object
-let playedFrom = '';
+let playedFrom = 'player';
 
 //---- Elapsed time ----
 let lastCurrentTime = 0;
@@ -126,6 +126,7 @@ function playSongAtPosition(pos = -1) {
 function playSong() {
   stopImmediately = false;
   if (!isSongPlaying && audioContext.state === 'running') { // Reproducción única
+    position = Math.floor(Math.random() * listSongs.length);
     initSong();
   } else if (isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
     audioContext.suspend().then(() => {
@@ -265,7 +266,7 @@ function setSong(buffer) {
 
   // Change the color the actual song
   if (playedFrom === 'album') $(`#al-${file.position}`).css('color:var(--pinkColor)');
-  else $(`#${file.position}`).child().each(v => { $(v).css('color:var(--pinkColor)'); });
+  else $(`#${file.position}`).child().each(v => $(v).css('color:var(--pinkColor)'));
 
   isSongPlaying = true;
 }
@@ -361,7 +362,7 @@ function filters() {
     (f = audioContext.createBiquadFilter(),
     f.type = 'peaking',
     f.frequency.value = v,
-    f.Q.value = 1,
+    f.Q.value = 0.5,
     f.gain.value = db[i], f)
   );
 }
@@ -414,13 +415,19 @@ function stopSong() {
   cancelAnimationFrame(interval);
   millisecond = second = minute = percent = lapse = 0;
 
+  $('#time-start').text('00:00');
+  $('#progress-bar').css('width:0');
+  $('#song-title').child().each(v => { $(v).text(''); });
+  $('#artist').child().each(v => { $(v).text(''); });
+  $('#album').child().each(v => { $(v).text(''); });
+
   if (source !== null) {
     source.stop(0);
     source = null;
   }
 }
 
-module.exports = {
+module.exports = Object.freeze({
   playSongAtPosition,
   updateCurrentTime,
   saveCurrentTime: lastCurrentTime => audioContext.currentTime,
@@ -431,6 +438,7 @@ module.exports = {
   nextSong,
   prevSong,
   playSong,
+  setSongs: _songs => listSongs = _songs,
   setFrom: from => playedFrom = from,
   shuffle
-}
+});

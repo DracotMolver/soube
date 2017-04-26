@@ -71,12 +71,15 @@ html {
     top: 0
 }
 
+select
 button,
 img,
 input,
 svg {
+    appearance: none;
     border: none
 }
+
 
 .hide {
     display: none
@@ -276,6 +279,7 @@ button:hover {
 
 .btn-controls {
     text-align: center;
+    cursor: pointer;
     margin: .3em 0;
     height: 1.2em;
     float: left
@@ -344,6 +348,7 @@ button:hover {
     text-align: left;
     overflow: hidden;
     margin: .1em 1.2em;
+    cursor: pointer;
     width: 85%;
     float: left
 }
@@ -397,9 +402,6 @@ button:hover {
     height: calc(100% - 89px);
     float: none
 }
-
-/*#album-to-play {
-}*/
 
 #album-title-album,
 #album-title-artist,

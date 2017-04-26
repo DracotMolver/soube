@@ -110,7 +110,6 @@ function hideSearchInputData() {
   $('#search-container').addClass('hide');
   $('#search-wrapper').removeClass('search-wrapper-anim');
   $($('.grid-container').get(0)).rmAttr('style');
-  $('#search').removeClass('input-search-anim');
 
   isSearchDisplayed = false;
 }
@@ -118,7 +117,7 @@ function hideSearchInputData() {
 
 // Play the song clicked in the search results
 function btnPlaySong() {
-  player.controls.playSongAtPosition($(this).data('position'));
+  player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'));
   hideSearchInputData();
 }
 
@@ -132,6 +131,7 @@ function searchInputData(e) {
   $('#pagination').addClass('hide');
 
   searchValue = this.value.trim();
+  console.log(searchValue)
   if (searchValue !== '') {
     regex = new RegExp(searchValue.replace(/\s/g,'\&nbsp;').trim(), 'ig');
 
@@ -146,16 +146,16 @@ function searchInputData(e) {
     totalResults = list.length;
     countSlide = slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
 
-  //   // Add the pagination if there's more than one slide
-  //   slide > 1 ?
-  //     $('#pagination')
-  //       .removeClass('hide')
-  //       .child(1)
-  //       .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
+      //   // Add the pagination if there's more than one slide
+      //   slide > 1 ?
+      //     $('#pagination')
+      //       .removeClass('hide')
+      //       .child(1)
+      //       .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
 
-  //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
-  //   // Make an slide with all the filtered coincidences
-  //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
+      //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
+      //   // Make an slide with all the filtered coincidences
+      //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
 
       if (list.length > 0) {
         countItem = 0;
@@ -185,12 +185,13 @@ function searchInputData(e) {
         .css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
 
       slideContainer = document.createDocumentFragment();
-    } else {
-      // Clean if there's no coincidence
-      $('#wrapper-results')
-        .text(lang.alerts.searchingResults)
-        .addClass('no-searching-found');
-    }
+  } else {
+    console.log('asdf');
+    // Clean if there's no coincidence
+    $('#wrapper-results')
+      .text(lang.alerts.searchingResults)
+      .addClass('no-searching-found');
+  }
 }
 
 // Check if there are new songs to be added
@@ -212,10 +213,10 @@ function searchInputData(e) {
 // Actions over the play, netxt, prev and shuffle buttons
 function btnActions(action) {
   switch (action) {
-    case 'play-pause': player.getMediaControl(player.getUsingMediaControl()).controls.playSong(); break;
-    case 'next': player.getMediaControl(player.getUsingMediaControl()).controls.nextSong(); break;
-    case 'prev': player.getMediaControl(player.getUsingMediaControl()).controls.prevSong(); break;
-    case 'shuffle': player.getMediaControl(player.getUsingMediaControl()).controls.shuffle() ;break;
+    case 'play-pause': player.getMediaControl(player.mediaControl).playSong(); break;
+    case 'next': player.getMediaControl(player.mediaControl).nextSong(); break;
+    case 'prev': player.getMediaControl(player.mediaControl).prevSong(); break;
+    case 'shuffle': player.getMediaControl(player.mediaControl).shuffle() ;break;
   }
 }
 
@@ -305,7 +306,7 @@ $('.arrow-updown').on({
 $('.btn-controls').on({ click: clickBtnControls });
 
 // Step forward or step back the song using the progress bar
-$('#total-progress-bar').on({ click: function (e) { player.controls.moveForward(e, this); } });
+$('#total-progress-bar').on({ click: function (e) { player.getMediaControl(player.mediaControl).moveForward(e, this); } });
 
 // Action over the pagination
 // $('.arrow').on({
@@ -339,7 +340,7 @@ ipcRenderer.on('close-search-song', () => {
 
 // Display the searching bar [ctrl + F]
 ipcRenderer.on('search-song', () => {
-  if (!isSearchDisplayed) {
+  if (!isSearchDisplayed && player.mediaControl === 'player') {
     $('#search-container').removeClass('hide');
     $('#search-wrapper').addClass('search-wrapper-anim');
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
@@ -347,8 +348,13 @@ ipcRenderer.on('search-song', () => {
     $('#wrapper-results').empty();
     $('#search')
       .addClass('search-anim')
-      .on({ keyup: searchInputData })
-      .val('').get().focus();
+      .on({
+        keyup: searchInputData,
+        animationend: function () {
+          this.focus();
+        }
+      })
+      .val('').get()
 
     isSearchDisplayed = true;
 
@@ -365,28 +371,31 @@ ipcRenderer.on('search-song', () => {
 });
 
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
-ipcRenderer.on('get-equalizer-filter', (e, a) => player.controls.setFilterVal(...a));
+ipcRenderer.on('get-equalizer-filter', (e, a) => player.getMediaControl(player.mediaControl).setFilterVal(...a));
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', () => {
-  if (listSongs.length)
-    player.getMediaControl(player.getUsingMediaControl()).controls.playSong();
+  if (listSongs.length) {
+    console.log(player.getMediaControl(player.mediaControl), player);
+    // player.getMediaControl(player.mediaControl).setFrom(player.getUsingMediaControl());
+    player.getMediaControl(player.mediaControl).playSong();
+  }
 });
 
 // Next song [Ctrl + Right]
 ipcRenderer.on('next-song', () => {
   if (listSongs.length)
-    player.getMediaControl(player.getUsingMediaControl()).controls.nextSong();
+    player.getMediaControl(player.mediaControl).nextSong();
 });
 
 // Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', () => {
   if (listSongs.length)
-    player.getMediaControl(player.getUsingMediaControl()).controls.prevSong();
+    player.getMediaControl(player.mediaControl).prevSong();
 });
 
 // Shuffle [Ctrl + Down]
-ipcRenderer.on('shuffle', player.getMediaControl(player.getUsingMediaControl()).controls.shuffle);
+ipcRenderer.on('shuffle', player.getMediaControl(player.mediaControl).shuffle);
 
 // ThumbarButtons [Windows]
 ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
@@ -394,8 +403,8 @@ ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
 // Because the requestAnimationFrame is single thread in the window
 // We must save the actual time lapse when we minimized the Window
 // and then recalculate the time when we unminimized the window.
-ipcRenderer.on('save-current-time', player.controls.saveCurrentTime);
-ipcRenderer.on('update-current-time', player.controls.updateCurrentTime);
+ipcRenderer.on('save-current-time', player.getMediaControl(player.mediaControl).saveCurrentTime);
+ipcRenderer.on('update-current-time', player.getMediaControl(player.mediaControl).updateCurrentTime);
 
 // Display the windows to add a musics folders
 ipcRenderer.on('menu-add-folder', () => isModalOpened(folders.loadFolder));
