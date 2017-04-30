@@ -19,6 +19,7 @@ const {
 //---- Node ----
 const path = require('path');
 const url = require('url');
+const fs = require('fs');
 
 /* --------------------------------- Variables --------------------------------- */
 let mainWindow = null;
@@ -55,9 +56,18 @@ function makeIcon(name) {
   return nativeImage.createFromPath(path.join(__dirname, 'assets', 'img', name));
 }
 
-function ready() {
+function ready(evt) {
   // Make all the config files
   require(path.join(__dirname, 'assets', 'js', 'config')).createFiles(app);
+
+  // let x = {
+  //   'e': evt,
+  //   'p': process.argv[1]
+  // }
+
+  // fs.writeFileSync(path.join(app.getPath('userData'), 'hola.txt'), JSON.stringify(x), { flag: 'w' });
+
+  console.log(evt, process.argv);
 
   // Player
   mainWindow = new BrowserWindow({
@@ -100,6 +110,7 @@ function ready() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {
       thumbarButtons = require(path.join(__dirname, 'assets', 'js', 'thumbar')).makeThumBar(mainWindow, {
@@ -117,7 +128,9 @@ function ready() {
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
 app.on('window-all-closed', () => app.quit());
+app.disableHardwareAcceleration();
 app.on('ready', ready);
+
 
 /* --------------------------------- Ipc Main --------------------------------- */
 // Sending data from the EQ to the AudioContext
