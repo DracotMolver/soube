@@ -119,8 +119,19 @@
         <!-- Listado de canciones -->
         <div id="list-songs"></div>
         <!-- Albun a tocar -->
-        <div id="album-to-play-container" class="grid-40 border-right border-color-dark-pink hide"> 
-            <div id="album-to-play" class="grid-100"></div>
+        <div id="album-to-play-container" class="grid-100 border-right border-color-dark-pink hide"> 
+            <div id="album-to-play" class="grid-50"></div>
+            <div id="desc-container-album"  class="grid-50">
+                <div class="grid-100">
+                    <p>
+                        You have loaded an album. This is a temporary play list, which means that is not gonna be part of your main list when you close the music player.
+                        To get back to your music list, just click on the Close album.
+                    </p>
+                </div>
+                <div class="grid-100" style="text-align:center;margin-top:3em">
+                    <button id="close-album">Close album</button>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Buscador de canciones-->

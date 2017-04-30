@@ -32,7 +32,7 @@ function loadFullAlbum() {
 
 function getSongs(parentFolder) {
   songFolder.addSongFolder(parentFolder,
-  () => $('#album-to-play-container').removeClass('hide'),
+  () => $('#album-to-play-container').switchClass('hide', 'album-to-play-anim'),
   (i, maxLength) => { // Iterator function
     $('#album-to-play').text(
       `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
@@ -46,10 +46,16 @@ function createView(folder, songs) {
   player.getMediaControl(player.mediaControl).stopSong();
   player.mediaControl = 'album';
   player.getMediaControl(player.mediaControl).setSongs(songs);
-  player.getMediaControl(player.mediaControl).setFrom('album');
   player.createAlbumView(player, folder, songs);
 }
 
+function closeAlbum() {
+  player.getMediaControl(player.mediaControl).stopSong();
+  player.mediaControl = 'player';
+  $('#album-to-play-container').switchClass('album-to-play-anim', 'hide');
+}
+
 module.exports = Object.freeze({
-  loadFullAlbum
+  loadFullAlbum,
+  closeAlbum
 });

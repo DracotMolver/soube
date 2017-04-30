@@ -115,7 +115,7 @@ function close() {
 }
 
 module.exports = Object.freeze({
-  loadFullAlbum: albumFolder.loadFullAlbum,
+  albumFolder,
   loadFolder,
   close
 });

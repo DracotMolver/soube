@@ -45,24 +45,25 @@ function createFiles(app) {
 
     fs.openSync(configPath, 'w');
     fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
-  }
-  //  else {
+  } else {
   //   // ONLY TO UPDATE THE CONFIG FILE
   //   var actualVersion = app.getVersion().toString();
   //   if (response === 'major') {
-  //     let config = JSON.parse(fs.readFileSync(configPath).toString());
-  //     if (typeof config.musicFolder === 'string') {
+      // let config = JSON.parse(fs.readFileSync(configPath).toString());
+      // if (typeof config.musicFolder === 'string') {
   //       config.equalizer = {
   //         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   //         rock: [],
   //         electro: [],
   //         acustic: []
-  //       };
+    //       };
+    //     config.theme: 'pink-theme';
+        // config.equalizerConfig: 'reset';
   //       config.musicFolder = [config.musicFolder];
   //       fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
   //     }
-  //   }
-  // }
+    // }
+  }
 
   /* --------------------------------- File of songs --------------------------------- */
   if (!fs.existsSync(listSongPath)) {

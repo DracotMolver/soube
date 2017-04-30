@@ -114,7 +114,6 @@ function hideSearchInputData() {
   isSearchDisplayed = false;
 }
 
-
 // Play the song clicked in the search results
 function btnPlaySong() {
   player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'));
@@ -308,6 +307,13 @@ $('.btn-controls').on({ click: clickBtnControls });
 // Step forward or step back the song using the progress bar
 $('#total-progress-bar').on({ click: function (e) { player.getMediaControl(player.mediaControl).moveForward(e, this); } });
 
+// Close the album player
+$('#close-album').on({
+  click: () => {
+    folders.albumFolder.closeAlbum();
+    isModalOpen = false;
+  }
+});
 // Action over the pagination
 // $('.arrow').on({
 //   click: function () {
@@ -375,11 +381,8 @@ ipcRenderer.on('get-equalizer-filter', (e, a) => player.getMediaControl(player.m
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', () => {
-  if (listSongs.length) {
-    console.log(player.getMediaControl(player.mediaControl), player);
-    // player.getMediaControl(player.mediaControl).setFrom(player.getUsingMediaControl());
+  if (listSongs.length)
     player.getMediaControl(player.mediaControl).playSong();
-  }
 });
 
 // Next song [Ctrl + Right]
@@ -406,14 +409,14 @@ ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
 ipcRenderer.on('save-current-time', player.getMediaControl(player.mediaControl).saveCurrentTime);
 ipcRenderer.on('update-current-time', player.getMediaControl(player.mediaControl).updateCurrentTime);
 
-// Display the windows to add a musics folders
+// Display the windows to add a musics folders [Ctrl + N]
 ipcRenderer.on('menu-add-folder', () => isModalOpened(folders.loadFolder));
 
-// Display the album to be played
-ipcRenderer.on('menu-play-album', () => isModalOpened(folders.loadFullAlbum));
+// Display the album to be played [Ctrl + A]
+ipcRenderer.on('menu-play-album', () => isModalOpened(folders.albumFolder.loadFullAlbum));
 
-// Display the equalizer
+// Display the equalizer [Ctrl + E]
 ipcRenderer.on('menu-equalizer', () => isModalOpened(equalizer.showEqualizer));
 
-// Display the configurations panel
+// Display the configurations panel [Ctrl + O]
 ipcRenderer.on('menu-configurations', () => isModalOpened(preferences.configurations.showConfigurations));

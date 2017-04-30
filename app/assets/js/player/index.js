@@ -9,13 +9,14 @@ const {
   createAlbumView,
   createView
 } = require('./createView');
-const controls = require('./controls');
+const Controls = require('./controls');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 let usingMediaControl = 'player';
+
 let mediaControl = {
-  player: Object.create(controls),
-  album: Object.create(controls)
+  player: new Controls('player'),
+  album: new Controls('album')
 };
 
 module.exports = {
