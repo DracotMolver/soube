@@ -3,7 +3,7 @@
   "version": "1.5.0",
   "description": "Simple music player",
   "author": {
-    "email": "dracotm25@gmail.com",
+    "email": "dmolina@soube.diegomolina.cl",
     "name": "Diego Molina Vera"
   },
   "homepage": "http://soube.diegomolina.cl",
@@ -15,6 +15,8 @@
     "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
     "asar": true,
     "linux": {
+      "vendor": "Diego Molina Vera",
+      "maintainer": "Diego Molina Vera",
       "category": "Audio",
       "packageCategory": "sound",
       "target": [
@@ -56,7 +58,8 @@
     }
   ],
   "nsis": {
-    "perMachine": true
+    "perMachine": true,
+    "deleteAppDataOnUninstall": true
   },
   "postinstall": "install-app-deps",
   "scripts": {
