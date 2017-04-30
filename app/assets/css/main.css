@@ -71,7 +71,7 @@ html {
     top: 0
 }
 
-select
+select,
 button,
 img,
 input,
@@ -395,12 +395,24 @@ button:hover {
 }
 
 #album-to-play-container {
+    transform-origin: center left;
     padding-left: 1em;
     background: var(--whiteColor);
     position: absolute;
-    overflow: auto;
+    overflow: hidden;
+    opacity: 0;
     height: calc(100% - 89px);
     float: none
+}
+
+.album-to-play-anim {
+    animation: showAlbum 1s cubic-bezier(.25,.82,1,.95) forwards
+}
+
+#album-to-play {
+    overflow: hidden;
+    overflow-y: scroll;
+    height: 100%
 }
 
 #album-title-album,
@@ -428,6 +440,16 @@ button:hover {
 
 .album-title-song:hover {
     background: var(--lightGreyColor)
+}
+
+#desc-container-album {
+    padding: 4em 2em
+}
+
+#desc-container-album > p {
+    font-weight: Muli-Light;
+    text-align: justify;
+    color: var(--darkGreyColor)
 }
 
 #album-loading {
@@ -888,6 +910,19 @@ button:hover {
 #spinner-item-5 {
     animation-delay: .82s;
     height: 70%
+}
+
+
+@keyframes showAlbum {
+    0% {
+        border-radius: 50%;
+        transform: scale(0, 1)
+    }
+    100% {
+        border-radius: 0;
+        transform: scale(1, 1);
+        opacity: 1
+    }
 }
 
 @keyframes showToolTip {
