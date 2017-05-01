@@ -12,7 +12,7 @@ const {
   langFile,
   editFile
 } = require(path.join(__dirname, '../../', 'config')).init();
-require(path.join(__dirname, '../../', 'dom'));
+const $ = require(path.join(__dirname, '../../', 'dom'));
 
 //---- Electronjs ----
 const ipcRenderer = require('electron').ipcRenderer;
@@ -26,7 +26,7 @@ let eqHrz = 0;
 let pos = 0;
 let db = 0;
 
-let option = CreateElement('option');
+let option = document.createElement('option');
 
 /* --------------------------------- Functions --------------------------------- */
 function getDB(value) {
@@ -63,19 +63,19 @@ function showEqualizer() {
   // $('#_neweq').text(lang.config.newEQ);
 
   const fragment = document.createDocumentFragment();
+
   fragment.appendChild(
-    option.clone()
-      .text(lang.config.selectEQSetting).get()
+    $(option.cloneNode(false)).text(lang.config.selectEQSetting).get()
   );
 
   // EQ select settings options
   Object.keys(configFile.equalizer).forEach(v =>
     fragment.appendChild(
-      option.clone(true)
+      $(option.cloneNode(true))
         .val(v)
         .text(v)
         .attr(
-          configFile.equalizerConfig === v.toLowerCase() &&
+        configFile.equalizerConfig === v.toLowerCase() &&
           configFile.equalizerConfig !== 'reset' ? { selected: 'selected' } : ''
         ).get()
     )
@@ -83,7 +83,7 @@ function showEqualizer() {
 
   // Option to add a new EQ setting
   fragment.appendChild(
-    option.clone()
+    $(option.cloneNode(false))
       .val('new')
       .text(lang.config.addNewEQSetting).get()
   );
@@ -92,7 +92,6 @@ function showEqualizer() {
     .empty()
     .append(fragment)
     .on({ change: setEQ });
-
 
   eqHrz = configFile.equalizer[configFile.equalizerConfig];
 

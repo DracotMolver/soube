@@ -16,6 +16,7 @@ const {
   langFile
 } = require(path.join(__dirname, '../../../', 'config')).init();
 let player = require(path.join(__dirname, '../../../', 'player'));
+const $ = require(path.join(__dirname, '../../../', 'dom'));
 
 /* --------------------------------- Variables --------------------------------- */
 const lang = langFile[configFile.lang];

@@ -53,7 +53,10 @@ module.exports = (app) => {
           type: 'separator'
         },
         {
-          label: menuLang.options.submenu[2] // About
+          label: menuLang.options.submenu[2], // About
+          click(menuItem, browserWindow, event) {
+            browserWindow.webContents.send('menu-about');
+          }
         }
       ]
     }

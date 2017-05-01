@@ -5,7 +5,8 @@
 /** --------------------------------------- Modules --------------------------------------- **/
 //---- Electron ----
 const {
-  ipcRenderer
+  ipcRenderer,
+  screen
 } = require('electron');
 
 //---- Node ----
@@ -18,23 +19,30 @@ const {
   editFile,
   coloursFile
 } = require(path.join(__dirname, '../../../', 'config')).init();
-require(path.join(__dirname, '../../../', 'dom'));
+const $ = require(path.join(__dirname, '../../../', 'dom'));
 
 /* --------------------------------- Variables --------------------------------- */
 //---- normals ----
 let lang = langFile[configFile.lang];
-let option = CreateElement('option');
+let option = document.createElement('option');
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function displayOption() {
   $('#theme-colours').addClass('hide');
   $('#idiom').addClass('hide');
+  $('#screen-size').addClass('hide');
 
   switch (this.value) {
     case '1': showColoursTheme(); break;
     case '2': showLanguage(); break;
-    case '3':
+    case '3': showScreenSize(); break;
   }
+}
+
+// Change the size of the screen
+function showScreenSize() {
+  $('#screen-size').removeClass('hide');
+  ipcRenderer.send('change-screen-size', screen.getPrimaryDisplay().workArea);
 }
 
 // Change the idiom of the app
@@ -86,9 +94,10 @@ function showConfigurations() {
   $('#_configurations').text(lang.config.configurations);
 
   const fragment = document.createDocumentFragment();
+
   lang.config.configurationsOpt.forEach((o, i) =>
     fragment.appendChild(
-      option.clone().val(i).text(o).get()
+      $(option.cloneNode(false)).val(i).text(o).get()
     )
   );
 
@@ -98,8 +107,7 @@ function showConfigurations() {
 
   // Colours options
   const coloursNames = Object.keys(coloursFile);
-  $('.colour-name')
-    .each((v, i) => $(v).text(coloursNames[i]))
+  $('.colour-name').each((v, i) => $(v).text(coloursNames[i]));
 
   $('.colour').on({ click: choosenColor });
 

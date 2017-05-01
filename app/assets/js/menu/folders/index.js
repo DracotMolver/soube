@@ -21,7 +21,7 @@ const {
   langFile,
   editFile
 } = require(path.join(__dirname, '../../', 'config')).init();
-require(path.join(__dirname, '../../', 'dom'));
+const $ = require(path.join(__dirname, '../../', 'dom'));
 
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang];
@@ -29,7 +29,7 @@ let folderToRemove = '';
 let isLoadingSongs = false;
 let itemToRemove;
 
-let li = CreateElement('li');
+let li = document.createElement('li');
 
 /* --------------------------------- Functions --------------------------------- */
 function removeItem() {
@@ -47,7 +47,7 @@ function saveSongList(parentFolder = '') {
   editFile('config', configFile);
 
   $('#path-list-container')
-    .append(li.clone(true).text(parentFolder).on({ click: removeItem }));
+    .append($(li.cloneNode(true)).text(parentFolder).on({ click: removeItem }));
 
   // Show a loading
   // Read the content of the parent folder
@@ -70,7 +70,7 @@ function loadFolder() {
 
   configFile.musicFolder.forEach(v => {
     $('#path-list-container').append(
-      li.clone(true).text(v).on({ click: removeItem })
+      $(li.cloneNode(true)).text(v).on({ click: removeItem })
     )
   });
 

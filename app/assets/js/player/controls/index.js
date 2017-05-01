@@ -17,7 +17,7 @@ let {
   listSongs,
   editFile
 } = require(path.join(__dirname, '../../', 'config')).init();
-require(path.join(__dirname, '../../', 'dom'));
+const $ = require(path.join(__dirname, '../../', 'dom'));
 
 
 /* --------------------------------------- Variables ------------------------------------------- */
@@ -377,7 +377,8 @@ Controls.prototype.stopSong = function () {
   $('#song-title').child().each(v => { $(v).text(''); });
   $('#artist').child().each(v => { $(v).text(''); });
   $('#album').child().each(v => { $(v).text(''); });
-  $(`#${this.oldFile.position}`).child().each(v => $(v).css('color:var(--blackColor)'));
+  if (this.oldFile.length)
+    $(`#${this.oldFile.position}`).child().each(v => $(v).css('color:var(--blackColor)'));
 
   animPlayAndPause('pause');
 

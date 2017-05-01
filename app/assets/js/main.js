@@ -20,7 +20,7 @@ const {
   listSongs,
   langFile
 } = require('./config').init()
-require('./dom');
+const $ = require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 //---- constants ----
@@ -37,15 +37,15 @@ let positionElement = null;
 
 //---- searching bar ----
 let isSearchDisplayed = false;
-let isModalOpen = false; 
+let isModalOpen = false;
 let totalResults = 0;
 let countSlide = 0;
-let parentSlideItem;
+let parentSlideItem = $(document.createElement('div')).addClass('grid-25 mobile-grid-25').get();
 let countItem = 0;
 let totalItem = 0;
 let stepItem = 0;
 let slide = 0;
-let containerSlider;
+let containerSlider = $(document.createElement('div')).addClass('results');
 let slideContainer = document.createDocumentFragment();
 let itemSlide = document.createDocumentFragment();
 let newList = [];
@@ -64,7 +64,7 @@ function getActualVersion() {
         .child(0)
         .addClass('pop-up-anim')
         .text(
-          `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
+        `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
         );
 
       $(':a').on({
@@ -123,16 +123,15 @@ function btnPlaySong() {
 // Will be executed every time the user hit down a keyword
 // So, I carefully tried to code a clean and faster code :).
 function searchInputData(e) {
-  parentSlideItem = CreateElement('div').addClass('grid-25 mobile-grid-25');
-  containerSlider = CreateElement('div').addClass('results').css(`width:${document.body.clientWidth - 100}px`);
+  containerSlider.css(`width:${document.body.clientWidth - 100}px`);
 
   $('#wrapper-results').empty();
   $('#pagination').addClass('hide');
 
   searchValue = this.value.trim();
-  console.log(searchValue)
+
   if (searchValue !== '') {
-    regex = new RegExp(searchValue.replace(/\s/g,'\&nbsp;').trim(), 'ig');
+    regex = new RegExp(searchValue.replace(/\s/g, '\&nbsp;').trim(), 'ig');
 
     if (newList.length > 0 && searchValue.length > oldSearchedValue.length) {
       list = newList.filter(v => regex.test(v.title));
@@ -145,45 +144,46 @@ function searchInputData(e) {
     totalResults = list.length;
     countSlide = slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
 
-      //   // Add the pagination if there's more than one slide
-      //   slide > 1 ?
-      //     $('#pagination')
-      //       .removeClass('hide')
-      //       .child(1)
-      //       .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
+    //   // Add the pagination if there's more than one slide
+    //   slide > 1 ?
+    //     $('#pagination')
+    //       .removeClass('hide')
+    //       .child(1)
+    //       .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
 
-      //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
-      //   // Make an slide with all the filtered coincidences
-      //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
+    //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
+    //   // Make an slide with all the filtered coincidences
+    //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
 
-      if (list.length > 0) {
-        countItem = 0;
-        while (slide--) {
-          totalItem = totalResults - countItem > maxElements ? maxElements : totalResults - countItem;
-          for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
-            itemSlide.appendChild(
-              parentSlideItem.clone(false)
-                .text(`<div class="search-results">${list[countItem].title}</div>`)
-                .data({ position: list[countItem].position })
-                .on({ click: btnPlaySong }).get()
-            );
-          }
-
-          slideContainer.appendChild(
-            containerSlider.clone(false)
-              .append(itemSlide).get()
-          )
-          itemSlide = document.createDocumentFragment();
+    if (list.length > 0) {
+      countItem = 0;
+      while (slide--) {
+        totalItem = totalResults - countItem > maxElements ? maxElements : totalResults - countItem;
+        for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
+          itemSlide.appendChild(
+            $(parentSlideItem.cloneNode(false))
+              .text(`<div class="search-results">${list[countItem].title}</div>`)
+              .data({ position: list[countItem].position })
+              .on({ click: btnPlaySong }).get()
+          );
         }
+
+        slideContainer.appendChild(
+          $(containerSlider.get().cloneNode(false))
+            .append(itemSlide).get()
+        )
+        itemSlide = document.createDocumentFragment();
       }
+    }
 
-      // Display all the filtered songs
-      $('#wrapper-results')
-        .empty()
-        .append(slideContainer)
-        .css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
+    // Display all the filtered songs
+    $('#wrapper-results')
+      .empty()
+      .append(slideContainer)
+      .removeClass('no-searching-found')
+      .css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
 
-      slideContainer = document.createDocumentFragment();
+    slideContainer = document.createDocumentFragment();
   } else {
     console.log('asdf');
     // Clean if there's no coincidence
@@ -215,18 +215,18 @@ function btnActions(action) {
     case 'play-pause': player.getMediaControl(player.mediaControl).playSong(); break;
     case 'next': player.getMediaControl(player.mediaControl).nextSong(); break;
     case 'prev': player.getMediaControl(player.mediaControl).prevSong(); break;
-    case 'shuffle': player.getMediaControl(player.mediaControl).shuffle() ;break;
+    case 'shuffle': player.getMediaControl(player.mediaControl).shuffle(); break;
   }
 }
 
 // Add animations to the play, next, prev and shuffle buttons
 function clickBtnControls() {
   $(this).addClass('click-controls')
-  .on({
-    animationend: function () {
-      $(this).removeClass('click-controls');
-    }
-  });
+    .on({
+      animationend: function () {
+        $(this).removeClass('click-controls');
+      }
+    });
 
   if (listSongs.length) {
     btnActions(this.id);
@@ -287,7 +287,7 @@ $('#song-title').on({
       const top = positionElement.offsetTop;
       const distance = top - (Math.round($('#top-nav').get().offsetHeight) + 100);
       const _c = distance - element;
-      clickedElement.scrollTop += element !== distance ?  _c : -(_c);
+      clickedElement.scrollTop += element !== distance ? _c : -(_c);
     }
   }
 });
@@ -314,6 +314,7 @@ $('#close-album').on({
     isModalOpen = false;
   }
 });
+
 // Action over the pagination
 // $('.arrow').on({
 //   click: function () {
@@ -359,8 +360,7 @@ ipcRenderer.on('search-song', () => {
         animationend: function () {
           this.focus();
         }
-      })
-      .val('').get()
+      }).val('').get();
 
     isSearchDisplayed = true;
 
@@ -420,3 +420,6 @@ ipcRenderer.on('menu-equalizer', () => isModalOpened(equalizer.showEqualizer));
 
 // Display the configurations panel [Ctrl + O]
 ipcRenderer.on('menu-configurations', () => isModalOpened(preferences.configurations.showConfigurations));
+
+// Display info about Soube
+ipcRenderer.on('menu-about', () => isModalOpened(preferences.about.showAbout));
