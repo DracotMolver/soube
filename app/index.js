@@ -41,10 +41,12 @@ const shortKeys = {
 let thumbarButtons = {};
 
 /* --------------------------------- Funciones --------------------------------- */
+// Unregister all the registered keys
 function closeRegisteredKeys() {
   Object.keys(shortKeys).forEach(v => globalShortcut.unregister(v));
 }
 
+// Register the list of keys
 function registreKeys() {
   Object.keys(shortKeys).forEach(v =>
     globalShortcut.register(v, () => mainWindow.webContents.send(shortKeys[v]))
@@ -67,11 +69,8 @@ function ready(evt) {
 
   // fs.writeFileSync(path.join(app.getPath('userData'), 'hola.txt'), JSON.stringify(x), { flag: 'w' });
 
-  console.log(evt, process.argv);
-
   // Player
   mainWindow = new BrowserWindow({
-    title: 'Soube',
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
@@ -79,11 +78,12 @@ function ready(evt) {
     minWidth: 600,
     height: 600,
     center: true,
+    title: 'Soube',
     width: 1200,
     show: false,
     icon: makeIcon('icon.png'),
     webPreferences: {
-      nodeIntegrationInWorker: true
+      nodeIntegrationInWorker: true // Allow to work with Web workers and Nodejs
     }
   });
 
@@ -128,9 +128,8 @@ function ready(evt) {
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
 app.on('window-all-closed', () => app.quit());
-app.disableHardwareAcceleration();
+app.disableHardwareAcceleration(); // This avoid for example, animations and the shadows.
 app.on('ready', ready);
-
 
 /* --------------------------------- Ipc Main --------------------------------- */
 // Sending data from the EQ to the AudioContext
@@ -151,13 +150,26 @@ ipcMain.on('display-msg', (e, a) =>
 );
 
 // Reload the main windows
-ipcMain.on('update-browser', (e, a) => mainWindow.reload());
+ipcMain.on('update-browser', () => mainWindow.reload());
 
 // Change the title of the window
 ipcMain.on('update-title', (e, a) => mainWindow.setTitle(a));
 
 // Restart the app after change the idiom
-ipcMain.on('restart-app', (e, a) => {
+ipcMain.on('restart-app', () => {
   app.relaunch();
   app.exit();
+});
+
+ipcMain.on('change-screen-size', (e, a) => {
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.setMinimumSize(200, 90);
+  mainWindow.setMaximizable(false);
+  mainWindow.setResizable(false);
+  mainWindow.setContentBounds({
+    x: a.width - 200,
+    y: a.height - 90,
+    width: 200,
+    height: 90
+  });
 });
