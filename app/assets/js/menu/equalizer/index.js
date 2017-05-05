@@ -26,8 +26,6 @@ let eqHrz = 0;
 let pos = 0;
 let db = 0;
 
-let option = document.createElement('option');
-
 /* --------------------------------- Functions --------------------------------- */
 function getDB(value) {
   return value === 0 ? 0 : (value === 12 ? 12 : (12 - (value / 10)).toFixed(1));
@@ -36,7 +34,7 @@ function getDB(value) {
 // Options to config the EQ
 function setEQ() {
   switch (this.value) {
-    case 'new': console.log('add new'); break;
+    case 'new': $('#add-new-eq').removeClass('hide'); break;
     case 'reset':
     case 'rock':
     case 'electro':
@@ -50,6 +48,7 @@ function setEQ() {
           .css(`top:${eqHrz[i] === 0 ? 120 : eqHrz[i]}px`)
           .data({ 'db': getDB(eqHrz[i]) });
 
+        $(`#db-${i}`).text('')
         ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
       }
 
@@ -57,12 +56,18 @@ function setEQ() {
   }
 }
 
+function saveEQSetting() {
+
+}
+
 function showEqualizer() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
   $('#_equalizerSetting').text(lang.config.equalizerSetting);
-  // $('#_neweq').text(lang.config.newEQ);
+  $('#_neweq').text(lang.config.newEQ)
+    .on({ click: saveEQSetting });
 
   const fragment = document.createDocumentFragment();
+  let option = document.createElement('option');
 
   fragment.appendChild(
     $(option.cloneNode(false)).text(lang.config.selectEQSetting).get()
@@ -99,13 +104,17 @@ function showEqualizer() {
     $(`#range-${i}`)
       .css(`top:${eqHrz[i] === 0 ? 120 : eqHrz[i]}px`)
       .data({ 'db': getDB(eqHrz[i]) });
+
+    $(`#db-${i}`).text(`${getDB(eqHrz[i])} dB`)
   }
+
 
   $('.db-up-down').on({
     mousedown: function () {
       dbSetting(this, $(this).data('orientation'));
     },
-    mouseup: () => clearTimeout(interval)
+    mouseup: () => clearTimeout(interval),
+    mouseleave: () => clearTimeout(interval)
   })
 
   $($('.parent-container-config').get(1))
