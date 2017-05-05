@@ -35,9 +35,9 @@ function createFiles(app) {
       musicFolder: [],
       equalizer: {
         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        rock: [],
-        electro: [],
-        acustic: []
+        rock: [60, 100, 130, 140, 160, 160, 150, 135, 130, 120, 120, 105, 105, 100, 86],
+        electro: [70, 105, 165, 180, 160, 160, 170, 100, 105, 105, 115, 115, 110, 105, 70],
+        acustic: [100, 100, 110, 115, 118, 125, 125, 130, 130, 110, 115, 115, 110, 100, 100]
       },
       equalizerConfig: 'reset',
       theme: 'pink-theme'
@@ -46,22 +46,22 @@ function createFiles(app) {
     fs.openSync(configPath, 'w');
     fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
   } else {
-  //   // ONLY TO UPDATE THE CONFIG FILE
-  //   var actualVersion = app.getVersion().toString();
-  //   if (response === 'major') {
-      // let config = JSON.parse(fs.readFileSync(configPath).toString());
-      // if (typeof config.musicFolder === 'string') {
-  //       config.equalizer = {
-  //         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //         rock: [],
-  //         electro: [],
-  //         acustic: []
+    //   // ONLY TO UPDATE THE CONFIG FILE
+    //   var actualVersion = app.getVersion().toString();
+    //   if (response === 'major') {
+    // let config = JSON.parse(fs.readFileSync(configPath).toString());
+    // if (typeof config.musicFolder === 'string') {
+    //       config.equalizer = {
+    //         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    //         rock: [60, 100, 130, 140, 160, 160, 150, 135, 130, 120, 120, 105, 105, 100, 86],
+    //         electro: [70, 105, 165, 180, 160, 160, 170, 100, 105, 105, 115, 115, 110, 105, 70],
+    //         acustic: [100, 100, 110, 115, 118, 125, 125, 130, 130, 110, 115, 115, 110, 100, 100]
     //       };
     //     config.theme: 'pink-theme';
-        // config.equalizerConfig: 'reset';
-  //       config.musicFolder = [config.musicFolder];
-  //       fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
-  //     }
+    // config.equalizerConfig: 'reset';
+    //       config.musicFolder = [config.musicFolder];
+    //       fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
+    //     }
     // }
   }
 

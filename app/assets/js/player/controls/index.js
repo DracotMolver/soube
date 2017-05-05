@@ -130,7 +130,7 @@ const Controls = function (from) {
       (f = audioContext.createBiquadFilter(),
         f.type = 'peaking',
         f.frequency.value = v,
-        f.Q.value = 0.5,
+        f.Q.value = 0.3,
         f.gain.value = db[i], f)
     );
   };
@@ -138,7 +138,7 @@ const Controls = function (from) {
 
   // ELapse of time
   this.startTimer = function () {
-    self = this;
+    let self = this;
     const update = function () {
       if (++self.millisecond > 59) {
         self.millisecond = 0;
@@ -182,7 +182,7 @@ const Controls = function (from) {
 
   // Show the data of the selected song
   this.dataSong = function (file) {
-    self = this;
+    let self = this;
     $('#time-start').text('00:00');
     $('#progress-bar').css('width:0');
     $('#song-title').data({ position: self.file.position }).child().each(function (v) { $(v).text(self.file.title); });
@@ -217,7 +217,7 @@ const Controls = function (from) {
   // This function recive the buffer of the song to be played
   // Also start the song
   this.setAudioBufferToPlay = function (buffer) {
-    self = this;
+    let self = this;
     this.source = audioContext.createBufferSource();
     this.source.onended = () => self.stopTimer(self);
     this.source.buffer = buffer;
@@ -228,8 +228,10 @@ const Controls = function (from) {
     this.startTimer();
     this.isMovingForward ? this.source.start(0, this.forward) : this.source.start(0);
     this.lastCurrentTime = audioContext.currentTime;
-    $($('.grid-container').get(0)).rmAttr('style');
-    $('#spinner').switchClass('spinner-anim', 'hide');
+    if ($('#spinner').has('spinner-anim')) {
+      $($('.grid-container').get(0)).rmAttr('style');
+      $('#spinner').switchClass('spinner-anim', 'hide');
+    }
   };
 
   // Get the buffer of the song
@@ -271,7 +273,7 @@ const Controls = function (from) {
   // or by choosing one by the filtered song list using
   // the searching bar
   this.nextPossibleSong = function () {
-    self = this;
+    let self = this;
     self.isplayedAtPosition = false;
     self.position = self.oldFile.position;
 
@@ -289,7 +291,7 @@ const Controls = function (from) {
   };
 
   this.initSong = function () {
-    self = this;
+    let self = this;
     animPlayAndPause('play');
 
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
@@ -419,7 +421,7 @@ Controls.prototype.playSong = function () {
     this.position = Math.floor(Math.random() * this.listSongs.length);
     this.initSong();
   } else if (this.isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
-    self = this;
+    let self = this;
     audioContext.suspend().then(() => self.isSongPlaying = false);
 
     cancelAnimationFrame(this.interval);

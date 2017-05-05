@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
     <link href="../../assets/css/unsemantic.css" rel="stylesheet">
     <link href="../../assets/css/color.css" rel="stylesheet">
-    <link href="../../assets/css/main.css" rel="stylesheet">
+    <link href="../../assets/css/main.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="grid-container">
@@ -167,9 +167,9 @@
             <div class="grid-100">
                 <div class="grid-40 mobile-grid-40">
                     <button id="add-songs"></button>
-                    <button id="remove-songs" class="hide"></button>
                 </div>
                 <div class="grid-60 mobile-grid-60">
+                    <button id="remove-songs" class="hide"></button>
                     <div id="song-progress"></div>
                 </div>
             </div>
@@ -197,19 +197,23 @@
                         <select id="eq-buttons">
                         </select>
                     </div>
-                    <div class="grid-85">
-                        <!--<div class="grid-10">
+                    <div id="add-new-eq" class="grid-85 hide">
+                        <div class="grid-10">
                             <button type="button" id="_neweq" disabled></button>
                         </div>
                         <div class="grid-90">
                             <input type="text" id="name-new-eq">
-                        </div>-->
+                        </div>
                     </div>
                 </div>
                 <div id="equalizer-container">
                     <div class="grid-100">
-                        <div class="hz">Hz</div>
-                        <div class="hz">KHz</div>
+                        <div class="grid-50">
+                            <div class="hz">Hz</div>
+                        </div>
+                        <div class="grid-50">
+                            <div class="hz">KHz</div>
+                        </div>
                     </div>
                     <div class="grid-100">
                         <div class="range-container">
