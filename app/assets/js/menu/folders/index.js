@@ -93,7 +93,7 @@ function loadFolder() {
     click: () => {
       configFile.musicFolder = configFile.musicFolder.filter(v => folderToRemove !== v);
       editFile('config', configFile);
- 
+
       itemToRemove.remove();
       songFolder.removeSongFolder(folderToRemove);
 

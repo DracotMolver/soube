@@ -10,7 +10,7 @@ const path = require('path');
 const {
     listSongs
 } = require(path.join(__dirname, '../../', 'config')).init();
-const $ = require(path.join(__dirname, '../../' , 'dom'));
+const $ = require(path.join(__dirname, '../../', 'dom'));
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function playSong(_t, player) {
@@ -43,7 +43,7 @@ function createView(player) {
           album: v.album,
           url: v.filename
         })
-        .on({ click: function() { playSong(this, player); }}).get()
+        .on({ click: function () { playSong(this, player); } }).get()
     );
   });
 

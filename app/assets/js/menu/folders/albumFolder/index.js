@@ -33,14 +33,14 @@ function loadFullAlbum() {
 
 function getSongs(parentFolder) {
   songFolder.addSongFolder(parentFolder,
-  () => $('#album-to-play-container').switchClass('hide', 'album-to-play-anim'),
-  (i, maxLength) => { // Iterator function
-    $('#album-to-play').text(
-      `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
-    );
+    () => $('#album-to-play-container').switchClass('hide', 'album-to-play-anim'),
+    (i, maxLength) => { // Iterator function
+      $('#album-to-play').text(
+        `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
+      );
 
-    if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
-  }, true);
+      if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
+    }, true);
 }
 
 function createView(folder, songs) {

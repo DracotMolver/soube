@@ -116,8 +116,8 @@ function hideSearchInputData() {
 
 // Play the song clicked in the search results
 function btnPlaySong() {
-  player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'));
   hideSearchInputData();
+  player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'));
 }
 
 // Will be executed every time the user hit down a keyword

@@ -20,8 +20,8 @@ const {
   listSongs,
   langFile,
   editFile
-} = require(path.join(__dirname, '../../../' ,'config')).init();
-const worker = new Worker(path.join(__dirname, 'workerPaths.js')); 
+} = require(path.join(__dirname, '../../../', 'config')).init();
+const worker = new Worker(path.join(__dirname, 'workerPaths.js'));
 
 /* --------------------------------- Variables --------------------------------- */
 //---- normals ----
@@ -55,7 +55,7 @@ function extractMetadata(fnIter) {
       songs.push(
         {
           artist: spaceToNbsp(data.artist.length === 0 || error ? lang.artist : data.artist[0]),
-          album: spaceToNbsp(data.album.trim().length === 0 || error ?  lang.album : data.album),
+          album: spaceToNbsp(data.album.trim().length === 0 || error ? lang.album : data.album),
           title: spaceToNbsp(data.title.trim().length === 0 || error ? lang.title : data.title),
           filename: f
         }
@@ -117,7 +117,7 @@ function spaceToNbsp(str) {
 function getAllSongs() {
   return songs.sort((a, b) =>
     a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
-    a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
+      a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
   ).map((v, i) => (v.position = i, v));
 }
 
