@@ -102,11 +102,11 @@ function ready(evt) {
     closeRegisteredKeys();
     mainWindow = null;
   })
-  .on('focus', registreKeys)
-  .on('blur', closeRegisteredKeys)
-  .on('minimize', () => mainWindow.webContents.send('save-current-time'))
-  // This happens also when you reload the website (refresh)
-  .on('restore', () => mainWindow.webContents.send('update-current-time'));
+    .on('focus', registreKeys)
+    .on('blur', closeRegisteredKeys)
+    .on('minimize', () => mainWindow.webContents.send('save-current-time'))
+    // This happens also when you reload the website (refresh)
+    .on('restore', () => mainWindow.webContents.send('update-current-time'));
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
