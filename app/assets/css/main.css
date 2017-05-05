@@ -201,7 +201,7 @@ svg {
 button,
 select {
     box-sizing: border-box;
-    box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .18);
+    box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .14);
     padding-right: .6em;
     padding-left: .6em;
     cursor: pointer
@@ -224,7 +224,7 @@ button {
 
 button:hover {
     backface-visibility: hidden;
-    box-shadow: 0 3px 5px 1px rgba(33, 33, 33, .18);
+    box-shadow: 0 3px 5px 1px rgba(33, 33, 33, .14);
     transform: scale(1.04)
 }
 
@@ -643,11 +643,23 @@ button:hover {
 }
 
 #container-equalizer {
-    width: 982px
+    width: 1182px
 }
 
 #eq-buttons {
     text-transform: capitalize
+}
+
+#_neweq[disabled] {
+    background: var(--lightGreyColor);
+    width: 90%
+}
+
+#name-new-eq {
+    line-height: 1.7em;
+    box-shadow: 0 2px 3px 0 rgba(33, 33, 33, .14);
+    border: 1px solid var(--pinkColor);
+    width: 90%
 }
 
 .range-container {
@@ -664,7 +676,7 @@ button:hover {
 .range-percent {
     border-radius: 3px;
     background: var(--lightGreyColor);
-    box-shadow: 0 0 2px 0 rgba(33, 33, 33, .18) inset;
+    box-shadow: 0 0 2px 0 rgba(33, 33, 33, .14) inset;
     position: relative;
     overflow: hidden;
     padding: 0;
@@ -695,6 +707,7 @@ button:hover {
 
 .db-desc {
     font-size: .66em;
+    width: 42px;
     color: var(--darkPinkColor)
 }
 
@@ -704,35 +717,8 @@ button:hover {
     background: var(--whiteColor);
     text-align: center;
     position: relative;
-    display: inline-block;
+    margin: 0 auto;
     width: 32px
-}
-
-.hz:first-child {
-    margin-right: 14.5em;
-    margin-left: 14.5em
-}
-
-.hz:last-child {
-    margin-right: 13em;
-    margin-left: 13em
-}
-
-.hz::before {
-    background: var(--lightGreyColor);
-    z-index: -1;
-    height: 2px;
-    top: 11px
-}
-
-.hz:first-child::before {
-    width: 31em;
-    left: -14em
-}
-
-.hz:last-child::before {
-    width: 27.4em;
-    left: -12.2em
 }
 
 #configurations {
