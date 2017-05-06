@@ -7,9 +7,7 @@
 const path = require('path');
 
 //---- Own ----
-const {
-    listSongs
-} = require(path.join(__dirname, '../../', 'config')).init();
+const listSongs = require(path.join(__dirname, '../../', 'config')).init().listSongs;
 const $ = require(path.join(__dirname, '../../', 'dom'));
 
 /** --------------------------------------- Functions --------------------------------------- **/
@@ -25,9 +23,10 @@ function createView(player) {
   // The parent element must be created, because we will attach a function to it.
   // The rest of the elements, the childNodes, are not need to create them.
   // They can be just text.
-  let parent = $(document.createElement('div')).addClass('list-song-container').get();
+  let parent = $(document.createElement('div'))
+    .addClass('list-song-container').get();
 
-  listSongs.forEach((v, i) => {
+  listSongs.forEach(function (v, i) {
     f.appendChild(
       $(parent.cloneNode(true))
         .attr({ id: i })
@@ -43,7 +42,11 @@ function createView(player) {
           album: v.album,
           url: v.filename
         })
-        .on({ click: function () { playSong(this, player); } }).get()
+        .on({
+          click: function () {
+            playSong(this, player);
+          }
+        }).get()
     );
   });
 
@@ -56,16 +59,20 @@ function createAlbumView(player, folder, listSongs) {
 
   // Name of the band or artist
   fragment.appendChild(
-    $(div.cloneNode(true)).attr({ id: 'album-title-artist' }).text(listSongs[0].artist).get()
+    $(div.cloneNode(true))
+      .attr({ id: 'album-title-artist' })
+      .text(listSongs[0].artist).get()
   );
 
   // Name of the album
   fragment.appendChild(
-    $(div.cloneNode(true)).attr({ id: 'album-title-album' }).text(path.basename(folder)).get()
+    $(div.cloneNode(true))
+      .attr({ id: 'album-title-album' })
+      .text(path.basename(folder)).get()
   );
 
   // List of songs
-  listSongs.forEach((s, i) =>
+  listSongs.forEach(function (s, i) {
     fragment.appendChild(
       $(div.cloneNode(false))
         .addClass('album-title-song')
@@ -81,10 +88,9 @@ function createAlbumView(player, folder, listSongs) {
           click: function () {
             playSong(this, player);
           }
-        })
-        .text(s.title).get()
-    )
-  );
+        }).text(s.title).get()
+    );
+  });
 
   $('#album-to-play').empty().append(fragment);
 }

@@ -24,33 +24,37 @@ const fs = require('fs');
 /* --------------------------------- Variables --------------------------------- */
 let mainWindow = null;
 const shortKeys = {
-  'CommandOrControl+F': 'search-song',
-  'Esc': 'close-search-song',
-  'Space': 'play-and-pause-song',
-  'MediaPlayPause': 'play-and-pause-song',
   'CommandOrControl+Right': 'next-song',
-  'MediaNextTrack': 'next-song',
   'CommandOrControl+Left': 'prev-song',
-  'MediaPreviousTrack': 'prev-song',
   'CommandOrControl+Down': 'shuffle',
+  'CommandOrControl+F': 'search-song',
+  'MediaPreviousTrack': 'prev-song',
   'CommandOrControl+E': 'menu-equalizer',
   'CommandOrControl+N': 'menu-add-folder',
   'CommandOrControl+O': 'menu-configurations',
-  'CommandOrControl+A': 'menu-play-album'
+  'CommandOrControl+A': 'menu-play-album',
+  'MediaNextTrack': 'next-song',
+  'MediaPlayPause': 'play-and-pause-song',
+  'Space': 'play-and-pause-song',
+  'Esc': 'close-search-song'
 };
 let thumbarButtons = {};
 
 /* --------------------------------- Funciones --------------------------------- */
 // Unregister all the registered keys
 function closeRegisteredKeys() {
-  Object.keys(shortKeys).forEach(v => globalShortcut.unregister(v));
+  Object.keys(shortKeys).forEach(function (v) {
+    globalShortcut.unregister(v);
+  });
 }
 
 // Register the list of keys
 function registreKeys() {
-  Object.keys(shortKeys).forEach(v =>
-    globalShortcut.register(v, () => mainWindow.webContents.send(shortKeys[v]))
-  );
+  Object.keys(shortKeys).forEach(function (v) {
+    globalShortcut.register(v, function () {
+      mainWindow.webContents.send(shortKeys[v]);
+    });
+  });
 }
 
 // Make the icon of the app
@@ -98,27 +102,32 @@ function ready(evt) {
       protocol: 'file:'
     })
   );
-  mainWindow.on('closed', () => {
+  mainWindow.on('closed', function () {
     closeRegisteredKeys();
     mainWindow = null;
-  })
-    .on('focus', registreKeys)
-    .on('blur', closeRegisteredKeys)
-    .on('minimize', () => mainWindow.webContents.send('save-current-time'))
+  }).on('focus', function () {
+    registreKeys();
+  }).on('blur', function () {
+    closeRegisteredKeys();
+  }).on('minimize', function () {
+    mainWindow.webContents.send('save-current-time');
+  }).on('restore', function () {
     // This happens also when you reload the website (refresh)
-    .on('restore', () => mainWindow.webContents.send('update-current-time'));
+    mainWindow.webContents.send('update-current-time');
+  });
 
-  mainWindow.once('ready-to-show', () => {
+  mainWindow.once('ready-to-show', function () {
     mainWindow.show();
 
     // Thumbar-button [Windows]
     if (process.platform === 'win32') {
-      thumbarButtons = require(path.join(__dirname, 'assets', 'js', 'thumbar')).makeThumBar(mainWindow, {
-        next: makeIcon('thumb-next.png'),
-        pause: makeIcon('thumb-pause.png'),
-        prev: makeIcon('thumb-prev.png'),
-        play: makeIcon('thumb-play.png')
-      });
+      thumbarButtons = require(path.join(__dirname, 'assets', 'js', 'thumbar'))
+        .makeThumBar(mainWindow, {
+          next: makeIcon('thumb-next.png'),
+          pause: makeIcon('thumb-pause.png'),
+          prev: makeIcon('thumb-prev.png'),
+          play: makeIcon('thumb-play.png')
+        });
 
       // Thumbar Buttons
       mainWindow.setThumbarButtons(thumbarButtons.playMomment);
@@ -127,41 +136,52 @@ function ready(evt) {
 }
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
-app.on('window-all-closed', () => app.quit());
+app.on('window-all-closed', function () {
+  app.quit();
+});
 app.disableHardwareAcceleration(); // This avoid for example, animations and the shadows.
 app.on('ready', ready);
 
 /* --------------------------------- Ipc Main --------------------------------- */
 // Sending data from the EQ to the AudioContext
-ipcMain.on('equalizer-filter', (e, a) => mainWindow.webContents.send('get-equalizer-filter', a));
+ipcMain.on('equalizer-filter', function (e, a) {
+  mainWindow.webContents.send('get-equalizer-filter', a);
+});
 
 // Updating of the thumbar buttons
-ipcMain.on('thumb-bar-update', (e, a) => mainWindow.setThumbarButtons(thumbarButtons[a]));
+ipcMain.on('thumb-bar-update', function (e, a) {
+  mainWindow.setThumbarButtons(thumbarButtons[a]);
+});
 
 // Displays messages dialogs
 // types of messages: none, info, error, question or warning.
-ipcMain.on('display-msg', (e, a) =>
+ipcMain.on('display-msg', function (e, a) {
   dialog.showMessageBox({
     type: a.type,
     message: a.message,
     detail: a.detail,
     buttons: a.buttons
-  })
-);
+  });
+});
 
 // Reload the main windows
-ipcMain.on('update-browser', () => mainWindow.reload());
+ipcMain.on('update-browser', function () {
+  mainWindow.reload();
+});
 
 // Change the title of the window
-ipcMain.on('update-title', (e, a) => mainWindow.setTitle(a));
+ipcMain.on('update-title', function (e, a) {
+  mainWindow.setTitle(a);
+});
 
 // Restart the app after change the idiom
-ipcMain.on('restart-app', () => {
+ipcMain.on('restart-app', function () {
   app.relaunch();
   app.exit();
 });
 
-ipcMain.on('change-screen-size', (e, a) => {
+// Change the size of the window
+ipcMain.on('change-screen-size', function (e, a) {
   mainWindow.setMenuBarVisibility(false);
   mainWindow.setMinimumSize(200, 90);
   mainWindow.setMaximizable(false);

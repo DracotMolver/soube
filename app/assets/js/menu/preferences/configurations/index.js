@@ -14,23 +14,22 @@ const path = require('path');
 
 //---- Own ----
 const {
+  coloursFile,
   configFile,
   langFile,
-  editFile,
-  coloursFile
+  editFile
 } = require(path.join(__dirname, '../../../', 'config')).init();
 const $ = require(path.join(__dirname, '../../../', 'dom'));
 
 /* --------------------------------- Variables --------------------------------- */
-//---- normals ----
 let lang = langFile[configFile.lang];
-let option = document.createElement('option');
+let option = null;
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function displayOption() {
-  $('#theme-colours').addClass('hide');
-  $('#idiom').addClass('hide');
-  $('#screen-size').addClass('hide');
+  ['#theme-colours', '#idiom', '#screen-size'].forEach(function (v) {
+    $(v).addClass('hide');
+  });
 
   switch (this.value) {
     case '1': showColoursTheme(); break;
@@ -70,9 +69,13 @@ function choosenIdiom() {
   }
 
   $(`#${configFile.lang}`).text(i).rmAttr('style');
-  $(`#${this.id}`).text(`${i}<div class="checked-colour"></div>`).css('background:#fcfcfc');
 
-  setTimeout(() => ipcRenderer.send('restart-app'), 460);
+  $(`#${this.id}`).text(`${i}<div class="checked-colour"></div>`)
+    .css('background:#fcfcfc');
+
+  setTimeout(function () {
+    ipcRenderer.send('restart-app');
+  }, 460);
 }
 
 // Change the color of the app
@@ -94,12 +97,13 @@ function showConfigurations() {
   $('#_configurations').text(lang.config.configurations);
 
   const fragment = document.createDocumentFragment();
+  option = document.createElement('option');
 
-  lang.config.configurationsOpt.forEach((o, i) =>
+  lang.config.configurationsOpt.forEach(function (o, i) {
     fragment.appendChild(
       $(option.cloneNode(false)).val(i).text(o).get()
-    )
-  );
+    );
+  });
 
   $('#config-options')
     .append(fragment)
@@ -107,7 +111,9 @@ function showConfigurations() {
 
   // Colours options
   const coloursNames = Object.keys(coloursFile);
-  $('.colour-name').each((v, i) => $(v).text(coloursNames[i]));
+  $('.colour-name').each(function (v, i) {
+    $(v).text(coloursNames[i]);
+  });
 
   $('.colour').on({ click: choosenColor });
 

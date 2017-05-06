@@ -18,10 +18,12 @@ function getActualVersion(net, version, fn) {
   });
 
   request.chunkedEncoding = true;
-  request.on('response', response => {
-    response.on('data', chunk => data += chunk);
-    response.on('end', () => {
-      const diff = (b, c) => {
+  request.on('response', function (response) {
+    response.on('data', function (chunk) {
+      data += chunk;
+    });
+    response.on('end', function () {
+      const diff = function (b, c) {
         let val = false;
         for (var i = 0, s = c.length; i < s; i++) {
           if (parseInt(c[i]) > parseInt(b[i])) {
@@ -36,7 +38,7 @@ function getActualVersion(net, version, fn) {
     });
   });
 
-  request.on('error', error => {
+  request.on('error', function (error) {
     console.error(error);
   });
 

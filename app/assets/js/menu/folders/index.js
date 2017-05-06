@@ -28,7 +28,6 @@ let lang = langFile[configFile.lang];
 let folderToRemove = '';
 let isLoadingSongs = false;
 let itemToRemove;
-
 let li = document.createElement('li');
 
 /* --------------------------------- Functions --------------------------------- */
@@ -47,19 +46,24 @@ function saveSongList(parentFolder = '') {
   editFile('config', configFile);
 
   $('#path-list-container')
-    .append($(li.cloneNode(true)).text(parentFolder).on({ click: removeItem }));
+    .append($(li.cloneNode(true))
+      .text(parentFolder)
+      .on({
+        click: function () {
+          removeItem();
+        }
+      }));
 
   // Show a loading
   // Read the content of the parent folder
-  songFolder.addSongFolder(parentFolder,
-    () => $('#add-songs').text(lang.config.loadingSongFolder),
-    (i, maxLength) => { // Iterator function
-      $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
-      $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
+  songFolder.addSongFolder(parentFolder, function () {
+    $('#add-songs').text(lang.config.loadingSongFolder);
+  }, function (i, maxLength) { // Iterator function
+    $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
+    $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
 
-      if (i === maxLength) songFolder.updateSongList();
-    }
-  );
+    if (i === maxLength) songFolder.updateSongList();
+  });
 }
 
 function loadFolder() {
@@ -68,20 +72,22 @@ function loadFolder() {
 
   $('#path-list-container').empty();
 
-  configFile.musicFolder.forEach(v => {
+  configFile.musicFolder.forEach(function (v) {
     $('#path-list-container').append(
-      $(li.cloneNode(true)).text(v).on({ click: removeItem })
-    )
+      $(li.cloneNode(true))
+        .text(v)
+        .on({ click: removeItem })
+    );
   });
 
   $('#add-songs').on({
-    click: () => {
+    click: function () {
       if (!isLoadingSongs) {
         // Action to add the songs
         remote.dialog.showOpenDialog({
           title: 'Add music folder',
           properties: ['openDirectory']
-        }, parentFolder => {
+        }, function (parentFolder) {
           // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
           if (parentFolder !== undefined) saveSongList(parentFolder[0]);
         });
@@ -90,8 +96,11 @@ function loadFolder() {
   }).text(lang.config.addSongBtn);
 
   $('#remove-songs').on({
-    click: () => {
-      configFile.musicFolder = configFile.musicFolder.filter(v => folderToRemove !== v);
+    click: function () {
+      configFile.musicFolder = configFile.musicFolder.filter(function (v) {
+        return folderToRemove !== v;
+      });
+
       editFile('config', configFile);
 
       itemToRemove.remove();

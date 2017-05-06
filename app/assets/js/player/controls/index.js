@@ -13,8 +13,8 @@ const ipcRenderer = require('electron').ipcRenderer;
 //---- Own ----
 let {
   configFile,
-  langFile,
   listSongs,
+  langFile,
   editFile
 } = require(path.join(__dirname, '../../', 'config')).init();
 const $ = require(path.join(__dirname, '../../', 'dom'));
@@ -67,7 +67,7 @@ function timeParse(_time) {
     minute: parseInt(_time.slice(0, _time.lastIndexOf('.'))),
     second: Math.floor(_time.slice(_time.lastIndexOf('.')) * seconds_u)
   };
-};
+}
 
 function animPlayAndPause(animName) {
   if (process.platform === 'win32') {
@@ -85,7 +85,7 @@ function animPlayAndPause(animName) {
 }
 
 function nbspToSpace(value) {
-  return value.replace(/\&nbsp;/g, ' ');
+  return value.replace(/&nbsp;/g, ' ');
 }
 
 /* --------------------------------------- Class ------------------------------------------- */
@@ -101,13 +101,18 @@ const Controls = function (from) {
   this.isMovingForward = false;
   this.isSongPlaying = false;
   this.isNextAble = false;
+
   this.prevSongsToPlay = [];
   this.filter = [];
+
   this.oldFile = '';
   this.file = '';
+
   this.position = 0;
   this.duration = 0;
+
   this.source = null;
+
   this.playedFrom = from;
 
   //---- Elapsed time ----
@@ -117,85 +122,101 @@ const Controls = function (from) {
   this.minute = 0;
   this.second = 0;
   this.lapse = 0;
+
   this.interval = null;
+
   this.time = {};
 
   /** --------------------------------------- Functions --------------------------------------- **/
   this.filters = function () {
     let f = null;
     let db = configFile.equalizer[configFile.equalizerConfig]
-      .map(v => v === 0 ? 0 : (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)));
+      .map(function (v) {
+        return v ? (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)) : 0;
+      });
 
-    this.filter = hrz.map((v, i) =>
-      (f = audioContext.createBiquadFilter(),
+    this.filter = hrz.map(function (v, i) {
+      return f = audioContext.createBiquadFilter(),
         f.type = 'peaking',
         f.frequency.value = v,
         f.Q.value = 0.3,
-        f.gain.value = db[i], f)
-    );
+        f.gain.value = db[i], f;
+    });
   };
   this.filters();
 
   // ELapse of time
   this.startTimer = function () {
-    let self = this;
+    let _self = this;
     const update = function () {
-      if (++self.millisecond > 59) {
-        self.millisecond = 0;
-        if (++self.second > 59) {
-          ++self.minute;
-          self.second = 0;
+      if (++_self.millisecond > 59) {
+        _self.millisecond = 0;
+        if (++_self.second > 59) {
+          ++_self.minute;
+          _self.second = 0;
         }
 
-        $('#time-start').text(`${formatDecimals(self.minute)}:${formatDecimals(self.second)}`);
-        $('#progress-bar').css(`width:${self.percent += self.lapse}%`);
+        $('#time-start').text(`${formatDecimals(_self.minute)}:${formatDecimals(_self.second)}`);
+        $('#progress-bar').css(`width:${_self.percent += _self.lapse}%`);
       }
-      self.interval = requestAnimationFrame(update);
+      _self.interval = requestAnimationFrame(update);
     };
-    self.interval = requestAnimationFrame(update);
+    _self.interval = requestAnimationFrame(update);
   }
 
   // Clean the everything when the ended function is executed
-  this.stopTimer = function (self) {
-    if (!self.stopImmediately) {
-      if (!self.isMovingForward) {
-        if (self.playedFrom === 'album') $(`#al-${self.oldFile.position}`).css('color:var(--blackColor)');
-        else $(`#${self.oldFile.position}`).child().each(v => $(v).css('color:var(--blackColor)'));
+  this.stopTimer = function (_self) {
+    if (!_self.stopImmediately) {
+      if (!_self.isMovingForward) {
+        if (_self.playedFrom === 'album') {
+          $(`#al-${_self.oldFile.position}`).css('color:var(--blackColor)');
+        } else {
+          $(`#${_self.oldFile.position}`)
+            .child()
+            .each(function (v) {
+              $(v).css('color:var(--blackColor)');
+            });
+        }
 
-        self.isSongPlaying = false;
-        self.isNextAble = true;
-        self.millisecond = self.second = self.minute = self.percent = self.lapse = 0;
+        _self.isSongPlaying = false;
+        _self.isNextAble = true;
+        _self.millisecond = _self.second = _self.minute =
+          _self.percent = _self.lapse = 0;
 
-        cancelAnimationFrame(self.interval);
+        cancelAnimationFrame(_self.interval);
 
-        if (self.isNextAble && !self.isMovingForward && !self.isplayedAtPosition) self.initSong();
-      } else if (self.isMovingForward) {
+        if (_self.isNextAble && !_self.isMovingForward && !_self.isplayedAtPosition)
+          _self.initSong();
+      } else if (_self.isMovingForward) {
 
         // It must be created a new AudioNode, because the stop function delete the node.
-        self.setAudioBufferToPlay(self.poolOfSongs[self.oldFile.filename]);
+        _self.setAudioBufferToPlay(_self.poolOfSongs[_self.oldFile.filename]);
 
-        self.isMovingForward = false;
-        self.isSongPlaying = true;
+        _self.isMovingForward = false;
+        _self.isSongPlaying = true;
       }
     }
   };
 
   // Show the data of the selected song
   this.dataSong = function (file) {
-    let self = this;
+    let _self = this;
     $('#time-start').text('00:00');
     $('#progress-bar').css('width:0');
-    $('#song-title').data({ position: self.file.position }).child().each(function (v) { $(v).text(self.file.title); });
-    $('#artist').child().each(function (v) { $(v).text(self.file.artist); });
-    $('#album').child().each(function (v) { $(v).text(self.file.album); });
+    $('#song-title').data({ position: _self.file.position });
+    ['#song-title', '#artist', '#album'].forEach(function (o) {
+      $(o).child().each(function (v) {
+        $(v).text(_self.file[o.replace(/#|song-/g, '')]);
+      });
+    });
 
     if (notification !== null) {
       notification.close();
       notification = null
     }
 
-    notifi.body = `${nbspToSpace(self.file.artist)} from ${nbspToSpace(self.file.album)}`;
-    notification = new Notification(nbspToSpace(self.file.title), notifi);
+    notifi.body = `${nbspToSpace(_self.file.artist)} from ${nbspToSpace(_self.file.album)}`;
+    notification = new Notification(nbspToSpace(_self.file.title), notifi);
 
     // Set the name of the song in the top bar
     ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`);
@@ -217,17 +238,23 @@ const Controls = function (from) {
   // This function recive the buffer of the song to be played
   // Also start the song
   this.setAudioBufferToPlay = function (buffer) {
-    let self = this;
+    let _self = this;
     this.source = audioContext.createBufferSource();
-    this.source.onended = () => self.stopTimer(self);
+    this.source.onended = function () {
+      _self.stopTimer(_self);
+    };
     this.source.buffer = buffer;
 
     // connect all the nodes
     this.source.connect(this.filter[0]);
-    this.filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination);
+    this.filter.reduce(function (p, c) {
+      return p.connect(c);
+    }).connect(audioContext.destination);
+
     this.startTimer();
     this.isMovingForward ? this.source.start(0, this.forward) : this.source.start(0);
     this.lastCurrentTime = audioContext.currentTime;
+
     if ($('#spinner').has('spinner-anim')) {
       $($('.grid-container').get(0)).rmAttr('style');
       $('#spinner').switchClass('spinner-anim', 'hide');
@@ -243,9 +270,11 @@ const Controls = function (from) {
     }), true);
     xhtr.responseType = 'arraybuffer';
     xhtr.onload = function () {
-      audioContext.decodeAudioData(xhtr.response).then(
-        buffer => fnc(buffer), reason => fnc(false)
-      );
+      audioContext.decodeAudioData(xhtr.response).then(function (buffer) {
+        fnc(buffer);
+      }, function (reason) {
+        fnc(false);
+      });
     };
     xhtr.send(null);
   };
@@ -261,8 +290,9 @@ const Controls = function (from) {
     $('#time-end').text(`${formatDecimals(this.time.minute)}:${formatDecimals(this.time.second)}`);
 
     // Change the color the actual song
-    if (this.playedFrom === 'album') $(`#al-${this.file.position}`).css('color:var(--pinkColor)');
-    else $(`#${this.file.position}`).child().each(v => $(v).css('color:var(--pinkColor)'));
+    this.playedFrom === 'album' ?
+      $(`#al-${this.file.position}`).css('color:var(--pinkColor)') :
+      $(`#${this.file.position}`).child().each(function (v) { $(v).css('color:var(--pinkColor)'); });
 
     this.isSongPlaying = true;
   }
@@ -273,25 +303,25 @@ const Controls = function (from) {
   // or by choosing one by the filtered song list using
   // the searching bar
   this.nextPossibleSong = function () {
-    let self = this;
-    self.isplayedAtPosition = false;
-    self.position = self.oldFile.position;
+    let _self = this;
+    _self.isplayedAtPosition = false;
+    _self.position = _self.oldFile.position;
 
     // Next (possible) song to play
     // if it is not saved into the buffer, we have to get it and save it
-    self.file = self.getFile();
-    if (!self.poolOfSongs[self.file.filename]) {
-      self.getBuffer(self.file.filename, data => {
+    _self.file = _self.getFile();
+    if (!_self.poolOfSongs[_self.file.filename]) {
+      _self.getBuffer(_self.file.filename, function (data) {
         if (!data) throw data;
 
-        self.isNextAble = true;
-        self.setBufferInPool(self.file.filename, data);
+        _self.isNextAble = true;
+        _self.setBufferInPool(_self.file.filename, data);
       });
     }
   };
 
   this.initSong = function () {
-    let self = this;
+    let _self = this;
     animPlayAndPause('play');
 
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
@@ -300,30 +330,31 @@ const Controls = function (from) {
     // Get the buffer of song if it is in the poolOfSongs
     // Note: The oldFile is an important variable, because is saved into
     // the prevSongsToPlay array, which has all the played songs.
-    if (self.poolOfSongs[self.file.filename]) {
+    if (_self.poolOfSongs[_self.file.filename]) {
       // play the song and save it as an old song (oldFile)
-      self.setSong(self.poolOfSongs[self.file.filename]);
-      self.dataSong((self.oldFile = self.file));
-      self.nextPossibleSong();
+      _self.setSong(_self.poolOfSongs[_self.file.filename]);
+      _self.dataSong((_self.oldFile = _self.file));
+      _self.nextPossibleSong();
     } else {
       // Get the song to play
-      self.file = self.getFile();
-      self.getBuffer(self.file.filename, data => {
+      _self.file = _self.getFile();
+      _self.getBuffer(_self.file.filename, function (data) {
         if (!data) throw data;
 
         // Save the buffer
-        self.setBufferInPool(self.file.filename, data);
+        _self.setBufferInPool(_self.file.filename, data);
 
         // Play the song and save it as old (oldFile)
-        self.setSong(data);
-        self.dataSong((self.oldFile = self.file));
-        self.nextPossibleSong();
+        _self.setSong(data);
+        _self.dataSong((_self.oldFile = _self.file));
+        _self.nextPossibleSong();
       });
     }
   };
 
   this.checkNextAndPrevSong = function () {
-    if (!this.isSongPlaying && audioContext.state === 'suspended') audioContext.resume();
+    if (!this.isSongPlaying && audioContext.state === 'suspended')
+      audioContext.resume();
 
     if (this.source !== null) {
       this.source.stop(0);
@@ -376,11 +407,20 @@ Controls.prototype.stopSong = function () {
   $('#time-start').text('00:00');
   $('#time-end').text('00:00');
   $('#progress-bar').css('width:0');
-  $('#song-title').child().each(v => { $(v).text(''); });
-  $('#artist').child().each(v => { $(v).text(''); });
-  $('#album').child().each(v => { $(v).text(''); });
-  if (this.oldFile.length)
-    $(`#${this.oldFile.position}`).child().each(v => $(v).css('color:var(--blackColor)'));
+  ['#song-title', '#artist', '#album'].forEach(function (o) {
+    $(o).child()
+      .each(function (v) {
+        $(v).text('');
+      });
+  });
+
+  if (this.oldFile.length) {
+    $(`#${this.oldFile.position}`)
+      .child()
+      .each(function (v) {
+        $(v).css('color:var(--blackColor)');
+      });
+  }
 
   animPlayAndPause('pause');
 
@@ -394,6 +434,7 @@ Controls.prototype.stopSong = function () {
 
   this.duration = this.lastCurrentTime = this.millisecond = this.percent =
     this.minute = this.second = this.lapse = 0;
+
   this.time = {};
 };
 
@@ -407,7 +448,7 @@ Controls.prototype.nextSong = function () {
 };
 
 Controls.prototype.prevSong = function () {
-  if (this.prevSongsToPlay.length > 0 && this.isNextAble) {
+  if (this.prevSongsToPlay.length && this.isNextAble) {
     this.file = this.prevSongsToPlay.pop();
     this.position = this.file.position;
 
@@ -421,8 +462,10 @@ Controls.prototype.playSong = function () {
     this.position = Math.floor(Math.random() * this.listSongs.length);
     this.initSong();
   } else if (this.isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
-    let self = this;
-    audioContext.suspend().then(() => self.isSongPlaying = false);
+    let _self = this;
+    audioContext.suspend().then(function () {
+      _self.isSongPlaying = false;
+    });
 
     cancelAnimationFrame(this.interval);
     animPlayAndPause('pause');
@@ -435,34 +478,38 @@ Controls.prototype.playSong = function () {
   }
 };
 
-Controls.prototype.setSongs = function (_songs) {
-  this.listSongs = _songs;
-};
+Controls.prototype.setShuffle = function () {
+  if (this.file) this.file = '';
 
-Controls.prototype.shuffle = function () {
-  this.file = '';
   configFile.shuffle = !configFile.shuffle;
-  $('#shuffle-icon').css(`fill:${configFile.shuffle ? '#FBFCFC' : '#f06292'}`);
+  $('#shuffle-icon').css(`fill:${configFile.shuffle ? '#FBFCFC' : 'var(--lightPinkColor)'}`);
 
   editFile('config', configFile);
 };
 
+Controls.prototype.setSongs = function (_songs) {
+  this.listSongs = _songs;
+};
+
+
 Controls.prototype.moveForward = function (event, element) {
-  this.isMovingForward = true;
+  if (this.isSongPlaying) {
+    this.isMovingForward = true;
 
-  cancelAnimationFrame(this.interval);
+    cancelAnimationFrame(this.interval);
 
-  this.forward = this.duration * event.offsetX / element.clientWidth;
-  this.time = timeParse(this.forward);
+    this.forward = this.duration * event.offsetX / element.clientWidth;
+    this.time = timeParse(this.forward);
 
-  // Calculate the new time
-  this.minute = this.time.minute;
-  this.second = this.time.second;
-  this.millisecond = this.forward * 100;
+    // Calculate the new time
+    this.minute = this.time.minute;
+    this.second = this.time.second;
+    this.millisecond = this.forward * 100;
 
-  // Calculate the percent of the progress bar
-  this.percent = this.forward * (100 / this.duration);
-  this.source.stop(0);
+    // Calculate the percent of the progress bar
+    this.percent = this.forward * (100 / this.duration);
+    this.source.stop(0);
+  }
 };
 
 module.exports = Controls;

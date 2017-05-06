@@ -3,7 +3,7 @@
  * @copyright 2016 - 2017
  */
 
-module.exports = (app) => {
+module.exports = function(app) {
   const configFile = require(`${app.getPath('userData')}/config.json`);
   const menuLang = require('./../config/menuLang')[configFile.lang];
 

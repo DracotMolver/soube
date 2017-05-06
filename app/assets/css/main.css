@@ -76,7 +76,7 @@ button,
 img,
 input,
 svg {
-    appearance: none;
+    -webkit-appearance: none;
     border: none
 }
 
@@ -250,25 +250,36 @@ button:hover {
     content: ''
 }
 
+#leftright,
 #updown {
     border-radius: 5px;
     text-align: center;
     background: var(--whiteColor);
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
-    position: absolute;
-    z-index: 2;
     border: 1px solid var(--lightGreyColor);
     height: 30px;
     bottom: 10px;
     cursor: pointer;
-    width: 66px;
+    width: 66px
+}
+
+#leftright {
+    position: relative;
+    left: 45px
+}
+
+#updown {
+    position: absolute;
+    z-index: 2;
     right: 22px
 }
 
-#updown .arrow-updown:first-child {
+#updown .arrow-updown:first-child,
+#leftright .arrow-updown:first-child {
     border-right: 1px solid var(--lightGreyColor)
 }
 
+#leftright .arrow-updown,
 #updown .arrow-updown {
     line-height: 31px
 }
@@ -353,22 +364,22 @@ button:hover {
     float: left
 }
 
-#song-title>h1 {
+#song-title > h1 {
     font-family: Muli-Bold;
     font-size: 1.6em
 }
 
-#artist>h2 {
+#artist > h2 {
     font-size: 1.3em
 }
 
-#album>h3 {
+#album > h3 {
     font-size: 1em
 }
 
-#album>h3,
-#artist>h2,
-#song-title>h1,
+#album > h3,
+#artist > h2,
+#song-title > h1,
 .search-results {
     text-overflow: ellipsis;
     overflow: hidden
@@ -380,15 +391,15 @@ button:hover {
     margin: .5em 0
 }
 
-#artist>h2,
+#artist > h2,
 #time-end,
 #time-start {
     font-family: Muli-Regular
 }
 
-#album>h3,
-#artist>h2,
-#song-title>h1,
+#album > h3,
+#artist > h2,
+#song-title > h1,
 #time-end,
 #time-start {
     color: var(--whiteColor)
@@ -449,7 +460,7 @@ button:hover {
     padding: 4em 2em
 }
 
-#desc-container-album > p {
+#desc-container-album  >  p {
     font-weight: Muli-Light;
     text-align: justify;
     color: var(--darkGreyColor)
@@ -473,13 +484,13 @@ button:hover {
     float: left
 }
 
-#path-list-container>li:nth-child(odd),
+#path-list-container > li:nth-child(odd),
 .list-song-container:nth-child(odd) {
     background: var(--lightGreyColor);
     cursor: pointer
 }
 
-#path-list-container>li:nth-child(even),
+#path-list-container > li:nth-child(even),
 .list-song-container:nth-child(even) {
     background: var(--whiteColor);
     cursor: pointer
@@ -516,7 +527,7 @@ button:hover {
 
 #search-wrapper {
     position: relative;
-    padding: 4em 0 3.5em 0;
+    padding: 2em 0;
     margin: auto;
     height: auto;
     width: 11%
@@ -596,7 +607,7 @@ button:hover {
     transform: scale(0)
 }
 
-#pop-up>a {
+#pop-up > a {
     text-decoration: none;
     color: currentColor
 }
@@ -633,7 +644,7 @@ button:hover {
     top: -11px
 }
 
-.text-container:hover>.tooltip {
+.text-container:hover > .tooltip {
     animation: showToolTip .3s ease-in forwards
 }
 
@@ -658,6 +669,7 @@ button:hover {
 #name-new-eq {
     line-height: 1.7em;
     box-shadow: 0 2px 3px 0 rgba(33, 33, 33, .14);
+    font-size: .92em;
     border: 1px solid var(--pinkColor);
     width: 90%
 }
@@ -721,11 +733,32 @@ button:hover {
     width: 32px
 }
 
+#logo-image {
+    position: relative;
+    margin: 1.6em auto;
+    height: 96px;
+    width: 96px
+}
+
+#about {
+    width: 850px
+}
+
+#_about > p {
+    margin-bottom: .6em
+}
+
+#_about {
+    font-weight: Muli-Light;
+    text-align: center;
+    font-size: .8em
+}
+
 #configurations {
     width: 640px
 }
 
-#screen-size > .grid-50 {
+#screen-size  >  .grid-50 {
     margin-top: 1em
 }
 
@@ -818,14 +851,14 @@ button:hover {
     border: 1px solid var(--lightGreyColor)
 }
 
-#path-list>ul {
+#path-list > ul {
     overflow: hidden;
     overflow-y: auto;
     padding: 0;
     margin: 0
 }
 
-#path-list>ul>li {
+#path-list > ul > li {
     padding-left: .6em;
     line-height: 2em;
     font-size: .8em;
@@ -864,7 +897,7 @@ button:hover {
     top: 0
 }
 
-.spinner-anim>.spinner-container>.spinner-item {
+.spinner-anim  >  .spinner-container  >  .spinner-item {
     animation-name: spinnerAnim;
     animation-duration: 1.2s;
     animation-direction: linear;
@@ -979,11 +1012,11 @@ button:hover {
 }
 
 @media only screen and (max-width:768px) {
-    #song-title>h1 {
+    #song-title > h1 {
         font-size: 1.4em
     }
-    #album>h2,
-    #artist>h2 {
+    #album > h2,
+    #artist > h2 {
         font-size: 1.1em
     }
     #time {

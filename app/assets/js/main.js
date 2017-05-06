@@ -6,12 +6,13 @@
 //---- Electron ----
 const {
   ipcRenderer,
-  remote
+  remote,
+  shell
 } = require('electron');
 
 //---- Own ----
-const equalizer = require('./menu/equalizer');
 const preferences = require('./menu/preferences');
+const equalizer = require('./menu/equalizer');
 const version = require('./version');
 const folders = require('./menu/folders');
 const player = require('./player');
@@ -19,14 +20,14 @@ const {
   configFile,
   listSongs,
   langFile
-} = require('./config').init()
+} = require('./config').init();
 const $ = require('./dom');
 
 /** --------------------------------------- Variables --------------------------------------- **/
 //---- constants ----
 const timeScrolling = 3.6;
-const lapsePopup = 4500;
 const maxElements = 20;
+const lapsePopup = 4500;
 
 let lang = langFile[configFile.lang];
 let interval = 0;
@@ -36,36 +37,39 @@ let clickedElement = null;
 let positionElement = null;
 
 //---- searching bar ----
+let regex = null;
+
 let isSearchDisplayed = false;
 let isModalOpen = false;
+
 let totalResults = 0;
 let countSlide = 0;
-let parentSlideItem = $(document.createElement('div')).addClass('grid-25 mobile-grid-25').get();
 let countItem = 0;
 let totalItem = 0;
 let stepItem = 0;
 let slide = 0;
+
+let newList = [];
+let list = [];
+
+let oldSearchedValue = '';
+let searchValue = '';
+
+let parentSlideItem = $(document.createElement('div')).addClass('grid-25 mobile-grid-25').get();
 let containerSlider = $(document.createElement('div')).addClass('results');
 let slideContainer = document.createDocumentFragment();
 let itemSlide = document.createDocumentFragment();
-let newList = [];
-let list = [];
-let regex = null;
-let oldSearchedValue = '';
-let searchValue = '';
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
 function getActualVersion() {
-  version(remote.net, remote.app.getVersion(), response => {
+  version(remote.net, remote.app.getVersion(), function (response) {
     if (response === 'major') {
       $('#pop-up-container')
         .removeClass('hide')
         .child(0)
         .addClass('pop-up-anim')
-        .text(
-        `<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`
-        );
+        .text(`<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`);
 
       $(':a').on({
         click: function (e) {
@@ -74,7 +78,7 @@ function getActualVersion() {
         }
       });
 
-      let tout = setTimeout(() => {
+      let tout = setTimeout(function () {
         $('#pop-up-container')
           .addClass('hide')
           .child(0)
@@ -89,18 +93,22 @@ function getActualVersion() {
 // Main function!!
 function loadSongs() {
   // Enable shuffle
-  if (configFile.shuffle) $('#shuffle-icon').css('fill:#FBFCFC');
+  if (configFile.shuffle) $('#shuffle-icon').css('fill:var(--lightPinkColor)');
 
   // getActualVersion();
 
-  if (Object.keys(listSongs).length === 0) {
-    $('#list-songs')
-      .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
-      .on({ click: folders.loadFolder });
-  } else {
+  if (Object.keys(listSongs).length) {
     // Render the list of songs
     player.createView(player);
     // checkNewSongs();
+  } else {
+    $('#list-songs')
+      .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
+      .on({
+        click: function () {
+          folders.loadFolder();
+        }
+      });
   }
 }
 loadSongs();
@@ -126,36 +134,29 @@ function searchInputData(e) {
   containerSlider.css(`width:${document.body.clientWidth - 100}px`);
 
   $('#wrapper-results').empty();
-  $('#pagination').addClass('hide');
+  $('#leftright').addClass('hide');
 
   searchValue = this.value.trim();
 
   if (searchValue !== '') {
     regex = new RegExp(searchValue.replace(/\s/g, '\&nbsp;').trim(), 'ig');
 
-    if (newList.length > 0 && searchValue.length > oldSearchedValue.length) {
-      list = newList.filter(v => regex.test(v.title));
+    if (newList.length && searchValue.length > oldSearchedValue.length) {
+      list = newList.filter(function (v) {
+        return regex.test(v.title);
+      });
     } else {
       oldSearchedValue = searchValue;
-      newList = list = listSongs.filter(v => regex.test(v.title));
+      newList = list = listSongs.filter(function (v) {
+        return regex.test(v.title);
+      });
     }
 
     // Show possibles results
     totalResults = list.length;
     countSlide = slide = totalResults > maxElements ? Math.round(totalResults / maxElements) : 1;
 
-    //   // Add the pagination if there's more than one slide
-    //   slide > 1 ?
-    //     $('#pagination')
-    //       .removeClass('hide')
-    //       .child(1)
-    //       .addClass('arrow-open-anim') : $('#pagination').addClass('hide');
-
-    //   // fragmentSlide = fragmentItems = document.createDocumentFragment();
-    //   // Make an slide with all the filtered coincidences
-    //   // const FILTERED_SONGS = totalResults < maxElements ? this.length : maxElements;
-
-    if (list.length > 0) {
+    if (list.length) {
       countItem = 0;
       while (slide--) {
         totalItem = totalResults - countItem > maxElements ? maxElements : totalResults - countItem;
@@ -169,9 +170,10 @@ function searchInputData(e) {
         }
 
         slideContainer.appendChild(
-          $(containerSlider.get().cloneNode(false))
+          $(containerSlider.get()
+            .cloneNode(false))
             .append(itemSlide).get()
-        )
+        );
         itemSlide = document.createDocumentFragment();
       }
     }
@@ -185,7 +187,6 @@ function searchInputData(e) {
 
     slideContainer = document.createDocumentFragment();
   } else {
-    console.log('asdf');
     // Clean if there's no coincidence
     $('#wrapper-results')
       .text(lang.alerts.searchingResults)
@@ -215,7 +216,7 @@ function btnActions(action) {
     case 'play-pause': player.getMediaControl(player.mediaControl).playSong(); break;
     case 'next': player.getMediaControl(player.mediaControl).nextSong(); break;
     case 'prev': player.getMediaControl(player.mediaControl).prevSong(); break;
-    case 'shuffle': player.getMediaControl(player.mediaControl).shuffle(); break;
+    case 'shuffle': player.getMediaControl(player.mediaControl).setShuffle(); break;
   }
 }
 
@@ -228,21 +229,18 @@ function clickBtnControls() {
       }
     });
 
-  if (listSongs.length) {
-    btnActions(this.id);
-  } else {
+  listSongs.length ? btnActions(this.id) :
     ipcRenderer.send('display-msg', {
       type: 'info',
       message: lang.alerts.error_002,
       detail: '',
       buttons: ['Ok']
-    })
-  }
+    });
 }
 
 // Scroll the list of songs using the arrows
 function scrollAnimation(direction) {
-  const animation = () => {
+  const animation = function () {
     $('#list-songs').get().scrollTop +=
       direction === 'up' ? -(timeScrolling) : timeScrolling;
 
@@ -256,7 +254,9 @@ function closeModals() {
   $($('.grid-container').get(0)).rmAttr('style');
   $('.parent-container-config')
     .addClass('hide')
-    .each(v => $(v).child(0).removeClass('container-config-anim'));
+    .each(function (v) {
+      $(v).child(0).removeClass('container-config-anim');
+    });
 
   // Clean all the used variables by the config panels
   $('.warning').empty();
@@ -298,18 +298,24 @@ $('.arrow-updown').on({
   mousedown: function () {
     scrollAnimation($(this).data('direction'));
   },
-  mouseup: () => cancelAnimationFrame(interval)
+  mouseup: function () {
+    cancelAnimationFrame(interval);
+  }
 });
 
 // Actions over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ click: clickBtnControls });
 
 // Step forward or step back the song using the progress bar
-$('#total-progress-bar').on({ click: function (e) { player.getMediaControl(player.mediaControl).moveForward(e, this); } });
+$('#total-progress-bar').on({
+  click: function (e) {
+    player.getMediaControl(player.mediaControl).moveForward(e, this);
+  }
+});
 
 // Close the album player
 $('#close-album').on({
-  click: () => {
+  click: function () {
     folders.albumFolder.closeAlbum();
     isModalOpen = false;
   }
@@ -336,25 +342,28 @@ $('#close-album').on({
 // });
 
 // Event to close all the config modals
-$('.close').on({ click: closeModals });
+$('.close').on({
+  click: function () {
+    closeModals();
+  }
+});
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the searching bar and all the config modals
-ipcRenderer.on('close-search-song', () => {
+ipcRenderer.on('close-search-song', function () {
   if (isSearchDisplayed) hideSearchInputData(); // Searching bar
   closeModals();
 });
 
 // Display the searching bar [ctrl + F]
-ipcRenderer.on('search-song', () => {
+ipcRenderer.on('search-song', function () {
   if (!isSearchDisplayed && player.mediaControl === 'player') {
     $('#search-container').removeClass('hide');
     $('#search-wrapper').addClass('search-wrapper-anim');
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
     $('#container-results').css(`width:${document.body.clientWidth - 100}px`);
     $('#wrapper-results').empty();
-    $('#search')
-      .addClass('search-anim')
+    $('#search').addClass('search-anim')
       .on({
         keyup: searchInputData,
         animationend: function () {
@@ -377,49 +386,69 @@ ipcRenderer.on('search-song', () => {
 });
 
 // Send the values from the equalizer to the AudioContext [player/controls/index.js]
-ipcRenderer.on('get-equalizer-filter', (e, a) => player.getMediaControl(player.mediaControl).setFilterVal(...a));
+ipcRenderer.on('get-equalizer-filter', function (e, a) {
+  player.getMediaControl(player.mediaControl).setFilterVal(...a);
+});
 
 // Play or pause song [Ctrl + Up]
-ipcRenderer.on('play-and-pause-song', () => {
+ipcRenderer.on('play-and-pause-song', function () {
   if (listSongs.length)
     player.getMediaControl(player.mediaControl).playSong();
 });
 
 // Next song [Ctrl + Right]
-ipcRenderer.on('next-song', () => {
+ipcRenderer.on('next-song', function () {
   if (listSongs.length)
     player.getMediaControl(player.mediaControl).nextSong();
 });
 
 // Prev song [Ctrl + Left]
-ipcRenderer.on('prev-song', () => {
+ipcRenderer.on('prev-song', function () {
   if (listSongs.length)
     player.getMediaControl(player.mediaControl).prevSong();
 });
 
 // Shuffle [Ctrl + Down]
-ipcRenderer.on('shuffle', player.getMediaControl(player.mediaControl).shuffle);
+ipcRenderer.on('shuffle', function () {
+  player.getMediaControl(player.mediaControl).setShuffle();
+});
 
 // ThumbarButtons [Windows]
-ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a));
+ipcRenderer.on('thumbar-controls', function (e, a) {
+  btnActions(a);
+});
 
 // Because the requestAnimationFrame is single thread in the window
 // We must save the actual time lapse when we minimized the Window
 // and then recalculate the time when we unminimized the window.
-ipcRenderer.on('save-current-time', player.getMediaControl(player.mediaControl).saveCurrentTime);
-ipcRenderer.on('update-current-time', player.getMediaControl(player.mediaControl).updateCurrentTime);
+ipcRenderer.on('save-current-time', function () {
+  player.getMediaControl(player.mediaControl).saveCurrentTime();
+});
+ipcRenderer.on('update-current-time', function () {
+  player.getMediaControl(player.mediaControl).updateCurrentTime();
+});
 
 // Display the windows to add a musics folders [Ctrl + N]
-ipcRenderer.on('menu-add-folder', () => isModalOpened(folders.loadFolder));
+ipcRenderer.on('menu-add-folder', function () {
+  isModalOpened(folders.loadFolder);
+});
 
 // Display the album to be played [Ctrl + A]
-ipcRenderer.on('menu-play-album', () => isModalOpened(folders.albumFolder.loadFullAlbum));
+ipcRenderer.on('menu-play-album', function () {
+  isModalOpened(folders.albumFolder.loadFullAlbum);
+});
 
 // Display the equalizer [Ctrl + E]
-ipcRenderer.on('menu-equalizer', () => isModalOpened(equalizer.showEqualizer));
+ipcRenderer.on('menu-equalizer', function () {
+  isModalOpened(equalizer.showEqualizer);
+});
 
 // Display the configurations panel [Ctrl + O]
-ipcRenderer.on('menu-configurations', () => isModalOpened(preferences.configurations.showConfigurations));
+ipcRenderer.on('menu-configurations', function () {
+  isModalOpened(preferences.configurations.showConfigurations);
+});
 
 // Display info about Soube
-ipcRenderer.on('menu-about', () => isModalOpened(preferences.about.showAbout));
+ipcRenderer.on('menu-about', function () {
+  isModalOpened(preferences.about.showAbout);
+});

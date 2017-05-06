@@ -141,12 +141,18 @@
                 <input id="search" type="text" placeholder="Search:"/>
             </div>
         </div>
+        <div id="leftright" class="hide">
+            <div class="grid-100">
+                <div class="grid-50 mobile-grid-50 arrow-updown" data-direction="left">
+                    &#9664;
+                </div>
+                <div class="grid-50 mobile-grid-50 arrow-updown" data-direction="right">
+                    &#9654;
+                </div>
+            </div>
+        </div>
         <div id="container-results">
             <div id="wrapper-results"></div>
-        </div>
-        <div id="pagination" class="hide">
-            <div id="left-arrow" class="arrow"></div>
-            <div id="right-arrow" class="arrow"></div>
         </div>
     </div>
     <!-- Pop up alerta de canciones nuevas -->
@@ -478,6 +484,29 @@
                         <input id="always-top" name="always-top" type="checkbox">
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Display the about content-->
+    <div class="grid-100 mobile-grid-100 parent-container-config hide">
+        <div id="about" class="container-config">
+            <div class="title-container border-bottom border-color-light-grey grid-100">
+                <div class="grid-100">
+                    <div class="close"></div>
+                </div>
+            </div>
+            <div class="grid-100">
+                <div class="grid-100">
+                    <div id="logo-image">
+                        <img src="../../assets/img/icon@1.33x.png"/>
+                    </div>
+                </div>
+                <div class="grid-100" style="text-align:center;font-size:.7.6em">
+                    <a href="http://soube.diegomolina.cl">Soube Web</a>
+                </div>
+            </div>
+            <div class="grid-100">
+                <div id="_about"></div>
             </div>
         </div>
     </div>

@@ -20,9 +20,13 @@ let mediaControl = {
 };
 
 module.exports = {
-  setUsingMediaControl: media => usingMediaControl = media,
+  setUsingMediaControl: function (media) {
+    usingMediaControl = media;
+  },
   mediaControl: usingMediaControl,
-  getMediaControl: media => mediaControl[media],
+  getMediaControl: function (media) {
+    return mediaControl[media];
+  },
   createAlbumView,
   createView,
 };

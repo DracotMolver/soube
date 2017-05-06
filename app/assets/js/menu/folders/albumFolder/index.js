@@ -4,7 +4,7 @@
  */
 /* --------------------------------- Modules --------------------------------- */
 //---- Electron ----
-const { dialog } = require('electron').remote;
+const dialog = require('electron').remote.dialog;
 
 //---- Node ----
 const path = require('path');
@@ -26,21 +26,21 @@ function loadFullAlbum() {
   dialog.showOpenDialog({
     title: 'Open an album',
     properties: ['openDirectory']
-  }, parentFolder => {
+  }, function (parentFolder) {
     if (parentFolder !== undefined) getSongs(parentFolder[0]);
   });
 }
 
 function getSongs(parentFolder) {
-  songFolder.addSongFolder(parentFolder,
-    () => $('#album-to-play-container').switchClass('hide', 'album-to-play-anim'),
-    (i, maxLength) => { // Iterator function
-      $('#album-to-play').text(
-        `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
-      );
+  songFolder.addSongFolder(parentFolder, function () {
+    $('#album-to-play-container').switchClass('hide', 'album-to-play-anim');
+  }, function (i, maxLength) { // Iterator function
+    $('#album-to-play').text(
+      `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
+    );
 
-      if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
-    }, true);
+    if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
+  }, true);
 }
 
 function createView(folder, songs) {

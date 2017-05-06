@@ -34,29 +34,33 @@ let files = [];
 // It will compare if there's more or few songs
 function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
   // Get the object from listsong.json - only if was already created it
-  songs = Object.keys(listSongs).length === 0 || newInstance ? [] : listSongs;
-  const readAllFiles = readFiles => {
+  songs = Object.keys(listSongs).length && newInstance ? [] : listSongs;
+  const readAllFiles = function(readFiles) {
     if (readFiles.length) { // Add songs
-      files = readFiles.map(f => path.normalize(f));
+      files = readFiles.map(function (f) {
+        return path.normalize(f);
+      });
+
       fnStart();
       extractMetadata(fnIter);
     }
   };
+
   readParentFolder(folder, readAllFiles);
 }
 
 // Will get all the needed metadata from a song file
 function extractMetadata(fnIter) {
   let count = 0;
-  files.forEach(f => {
-    musicmetadata(fs.createReadStream(f), (error, data) => {
+  files.forEach(function (f) {
+    musicmetadata(fs.createReadStream(f), function (error, data) {
       count++;
       // In case of empty data, it will save data using what is inside the lang.json file
       songs.push(
         {
-          artist: spaceToNbsp(data.artist.length === 0 || error ? lang.artist : data.artist[0]),
-          album: spaceToNbsp(data.album.trim().length === 0 || error ? lang.album : data.album),
-          title: spaceToNbsp(data.title.trim().length === 0 || error ? lang.title : data.title),
+          artist: spaceToNbsp(data.artist.length ? data.artist[0].trim() : lang.artist),
+          album: spaceToNbsp(data.album !== '' ? data.album.trim() : lang.album),
+          title: spaceToNbsp(data.title !== '' ? data.title.trim() : lang.title),
           filename: f
         }
       );
@@ -66,17 +70,15 @@ function extractMetadata(fnIter) {
 }
 
 function updateSongList() {
-  // Works fine with English and Spanish words. Don't know if it's fine for others languages :(
   editFile('listSong', getAllSongs());
 }
 
 function removeSongFolder(folder) {
   // Get the object from listsong.json - only if was already created it
-  const readAllFiles = readFiles => {
+  const readAllFiles = function (readFiles) {
     songs = [];
-    listSongs.forEach((f, i, a) => {
-      if (readFiles.find(v => v === f.filename)) delete a[i];
-      else songs.push(f);
+    listSongs.forEach(function (f, i, a) {
+      readFiles.indexOf(f.filename) !== -1 ? delete a[i] : songs.push(f);
     });
 
     updateSongList();
@@ -89,7 +91,7 @@ function readParentFolder(folder, fn) {
   // command line [Linux | Mac]
   if (process.platform === 'darwin' || process.platform === 'linux') {
     const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`;
-    exec(command, (error, stdout, stderr) => {
+    exec(command, function (error, stdout, stderr) {
       if (error) {
         ipcRenderer.send('display-msg', {
           type: 'info',
@@ -106,7 +108,9 @@ function readParentFolder(folder, fn) {
   } else if (process.platform === 'win32') {
     // // Only for windows
     worker.postMessage({ 'folder': folder });
-    worker.onmessage = e => fn(e.data.files.split('|'));
+    worker.onmessage = function (e) {
+      fn(e.data.files.split('|'));
+    };
   }
 }
 
@@ -115,10 +119,12 @@ function spaceToNbsp(str) {
 }
 
 function getAllSongs() {
-  return songs.sort((a, b) =>
-    a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
-      a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
-  ).map((v, i) => (v.position = i, v));
+  return songs.sort(function (a, b) {
+    return a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? - 1 :
+      a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC');
+  }).map(function (v, i) {
+    return v.position = i, v;
+  });
 }
 
 module.exports = Object.freeze({

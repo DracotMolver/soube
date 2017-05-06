@@ -75,11 +75,16 @@ function createFiles(app) {
 // Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data, fullPath = false) {
   if (fullPath) {
-    fs.writeFile(fileName, data, err => ipcRenderer.send('update-browser'));
-  } else {
-    fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`, JSON.stringify(data, null), err => {
-      if (fileName === 'listSong') ipcRenderer.send('update-browser');
+    fs.writeFile(fileName, data, function (err) {
+      ipcRenderer.send('update-browser');
     });
+  } else {
+    fs.writeFile(
+      `${remote.app.getPath('userData')}/${fileName}.json`,
+      JSON.stringify(data, null),
+      function (err) {
+        if (fileName === 'listSong') ipcRenderer.send('update-browser');
+      });
   }
 }
 
