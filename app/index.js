@@ -32,28 +32,24 @@ const shortKeys = {
   'CommandOrControl+E': 'menu-equalizer',
   'CommandOrControl+N': 'menu-add-folder',
   'CommandOrControl+O': 'menu-configurations',
-  'CommandOrControl+A': 'menu-play-album',
+  'CommandOrControl+Shift+A': 'menu-play-album',
   'MediaNextTrack': 'next-song',
   'MediaPlayPause': 'play-and-pause-song',
   'Space': 'play-and-pause-song',
   'Esc': 'close-search-song'
 };
 let thumbarButtons = {};
+let keepUnregistered = [];
 
 /* --------------------------------- Funciones --------------------------------- */
-// Unregister all the registered keys
-function closeRegisteredKeys() {
-  Object.keys(shortKeys).forEach(function (v) {
-    globalShortcut.unregister(v);
-  });
-}
-
 // Register the list of keys
 function registreKeys() {
   Object.keys(shortKeys).forEach(function (v) {
-    globalShortcut.register(v, function () {
-      mainWindow.webContents.send(shortKeys[v]);
-    });
+    if (keepUnregistered.indexOf(v) === -1) {
+      globalShortcut.register(v, function () {
+        mainWindow.webContents.send(shortKeys[v]);
+      });
+    }
   });
 }
 
@@ -103,12 +99,12 @@ function ready(evt) {
     })
   );
   mainWindow.on('closed', function () {
-    closeRegisteredKeys();
+    globalShortcut.unregisterAll();
     mainWindow = null;
   }).on('focus', function () {
     registreKeys();
   }).on('blur', function () {
-    closeRegisteredKeys();
+    globalShortcut.unregisterAll();
   }).on('minimize', function () {
     mainWindow.webContents.send('save-current-time');
   }).on('restore', function () {
@@ -191,5 +187,22 @@ ipcMain.on('change-screen-size', function (e, a) {
     y: a.height - 90,
     width: 200,
     height: 90
+  });
+});
+
+// Unregister and register specific shortkey
+ipcMain.on('close-specific-key', function (e, a) {
+  if (a.keepUnregistered)
+    keepUnregistered.push(a.keyName);
+
+  globalShortcut.unregister(a.keyName);
+});
+
+ipcMain.on('open-specific-key', function (e, a) {
+  if (keepUnregistered.indexOf(a) !== -1)
+    keepUnregistered.splice(keepUnregistered.indexOf(a), 1);
+
+  globalShortcut.register(a, function () {
+    mainWindow.webContents.send(shortKeys[a]);
   });
 });
