@@ -148,14 +148,15 @@ svg {
 }
 
 .container-config {
-    padding: 0 1em 1em;
+    transform-origin: center;
+    border-radius: 50%;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
     background: var(--whiteColor);
     position: relative;
-    border-radius: 50%;
-    transform-origin: center;
     transform: scale(0);
     overflow: hidden;
+    opacity: 0;
+    padding: 0 1em 1em;
     margin: 0 auto;
     border: .1em solid rgba(245, 245, 245, .3)
 }
@@ -274,13 +275,13 @@ button:hover {
     right: 22px
 }
 
-#updown .arrow-updown:first-child,
-#leftright .arrow-updown:first-child {
+.arrow-updown:first-child,
+.arrow-leftright:first-child {
     border-right: 1px solid var(--lightGreyColor)
 }
 
-#leftright .arrow-updown,
-#updown .arrow-updown {
+.arrow-leftright,
+.arrow-updown {
     line-height: 31px
 }
 
@@ -674,6 +675,10 @@ button:hover {
     width: 90%
 }
 
+#name-new-eq::before {
+    content: ''
+}
+
 .range-container {
     text-align: center;
     opacity: .5;
@@ -997,7 +1002,8 @@ button:hover {
 
 @keyframes popups {
     100% {
-        border-radius: 5px
+        border-radius: 5px;
+        opacity: 1
     }
 }
 
