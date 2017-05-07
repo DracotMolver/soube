@@ -62,7 +62,8 @@ function saveSongList(parentFolder = '') {
     $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`);
     $('#song-progress').css(`width:${(i * 100) / maxLength}%`);
 
-    if (i === maxLength) songFolder.updateSongList();
+    if (i === maxLength)
+      songFolder.updateSongList();
   });
 }
 
@@ -89,7 +90,8 @@ function loadFolder() {
           properties: ['openDirectory']
         }, function (parentFolder) {
           // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
-          if (parentFolder !== undefined) saveSongList(parentFolder[0]);
+          if (parentFolder !== undefined)
+            saveSongList(parentFolder[0]);
         });
       }
     }

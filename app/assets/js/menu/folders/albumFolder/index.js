@@ -27,7 +27,8 @@ function loadFullAlbum() {
     title: 'Open an album',
     properties: ['openDirectory']
   }, function (parentFolder) {
-    if (parentFolder !== undefined) getSongs(parentFolder[0]);
+    if (parentFolder !== undefined)
+      getSongs(parentFolder[0]);
   });
 }
 
@@ -39,7 +40,8 @@ function getSongs(parentFolder) {
       `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
     );
 
-    if (i === maxLength) createView(parentFolder, songFolder.getAllSongs());
+    if (i === maxLength)
+      createView(parentFolder, songFolder.getAllSongs());
   }, true);
 }
 

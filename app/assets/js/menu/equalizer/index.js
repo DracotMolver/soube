@@ -58,18 +58,28 @@ function setEQ() {
 }
 
 function saveEQSetting() {
-
+  if ($('#name-new-eq').val().trim() === '') {
+    
+  }
 }
 
 function showEqualizer() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
   $('#_equalizerSetting').text(lang.config.equalizerSetting);
+
   $('#_neweq').text(lang.config.newEQ)
     .on({
       click: function () {
         saveEQSetting();
       }
     });
+
+  $('#name-new-eq').on({
+    keyup: function () {
+      if (this, this.value.trim().length)
+        $('#_neweq').rmAttr('disabled');
+    }
+  });
 
   const fragment = document.createDocumentFragment();
   let option = document.createElement('option');
