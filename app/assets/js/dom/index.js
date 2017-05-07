@@ -39,7 +39,7 @@ _.prototype = {
       let className = e.className.trim().split(' ');
       if (className.indexOf(str) === -1) {
         className.push(str);
-        e.className = className.join(' ');
+        e.className = className.join(' ').trim();
       }
     };
 
@@ -58,7 +58,7 @@ _.prototype = {
       (el.length ? el.forEach(function (e) { e.innerHTML = str; }) : el.innerHTML = str, this) : el.textContent;
   },
   removeClass: function (_class) {
-    return el = this.element, el.className = el.className.replace(_class, ''), this;
+    return el = this.element, el.className = el.className.replace(_class, '').trim(), this;
   },
   child: function (pos = -1) {
     return this.element = pos !== -1 ? this.element.children[pos] : Array.from(this.element.children), this;
@@ -82,7 +82,8 @@ _.prototype = {
   css: function (str) {
     el = this.element;
     const cssChange = function (e) {
-      if (e.style.cssText.indexOf(str)) e.style.cssText += `${str};`;
+      if (e.style.cssText.indexOf(str))
+        e.style.cssText += `${str};`;
     };
 
     return el.length ?
@@ -96,8 +97,10 @@ _.prototype = {
   },
   attr: function (attr) {
     el = this.element;
-    if (attr.constructor === Object) Object.keys(attr).forEach(function (v) { el.setAttribute(v, attr[v]); });
-    else if (attr !== '') return el.getAttribute(attr);
+    if (attr.constructor === Object)
+      Object.keys(attr).forEach(function (v) { el.setAttribute(v, attr[v]); });
+    else if (attr !== '')
+      return el.getAttribute(attr);
 
     return this;
   },

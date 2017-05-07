@@ -93,7 +93,8 @@ function getActualVersion() {
 // Main function!!
 function loadSongs() {
   // Enable shuffle
-  if (configFile.shuffle) $('#shuffle-icon').css('fill:var(--lightPinkColor)');
+  if (configFile.shuffle)
+    $('#shuffle-icon').css('fill:var(--lightPinkColor)');
 
   // getActualVersion();
 
@@ -120,6 +121,7 @@ function hideSearchInputData() {
   $($('.grid-container').get(0)).rmAttr('style');
 
   isSearchDisplayed = false;
+  ipcRenderer.send('open-specific-key', 'Space');
 }
 
 // Play the song clicked in the search results
@@ -174,16 +176,28 @@ function searchInputData(e) {
             .cloneNode(false))
             .append(itemSlide).get()
         );
-        itemSlide = document.createDocumentFragment();
-      }
-    }
 
-    // Display all the filtered songs
-    $('#wrapper-results')
-      .empty()
-      .append(slideContainer)
-      .removeClass('no-searching-found')
-      .css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
+        itemSlide = document.createDocumentFragment();
+
+      }
+
+      // Display all the filtered songs
+      $('#wrapper-results')
+        .empty()
+        .append(slideContainer)
+        .removeClass('no-searching-found')
+        .css(`width:${countSlide * (document.body.clientWidth - 100)}px`);
+
+      $('#leftright').removeClass('hide');
+    } else {
+      // Clean if there's no coincidence
+      $('#wrapper-results')
+        .text(lang.alerts.searchingResults)
+        .addClass('no-searching-found');
+      $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`);
+
+      $('#leftright').addClass('hide');
+    }
 
     slideContainer = document.createDocumentFragment();
   } else {
@@ -191,6 +205,8 @@ function searchInputData(e) {
     $('#wrapper-results')
       .text(lang.alerts.searchingResults)
       .addClass('no-searching-found');
+    $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`);
+    $('#leftright').addClass('hide');
   }
 }
 
@@ -272,6 +288,10 @@ function isModalOpened(fc) {
   if (!isModalOpen) {
     fc();
     isModalOpen = true;
+    ipcRenderer.send('close-specific-key', {
+      keyName: 'Space',
+      keepUnregistered: true
+    });
   }
 }
 
@@ -318,6 +338,7 @@ $('#close-album').on({
   click: function () {
     folders.albumFolder.closeAlbum();
     isModalOpen = false;
+    ipcRenderer.send('open-specific-key', 'Space');
   }
 });
 
@@ -351,7 +372,10 @@ $('.close').on({
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the searching bar and all the config modals
 ipcRenderer.on('close-search-song', function () {
-  if (isSearchDisplayed) hideSearchInputData(); // Searching bar
+  if (isSearchDisplayed) {
+    hideSearchInputData(); // Searching bar
+  }
+
   closeModals();
 });
 
@@ -372,7 +396,10 @@ ipcRenderer.on('search-song', function () {
       }).val('').get();
 
     isSearchDisplayed = true;
-
+    ipcRenderer.send('close-specific-key', {
+      keyName: 'Space',
+      keepUnregistered: true
+    });
     // let resizeTimes;
     // window.onresize = function() {
     //   clearTimeout(resizeTimes);
@@ -392,7 +419,7 @@ ipcRenderer.on('get-equalizer-filter', function (e, a) {
 
 // Play or pause song [Ctrl + Up]
 ipcRenderer.on('play-and-pause-song', function () {
-  if (listSongs.length)
+  if (listSongs.length && $('#spinner').has('hide'))
     player.getMediaControl(player.mediaControl).playSong();
 });
 
@@ -433,7 +460,7 @@ ipcRenderer.on('menu-add-folder', function () {
   isModalOpened(folders.loadFolder);
 });
 
-// Display the album to be played [Ctrl + A]
+// Display the album to be played [Ctrl + Shift + A]
 ipcRenderer.on('menu-play-album', function () {
   isModalOpened(folders.albumFolder.loadFullAlbum);
 });
