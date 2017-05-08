@@ -381,7 +381,7 @@ ipcRenderer.on('close-search-song', function () {
 
 // Display the searching bar [ctrl + F]
 ipcRenderer.on('search-song', function () {
-  if (!isSearchDisplayed && player.mediaControl === 'player') {
+  if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player') {
     $('#search-container').removeClass('hide');
     $('#search-wrapper').addClass('search-wrapper-anim');
     $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
