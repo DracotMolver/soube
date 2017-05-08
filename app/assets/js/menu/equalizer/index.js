@@ -21,6 +21,7 @@ const ipcRenderer = require('electron').ipcRenderer;
 //---- normals ----
 let lang = langFile[configFile.lang];
 let interval;
+let option;
 
 let percent = 0;
 let eqHrz = 0;
@@ -35,32 +36,62 @@ function getDB(value) {
 // Options to config the EQ
 function setEQ() {
   switch (this.value) {
-    case 'new': $('#add-new-eq').removeClass('hide'); break;
-    case 'reset':
-    case 'rock':
-    case 'electro':
-    case 'acustic':
-      configFile.equalizerConfig = this.value;
-      editFile('config', configFile);
-
-      eqHrz = configFile.equalizer[this.value];
+    case 'new':
+      $('#add-new-eq').removeClass('hide');
+      $('.warning').empty();
       for (var i = 0; i < 15; i++) {
-        $(`#range-${i}`)
-          .css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`)
-          .data({ 'db': getDB(eqHrz[i]) });
+        $(`#range-${i}`).css('top:120').data({ 'db': getDB(0) });
 
-        $(`#db-${i}`).text(this.value === 'reset' ? '' : `${getDB(eqHrz[i])} dB`);
+        $(`#db-${i}`).text('0 dB');
         ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
       }
+      break;
+    default:
+      if (this.value.trim().length) {
+        configFile.equalizerConfig = this.value;
+        editFile('config', configFile);
 
+        eqHrz = configFile.equalizer[this.value];
+        for (var i = 0; i < 15; i++) {
+          $(`#range-${i}`)
+            .css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`)
+            .data({ 'db': getDB(eqHrz[i]) });
+
+          $(`#db-${i}`).text(`${getDB(eqHrz[i])} dB`);
+          ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
+        }
+
+        $('#add-new-eq').addClass('hide');
+      }
       break;
   }
 }
 
 function saveEQSetting() {
-  if ($('#name-new-eq').val().trim() === '') {
-    
-  }
+  let newSetting = [];
+  let name = $('#name-new-eq').val().trim();
+
+  $('.range-total-percent').each(function (v) {
+    newSetting.push(parseInt($(v).cssValue()[0].replace('px', '')));
+  });
+
+  configFile.equalizer[name] = newSetting;
+  editFile('config', configFile);
+
+  $('#add-new-eq').addClass('hide');
+  $('.warning').text(lang.config.newEQSettingSaved);
+
+  option = document.createElement('option');
+  $('#eq-buttons').append(
+    $(option.cloneNode(true))
+      .val(name)
+      .text(name)
+    , ['before', $('#eq-buttons').lastChild().get()]
+  );
+
+  setTimeout(function () {
+    $('.warning').empty();
+  }, 600);
 }
 
 function showEqualizer() {
@@ -76,13 +107,14 @@ function showEqualizer() {
 
   $('#name-new-eq').on({
     keyup: function () {
-      if (this, this.value.trim().length)
-        $('#_neweq').rmAttr('disabled');
+      this.value.trim().length ?
+        $('#_neweq').rmAttr('disabled') :
+        $('#_neweq').attr({ disabled: true });
     }
   });
 
   const fragment = document.createDocumentFragment();
-  let option = document.createElement('option');
+  option = document.createElement('option');
 
   fragment.appendChild(
     $(option.cloneNode(false)).text(lang.config.selectEQSetting).get()
