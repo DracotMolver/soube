@@ -178,24 +178,24 @@ svg {
     width: 14px
 }
 
-.close:hover:after,
-.close:hover:before {
+.close:hover::after,
+.close:hover::before {
     background: var(--darkGreyColor)
 }
 
-.close:after,
-.close:before {
+.close::after,
+.close::before {
     background: var(--blackColor);
     height: 14px;
     width: 2px;
     right: 25px
 }
 
-.close:before {
+.close::before {
     transform: rotate(45deg)
 }
 
-.close:after {
+.close::after {
     transform: rotate(-45deg)
 }
 
@@ -243,8 +243,8 @@ button:hover {
 .arrow::before,
 .btn-controls::after,
 .checked-colour::before,
-.close:after,
-.close:before,
+.close::after,
+.close::before,
 .hz::before,
 .tooltip::after {
     position: absolute;
@@ -662,9 +662,12 @@ button:hover {
     text-transform: capitalize
 }
 
+#_neweq {
+    width: 90%
+}
+
 #_neweq[disabled] {
     background: var(--lightGreyColor);
-    width: 90%
 }
 
 #name-new-eq {
@@ -673,10 +676,6 @@ button:hover {
     font-size: .92em;
     border: 1px solid var(--pinkColor);
     width: 90%
-}
-
-#name-new-eq::before {
-    content: ''
 }
 
 .range-container {
