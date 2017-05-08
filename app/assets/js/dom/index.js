@@ -63,6 +63,9 @@ _.prototype = {
   child: function (pos = -1) {
     return this.element = pos !== -1 ? this.element.children[pos] : Array.from(this.element.children), this;
   },
+  lastChild: function () {
+    return this.element = this.element.lastChild, this;
+  },
   on: function (fn) {
     el = this.element;
     return el.length && el.nodeName !== 'SELECT' ?
@@ -104,11 +107,22 @@ _.prototype = {
 
     return this;
   },
-  append: function (...a) {
-    return el = this.element, a.forEach(function (v) { el.appendChild('element' in v ? v.element : v); }), this;
+  append: function (a, pos = []) {
+    let _a = [];
+    _a.push(a);
+
+    return el = this.element, _a.forEach(function (v) {
+      if (pos.length) {
+        switch (pos[0]) {
+          case 'before': el.insertBefore('element' in v ? v.element : v, pos[1]); break;
+        }
+      } else {
+        el.appendChild('element' in v ? v.element : v);
+      }
+    }), this;
   },
   val: function (v = null) {
-    return v === null ? this.element.value : this.element.value = v, this;
+    return v === null ? this.element.value : (this.element.value = v, this);
   },
   has: function (s) {
     return this.element.className.indexOf(s) !== -1;
