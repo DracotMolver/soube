@@ -671,11 +671,35 @@ button:hover {
 }
 
 #name-new-eq {
-    line-height: 1.7em;
+    line-height: 1.67em;
     box-shadow: 0 2px 3px 0 rgba(33, 33, 33, .14);
     font-size: .92em;
     border: 1px solid var(--pinkColor);
     width: 90%
+}
+
+#modify-new-eq {
+    font-family: Muli-Light;
+    font-size: .86em
+}
+
+#modify-new-eq > div {
+    line-height: 2em;
+    float: left;
+    width: auto
+}
+
+#edit-name,
+#delete-name {
+    margin-right: 1em;
+    margin-left: 1em;
+    cursor: pointer;
+    color: var(--pinkColor)
+}
+
+#edit-name:hover,
+#delete-name:hover {
+    color: var(--lightPinkColor)
 }
 
 .range-container {
