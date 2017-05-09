@@ -47,10 +47,13 @@ function setEQ() {
       }
       break;
     default:
-      if (this.value.trim().length) {
-        if (['rock', 'acustic', 'electro'].indexOf(this.value.toLowerCase()) === -1) {
+      if (this.value !== 'Select an style') {
+        if (['rock', 'acustic', 'electro'].indexOf(this.value) === -1) {
           $('#modify-new-eq').removeClass('hide');
           $('#text-new-eq').text(this.value);
+        } else {
+          $('#modify-new-eq').addClass('hide');
+          $('#text-new-eq').text('');
         }
 
         configFile.equalizerConfig = this.value;
@@ -132,10 +135,19 @@ function showEqualizer() {
         .val(v)
         .text(v)
         .attr(
-        configFile.equalizerConfig === v.toLowerCase() &&
-          configFile.equalizerConfig !== 'reset' ? { selected: 'selected' } : ''
+        configFile.equalizerConfig === v ? { selected: 'selected' } : ''
         ).get()
     );
+
+    if (configFile.equalizerConfig === v) {
+      if (['rock', 'acustic', 'electro'].indexOf(v) === -1) {
+        $('#modify-new-eq').removeClass('hide');
+        $('#text-new-eq').text(v);
+      } else {
+        $('#modify-new-eq').addClass('hide');
+        $('#text-new-eq').text('');
+      }
+    }
   });
 
   // Option to add a new EQ setting
@@ -171,7 +183,16 @@ function showEqualizer() {
   });
 
   // Delete and edit option over a new EQ setting
-  $('#edit-name').text(lang.config.newEQSettingEdit);
+  $('#edit-name')
+    .text(lang.config.newEQSettingEdit)
+    .on({
+      click: function () {
+        $('#name-new-eq').val($('#text-new-eq').text());
+        $('#modify-new-eq').addClass('hide');
+        $('#add-new-eq').removeClass('hide');
+      }
+    });
+
   $('#delete-name').text(lang.config.newEQSettingDelete);
 
   $($('.parent-container-config').get(1))

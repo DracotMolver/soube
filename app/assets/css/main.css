@@ -474,7 +474,8 @@ button:hover {
 }
 
 #list-songs {
-    background: linear-gradient(var(--lightGreyColor) 30%, transparent), radial-gradient(at 50% 0, rgba(66, 73, 73, .3), transparent 30%);
+    background: linear-gradient(var(--whiteColor) 30%, transparent),
+                radial-gradient(at 50% 0, rgba(66, 73, 73, .3), transparent 30%);
     background-repeat: no-repeat;
     background-size: 100% 50px, 100% 15px;
     background-attachment: local, scroll;
