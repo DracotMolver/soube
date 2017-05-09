@@ -48,6 +48,11 @@ function setEQ() {
       break;
     default:
       if (this.value.trim().length) {
+        if (['rock', 'acustic', 'electro'].indexOf(this.value.toLowerCase()) === -1) {
+          $('#modify-new-eq').removeClass('hide');
+          $('#text-new-eq').text(this.value);
+        }
+
         configFile.equalizerConfig = this.value;
         editFile('config', configFile);
 
@@ -163,7 +168,11 @@ function showEqualizer() {
     mouseleave: function () {
       clearTimeout(interval);
     }
-  })
+  });
+
+  // Delete and edit option over a new EQ setting
+  $('#edit-name').text(lang.config.newEQSettingEdit);
+  $('#delete-name').text(lang.config.newEQSettingDelete);
 
   $($('.parent-container-config').get(1))
     .removeClass('hide')
