@@ -23,6 +23,7 @@ let lang = langFile[configFile.lang];
 let interval;
 let option;
 
+let settingName = '';
 let percent = 0;
 let eqHrz = 0;
 let pos = 0;
@@ -102,6 +103,10 @@ function saveEQSetting() {
   }, 600);
 }
 
+function updateEQSeeting() {
+
+}
+
 function showEqualizer() {
   $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
   $('#_equalizerSetting').text(lang.config.equalizerSetting);
@@ -141,8 +146,9 @@ function showEqualizer() {
 
     if (configFile.equalizerConfig === v) {
       if (['rock', 'acustic', 'electro'].indexOf(v) === -1) {
+        settingName = v;
         $('#modify-new-eq').removeClass('hide');
-        $('#text-new-eq').text(v);
+        $('#text-new-eq').text(settingName);
       } else {
         $('#modify-new-eq').addClass('hide');
         $('#text-new-eq').text('');
@@ -187,13 +193,42 @@ function showEqualizer() {
     .text(lang.config.newEQSettingEdit)
     .on({
       click: function () {
-        $('#name-new-eq').val($('#text-new-eq').text());
+        settingName = $('#text-new-eq').text();
+        console.log(settingName);
+        $('#name-new-eq-edit').val(settingName);
         $('#modify-new-eq').addClass('hide');
-        $('#add-new-eq').removeClass('hide');
+        $('#edit-new-eq').removeClass('hide');
       }
     });
 
-  $('#delete-name').text(lang.config.newEQSettingDelete);
+  $('#delete-name')
+    .text(lang.config.newEQSettingDelete)
+    .on({
+      click: function () {
+        if (delete configFile.equalizer[settingName]) {
+          configFile.equalizerConfig = settingName;
+
+          $('.warning').text(lang.config.newEQSettingDeleted);
+          $('#modify-new-eq').removeClass('hide');
+          $('#edit-new-eq').addClass('hide');
+
+          editFile('config', configFile);
+        }
+      }
+    });
+
+    $('#_saveeq')
+    .text(lang.config.newEQSettingUpdate)
+    .on({ click: updateEQSeeting });
+
+  $('#_canceleq')
+    .text(lang.config.newEQSettingCancel)
+    .on({
+      click: function () {
+        $('#modify-new-eq').removeClass('hide');
+        $('#edit-new-eq').addClass('hide');
+      }
+    });
 
   $($('.parent-container-config').get(1))
     .removeClass('hide')
@@ -226,6 +261,7 @@ function close() {
   $('#add-new-eq').addClass('hide');
   clearInterval(interval);
   percent = eqHrz = pos = db = 0;
+  settingName = '';
   option = null;
 }
 

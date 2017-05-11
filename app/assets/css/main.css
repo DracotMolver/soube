@@ -671,7 +671,8 @@ button:hover {
     background: var(--lightGreyColor);
 }
 
-#name-new-eq {
+#name-new-eq,
+#name-new-eq-edit {
     line-height: 1.67em;
     box-shadow: 0 2px 3px 0 rgba(33, 33, 33, .14);
     font-size: .92em;
