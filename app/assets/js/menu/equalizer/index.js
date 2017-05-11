@@ -36,7 +36,8 @@ function getDB(value) {
 
 // Options to config the EQ
 function setEQ() {
-  switch (this.value) {
+  settingName = this.value;
+  switch (settingName) {
     case 'new':
       $('#add-new-eq').removeClass('hide');
       $('.warning').empty();
@@ -48,19 +49,19 @@ function setEQ() {
       }
       break;
     default:
-      if (this.value !== 'Select an style') {
-        if (['rock', 'acustic', 'electro'].indexOf(this.value) === -1) {
+      if (settingName !== 'Select an style') {
+        if (['rock', 'acustic', 'electro', 'reset'].indexOf(settingName) === -1) {
           $('#modify-new-eq').removeClass('hide');
-          $('#text-new-eq').text(this.value);
+          $('#text-new-eq').text(settingName);
         } else {
           $('#modify-new-eq').addClass('hide');
           $('#text-new-eq').text('');
         }
 
-        configFile.equalizerConfig = this.value;
+        configFile.equalizerConfig = settingName;
         editFile('config', configFile);
 
-        eqHrz = configFile.equalizer[this.value];
+        eqHrz = configFile.equalizer[settingName];
         for (var i = 0; i < 15; i++) {
           $(`#range-${i}`)
             .css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`)
@@ -100,7 +101,7 @@ function saveEQSetting() {
 
   setTimeout(function () {
     $('.warning').empty();
-  }, 600);
+  }, 460);
 }
 
 function updateEQSeeting() {
@@ -145,7 +146,7 @@ function showEqualizer() {
     );
 
     if (configFile.equalizerConfig === v) {
-      if (['rock', 'acustic', 'electro'].indexOf(v) === -1) {
+      if (['rock', 'acustic', 'electro', 'reset'].indexOf(v) === -1) {
         settingName = v;
         $('#modify-new-eq').removeClass('hide');
         $('#text-new-eq').text(settingName);
@@ -194,7 +195,6 @@ function showEqualizer() {
     .on({
       click: function () {
         settingName = $('#text-new-eq').text();
-        console.log(settingName);
         $('#name-new-eq-edit').val(settingName);
         $('#modify-new-eq').addClass('hide');
         $('#edit-new-eq').removeClass('hide');
@@ -206,18 +206,29 @@ function showEqualizer() {
     .on({
       click: function () {
         if (delete configFile.equalizer[settingName]) {
-          configFile.equalizerConfig = settingName;
+          configFile.equalizerConfig = 'reset';
 
           $('.warning').text(lang.config.newEQSettingDeleted);
-          $('#modify-new-eq').removeClass('hide');
-          $('#edit-new-eq').addClass('hide');
+          $('#modify-new-eq').addClass('hide');
+          $('#eq-buttons').rmChild(settingName);
 
           editFile('config', configFile);
+
+          for (var i = 0; i < 15; i++) {
+            $(`#range-${i}`).css('top:120px').data({ 'db': 0 });
+
+            $(`#db-${i}`).text('0 dB');
+            ipcRenderer.send('equalizer-filter', [i, 0]);
+          }
+
+          setTimeout(function () {
+            $('.warning').empty();
+          }, 460);
         }
       }
     });
 
-    $('#_saveeq')
+  $('#_saveeq')
     .text(lang.config.newEQSettingUpdate)
     .on({ click: updateEQSeeting });
 

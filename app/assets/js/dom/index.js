@@ -46,6 +46,9 @@ _.prototype = {
     return this.element.length ?
       this.element.forEach(function (v) { changeClassName(v); }) : changeClassName(this.element), this;
   },
+  rmChild: function (c) {
+    return el = this.element, el.removeChild(Array.from(el.children).find(function (v) { return (new RegExp(c)).test(v.outerHTML) })), this;
+  },
   empty: function () {
     el = this.element;
     while (el.firstChild) el.removeChild(el.firstChild);

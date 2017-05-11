@@ -94,7 +94,7 @@ function getActualVersion() {
 function loadSongs() {
   // Enable shuffle
   if (configFile.shuffle)
-    $('#shuffle-icon').css('fill:var(--lightPinkColor)');
+    $('#shuffle-icon').css('fill:var(--whiteColor)');
 
   // getActualVersion();
 
@@ -121,7 +121,6 @@ function hideSearchInputData() {
   $($('.grid-container').get(0)).rmAttr('style');
 
   isSearchDisplayed = false;
-  ipcRenderer.send('open-specific-key', 'Space');
 }
 
 // Play the song clicked in the search results
@@ -267,6 +266,7 @@ function scrollAnimation(direction) {
 
 // Close the config modals
 function closeModals() {
+  ipcRenderer.send('open-specific-key', 'Space');
   $($('.grid-container').get(0)).rmAttr('style');
   $('.parent-container-config')
     .addClass('hide')
@@ -417,7 +417,7 @@ ipcRenderer.on('get-equalizer-filter', function (e, a) {
   player.getMediaControl(player.mediaControl).setFilterVal(...a);
 });
 
-// Play or pause song [Ctrl + Up]
+// Play or pause song [Space]
 ipcRenderer.on('play-and-pause-song', function () {
   if (listSongs.length && $('#spinner').has('hide'))
     player.getMediaControl(player.mediaControl).playSong();

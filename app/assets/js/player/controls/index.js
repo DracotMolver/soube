@@ -324,9 +324,6 @@ const Controls = function (from) {
     let _self = this;
     animPlayAndPause('play');
 
-    $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
-    $('#spinner').switchClass('hide', 'spinner-anim');
-
     // Get the buffer of song if it is in the poolOfSongs
     // Note: The oldFile is an important variable, because is saved into
     // the prevSongsToPlay array, which has all the played songs.
@@ -338,6 +335,9 @@ const Controls = function (from) {
     } else {
       // Get the song to play
       _self.file = _self.getFile();
+
+      $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
+      $('#spinner').switchClass('hide', 'spinner-anim');
       _self.getBuffer(_self.file.filename, function (data) {
         if (!data) throw data;
 
@@ -366,6 +366,9 @@ const Controls = function (from) {
 };
 
 Controls.prototype.playSongAtPosition = function (pos = -1) {
+  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)');
+  $('#spinner').switchClass('hide', 'spinner-anim');
+
   if (this.source !== null) {
     this.source.stop(0);
     this.source = null;
