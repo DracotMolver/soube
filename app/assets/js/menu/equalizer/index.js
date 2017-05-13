@@ -34,6 +34,17 @@ function getDB(value) {
   return value ? (value === 12 ? 12 : (12 - (value / 10)).toFixed(1)) : 0;
 }
 
+function setBtnOptions(option) {
+  if (['rock', 'acustic', 'electro', 'reset'].indexOf(option) === -1) {
+    settingName = option;
+    $('#modify-new-eq').removeClass('hide');
+    $('#text-new-eq').text(option);
+  } else {
+    $('#modify-new-eq').addClass('hide');
+    $('#text-new-eq').text('');
+  }
+}
+
 // Options to config the EQ
 function setEQ() {
   settingName = this.value;
@@ -42,7 +53,7 @@ function setEQ() {
       $('#add-new-eq').removeClass('hide');
       $('.warning').empty();
       for (var i = 0; i < 15; i++) {
-        $(`#range-${i}`).css('top:120').data({ 'db': getDB(0) });
+        $(`#range-${i}`).css('top:120');
 
         $(`#db-${i}`).text('0 dB');
         ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
@@ -50,22 +61,14 @@ function setEQ() {
       break;
     default:
       if (settingName !== 'Select an style') {
-        if (['rock', 'acustic', 'electro', 'reset'].indexOf(settingName) === -1) {
-          $('#modify-new-eq').removeClass('hide');
-          $('#text-new-eq').text(settingName);
-        } else {
-          $('#modify-new-eq').addClass('hide');
-          $('#text-new-eq').text('');
-        }
+        setBtnOptions(settingName);
 
         configFile.equalizerConfig = settingName;
         editFile('config', configFile);
 
         eqHrz = configFile.equalizer[settingName];
         for (var i = 0; i < 15; i++) {
-          $(`#range-${i}`)
-            .css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`)
-            .data({ 'db': getDB(eqHrz[i]) });
+          $(`#range-${i}`).css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`);
 
           $(`#db-${i}`).text(`${getDB(eqHrz[i])} dB`);
           ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
@@ -100,6 +103,7 @@ function saveEQSetting() {
   );
 
   setTimeout(function () {
+    console.log('guardaa');
     $('.warning').empty();
   }, 460);
 }
@@ -145,33 +149,27 @@ function showEqualizer() {
         ).get()
     );
 
-    if (configFile.equalizerConfig === v) {
-      if (['rock', 'acustic', 'electro', 'reset'].indexOf(v) === -1) {
-        settingName = v;
-        $('#modify-new-eq').removeClass('hide');
-        $('#text-new-eq').text(settingName);
-      } else {
-        $('#modify-new-eq').addClass('hide');
-        $('#text-new-eq').text('');
-      }
-    }
+    if (configFile.equalizerConfig === v)
+      setBtnOptions(v);
   });
 
   // Option to add a new EQ setting
   fragment.appendChild(
-    $(option.cloneNode(false)).val('new')
-      .text(lang.config.addNewEQSetting).get()
+    $(option.cloneNode(false))
+      .val('new')
+      .text(lang.config.addNewEQSetting)
+      .get()
   );
 
-  $('#eq-buttons').empty().append(fragment)
+  $('#eq-buttons')
+    .empty()
+    .append(fragment)
     .on({ change: setEQ });
 
   eqHrz = configFile.equalizer[configFile.equalizerConfig];
 
   for (var i = 0; i < 15; i++) {
-    $(`#range-${i}`)
-      .css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`)
-      .data({ 'db': getDB(eqHrz[i]) });
+    $(`#range-${i}`).css(`top:${eqHrz[i] ? eqHrz[i] : 120}px`);
 
     $(`#db-${i}`).text(`${getDB(eqHrz[i])} dB`);
   }
@@ -182,10 +180,10 @@ function showEqualizer() {
       dbSetting(this, $(this).data('orientation'));
     },
     mouseup: function () {
-      clearTimeout(interval);
+      cancelAnimationFrame(interval);
     },
     mouseleave: function () {
-      clearTimeout(interval);
+      cancelAnimationFrame(interval);
     }
   });
 
@@ -215,13 +213,14 @@ function showEqualizer() {
           editFile('config', configFile);
 
           for (var i = 0; i < 15; i++) {
-            $(`#range-${i}`).css('top:120px').data({ 'db': 0 });
+            $(`#range-${i}`).css('top:120px');
 
             $(`#db-${i}`).text('0 dB');
             ipcRenderer.send('equalizer-filter', [i, 0]);
           }
 
           setTimeout(function () {
+            console.log('eliminada');
             $('.warning').empty();
           }, 460);
         }
@@ -252,25 +251,27 @@ function dbSetting(el, orientation) {
   percent = parseInt($(`#range-${pos}`).cssValue()[0].replace('px', ''));
 
   const animation = function () {
-    if (percent) {
-      $(`#range-${pos}`)
-        .css(`top:${orientation === 'up' ? --percent : ++percent}px`)
-        .data({ 'db': getDB(percent) });
+    if (orientation === 'up' && percent) {
+      $(`#range-${pos}`).css(`top:${--percent}px`);
+    } else if (orientation === 'down') {
+      $(`#range-${pos}`).css(`top:${++percent}px`);
+    }
 
+    if (percent) {
       $(`#db-${pos}`).text(`${getDB(percent)} dB`)
 
-      interval = setTimeout(animation, 120);
+      interval = requestAnimationFrame(animation);
       ipcRenderer.send('equalizer-filter', [pos, getDB(percent)]);
     } else {
-      clearTimeout(interval);
+      cancelAnimationFrame(interval);
     }
   };
-  interval = setTimeout(animation, 120);
+  interval = requestAnimationFrame(animation, 120);
 }
 
 function close() {
   $('#add-new-eq').addClass('hide');
-  clearInterval(interval);
+  cancelAnimationFrame(interval);
   percent = eqHrz = pos = db = 0;
   settingName = '';
   option = null;
