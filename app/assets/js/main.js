@@ -275,7 +275,6 @@ function closeModals() {
     });
 
   // Clean all the used variables by the config panels
-  $('.warning').empty();
   folders.close();
   equalizer.close();
   preferences.configurations.close();
@@ -287,6 +286,7 @@ function closeModals() {
 function isModalOpened(fc) {
   if (!isModalOpen) {
     fc();
+    $('.warning').empty();
     isModalOpen = true;
     ipcRenderer.send('close-specific-key', {
       keyName: 'Space',
