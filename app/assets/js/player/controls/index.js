@@ -139,7 +139,7 @@ const Controls = function (from) {
       return f = audioContext.createBiquadFilter(),
         f.type = 'peaking',
         f.frequency.value = v,
-        f.Q.value = 0.3,
+        f.Q.value = 0,
         f.gain.value = db[i], f;
     });
   };
@@ -210,10 +210,8 @@ const Controls = function (from) {
       });
     });
 
-    if (notification !== null) {
-      notification.close();
-      notification = null
-    }
+    if (notification !== null)
+      notification.close()
 
     notifi.body = `${nbspToSpace(_self.file.artist)} from ${nbspToSpace(_self.file.album)}`;
     notification = new Notification(nbspToSpace(_self.file.title), notifi);

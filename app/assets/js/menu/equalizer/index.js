@@ -107,11 +107,55 @@ function saveEQSetting() {
 
   setTimeout(function () {
     $('.warning').text('');
-  }, 1600);
+  }, 2600);
+}
+
+function deleteSetting() {
+  if (delete configFile.equalizer[settingName]) {
+    configFile.equalizerConfig = 'reset';
+
+    $('.warning').text(lang.config.newEQSettingDeleted);
+    $('#modify-new-eq').addClass('hide');
+    $('#eq-buttons').rmChild(settingName);
+
+    editFile('config', configFile);
+
+    for (var i = 0; i < 15; i++) {
+      $(`#range-${i}`).css('top:120px');
+
+      $(`#db-${i}`).text('0 dB');
+      ipcRenderer.send('equalizer-filter', [i, 0]);
+    }
+
+    setTimeout(function () {
+      $('.warning').text('');
+    }, 2600);
+  }
 }
 
 function updateEQSeeting() {
+  let newSetting = [];
+  let name = $('#name-new-eq-edit').val().trim();
 
+  $('.range-total-percent').each(function (v) {
+    newSetting.push(parseInt($(v).cssValue()[0].replace('px', '')));
+  });
+
+  delete configFile.equalizer[settingName];
+  configFile.equalizer[name] = newSetting;
+  if (configFile.equalizerConfig === settingName)
+    configFile.equalizerConfig = name;
+
+  editFile('config', configFile);
+
+  $('#edit-new-eq').addClass('hide');
+  $('.warning').text(lang.config.newEQSettingSaved);
+
+  setTimeout(function () {
+    $('.warning').text('');
+    $('#name-new-eq-edit').val(name);
+    $('#modify-new-eq').removeClass('hide');
+  }, 2600);
 }
 
 function showEqualizer() {
@@ -203,30 +247,7 @@ function showEqualizer() {
 
   $('#delete-name')
     .text(lang.config.newEQSettingDelete)
-    .on({
-      click: function () {
-        if (delete configFile.equalizer[settingName]) {
-          configFile.equalizerConfig = 'reset';
-
-          $('.warning').text(lang.config.newEQSettingDeleted);
-          $('#modify-new-eq').addClass('hide');
-          $('#eq-buttons').rmChild(settingName);
-
-          editFile('config', configFile);
-
-          for (var i = 0; i < 15; i++) {
-            $(`#range-${i}`).css('top:120px');
-
-            $(`#db-${i}`).text('0 dB');
-            ipcRenderer.send('equalizer-filter', [i, 0]);
-          }
-
-          setTimeout(function () {
-            $('.warning').text('');
-          }, 1600);
-        }
-      }
-    });
+    .on({ click: deleteSetting });
 
   $('#_saveeq')
     .text(lang.config.newEQSettingUpdate)
