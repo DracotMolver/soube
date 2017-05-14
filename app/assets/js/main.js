@@ -286,7 +286,7 @@ function closeModals() {
 function isModalOpened(fc) {
   if (!isModalOpen) {
     fc();
-    $('.warning').empty();
+    $('.warning').text('');
     isModalOpen = true;
     ipcRenderer.send('close-specific-key', {
       keyName: 'Space',

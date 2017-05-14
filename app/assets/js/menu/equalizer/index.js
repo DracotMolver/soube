@@ -41,6 +41,8 @@ function setBtnOptions(option) {
     $('#text-new-eq').text(option);
   } else {
     $('#modify-new-eq').addClass('hide');
+    $('#add-new-eq').addClass('hide');
+    $('#edit-new-eq').addClass('hide');
     $('#text-new-eq').text('');
   }
 }
@@ -51,7 +53,10 @@ function setEQ() {
   switch (settingName) {
     case 'new':
       $('#add-new-eq').removeClass('hide');
-      $('.warning').empty();
+      $('#edit-new-eq').addClass('hide');
+      $('#modify-new-eq').addClass('hide');
+
+      $('.warning').text('');
       for (var i = 0; i < 15; i++) {
         $(`#range-${i}`).css('top:120');
 
@@ -73,8 +78,6 @@ function setEQ() {
           $(`#db-${i}`).text(`${getDB(eqHrz[i])} dB`);
           ipcRenderer.send('equalizer-filter', [i, getDB(eqHrz[i])]);
         }
-
-        $('#add-new-eq').addClass('hide');
       }
       break;
   }
@@ -103,9 +106,8 @@ function saveEQSetting() {
   );
 
   setTimeout(function () {
-    console.log('guardaa');
-    $('.warning').empty();
-  }, 460);
+    $('.warning').text('');
+  }, 1600);
 }
 
 function updateEQSeeting() {
@@ -180,10 +182,10 @@ function showEqualizer() {
       dbSetting(this, $(this).data('orientation'));
     },
     mouseup: function () {
-      cancelAnimationFrame(interval);
+      clearTimeout(interval);
     },
     mouseleave: function () {
-      cancelAnimationFrame(interval);
+      clearTimeout(interval);
     }
   });
 
@@ -220,9 +222,8 @@ function showEqualizer() {
           }
 
           setTimeout(function () {
-            console.log('eliminada');
-            $('.warning').empty();
-          }, 460);
+            $('.warning').text('');
+          }, 1600);
         }
       }
     });
@@ -251,27 +252,28 @@ function dbSetting(el, orientation) {
   percent = parseInt($(`#range-${pos}`).cssValue()[0].replace('px', ''));
 
   const animation = function () {
-    if (orientation === 'up' && percent) {
+    if (orientation === 'up' && percent)
       $(`#range-${pos}`).css(`top:${--percent}px`);
-    } else if (orientation === 'down') {
+    else if (orientation === 'down' && percent)
       $(`#range-${pos}`).css(`top:${++percent}px`);
-    }
 
     if (percent) {
       $(`#db-${pos}`).text(`${getDB(percent)} dB`)
 
-      interval = requestAnimationFrame(animation);
+      interval = setTimeout(animation, 120);
       ipcRenderer.send('equalizer-filter', [pos, getDB(percent)]);
     } else {
-      cancelAnimationFrame(interval);
+      clearTimeout(interval);
     }
   };
-  interval = requestAnimationFrame(animation, 120);
+  interval = setTimeout(animation, 120);
 }
 
 function close() {
-  $('#add-new-eq').addClass('hide');
-  cancelAnimationFrame(interval);
+  ['#modify-new-eq', '#edit-new-eq', '#add-new-eq']
+    .forEach(function (v) { $(v).addClass('hide'); });
+
+  clearTimeout(interval);
   percent = eqHrz = pos = db = 0;
   settingName = '';
   option = null;

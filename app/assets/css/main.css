@@ -656,7 +656,7 @@ button:hover {
 }
 
 #container-equalizer {
-    width: 1182px
+    width: 1198px
 }
 
 #eq-buttons {
@@ -749,7 +749,7 @@ button:hover {
 
 .db-desc {
     font-size: .66em;
-    width: 42px;
+    width: 44px;
     color: var(--darkPinkColor)
 }
 
