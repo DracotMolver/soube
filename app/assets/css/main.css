@@ -570,6 +570,10 @@ button:hover {
     float: left
 }
 
+#wrapper-results {
+     transition: all 1s cubic-bezier(.41, .97, .74, .94)
+}
+
 .no-searching-found {
     text-align: center;
     font-size: 2.6em;
@@ -656,7 +660,7 @@ button:hover {
 }
 
 #container-equalizer {
-    width: 1198px
+    width: 1215px
 }
 
 #eq-buttons {
