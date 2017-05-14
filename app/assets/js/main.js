@@ -295,6 +295,24 @@ function isModalOpened(fc) {
   }
 }
 
+let countSlidedMoved = 0;
+let totalCountSlideMoved = 0;
+function animSlideSongs() {
+
+  if ($(this).data('direction') === 'right' && totalCountSlideMoved < parseInt($('#wrapper-results').cssValue('width'))) {
+
+    totalCountSlideMoved = ++countSlidedMoved * parseInt($('#container-results').cssValue('width'));
+    $("#wrapper-results").css(`transform:translateX(${-totalCountSlideMoved}px)`);
+
+  } else if($(this).data('direction') === 'left' &&
+    totalCountSlideMoved &&
+    totalCountSlideMoved < parseInt($('#wrapper-results').cssValue('width'))) {
+    totalCountSlideMoved = --countSlidedMoved * parseInt($('#container-results').cssValue('width'));
+
+    $("#wrapper-results").css(`transform:translateX(${totalCountSlideMoved}px)`);
+  }
+}
+
 /** --------------------------------------- Events --------------------------------------- **/
 // Scrolling the list of songs when click on the song title
 $('#song-title').on({
@@ -342,25 +360,8 @@ $('#close-album').on({
   }
 });
 
-// Action over the pagination
-// $('.arrow').on({
-//   click: function () {
-//     if (this.id === 'right-arrow' && $(this).has('arrow-open-anim')) {
-//       if (countSlide < tempSlide) ++countSlide;
-//     } else if (this.id === 'left-arrow' && $(this).has('arrow-open-anim')) {
-//       if (countSlide < tempSlide && countSlide > 0) --countSlide;
-//     }
-
-//     if (countSlide === tempSlide - 1) $('#right-arrow').removeClass('arrow-open-anim');
-//     if (countSlide === 1) $('#left-arrow').addClass('arrow-open-anim');
-//     if (countSlide === 0) $('#left-arrow').removeClass('arrow-open-anim');
-//     if (countSlide === tempSlide - 2) $('#right-arrow').addClass('arrow-open-anim');
-//     if (countSlide < tempSlide && countSlide !== -1) {
-//       $('#wrapper-results').child()
-//       .css(`transform:translateX(${-1 * (countSlide * document.body.clientWidth)}px)`);
-//     }
-//   }
-// });
+// Will move the slide of searched songs
+$('.arrow-leftright').on({ click: animSlideSongs });
 
 // Event to close all the config modals
 $('.close').on({
