@@ -1,11 +1,11 @@
 {
   "name": "soube",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Simple music player",
   "main": "index.js",
   "license": "MIT",
   "author": {
-    "email": "dracotm25@gmail.com",
+    "email": "dmolina@soube.diegomolina.cl",
     "name": "Diego Molina Vera"
   },
   "homepage": "http://soube.diegomolina.cl",

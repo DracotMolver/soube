@@ -1,6 +1,6 @@
 {
   "name": "soube",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Simple music player",
   "author": {
     "email": "dmolina@soube.diegomolina.cl",
@@ -30,7 +30,7 @@
         "Name": "Soube",
         "Exec": "soube",
         "Terminal": "false",
-        "Version": "1.5.0",
+        "Version": "2.0.0",
         "Categories": "Audio;Music;Player;AudioVideo"
       }
     },
