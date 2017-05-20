@@ -119,6 +119,7 @@ function hideSearchInputData() {
   $('#search-container').addClass('hide');
   $('#search-wrapper').removeClass('search-wrapper-anim');
   $($('.grid-container').get(0)).rmAttr('style');
+  $('#leftright').addClass('hide');
 
   isSearchDisplayed = false;
 }
@@ -297,19 +298,20 @@ function isModalOpened(fc) {
 
 let countSlidedMoved = 0;
 let totalCountSlideMoved = 0;
+let wrapperWidth = 0;
+let containerResult = 0;
 function animSlideSongs() {
+  containerResult = parseInt($('#container-results').cssValue('width'));
+  wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult;
 
-  if ($(this).data('direction') === 'right' && totalCountSlideMoved < parseInt($('#wrapper-results').cssValue('width'))) {
+  if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
+    ++countSlidedMoved;
+  else if ($(this).data('direction') === 'left' && totalCountSlideMoved)
+    --countSlidedMoved;
 
-    totalCountSlideMoved = ++countSlidedMoved * parseInt($('#container-results').cssValue('width'));
+  if (countSlidedMoved > 0) {
+    totalCountSlideMoved = countSlidedMoved * containerResult;
     $("#wrapper-results").css(`transform:translateX(${-totalCountSlideMoved}px)`);
-
-  } else if($(this).data('direction') === 'left' &&
-    totalCountSlideMoved &&
-    totalCountSlideMoved < parseInt($('#wrapper-results').cssValue('width'))) {
-    totalCountSlideMoved = --countSlidedMoved * parseInt($('#container-results').cssValue('width'));
-
-    $("#wrapper-results").css(`transform:translateX(${totalCountSlideMoved}px)`);
   }
 }
 
