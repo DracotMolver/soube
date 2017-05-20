@@ -39,9 +39,17 @@ function displayOption() {
 }
 
 // Change the size of the screen
+function enableScreenSize() {
+  // enable the screen sizer
+  if ($(this).has('unchecked-colour') && $(this).data('screen') === 'show-size') {
+    $(this).switchClass('unchecked-colour', 'checked-colour');
+  }
+  // ipcRenderer.send('change-screen-size', screen.getPrimaryDisplay().workArea);
+}
+
 function showScreenSize() {
   $('#screen-size').removeClass('hide');
-  ipcRenderer.send('change-screen-size', screen.getPrimaryDisplay().workArea);
+  $('.unchecked-colour').on({ click: enableScreenSize });
 }
 
 // Change the idiom of the app
