@@ -266,7 +266,7 @@ button:hover {
 
 #leftright {
     position: relative;
-    left: 45px
+    left: 65px
 }
 
 #updown {
@@ -558,7 +558,7 @@ button:hover {
 }
 
 #container-results {
-    overflow: scroll;
+    overflow: overflow;
     position: relative;
     height: 370px;
     margin: 0 auto
@@ -571,7 +571,7 @@ button:hover {
 }
 
 #wrapper-results {
-     transition: all 1s cubic-bezier(.41, .97, .74, .94)
+     transition: all .8s cubic-bezier(.41, .97, .74, .94)
 }
 
 .no-searching-found {
@@ -775,7 +775,7 @@ button:hover {
 }
 
 #about {
-    width: 850px
+    width: 700px
 }
 
 #_about > p {
@@ -795,6 +795,7 @@ button:hover {
 #screen-size  >  .grid-50 {
     margin-top: 1em
 }
+
 
 .colour-box {
     position: relative;
@@ -849,17 +850,28 @@ button:hover {
     background: var(--lightGreyColor)
 }
 
+.unchecked-colour {
+    border: 1px solid rgba(0, 0, 0, .26);
+    background: var(--whiteColor);
+    margin-right: 110px;
+    float: right
+}
+
 .checked-colour {
     box-shadow: 0 3px 2px 0 rgba(0, 0, 0, .18);
-    border-radius: 2px;
     background: #64dd17;
     position: absolute;
-    height: 16px;
     right: -6px;
-    width: 16px;
     top: -6px
 }
 
+.checked-colour,
+.unchecked-colour {
+    border-radius: 2px;
+    cursor: pointer;
+    height: 16px;
+    width: 16px
+}
 .checked-colour::before {
     border-style: solid;
     border-color: var(--whiteColor);
@@ -1046,7 +1058,7 @@ button:hover {
     }
 }
 
-@media only screen and (max-width:768px) {
+/*@media only screen and (max-width:768px) {
     #song-title > h1 {
         font-size: 1.4em
     }
@@ -1062,4 +1074,4 @@ button:hover {
         margin-right: 1em;
         margin-left: 1em
     }
-}
+}*/
