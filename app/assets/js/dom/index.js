@@ -4,6 +4,7 @@
  */
 /* --------------------------------- Variables --------------------------------- */
 let poolOfElements = {};
+let key = '';
 
 /* --------------------------------- Functions --------------------------------- */
 function onFunction(el, fn) {
@@ -143,13 +144,14 @@ function $(e) {
     return obj.element = getElementInPool(e), obj;
   } else {
     if ((r = /^(\.|#|:)/.exec(e))) {
+      key = e;
       switch (r[0]) {
         case '.': e = Array.from(document.getElementsByClassName(e.slice(1, e.length))); break;
         case '#': e = document.getElementById(e.slice(1, e.length)); break;
         case ':': e = Array.from(document.getElementsByTagName(e.slice(1, e.length))); break;
       }
 
-      saveElementInPool(e);
+      saveElementInPool(key, e);
     }
   }
 
