@@ -114,7 +114,9 @@
                         </div>
                     </div>
                     <div class="grid-5">
-                        
+                        <div id="sizer-container" class="hide">
+                            <img src="../../assets/img/sizer.svg" alt="Screen size" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -499,14 +501,18 @@
                 <div class="hide" id="screen-size">
                     <div class="grid-50">
                         <div class="grid-100">
-                            Show screen size option
-                            <div class="unchecked-colour" data-screen="show-size"></div>
+                            <label for="enable-screen-size">
+                                Show screen size option
+                            </label>
+                            <input id="enable-screen-size" type="checkbox">
                         </div>
                     </div>
                     <div id="on-top" class="grid-50 hide">
                         <div class="grid-100">
-                            Always on top
-                            <div class="unchecked-colour" data-screen="on-top"></div>
+                            <label for="always-on-top">
+                                Always on top
+                            </label>
+                            <input id="always-on-top" type="checkbox">
                         </div>
                     </div>
                 </div>

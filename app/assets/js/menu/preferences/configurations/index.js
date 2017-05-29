@@ -4,10 +4,7 @@
  */
 /** --------------------------------------- Modules --------------------------------------- **/
 //---- Electron ----
-const {
-  ipcRenderer,
-  screen
-} = require('electron');
+const ipcRenderer = require('electron').ipcRenderer;
 
 //---- Node ----
 const path = require('path');
@@ -34,23 +31,23 @@ function displayOption() {
   switch (this.value) {
     case '1': showColoursTheme(); break;
     case '2': showLanguage(); break;
-    case '3': showScreenSize(); break;
+    case '3': $('#screen-size').removeClass('hide'); break;
   }
 }
 
 // Change the size of the screen
 function enableScreenSize() {
   // enable the screen sizer
-  if ($(this).has('unchecked-colour') && $(this).data('screen') === 'show-size') {
-    $(this).switchClass('unchecked-colour', 'checked-colour');
+  if (this.checked) {
+    $('#on-top').removeClass('hide');
+    $('#sizer-container').removeClass('hide');
+  } else {
+    $('#on-top').addClass('hide');
+    $('#sizer-container').addClass('hide');
   }
   // ipcRenderer.send('change-screen-size', screen.getPrimaryDisplay().workArea);
 }
 
-function showScreenSize() {
-  $('#screen-size').removeClass('hide');
-  $('.unchecked-colour').on({ click: enableScreenSize });
-}
 
 // Change the idiom of the app
 function showLanguage() {
@@ -132,6 +129,9 @@ function showConfigurations() {
     .removeClass('hide')
     .child(0)
     .addClass('container-config-anim');
+
+  // Screen size
+  $('#enable-screen-size').on({ change: enableScreenSize });
 }
 
 function close() {
