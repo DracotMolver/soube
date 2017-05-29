@@ -26,7 +26,7 @@ span {
     font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
     font-stretch: condensed;
     font-family: Muli-Regular, sans-serif;
-    text-shadow: 0 0 0 rgba(0, 0, 0, .06);
+    text-shadow: 0 0 0 rgba(0, 0, 0, .2);
     font-weight: 400;
     line-height: 1.35em;
     font-size: 100%;
@@ -64,7 +64,8 @@ html {
 
 #spinner,
 body,
-html {
+html,
+#sizer-container > img {
     bottom: 0;
     right: 0;
     left: 0;
@@ -850,28 +851,18 @@ button:hover {
     background: var(--lightGreyColor)
 }
 
-.unchecked-colour {
-    border: 1px solid rgba(0, 0, 0, .26);
-    background: var(--whiteColor);
-    margin-right: 110px;
-    float: right
-}
-
 .checked-colour {
+    border-radius: 2px;
     box-shadow: 0 3px 2px 0 rgba(0, 0, 0, .18);
     background: #64dd17;
     position: absolute;
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
     right: -6px;
     top: -6px
 }
 
-.checked-colour,
-.unchecked-colour {
-    border-radius: 2px;
-    cursor: pointer;
-    height: 16px;
-    width: 16px
-}
 .checked-colour::before {
     border-style: solid;
     border-color: var(--whiteColor);
@@ -973,6 +964,23 @@ button:hover {
 #spinner-item-5 {
     animation-delay: .82s;
     height: 70%
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+}
+
+#sizer-container {
+    position: relative;
+    height: 85px;
+    width: 100%
+}
+
+#sizer-container > img {
+    position: absolute;
+    height: 18px;
+    margin: auto;
+    width: 18px
 }
 
 @keyframes showAlbum {
