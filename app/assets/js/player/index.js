@@ -8,25 +8,25 @@
 const {
   createAlbumView,
   createView
-} = require('./createView');
-const Controls = require('./controls');
+} = require('./createView')
+const Controls = require('./controls')
 
 /** --------------------------------------- Variables --------------------------------------- **/
-let usingMediaControl = 'player';
+let usingMediaControl = 'player'
 
 let mediaControl = {
   player: new Controls('player'),
   album: new Controls('album')
-};
+}
 
 module.exports = {
   setUsingMediaControl: function (media) {
-    usingMediaControl = media;
+    usingMediaControl = media
   },
   mediaControl: usingMediaControl,
   getMediaControl: function (media) {
-    return mediaControl[media];
+    return mediaControl[media]
   },
   createAlbumView,
-  createView,
-};
+  createView
+}

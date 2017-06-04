@@ -3,16 +3,14 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
-//---- nodejs ----
-const fs = require('fs');
-const path = require('path');
+// ---- nodejs ----
+const fs = require('fs')
 
-//---- electron ----
+// ---- electron ----
 const {
   ipcRenderer,
-  remote,
-  net
-} = require('electron');
+  remote
+} = require('electron')
 
 /* --------------------------------- Functions --------------------------------- */
 // Will create all the files needed by the music player.
@@ -22,10 +20,10 @@ const {
 // - listSong.json
 function createFiles(app) {
   /* --------------------------------- Configuration --------------------------------- */
-  //---- constants ----
-  const path = app.getPath('userData');
-  const configPath = `${path}/config.json`;
-  const listSongPath = `${path}/listSong.json`;
+  // ---- constants ----
+  const path = app.getPath('userData')
+  const configPath = `${path}/config.json`
+  const listSongPath = `${path}/listSong.json`
 
   if (!fs.existsSync(configPath)) {
     // Values by default
@@ -41,10 +39,10 @@ function createFiles(app) {
       },
       equalizerConfig: 'reset',
       theme: 'pink-theme'
-    };
+    }
 
-    fs.openSync(configPath, 'w');
-    fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
+    fs.openSync(configPath, 'w')
+    fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' })
   } else {
     //   // ONLY TO UPDATE THE CONFIG FILE
     //   var actualVersion = app.getVersion().toString();
@@ -53,9 +51,9 @@ function createFiles(app) {
     // if (typeof config.musicFolder === 'string') {
     //       config.equalizer = {
     //         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        // rock: [50, 70, 94, 160, 160, 160, 146, 146, 135, 133, 126, 126, 105, 100, 70],
-        // electro: [40, 84, 110, 160, 160, 175, 188, 104, 110, 110, 126, 135, 110, 110, 70],
-        // acustic: [86, 94, 132, 156, 132, 115, 110, 110, 104, 110, 115, 115, 120, 126, 146]
+    // rock: [50, 70, 94, 160, 160, 160, 146, 146, 135, 133, 126, 126, 105, 100, 70],
+    // electro: [40, 84, 110, 160, 160, 175, 188, 104, 110, 110, 126, 135, 110, 110, 70],
+    // acustic: [86, 94, 132, 156, 132, 115, 110, 110, 104, 110, 115, 115, 120, 126, 146]
     //       };
     //     config.theme: 'pink-theme';
     // config.equalizerConfig: 'reset';
@@ -67,8 +65,8 @@ function createFiles(app) {
 
   /* --------------------------------- File of songs --------------------------------- */
   if (!fs.existsSync(listSongPath)) {
-    fs.openSync(listSongPath, 'w');
-    fs.writeFileSync(listSongPath, JSON.stringify({}, null), { flag: 'w' });
+    fs.openSync(listSongPath, 'w')
+    fs.writeFileSync(listSongPath, JSON.stringify({}, null), { flag: 'w' })
   }
 }
 
@@ -76,15 +74,15 @@ function createFiles(app) {
 function editFile(fileName, data, fullPath = false) {
   if (fullPath) {
     fs.writeFile(fileName, data, function (err) {
-      ipcRenderer.send('update-browser');
-    });
+      ipcRenderer.send('update-browser')
+    })
   } else {
     fs.writeFile(
       `${remote.app.getPath('userData')}/${fileName}.json`,
       JSON.stringify(data, null),
       function (err) {
-        if (fileName === 'listSong') ipcRenderer.send('update-browser');
-      });
+        if (fileName === 'listSong') ipcRenderer.send('update-browser')
+      })
   }
 }
 
@@ -105,4 +103,4 @@ function init() {
 module.exports = Object.freeze({
   createFiles,
   init
-});
+})

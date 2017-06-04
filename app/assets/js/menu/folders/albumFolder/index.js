@@ -3,23 +3,23 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------- Modules --------------------------------- */
-//---- Electron ----
-const dialog = require('electron').remote.dialog;
+// ---- Electron ----
+const dialog = require('electron').remote.dialog
 
-//---- Node ----
-const path = require('path');
+// ---- Node ----
+const path = require('path')
 
-//---- Own ----
-const songFolder = require(path.join(__dirname, '../', 'songFolder'));
+// ---- Own ----
+const songFolder = require(path.join(__dirname, '../', 'songFolder'))
 const {
   configFile,
   langFile
-} = require(path.join(__dirname, '../../../', 'config')).init();
-let player = require(path.join(__dirname, '../../../', 'player'));
-const $ = require(path.join(__dirname, '../../../', 'dom'));
+} = require(path.join(__dirname, '../../../', 'config')).init()
+let player = require(path.join(__dirname, '../../../', 'player'))
+const $ = require(path.join(__dirname, '../../../', 'dom'))
 
 /* --------------------------------- Variables --------------------------------- */
-const lang = langFile[configFile.lang];
+const lang = langFile[configFile.lang]
 
 /* --------------------------------- Functions --------------------------------- */
 function loadFullAlbum() {
@@ -28,37 +28,37 @@ function loadFullAlbum() {
     properties: ['openDirectory']
   }, function (parentFolder) {
     if (parentFolder !== undefined)
-      getSongs(parentFolder[0]);
-  });
+      getSongs(parentFolder[0])
+  })
 }
 
 function getSongs(parentFolder) {
   songFolder.addSongFolder(parentFolder, function () {
-    $('#album-to-play-container').switchClass('hide', 'album-to-play-anim');
+    $('#album-to-play-container').switchClass('hide', 'album-to-play-anim')
   }, function (i, maxLength) { // Iterator function
     $('#album-to-play').text(
       `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
-    );
+    )
 
     if (i === maxLength)
-      createView(parentFolder, songFolder.getAllSongs());
-  }, true);
+      createView(parentFolder, songFolder.getAllSongs())
+  }, true)
 }
 
 function createView(folder, songs) {
-  player.getMediaControl(player.mediaControl).stopSong();
-  player.mediaControl = 'album';
-  player.getMediaControl(player.mediaControl).setSongs(songs);
-  player.createAlbumView(player, folder, songs);
+  player.getMediaControl(player.mediaControl).stopSong()
+  player.mediaControl = 'album'
+  player.getMediaControl(player.mediaControl).setSongs(songs)
+  player.createAlbumView(player, folder, songs)
 }
 
 function closeAlbum() {
-  player.getMediaControl(player.mediaControl).stopSong();
-  player.mediaControl = 'player';
-  $('#album-to-play-container').switchClass('album-to-play-anim', 'hide');
+  player.getMediaControl(player.mediaControl).stopSong()
+  player.mediaControl = 'player'
+  $('#album-to-play-container').switchClass('album-to-play-anim', 'hide')
 }
 
 module.exports = Object.freeze({
   loadFullAlbum,
   closeAlbum
-});
+})

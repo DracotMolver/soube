@@ -6,4 +6,4 @@
 module.exports = Object.freeze({
   configurations: require('./configurations'),
   about: require('./about')
-});
+})

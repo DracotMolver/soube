@@ -559,7 +559,7 @@ button:hover {
 }
 
 #container-results {
-    overflow: overflow;
+    overflow: hidden;
     position: relative;
     height: 370px;
     margin: 0 auto

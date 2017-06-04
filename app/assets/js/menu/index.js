@@ -4,8 +4,8 @@
  */
 
 module.exports = function(app) {
-  const configFile = require(`${app.getPath('userData')}/config.json`);
-  const menuLang = require('./../config/menuLang')[configFile.lang];
+  const configFile = require(`${app.getPath('userData')}/config.json`)
+  const menuLang = require('./../config/menuLang')[configFile.lang]
 
   return [
     {
@@ -14,7 +14,7 @@ module.exports = function(app) {
         {
           label: menuLang.songs.submenu[0], // new folder
           click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-add-folder');
+            browserWindow.webContents.send('menu-add-folder')
           }
         },
         {
@@ -23,7 +23,7 @@ module.exports = function(app) {
         {
           label: menuLang.songs.submenu[1], // play an album from a folder
           click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-play-album');
+            browserWindow.webContents.send('menu-play-album')
           }
         },
         {
@@ -34,7 +34,7 @@ module.exports = function(app) {
     {
       label: menuLang.eq.menu, // Equalizer
       click(menuItem, browserWindow, event) {
-        browserWindow.webContents.send('menu-equalizer');
+        browserWindow.webContents.send('menu-equalizer')
       }
     },
     {
@@ -43,7 +43,7 @@ module.exports = function(app) {
         {
           label: menuLang.options.submenu[0], // Configurations
           click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-configurations');
+            browserWindow.webContents.send('menu-configurations')
           }
         },
         {
@@ -55,10 +55,10 @@ module.exports = function(app) {
         {
           label: menuLang.options.submenu[2], // About
           click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-about');
+            browserWindow.webContents.send('menu-about')
           }
         }
       ]
     }
-  ];
-};
+  ]
+}

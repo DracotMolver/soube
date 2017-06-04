@@ -3,48 +3,48 @@
  * @copyright 2016 - 2017
  */
 /* --------------------------------------- Modules ------------------------------------------- */
-const path = require('path');
-const fs = require('fs');
+const path = require('path')
+const fs = require('fs')
 
 /* --------------------------------------- Functions ------------------------------------------- */
 // List of files and sub-files
 // In this way, we avoid to use recursion
 function findFiles(dir) {
-  let tmpFolders = [];
-  let allFiles = [];
-  let folders = [];
-  let foldersSize = 0;
-  let baseFolder = '';
+  let tmpFolders = []
+  let allFiles = []
+  let folders = []
+  let foldersSize = 0
+  let baseFolder = ''
 
   fs.readdirSync(dir).forEach(function (files) {
     // Based folders
-    baseFolder = path.join(dir, files);
+    baseFolder = path.join(dir, files)
     if (fs.lstatSync(baseFolder).isDirectory())
-      folders.push(baseFolder);
+      folders.push(baseFolder)
     else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wmv|wav|ogg)$/ig.test(baseFolder.trim()))
-      allFiles.push(baseFolder);
-  });
+      allFiles.push(baseFolder)
+  })
 
-  foldersSize = folders.length - 1;
-  var count = 0;
+  foldersSize = folders.length - 1
+  var count = 0
   while (foldersSize > -1) {
     fs.readdirSync(folders[foldersSize]).forEach(function (files) {
-      baseFolder = path.join(folders[foldersSize], files);
+      baseFolder = path.join(folders[foldersSize], files)
       if (fs.lstatSync(baseFolder).isDirectory())
-        tmpFolders.push(baseFolder);
+        tmpFolders.push(baseFolder)
       else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wmv|wav|ogg)$/ig.test(baseFolder.trim()))
-        allFiles.push(baseFolder);
-    });
+        allFiles.push(baseFolder)
+    })
 
-    folders.pop();
-    folders = folders.concat(tmpFolders);
-    foldersSize = folders.length - 1;
+    folders.pop()
+    folders = folders.concat(tmpFolders)
+    foldersSize = folders.length - 1
   }
 
-  postMessage({ files: allFiles.join('|') });
+  postMessage({ files: allFiles.join('|') })
 }
 
 
 this.onmessage = function (e) {
-  findFiles(e.data.folder);
-};
+  findFiles(e.data.folder)
+}

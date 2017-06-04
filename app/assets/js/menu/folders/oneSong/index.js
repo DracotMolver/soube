@@ -19,10 +19,10 @@
 // const $ = require(path.join(__dirname, '../../../', 'dom'));
 
 /* --------------------------------- Variables --------------------------------- */
-const lang = langFile[configFile.lang];
+// const lang = langFile[configFile.lang]
 
 /* --------------------------------- Functions --------------------------------- */
 
-module.exports = Object.freeze({
-  loadSong
-});
+// module.exports = Object.freeze({
+//   loadSong
+// })
