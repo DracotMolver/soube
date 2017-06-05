@@ -85,11 +85,13 @@ _.prototype = {
   each: function (fn) {
     return this.element.forEach(function (v, i) { fn.length === 1 ? fn(v) : fn(v, i) }), this
   },
-  css: function (str) {
+  css: function (str, replace = false) {
     el = this.element
     const cssChange = function (e) {
-      if (e.style.cssText.indexOf(str))
+      if (e.style.cssText.indexOf(str) && !replace)
         e.style.cssText += `${str};`
+      else if (replace)
+        e.style.cssText = `${str};`
     }
 
     return el.length

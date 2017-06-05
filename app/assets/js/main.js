@@ -143,7 +143,7 @@ function searchInputData(e) {
       // Show possibles results
       totalResults = list.length
       countSlide = slide = totalResults > 20 ? Math.round(totalResults / 20) : 1
-      countItem = 0
+      countItem = countSlidedMoved = totalCountSlideMoved = 0
       while (slide--) {
         totalItem = totalResults - countItem > 20 ? 20 : totalResults - countItem
         for (stepItem = 0; stepItem < totalItem; stepItem++, countItem++) {
@@ -169,7 +169,7 @@ function searchInputData(e) {
         .empty()
         .append(slideContainer)
         .removeClass('no-searching-found')
-        .css(`width:${countSlide * (document.body.clientWidth - 100)}px`)
+        .css(`width:${countSlide * (document.body.clientWidth - 100)}px`, true)
 
       $('#leftright').removeClass('hide')
     } else {
@@ -177,7 +177,8 @@ function searchInputData(e) {
       $('#wrapper-results')
         .text(lang.alerts.searchingResults)
         .addClass('no-searching-found')
-      $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`)
+        .css(`width:${document.body.clientWidth - 100}px`, true)
+      // $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`)
 
       $('#leftright').addClass('hide')
     }
@@ -188,7 +189,8 @@ function searchInputData(e) {
     $('#wrapper-results')
       .text(lang.alerts.searchingResults)
       .addClass('no-searching-found')
-    $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`)
+      .css(`width:${document.body.clientWidth - 100}px`, true)
+    // $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`)
     $('#leftright').addClass('hide')
   }
 }
@@ -284,12 +286,13 @@ function animSlideSongs() {
 
   if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
     ++countSlidedMoved
-  else if ($(this).data('direction') === 'left' && totalCountSlideMoved)
+  else if ($(this).data('direction') === 'left' && countSlidedMoved)
     --countSlidedMoved
 
-  if (totalCountSlideMoved && totalCountSlideMoved < wrapperWidth) {
-    totalCountSlideMoved = countSlidedMoved * containerResult;
-    $("#wrapper-results").css(`transform:translateX(${-totalCountSlideMoved}px)`);
+  if (countSlidedMoved >= 0){
+    $("#wrapper-results").css(
+      `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
+    );
   }
 }
 
