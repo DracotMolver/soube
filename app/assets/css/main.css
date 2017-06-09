@@ -358,9 +358,10 @@ button:hover {
 }
 
 #info-song {
+    margin-bottom: .1em;
+    margin-top: .1em;
     text-align: left;
     overflow: hidden;
-    margin: .1em 1.2em;
     cursor: pointer;
     width: 85%;
     float: left
@@ -653,11 +654,6 @@ button:hover {
 
 .text-container:hover > .tooltip {
     animation: showToolTip .3s ease-in forwards
-}
-
-.list-song-container {
-    width: 100%;
-    float: left
 }
 
 #container-equalizer {

@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8" />
-    <link href="../../assets/css/unsemantic.css" rel="stylesheet">
+    <link href="../../assets/css/unsemantic.min.css" rel="stylesheet">
     <link href="../../assets/css/color.css" rel="stylesheet">
     <link href="../../assets/css/main.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="grid-container">
+    <div id="main-parent-container" class="grid-100 grid-parent">
         <div id="updown">
-            <div class="grid-100">
-                <div class="grid-50 mobile-grid-50 arrow-updown" data-direction="up">
+            <div class="grid-100 grid-parent">
+                <div class="grid-50 grid-parent mobile-grid-50 arrow-updown" data-direction="up">
                     &#9650;
                 </div>
-                <div class="grid-50 mobile-grid-50 arrow-updown" data-direction="down">
+                <div class="grid-50 grid-parent mobile-grid-50 arrow-updown" data-direction="down">
                     &#9660;
                 </div>
             </div>
         </div>
         <!--Top nav-->
-        <div id="top-nav" class="grid-100 border-bottom border-color-dark-pink">
+        <div id="top-nav" class="grid-100 grid-parent border-bottom border-color-dark-pink">
             <!--controles-->
-            <div class="grid-10 mobile-grid-20">
+            <div class="grid-10 grid-parent mobile-grid-20">
                 <div class="grid-75 mobile-grid-75">
                     <div class="btn-controls" id="play-pause">
                         <!-- play -->
@@ -34,21 +34,21 @@
                         </svg>
                     </div>
                 </div>
-                <div class="grid-25 mobile-grid-25 border-left border-right border-color-dark-pink">
+                <div class="grid-25 grid-parent mobile-grid-25 border-left border-right border-color-dark-pink">
                     <!-- siguiente -->
-                    <div class="grid-100 border-bottom border-color-dark-pink">
+                    <div class="grid-100 grid-parent border-bottom border-color-dark-pink">
                         <div class="btn-controls" id="next"> 
                             <img class="music-controls" id="next-icon" src="../../assets/img/next.svg" height="100%" width="100%">
                         </div>
                     </div>
                     <!-- previo -->
-                    <div class="grid-100 border-bottom border-color-dark-pink">
+                    <div class="grid-100 grid-parent border-bottom border-color-dark-pink">
                         <div class="btn-controls" id="prev">
                             <img class="music-controls" id="prev-icon" src="../../assets/img/prev.svg" height="100%" width="100%">
                         </div>
                     </div>
                     <!-- shuffle -->
-                    <div class="grid-100">
+                    <div class="grid-100 grid-parent">
                         <div class="btn-controls" id="shuffle">
                             <svg class="music-controls" id="shuffle-icon" preserveAspectRatio="xMidYMid meet" viewBox="0 0 59.000001 59.000001" height="100%" width="100%">
                                 <defs>
@@ -85,35 +85,35 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-90 mobile-grid-80">
-                <div class="grid-100">
+            <div class="grid-90 grid-parent mobile-grid-80">
+                <div class="grid-100 grid-parent">
                     <!-- Info de la canción-->
                     <div class="grid-30">
                         <div id="info-song">
-                            <div id="song-title" class="text-container grid-100">
+                            <div id="song-title" class="text-container grid-100 grid-parent">
                                 <h1>&nbsp;</h1>
                                 <div class="tooltip"></div>
                             </div>
-                            <div id="artist" class="text-container grid-100 mobile-grid-50">
+                            <div id="artist" class="text-container grid-100 grid-parent mobile-grid-50">
                                 <h2>&nbsp;</h2>
                                 <div class="tooltip"></div>
                             </div>
-                            <div id="album" class="text-container grid-100 mobile-grid-50">
+                            <div id="album" class="text-container grid-100 grid-parent mobile-grid-50">
                                 <h3>&nbsp;</h3>
                                 <div class="tooltip"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="grid-65">
+                    <div class="grid-65 grid-parent">
                         <div id="time" class="grid-100">
                             <span id="time-start">00:00</span>&nbsp;<span style="color:white">-</span>&nbsp;<span id="time-end">00:00</span>
                         </div>
-                        <div id="total-progress-bar" class="grid-100">
+                        <div id="total-progress-bar">
                             <div id="progress-bar">
                             </div>
                         </div>
                     </div>
-                    <div class="grid-5">
+                    <div class="grid-5 grid-parent">
                         <div id="sizer-container" class="hide">
                             <img src="../../assets/img/sizer.svg" alt="Screen size" />
                         </div>
