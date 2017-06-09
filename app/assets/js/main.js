@@ -105,7 +105,7 @@ if (Object.keys(listSongs).length) {
 function hideSearchInputData() {
   $('#search-container').addClass('hide')
   $('#search-wrapper').removeClass('search-wrapper-anim')
-  $($('.grid-container').get(0)).rmAttr('style')
+  $('#main-parent-container').rmAttr('style')
   $('#leftright').addClass('hide')
 
   isSearchDisplayed = false
@@ -178,7 +178,6 @@ function searchInputData(e) {
         .text(lang.alerts.searchingResults)
         .addClass('no-searching-found')
         .css(`width:${document.body.clientWidth - 100}px`, true)
-      // $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`)
 
       $('#leftright').addClass('hide')
     }
@@ -190,7 +189,6 @@ function searchInputData(e) {
       .text(lang.alerts.searchingResults)
       .addClass('no-searching-found')
       .css(`width:${document.body.clientWidth - 100}px`, true)
-    // $('.no-searching-found').css(`width:${document.body.clientWidth - 100}px`)
     $('#leftright').addClass('hide')
   }
 }
@@ -224,11 +222,6 @@ function btnActions(action) {
 // Add animations to the play, next, prev and shuffle buttons
 function clickBtnControls() {
   $(this).addClass('click-controls')
-    .on({
-      animationend: function () {
-        $(this).removeClass('click-controls')
-      }
-    })
 
   listSongs.length ? btnActions(this.id)
     : ipcRenderer.send('display-msg', {
@@ -252,7 +245,7 @@ function scrollAnimation(direction) {
 // Close the config modals
 function closeModals() {
   ipcRenderer.send('open-specific-key', 'Space')
-  $($('.grid-container').get(0)).rmAttr('style')
+  $('#main-parent-container').rmAttr('style')
   $('.parent-container-config')
     .addClass('hide')
     .each(function (v) {
@@ -296,6 +289,17 @@ function animSlideSongs() {
   }
 }
 
+
+    // let resizeTimes;
+    // window.onresize = function() {
+    //   clearTimeout(resizeTimes);
+    //   resizeTimes = setTimeout(() => {
+    //     $('#wrapper-results')
+    //     .css(`width:${tempSlide * document.body.clientWidth}px`);
+    //     $('.results').css(`width:${document.body.clientWidth}px`);
+    //   }, 160);
+    // };
+
 /** --------------------------------------- Events --------------------------------------- **/
 // Scrolling the list of songs when click on the song title
 $('#song-title').on({
@@ -322,7 +326,15 @@ $('.arrow-updown').on({
 })
 
 // Actions over the buttons play, next, prev and shuffle
-$('.btn-controls').on({ click: clickBtnControls })
+$('.btn-controls')
+  .on({ click: clickBtnControls })
+  .each(function (e) {
+    $(e).on({
+      animationend: function () {
+        $(this).removeClass('click-controls')
+      }
+    })
+  })
 
 // Step forward or step back the song using the progress bar
 $('#total-progress-bar').on({
@@ -360,7 +372,7 @@ ipcRenderer.on('search-song', function () {
   if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player') {
     $('#search-container').removeClass('hide')
     $('#search-wrapper').addClass('search-wrapper-anim')
-    $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+    $('#main-parent-container').css('-webkit-filter:blur(1px)')
     $('#container-results').css(`width:${document.body.clientWidth - 100}px`)
     $('#wrapper-results').empty()
     $('#search').addClass('search-anim')
@@ -376,15 +388,6 @@ ipcRenderer.on('search-song', function () {
       keyName: 'Space',
       keepUnregistered: true
     })
-    // let resizeTimes;
-    // window.onresize = function() {
-    //   clearTimeout(resizeTimes);
-    //   resizeTimes = setTimeout(() => {
-    //     $('#wrapper-results')
-    //     .css(`width:${tempSlide * document.body.clientWidth}px`);
-    //     $('.results').css(`width:${document.body.clientWidth}px`);
-    //   }, 160);
-    // };
   }
 })
 

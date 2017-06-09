@@ -60,7 +60,7 @@ function saveSongList(parentFolder = '') {
 }
 
 function loadFolder() {
-  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+  $('#main-parent-container').css('-webkit-filter:blur(1px)')
   $('#_addsongfolder').text(lang.config.addSongFolder)
   $('#path-list-container').empty()
 
@@ -72,36 +72,8 @@ function loadFolder() {
     )
   })
 
-  $('#add-songs').on({
-    click: function () {
-      if (!isLoadingSongs) {
-        // Action to add the songs
-        remote.dialog.showOpenDialog({
-          title: 'Add music folder',
-          properties: ['openDirectory']
-        }, function (parentFolder) {
-          // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
-          if (parentFolder !== undefined)
-            saveSongList(parentFolder[0])
-        })
-      }
-    }
-  }).text(lang.config.addSongBtn)
-
-  $('#remove-songs').on({
-    click: function () {
-      configFile.musicFolder = configFile.musicFolder.filter(function (v) {
-        return folderToRemove !== v
-      })
-
-      editFile('config', configFile)
-
-      itemToRemove.remove()
-      songFolder.removeSongFolder(folderToRemove)
-
-      $('#remove-songs').addClass('hide')
-    }
-  }).text(lang.config.removeSongBtn)
+  $('#add-songs').text(lang.config.addSongBtn)
+  $('#remove-songs').text(lang.config.removeSongBtn)
 
   // Execute the animation at the end of the code
   $($('.parent-container-config').get(0))
@@ -109,6 +81,38 @@ function loadFolder() {
     .child(0)
     .addClass('container-config-anim')
 }
+
+/* --------------------------------- Events --------------------------------- */
+$('#remove-songs').on({
+  click: function () {
+    configFile.musicFolder = configFile.musicFolder.filter(function (v) {
+      return folderToRemove !== v
+    })
+
+    editFile('config', configFile)
+
+    itemToRemove.remove()
+    songFolder.removeSongFolder(folderToRemove)
+
+    $('#remove-songs').addClass('hide')
+  }
+})
+
+$('#add-songs').on({
+  click: function () {
+    if (!isLoadingSongs) {
+      // Action to add the songs
+      remote.dialog.showOpenDialog({
+        title: 'Add music folder',
+        properties: ['openDirectory']
+      }, function (parentFolder) {
+        // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
+        if (parentFolder !== undefined)
+          saveSongList(parentFolder[0])
+      })
+    }
+  }
+})
 
 module.exports = Object.freeze({
   albumFolder,

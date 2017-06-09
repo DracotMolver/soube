@@ -98,7 +98,7 @@ function choosenColor() {
 }
 
 function showConfigurations() {
-  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+  $('#main-parent-container').css('-webkit-filter:blur(1px)')
   $('#_configurations').text(lang.config.configurations)
 
   const fragment = document.createDocumentFragment()
@@ -109,9 +109,7 @@ function showConfigurations() {
     )
   })
 
-  $('#config-options')
-    .append(fragment)
-    .on({ click: displayOption })
+  $('#config-options').append(fragment)
 
   // Colours options
   const coloursNames = Object.keys(coloursFile);
@@ -119,19 +117,23 @@ function showConfigurations() {
     $(v).text(coloursNames[i])
   })
 
-  $('.colour').on({ click: choosenColor });
-
-  // idiom.
-  $('.idiom-item').on({ click: choosenIdiom });
-
   $($('.parent-container-config').get(2))
     .removeClass('hide')
     .child(0)
     .addClass('container-config-anim')
-
-  // Screen size
-  $('#enable-screen-size').on({ change: enableScreenSize })
 }
+
+/** --------------------------------------- Functions --------------------------------------- **/
+// Screen size
+$('#enable-screen-size').on({ change: enableScreenSize })
+
+// idiom
+$('.idiom-item').on({ click: choosenIdiom })
+
+$('.colour').on({ click: choosenColor })
+
+$('#config-options').on({ click: displayOption })
+
 
 module.exports = Object.freeze({
   showConfigurations,

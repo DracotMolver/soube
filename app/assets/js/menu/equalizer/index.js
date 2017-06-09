@@ -100,7 +100,6 @@ function saveEQSetting() {
     , ['before', $('#eq-buttons').lastChild().get()]
   )
 
-
   setTimeout(function () {
     $('.warning').text('')
   }, 2600)
@@ -154,18 +153,10 @@ function updateEQSeeting() {
 }
 
 function showEqualizer() {
-  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+  $('#main-parent-container').css('-webkit-filter:blur(1px)')
   $('#_equalizerSetting').text(lang.config.equalizerSetting)
 
-  $('#_neweq').text(lang.config.newEQ).on({ click: saveEQSetting })
-
-  $('#name-new-eq').on({
-    keyup: function () {
-      this.value.trim().length
-        ? $('#_neweq').rmAttr('disabled')
-        : $('#_neweq').attr({ disabled: true })
-    }
-  })
+  $('#_neweq').text(lang.config.newEQ)
 
   const fragment = document.createDocumentFragment()
   option = document.createElement('option')
@@ -197,10 +188,7 @@ function showEqualizer() {
       .get()
   )
 
-  $('#eq-buttons')
-    .empty()
-    .append(fragment)
-    .on({ change: setEQ })
+  $('#eq-buttons').empty().append(fragment)
 
   eqHrz = configFile.equalizer[configFile.equalizerConfig]
   for (var i = 0; i < 15; i++) {
@@ -208,45 +196,11 @@ function showEqualizer() {
     $(`#db-${i}`).text(`${getDB(eqHrz[i])} dB`)
   }
 
-  $('.db-up-down').on({
-    mousedown: function () {
-      dbSetting(this, $(this).data('orientation'))
-    },
-    mouseup: function () {
-      clearTimeout(interval)
-    },
-    mouseleave: function () {
-      clearTimeout(interval)
-    }
-  })
-
   // Delete and edit option over a new EQ setting
-  $('#edit-name')
-    .text(lang.config.newEQSettingEdit)
-    .on({
-      click: function () {
-        $('#name-new-eq-edit').val((settingName = $('#text-new-eq').text()))
-        $('#modify-new-eq').addClass('hide')
-        $('#edit-new-eq').removeClass('hide')
-      }
-    })
-
-  $('#delete-name')
-    .text(lang.config.newEQSettingDelete)
-    .on({ click: deleteSetting })
-
-  $('#_saveeq')
-    .text(lang.config.newEQSettingUpdate)
-    .on({ click: updateEQSeeting })
-
-  $('#_canceleq')
-    .text(lang.config.newEQSettingCancel)
-    .on({
-      click: function () {
-        $('#modify-new-eq').removeClass('hide')
-        $('#edit-new-eq').addClass('hide')
-      }
-    })
+  $('#edit-name').text(lang.config.newEQSettingEdit)
+  $('#delete-name').text(lang.config.newEQSettingDelete)
+  $('#_saveeq').text(lang.config.newEQSettingUpdate)
+  $('#_canceleq').text(lang.config.newEQSettingCancel)
 
   $($('.parent-container-config').get(1))
     .removeClass('hide')
@@ -279,12 +233,57 @@ function close() {
   $('#modify-new-eq').addClass('hide')
   $('#edit-new-eq').addClass('hide')
   $('#add-new-eq').addClass('hide')
+  $('#name-new-eq').val('')
 
   clearTimeout(interval)
   percent = eqHrz = pos = 0
   settingName = ''
   option = null
 }
+
+/* --------------------------------- Events --------------------------------- */
+$('#_canceleq').on({
+  click: function () {
+    $('#modify-new-eq').removeClass('hide')
+    $('#edit-new-eq').addClass('hide')
+  }
+})
+
+$('#_saveeq').on({ click: updateEQSeeting })
+
+$('#delete-name').on({ click: deleteSetting })
+
+$('#edit-name').on({
+  click: function () {
+    $('#name-new-eq-edit').val((settingName = $('#text-new-eq').text()))
+    $('#modify-new-eq').addClass('hide')
+    $('#edit-new-eq').removeClass('hide')
+  }
+})
+
+$('.db-up-down').on({
+  mousedown: function () {
+    dbSetting(this, $(this).data('orientation'))
+  },
+  mouseup: function () {
+    clearTimeout(interval)
+  },
+  mouseleave: function () {
+    clearTimeout(interval)
+  }
+})
+
+$('#eq-buttons').on({ change: setEQ })
+
+$('#_neweq').on({ click: saveEQSetting })
+
+$('#name-new-eq').on({
+  keyup: function () {
+    this.value.trim().length
+      ? $('#_neweq').rmAttr('disabled')
+      : $('#_neweq').attr({ disabled: true })
+  }
+})
 
 module.exports = Object.freeze({
   showEqualizer,

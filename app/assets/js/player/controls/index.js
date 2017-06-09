@@ -192,8 +192,8 @@ const Controls = function (from) {
     $('#progress-bar').css('width:0')
     $('#song-title').data({ position: _self.file.position })
     $('#song-title').child().each(function (v) { $(v).text(_self.file.title) })
-    $('#artist').child().each(function (v) { $(v).text(_self.artist) })
-    $('#album').child().each(function (v) { $(v).text(_self.album) })
+    $('#artist').child().each(function (v) { $(v).text(_self.file.artist) })
+    $('#album').child().each(function (v) { $(v).text(_self.file.album) })
 
     if (notification !== null)
       notification.close()
@@ -238,7 +238,7 @@ const Controls = function (from) {
     this.lastCurrentTime = audioContext.currentTime
 
     if ($('#spinner').has('spinner-anim')) {
-      $($('.grid-container').get(0)).rmAttr('style')
+      $('#main-parent-container').rmAttr('style')
       $('#spinner').switchClass('spinner-anim', 'hide')
     }
   }
@@ -318,7 +318,7 @@ const Controls = function (from) {
       // Get the song to play
       _self.file = _self.getFile()
 
-      $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+      $('#main-parent-container').css('-webkit-filter:blur(1px)')
       $('#spinner').switchClass('hide', 'spinner-anim')
       _self.getBuffer(_self.file.filename, function (data) {
         if (!data) throw data
@@ -348,7 +348,7 @@ const Controls = function (from) {
 }
 
 Controls.prototype.playSongAtPosition = function (pos = -1) {
-  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+  $('#main-parent-container').css('-webkit-filter:blur(1px)')
   $('#spinner').switchClass('hide', 'spinner-anim')
 
   if (this.source !== null) {

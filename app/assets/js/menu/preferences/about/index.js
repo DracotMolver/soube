@@ -20,9 +20,8 @@ const $ = require(path.join(__dirname, '../../../', 'dom'))
 let lang = langFile[configFile.lang]
 
 /** --------------------------------------- Functions --------------------------------------- **/
-
 module.exports = function showAbout() {
-  $($('.grid-container').get(0)).css('-webkit-filter:blur(1px)')
+  $('#main-parent-container').css('-webkit-filter:blur(1px)')
   $('#_about').text(lang.aboutContent)
 
   $(':a').on({

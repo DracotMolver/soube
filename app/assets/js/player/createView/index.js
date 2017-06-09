@@ -24,7 +24,7 @@ function createView(player) {
   // The rest of the elements, the childNodes, are not need to create them.
   // They can be just text.
   let parent = $(document.createElement('div'))
-    .addClass('list-song-container').get()
+    .addClass('list-song-container grid-100 grid-parent').get()
 
   listSongs.forEach(function (v, i) {
     f.appendChild(
