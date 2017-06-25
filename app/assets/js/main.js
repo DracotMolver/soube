@@ -11,9 +11,7 @@ const {
 } = require('electron')
 
 // ---- Own ----
-const preferences = require('./menu/preferences')
-const equalizer = require('./menu/equalizer')
-const folders = require('./menu/folders')
+const menu = require('./menu/menu.js')
 const player = require('./player')
 const {
   configFile,
@@ -31,27 +29,11 @@ let positionElement = null
 let clickedElement = null
 
 // ---- searching bar ----
-let regex = null
 let isSearchDisplayed = false
 let isModalOpen = false
-let totalCountSlideMoved = 0
-let countSlidedMoved = 0
 let containerResult = 0
-let totalResults = 0
 let wrapperWidth = 0
 let countSlide = 0
-let countItem = 0
-let totalItem = 0
-let stepItem = 0
-let slide = 0
-let newList = []
-let list = []
-let oldSearchedValue = ''
-let searchValue = ''
-let parentSlideItem = $(document.createElement('div')).addClass('grid-25 mobile-grid-25').get()
-let containerSlider = $(document.createElement('div')).addClass('results')
-let slideContainer = document.createDocumentFragment()
-let itemSlide = document.createDocumentFragment()
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
@@ -98,13 +80,14 @@ if (Object.keys(listSongs).length) {
 } else {
   $('#list-songs')
     .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
-    .on({ click: folders.loadFolder })
+    .on({ click: menu.folders.loadFolder })
 }
 
 // Hide the searching bar
 function hideSearchInputData() {
   $('#search-container').addClass('hide')
-  $('#search-wrapper').removeClass('search-wrapper-anim')
+  $('#m-search-wrapper').addClass('hide')
+  $('#search-wrapper').switchClass('search-wrapper-anim', 'hide')
   $('#main-parent-container').rmAttr('style')
   $('#leftright').addClass('hide')
 
@@ -115,82 +98,6 @@ function hideSearchInputData() {
 function btnPlaySong() {
   hideSearchInputData()
   player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'))
-}
-
-// Will be executed every time the user hit down a keyword
-// So, I carefully tried to code a clean and faster code :).
-function searchInputData(e) {
-  containerSlider.css(`width:${document.body.clientWidth - 100}px`)
-
-  $('#wrapper-results').empty()
-  $('#leftright').addClass('hide')
-
-  if ((searchValue = this.value.trim()) !== '') {
-    regex = new RegExp(searchValue.replace(/\s/g, '&nbsp;').trim(), 'ig')
-
-    if (newList.length && searchValue.length > oldSearchedValue.length) {
-      list = newList.filter(function (v) {
-        return regex.test(v.title)
-      })
-    } else {
-      oldSearchedValue = searchValue
-      newList = list = listSongs.filter(function (v) {
-        return regex.test(v.title)
-      })
-    }
-
-    if (list.length) {
-      // Show possibles results
-      totalResults = list.length
-      countSlide = slide = totalResults > 20 ? Math.round(totalResults / 20) : 1
-      countItem = countSlidedMoved = totalCountSlideMoved = 0
-      while (slide--) {
-        totalItem = totalResults - countItem > 20 ? 20 : totalResults - countItem
-        for (stepItem = 0; stepItem < totalItem; stepItem++, countItem++) {
-          itemSlide.appendChild(
-            $(parentSlideItem.cloneNode(false))
-              .text(`<div class="search-results">${list[countItem].title}</div>`)
-              .data({ position: list[countItem].position })
-              .on({ click: btnPlaySong }).get()
-          )
-        }
-
-        slideContainer.appendChild(
-          $(containerSlider.get()
-            .cloneNode(false))
-            .append(itemSlide).get()
-        )
-
-        itemSlide = document.createDocumentFragment()
-      }
-
-      // Display all the filtered songs
-      $('#wrapper-results')
-        .empty()
-        .append(slideContainer)
-        .removeClass('no-searching-found')
-        .css(`width:${countSlide * (document.body.clientWidth - 100)}px`, true)
-
-      $('#leftright').removeClass('hide')
-    } else {
-      // Clean if there's no coincidence
-      $('#wrapper-results')
-        .text(lang.alerts.searchingResults)
-        .addClass('no-searching-found')
-        .css(`width:${document.body.clientWidth - 100}px`, true)
-
-      $('#leftright').addClass('hide')
-    }
-
-    slideContainer = document.createDocumentFragment()
-  } else {
-    // Clean if there's no coincidence
-    $('#wrapper-results')
-      .text(lang.alerts.searchingResults)
-      .addClass('no-searching-found')
-      .css(`width:${document.body.clientWidth - 100}px`, true)
-    $('#leftright').addClass('hide')
-  }
 }
 
 // Check if there are new songs to be added
@@ -253,9 +160,9 @@ function closeModals() {
     })
 
   // Clean all the used variables by the config panels
-  folders.close()
-  equalizer.close()
-  preferences.configurations.close()
+  menu.folders.close()
+  menu.equalizer.close()
+  menu.preferences.configurations.close()
 
   isModalOpen = false
 }
@@ -282,7 +189,7 @@ function animSlideSongs() {
   else if ($(this).data('direction') === 'left' && countSlidedMoved)
     --countSlidedMoved
 
-  if (countSlidedMoved >= 0){
+  if (countSlidedMoved >= 0) {
     $("#wrapper-results").css(
       `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
     );
@@ -290,17 +197,14 @@ function animSlideSongs() {
 }
 
 
-    // let resizeTimes;
-    // window.onresize = function() {
-    //   clearTimeout(resizeTimes);
-    //   resizeTimes = setTimeout(() => {
-    //     $('#wrapper-results')
-    //     .css(`width:${tempSlide * document.body.clientWidth}px`);
-    //     $('.results').css(`width:${document.body.clientWidth}px`);
-    //   }, 160);
-    // };
+// let resizeTimes;
 
 /** --------------------------------------- Events --------------------------------------- **/
+window.onresize = function () {
+  if (isSearchDisplayed)
+    hideSearchInputData()
+}
+
 // Scrolling the list of songs when click on the song title
 $('#song-title').on({
   click: function () {
@@ -308,7 +212,7 @@ $('#song-title').on({
       clickedElement = $('#list-songs').get()
       positionElement = $(`#${$(this).data('position')}`).get()
       const element = clickedElement.scrollTop
-      const distance = positionElement.offsetTop - (Math.round($('#top-nav').get().offsetHeight) + 100)
+      const distance = positionElement.offsetTop - (Math.round($('#top-nav').get().offsetHeight) + 60)
       clickedElement.scrollTop += element !== distance ? (distance - element) : -(distance - element)
     }
   }
@@ -346,7 +250,7 @@ $('#total-progress-bar').on({
 // Close the album player
 $('#close-album').on({
   click: function () {
-    folders.albumFolder.closeAlbum()
+    menu.folders.albumFolder.closeAlbum()
     isModalOpen = false
     ipcRenderer.send('open-specific-key', 'Space')
   }
@@ -357,6 +261,28 @@ $('.arrow-leftright').on({ click: animSlideSongs })
 
 // Event to close all the config modals
 $('.close').on({ click: closeModals })
+
+$('#search')
+  .on({
+    keyup: function () {
+      player.search.searchDesktopResults(
+        player.search.getValuesFromList(this.value, listSongs),
+        btnActions,
+        lang
+      )
+    },
+    animationend: function () {
+      this.focus()
+    }
+  }).val('').get()
+
+// $('#m-search')
+//   .on({
+//     keyup: searchMobileInputData,
+//     animationend: function () {
+//       this.focus()
+//     }
+//   }).val('').get()
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the searching bar and all the config modals
@@ -371,17 +297,19 @@ ipcRenderer.on('close-search-song', function () {
 ipcRenderer.on('search-song', function () {
   if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player') {
     $('#search-container').removeClass('hide')
-    $('#search-wrapper').addClass('search-wrapper-anim')
     $('#main-parent-container').css('-webkit-filter:blur(1px)')
-    $('#container-results').css(`width:${document.body.clientWidth - 100}px`)
-    $('#wrapper-results').empty()
-    $('#search').addClass('search-anim')
-      .on({
-        keyup: searchInputData,
-        animationend: function () {
-          this.focus()
-        }
-      }).val('').get()
+    player.search.reset()
+
+    if (document.body.clientWidth <= 768) {
+      $('#m-search-wrapper').removeClass('hide')
+      $('#m-search').addClass('search-anim')
+
+    } else {
+      $('#search-wrapper').switchClass('hide', 'search-wrapper-anim')
+      $('#container-results').css(`width:${document.body.clientWidth - 100}px`)
+      $('#wrapper-results').empty()
+      $('#search').addClass('search-anim')
+    }
 
     isSearchDisplayed = true
     ipcRenderer.send('close-specific-key', {
@@ -436,25 +364,25 @@ ipcRenderer.on('update-current-time', function () {
 
 // Display the windows to add a musics folders [Ctrl + N]
 ipcRenderer.on('menu-add-folder', function () {
-  isModalOpened(folders.loadFolder)
+  isModalOpened(menu.folders.loadFolder)
 })
 
 // Display the album to be played [Ctrl + Shift + A]
 ipcRenderer.on('menu-play-album', function () {
-  isModalOpened(folders.albumFolder.loadFullAlbum)
+  isModalOpened(menu.folders.albumFolder.loadFullAlbum)
 })
 
 // Display the equalizer [Ctrl + E]
 ipcRenderer.on('menu-equalizer', function () {
-  isModalOpened(equalizer.showEqualizer)
+  isModalOpened(menu.equalizer.showEqualizer)
 })
 
 // Display the configurations panel [Ctrl + O]
 ipcRenderer.on('menu-configurations', function () {
-  isModalOpened(preferences.configurations.showConfigurations)
+  isModalOpened(menu.preferences.configurations.showConfigurations)
 })
 
 // Display info about Soube
 ipcRenderer.on('menu-about', function () {
-  isModalOpened(preferences.about)
+  isModalOpened(menu.preferences.about)
 })
