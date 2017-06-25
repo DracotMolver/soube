@@ -20,7 +20,7 @@
         <!--Top nav-->
         <div id="top-nav" class="grid-100 grid-parent border-bottom border-color-dark-pink">
             <!--controles-->
-            <div class="grid-10 grid-parent mobile-grid-20">
+            <div class="grid-10 grid-parent mobile-grid-15">
                 <div class="grid-75 mobile-grid-75">
                     <div class="btn-controls" id="play-pause">
                         <!-- play -->
@@ -85,39 +85,38 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-90 grid-parent mobile-grid-80">
-                <div class="grid-100 grid-parent">
-                    <!-- Info de la canción-->
-                    <div class="grid-30">
-                        <div id="info-song">
-                            <div id="song-title" class="text-container grid-100 grid-parent">
-                                <h1>&nbsp;</h1>
-                                <div class="tooltip"></div>
-                            </div>
-                            <div id="artist" class="text-container grid-100 grid-parent mobile-grid-50">
-                                <h2>&nbsp;</h2>
-                                <div class="tooltip"></div>
-                            </div>
-                            <div id="album" class="text-container grid-100 grid-parent mobile-grid-50">
-                                <h3>&nbsp;</h3>
-                                <div class="tooltip"></div>
-                            </div>
+            <div id="toggle-buttons" class="hide grid-parent mobile-grid-5">A</div>
+            <div id="info-play" class="grid-85 grid-parent mobile-grid-80">
+                <!-- Info de la canción-->
+                <div class="grid-30">
+                    <div id="info-song" class="grid-100 grid-parent">
+                        <div id="song-title" class="text-container grid-100 grid-parent">
+                            <h1>&nbsp;</h1>
+                            <div class="tooltip"></div>
+                        </div>
+                        <div id="artist" class="text-container grid-100 grid-parent mobile-grid-50">
+                            <h2>&nbsp;</h2>
+                            <div class="tooltip"></div>
+                        </div>
+                        <div id="album" class="text-container grid-100 grid-parent mobile-grid-50">
+                            <h3>&nbsp;</h3>
+                            <div class="tooltip"></div>
                         </div>
                     </div>
-                    <div class="grid-65 grid-parent">
-                        <div id="time" class="grid-100">
-                            <span id="time-start">00:00</span>&nbsp;<span style="color:white">-</span>&nbsp;<span id="time-end">00:00</span>
-                        </div>
-                        <div id="total-progress-bar">
-                            <div id="progress-bar">
-                            </div>
+                </div>
+                <div class="grid-70 grid-parent">
+                    <div id="time" class="grid-100">
+                        <span id="time-start">00:00</span>&nbsp;<span style="color:white">-</span>&nbsp;<span id="time-end">00:00</span>
+                    </div>
+                    <div id="total-progress-bar" class="mobile-suffix-5 mobile-prefix-5">
+                        <div id="progress-bar">
                         </div>
                     </div>
-                    <div class="grid-5 grid-parent">
-                        <div id="sizer-container" class="hide">
-                            <img src="../../assets/img/sizer.svg" alt="Screen size" />
-                        </div>
-                    </div>
+                </div>
+            </div>
+            <div class="grid-5 grid-parent mobile-grid-5">
+                <div id="sizer-container" class="hide">
+                    <img src="../../assets/img/sizer.svg" alt="Screen size" />
                 </div>
             </div>
         </div>
@@ -125,12 +124,12 @@
         <div id="list-songs"></div>
         <!-- Albun a tocar -->
         <div id="album-to-play-container" class="grid-100 border-right border-color-dark-pink hide"> 
-            <div id="album-to-play" class="grid-50"></div>
-            <div id="desc-container-album"  class="grid-50">
+            <div id="album-to-play" class="grid-50 grid-parent"></div>
+            <div id="desc-container-album"  class="grid-50 grid-parent">
                 <div class="grid-100">
                     <p>
                         You have loaded an album. This is a temporary play list, which means that is not gonna be part of your main list when you close the music player.
-                        To get back to your music list, just click on the Close album.
+                        To get back to your music list, just click on the Close album button.
                     </p>
                 </div>
                 <div class="grid-100" style="text-align:center;margin-top:3em">
@@ -141,17 +140,20 @@
     </div>
     <!-- Buscador de canciones-->
     <div id="search-container" class="hide">
-        <div id="search-wrapper">
-            <div class="grid-100">
-                <input id="search" type="text" placeholder="Search:"/>
-            </div>
+        <!-- - 768px -->
+        <div id="m-search-wrapper" class="hide">
+            <input id="m-search" type="text" placeholder="Search:" class="mobile-grid-100 grid-parent"/>
+        </div>
+        <!-- + 768px -->
+        <div id="search-wrapper" class="hide">
+            <input id="search" type="text" placeholder="Search:" class="grid-100 grid-parent"/>
         </div>
         <div id="leftright" class="hide">
-            <div class="grid-100">
-                <div class="grid-50 mobile-grid-50 arrow-leftright" data-direction="left">
+            <div class="grid-100 grid-parent">
+                <div class="grid-50 grid-parent mobile-grid-50 arrow-leftright" data-direction="left">
                     &#9664;
                 </div>
-                <div class="grid-50 mobile-grid-50 arrow-leftright" data-direction="right">
+                <div class="grid-50 grid-parent mobile-grid-50 arrow-leftright" data-direction="right">
                     &#9654;
                 </div>
             </div>
@@ -165,26 +167,26 @@
         <div id="pop-up"></div>
     </div>
     <!-- Display the menu to add more music folders -->
-    <div class="grid-100 mobile-grid-100 parent-container-config hide">
+    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
         <div id="container-add-songs" class="container-config">
-            <div class="title-container border-bottom border-color-light-grey grid-100">
-                <div class="grid-70">
+            <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
+                <div class="grid-70 grid-parent">
                     <div id="_addsongfolder"></div>
                 </div>
-                <div class="grid-30">
+                <div class="grid-30 grid-parent">
                     <div class="close"></div>
                 </div>
             </div>
-            <div class="grid-100">
-                <div class="grid-40 mobile-grid-40">
+            <div class="grid-100 grid-parent">
+                <div class="grid-40 grid-parent mobile-grid-40">
                     <button id="add-songs"></button>
                 </div>
-                <div class="grid-60 mobile-grid-60">
+                <div class="grid-60 grid-parent mobile-grid-60">
                     <button id="remove-songs" class="hide"></button>
                     <div id="song-progress"></div>
                 </div>
             </div>
-            <div id="path-list" class="grid-100">
+            <div id="path-list" class="grid-100 grid-parent">
                 <ul id="path-list-container" class="list-song-container">
                 </ul>
             </div>
@@ -192,254 +194,252 @@
         </div>
     </div>
     <!-- Display the equalizer -->
-    <div class="grid-100 mobile-grid-100 parent-container-config hide">
+    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
         <div id="container-equalizer" class="container-config">
-            <div class="title-container border-bottom border-color-light-grey grid-100">
-                <div class="grid-70">
+            <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
+                <div class="grid-70 grid-parent">
                     <div id="_equalizerSetting"></div>
                 </div>
-                <div class="grid-30">
+                <div class="grid-30 grid-parent">
                     <div class="close"></div>
                 </div>
             </div>
-            <div class="grid-100">
-                <div class="grid-100" style="margin-bottom:4px">
-                    <div class="grid-15">
-                        <select id="eq-buttons">
-                        </select>
-                    </div>
-                    <div id="add-new-eq" class="grid-85 hide">
-                        <div class="grid-15">
-                            <button type="button" id="_neweq" disabled></button>
-                        </div>
-                        <div class="grid-80">
-                            <input type="text" id="name-new-eq" />
-                        </div>
-                    </div>
-                    <div id="edit-new-eq" class="grid-85 hide">
-                        <div class="grid-20">
-                            <div class="grid-50">
-                                <button type="button" id="_saveeq"></button>
-                            </div>
-                            <div class="grid-50">
-                                <button type="button" id="_canceleq"></button>
-                            </div>
-                        </div>
-                        <div class="grid-80">
-                            <input type="text" id="name-new-eq-edit" />
-                        </div>
-                    </div>
-                    <div id="modify-new-eq" class="grid-85 hide">
-                        <div id="text-new-eq"></div>
-                        <div id="edit-name"></div>
-                        <div id="delete-name"></div>
-                    </div>
-                    <div class="warning"></div>
+            <div class="grid-100 grid-parent" style="margin-bottom:4px">
+                <div class="grid-15 grid-parent">
+                    <select id="eq-buttons">
+                    </select>
                 </div>
-                <div id="equalizer-container">
-                    <div class="grid-100">
+                <div id="add-new-eq" class="grid-85 grid-parent hide">
+                    <div class="grid-15">
+                        <button type="button" id="_neweq" disabled></button>
+                    </div>
+                    <div class="grid-80">
+                        <input type="text" id="name-new-eq" />
+                    </div>
+                </div>
+                <div id="edit-new-eq" class="grid-85 hide">
+                    <div class="grid-20">
                         <div class="grid-50">
-                            <div class="hz">Hz</div>
+                            <button type="button" id="_saveeq"></button>
                         </div>
                         <div class="grid-50">
-                            <div class="hz">KHz</div>
+                            <button type="button" id="_canceleq"></button>
                         </div>
                     </div>
-                    <div class="grid-100">
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>50</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="0">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-0" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="0">-</div>
-                                <div class="db-desc" id="db-0"></div>
-                            </div>
+                    <div class="grid-80">
+                        <input type="text" id="name-new-eq-edit" />
+                    </div>
+                </div>
+                <div id="modify-new-eq" class="grid-85 hide">
+                    <div id="text-new-eq"></div>
+                    <div id="edit-name"></div>
+                    <div id="delete-name"></div>
+                </div>
+                <div class="warning"></div>
+            </div>
+            <div id="equalizer-container">
+                <div class="grid-100 grid-parent">
+                    <div class="grid-50">
+                        <div class="hz">Hz</div>
+                    </div>
+                    <div class="grid-50">
+                        <div class="hz">KHz</div>
+                    </div>
+                </div>
+                <div class="grid-100 grid-parent">
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>50</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="0">+</div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>100</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="1">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-1" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="1">-</div>
-                                <div class="db-desc" id="db-1"></div>
-                            </div>
+                        <div class="range-percent">
+                            <div id="range-0" class="range-total-percent" data-db="0"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>156</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="2">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-2" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="2">-</div>
-                                <div class="db-desc" id="db-2"></div>
-                            </div>
+                        <div class="grid-100  grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="0">-</div>
+                            <div class="db-desc" id="db-0"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>220</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="3">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-3" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="3">-</div>
-                                <div class="db-desc" id="db-3"></div>
-                            </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100  grid-parent">
+                            <h5>100</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="1">+</div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>311</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="4">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-4" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="4">-</div>
-                                <div class="db-desc" id="db-4"></div>
-                            </div>
+                        <div class="range-percent">
+                            <div id="range-1" class="range-total-percent" data-db="0"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>440</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="5">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-5" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="5">-</div>
-                                <div class="db-desc" id="db-5"></div>
-                            </div>
+                        <div class="grid-100  grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="1">-</div>
+                            <div class="db-desc" id="db-1"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>622</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="6">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-6" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="6">-</div>
-                                <div class="db-desc" id="db-6"></div>
-                            </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>156</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="2">+</div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>880</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="7">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-7" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="7">-</div>
-                                <div class="db-desc" id="db-7"></div>
-                            </div>
+                        <div class="range-percent">
+                            <div id="range-2" class="range-total-percent" data-db="0"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>1.25</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="8">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-8" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="8">-</div>
-                                <div class="db-desc" id="db-8"></div>
-                            </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="2">-</div>
+                            <div class="db-desc" id="db-2"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>1.75</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="9">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-9" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="9">-</div>
-                                <div class="db-desc" id="db-9"></div>
-                            </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>220</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="3">+</div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>2.5</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="10">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-10" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="10">-</div>
-                                <div class="db-desc" id="db-10"></div>
-                            </div>
+                        <div class="range-percent">
+                            <div id="range-3" class="range-total-percent" data-db="0"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>3.5</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="11">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-11" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="11">-</div>
-                                <div class="db-desc" id="db-11"></div>
-                            </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="3">-</div>
+                            <div class="db-desc" id="db-3"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>5</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="12">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-12" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="12">-</div>
-                                <div class="db-desc" id="db-12"></div>
-                            </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>311</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="4">+</div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>10</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="13">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-13" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="13">-</div>
-                                <div class="db-desc" id="db-13"></div>
-                            </div>
+                        <div class="range-percent">
+                            <div id="range-4" class="range-total-percent" data-db="0"></div>
                         </div>
-                        <div class="range-container">
-                            <div class="grid-100">
-                                <h5>20</h5>
-                                <div class="db-up-down" data-orientation="up" data-position="14">+</div>
-                            </div>
-                            <div class="range-percent">
-                                <div id="range-14" class="range-total-percent" data-db="0"></div>
-                            </div>
-                            <div class="grid-100">
-                                <div class="db-up-down" data-orientation="down" data-position="14">-</div>
-                                <div class="db-desc" id="db-14"></div>
-                            </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="4">-</div>
+                            <div class="db-desc" id="db-4"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>440</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="5">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-5" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="5">-</div>
+                            <div class="db-desc" id="db-5"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>622</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="6">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-6" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="6">-</div>
+                            <div class="db-desc" id="db-6"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>880</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="7">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-7" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="7">-</div>
+                            <div class="db-desc" id="db-7"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>1.25</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="8">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-8" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="8">-</div>
+                            <div class="db-desc" id="db-8"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>1.75</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="9">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-9" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="9">-</div>
+                            <div class="db-desc" id="db-9"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>2.5</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="10">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-10" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="10">-</div>
+                            <div class="db-desc" id="db-10"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>3.5</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="11">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-11" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="11">-</div>
+                            <div class="db-desc" id="db-11"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>5</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="12">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-12" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="12">-</div>
+                            <div class="db-desc" id="db-12"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>10</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="13">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-13" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="13">-</div>
+                            <div class="db-desc" id="db-13"></div>
+                        </div>
+                    </div>
+                    <div class="range-container">
+                        <div class="grid-100 grid-parent">
+                            <h5>20</h5>
+                            <div class="db-up-down" data-orientation="up" data-position="14">+</div>
+                        </div>
+                        <div class="range-percent">
+                            <div id="range-14" class="range-total-percent" data-db="0"></div>
+                        </div>
+                        <div class="grid-100 grid-parent">
+                            <div class="db-up-down" data-orientation="down" data-position="14">-</div>
+                            <div class="db-desc" id="db-14"></div>
                         </div>
                     </div>
                 </div>
@@ -447,95 +447,97 @@
         </div>
     </div>
     <!-- Display the config options (color theme, screen size, language) -->
-    <div class="grid-100 mobile-grid-100 parent-container-config hide">
+    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
         <div id="configurations" class="container-config">
-            <div class="title-container border-bottom border-color-light-grey grid-100">
-                <div class="grid-70">
+            <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
+                <div class="grid-70 grid-parent mobile-grid-70">
                     <div id="_configurations"></div>
                 </div>
-                <div class="grid-30">
+                <div class="grid-30 grid-parent mobile-grid-30">
                     <div class="close"></div>
                 </div>
             </div>
-            <div class="grid-100">
-                <div class="grid-100">
-                    <select id="config-options"></select>
+            <div class="grid-100 grid-parent">
+                <select id="config-options"></select>
+            </div>
+            <div class="hide grid-100 grid-parent" id="theme-colours">
+                <div class="grid-25 mobile-grid-25">
+                    <div class="colour-box">
+                        <div class="colour" id="pink-theme"></div>
+                    </div>
+                    <div class="colour-name"></div>
                 </div>
-                <div class="hide" id="theme-colours">
-                    <div class="grid-25">
-                        <div class="colour-box">
-                            <div class="colour" id="pink-theme"></div>
-                        </div>
-                        <div class="colour-name"></div>
+                <div class="grid-25 mobile-grid-25">
+                    <div class="colour-box">
+                        <div class="colour" id="orange-theme"></div>
                     </div>
-                    <div class="grid-25">
-                        <div class="colour-box">
-                            <div class="colour" id="black-theme"></div>
-                        </div>
-                        <div class="colour-name"></div>
-                    </div>
-                    <div class="grid-25">
-                        <div class="colour-box">
-                            <div class="colour" id="orange-theme"></div>
-                        </div>
-                        <div class="colour-name"></div>
-                    </div>
-                    <div class="grid-25">
-                        <div class="colour-box">
-                            <div class="colour" id="grey-theme"></div>
-                        </div>
-                        <div class="colour-name"></div>
-                    </div>
+                    <div class="colour-name"></div>
                 </div>
-                <div class="hide" id="idiom">
-                    <div class="grid-33">
-                        <div class="idiom-item" id="es">Español</div>
+                <div class="grid-25 mobile-grid-25">
+                    <div class="colour-box">
+                        <div class="colour" id="purple-theme"></div>
                     </div>
-                    <div class="grid-33">
-                        <div class="idiom-item" id="us">English</div>
-                    </div>
-                    <div class="grid-33">
-                        <div class="idiom-item" id="de">Deutsch</div>
-                    </div>
+                    <div class="colour-name"></div>
                 </div>
-                <div class="hide" id="screen-size">
-                    <div class="grid-50">
-                        <div class="grid-100">
-                            <label for="enable-screen-size">
-                                Show screen size option
-                            </label>
-                            <input id="enable-screen-size" type="checkbox">
-                        </div>
+                <div class="grid-25 mobile-grid-25">
+                    <div class="colour-box">
+                        <div class="colour" id="blue-theme"></div>
                     </div>
-                    <div id="on-top" class="grid-50 hide">
-                        <div class="grid-100">
-                            <label for="always-on-top">
-                                Always on top
-                            </label>
-                            <input id="always-on-top" type="checkbox">
-                        </div>
+                    <div class="colour-name"></div>
+                </div>
+                <div class="grid-25 mobile-grid-25">
+                    <div class="colour-box">
+                        <div class="colour" id="black-theme"></div>
                     </div>
+                    <div class="colour-name"></div>
+                </div>
+                <div class="grid-25 mobile-grid-25">
+                    <div class="colour-box">
+                        <div class="colour" id="grey-theme"></div>
+                    </div>
+                    <div class="colour-name"></div>
+                </div>
+            </div>
+            <div class="hide grid-100 grid-parent" id="idiom">
+                <div class="grid-33 mobile-grid-33">
+                    <div class="idiom-item" id="es">Español</div>
+                </div>
+                <div class="grid-33 mobile-grid-33">
+                    <div class="idiom-item" id="us">English</div>
+                </div>
+                <div class="grid-33 mobile-grid-33">
+                    <div class="idiom-item" id="de">Deutsch</div>
+                </div>
+            </div>
+            <div class="hide grid-100 grid-parent" id="screen-size">
+                <div class="grid-50 mobile-grid-50">
+                    <label for="enable-screen-size">
+                        Show screen size option
+                    </label>
+                    <input id="enable-screen-size" type="checkbox">
+                </div>
+                <div id="on-top" class="grid-50 mobile-grid-50 hide">
+                    <label for="always-on-top">
+                        Always on top
+                    </label>
+                    <input id="always-on-top" type="checkbox">
                 </div>
             </div>
         </div>
     </div>
     <!-- Display the about content-->
-    <div class="grid-100 mobile-grid-100 parent-container-config hide">
+    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
         <div id="about" class="container-config">
-            <div class="title-container border-bottom border-color-light-grey grid-100">
-                <div class="grid-100">
-                    <div class="close"></div>
-                </div>
+            <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
+                <div class="close"></div>
             </div>
             <div class="grid-100">
-                <div class="grid-100">
-                    <div id="logo-image">
-                        <img src="../../assets/img/icon@1.33x.png"/>
-                    </div>
+                <div id="logo-image">
+                    <img src="../../assets/img/icon@1.33x.png"/>
                 </div>
-                <div class="grid-100" style="text-align:center;font-size:.7.6em">
-                    <a href="http://soube.diegomolina.cl">Soube Web</a>
-                </div>
+            </div>
+            <div class="grid-100" style="text-align:center;font-size:.7.6em">
+                <a href="http://soube.diegomolina.cl">Soube Web</a>
             </div>
             <div class="grid-100">
                 <div id="_about"></div>
