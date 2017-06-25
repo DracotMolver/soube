@@ -71,11 +71,13 @@ function ready(evt) {
 
   // Player
   mainWindow = new BrowserWindow({
+    backgroundColor: '#fff',
     autoHideMenuBar: true,
     defaultEncoding: 'utf-8',
     useContentSize: true,
+    hasShadow: false,
     minHeight: 600,
-    minWidth: 600,
+    minWidth: 440,
     height: 680,
     center: true,
     title: 'Soube',
