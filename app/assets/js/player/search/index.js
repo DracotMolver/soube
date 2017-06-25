@@ -47,7 +47,7 @@ function getValuesFromList(value, listSongs) {
   }
 }
 
-function searchDesktopResults(list, btnAction, lang) {
+function searchDesktopResults(list, btnActions, lang) {
   $('#wrapper-results').empty()
   $('#leftright').addClass('hide')
   containerSlider.css(`width:${document.body.clientWidth - 100}px`)
@@ -64,7 +64,7 @@ function searchDesktopResults(list, btnAction, lang) {
           $(parentSlideItem.cloneNode(false))
             .text(`<div class="search-results">${list[countItem].title}</div>`)
             .data({ position: list[countItem].position })
-            .on({ click: btnAction }).get()
+            .on({ click: btnActions }).get()
         )
       }
 
@@ -105,9 +105,30 @@ function searchDesktopResults(list, btnAction, lang) {
   slideContainer = document.createDocumentFragment()
 }
 
+function animSlideSongs() {
+  containerResult = parseInt($('#container-results').cssValue('width'))
+  wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
+
+  if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
+    ++countSlidedMoved
+  else if ($(this).data('direction') === 'left' && countSlidedMoved)
+    --countSlidedMoved
+
+  if (countSlidedMoved >= 0) {
+    $("#wrapper-results").css(
+      `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
+    );
+  }
+}
+
+function searchMobileResults(list, btnAction, lang) {
+  
+}
+
 module.exports = {
   getValuesFromList,
   searchDesktopResults,
+  animSlideSongs,
   reset: function () {
     newList, list = []
     searchValue = oldSearchedValue = ''

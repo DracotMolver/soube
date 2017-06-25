@@ -88,6 +88,7 @@ function hideSearchInputData() {
   $('#search-container').addClass('hide')
   $('#m-search-wrapper').addClass('hide')
   $('#search-wrapper').switchClass('search-wrapper-anim', 'hide')
+  $('#wrapper-results').empty()
   $('#main-parent-container').rmAttr('style')
   $('#leftright').addClass('hide')
 
@@ -180,25 +181,6 @@ function isModalOpened(fc) {
   }
 }
 
-function animSlideSongs() {
-  containerResult = parseInt($('#container-results').cssValue('width'))
-  wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
-
-  if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
-    ++countSlidedMoved
-  else if ($(this).data('direction') === 'left' && countSlidedMoved)
-    --countSlidedMoved
-
-  if (countSlidedMoved >= 0) {
-    $("#wrapper-results").css(
-      `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
-    );
-  }
-}
-
-
-// let resizeTimes;
-
 /** --------------------------------------- Events --------------------------------------- **/
 window.onresize = function () {
   if (isSearchDisplayed)
@@ -212,7 +194,7 @@ $('#song-title').on({
       clickedElement = $('#list-songs').get()
       positionElement = $(`#${$(this).data('position')}`).get()
       const element = clickedElement.scrollTop
-      const distance = positionElement.offsetTop - (Math.round($('#top-nav').get().offsetHeight) + 60)
+      const distance = positionElement.offsetTop - Math.round($('#top-nav').get().offsetHeight)
       clickedElement.scrollTop += element !== distance ? (distance - element) : -(distance - element)
     }
   }
@@ -256,8 +238,8 @@ $('#close-album').on({
   }
 })
 
-// Will move the slide of searched songs
-$('.arrow-leftright').on({ click: animSlideSongs })
+// Will move the slide of searched songs [Desktop]
+$('.arrow-leftright').on({ click: player.search.animSlideSongs })
 
 // Event to close all the config modals
 $('.close').on({ click: closeModals })
@@ -267,7 +249,7 @@ $('#search')
     keyup: function () {
       player.search.searchDesktopResults(
         player.search.getValuesFromList(this.value, listSongs),
-        btnActions,
+        btnPlaySong,
         lang
       )
     },
@@ -276,13 +258,19 @@ $('#search')
     }
   }).val('').get()
 
-// $('#m-search')
-//   .on({
-//     keyup: searchMobileInputData,
-//     animationend: function () {
-//       this.focus()
-//     }
-//   }).val('').get()
+$('#m-search')
+  .on({
+    keyup: function () {
+      player.search.searchMobileResults(
+        player.search.getValuesFromList(this.value, listSongs),
+        btnPlaySong,
+        lang
+      )
+    },
+    animationend: function () {
+      this.focus()
+    }
+  }).val('').get()
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the searching bar and all the config modals
@@ -303,11 +291,8 @@ ipcRenderer.on('search-song', function () {
     if (document.body.clientWidth <= 768) {
       $('#m-search-wrapper').removeClass('hide')
       $('#m-search').addClass('search-anim')
-
     } else {
       $('#search-wrapper').switchClass('hide', 'search-wrapper-anim')
-      $('#container-results').css(`width:${document.body.clientWidth - 100}px`)
-      $('#wrapper-results').empty()
       $('#search').addClass('search-anim')
     }
 
