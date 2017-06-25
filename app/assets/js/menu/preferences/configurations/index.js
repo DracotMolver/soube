@@ -83,7 +83,7 @@ function choosenIdiom() {
   }, 460)
 }
 
-// Change the color of the app
+// Change the colour of the app
 function showColoursTheme() {
   $('#theme-colours').removeClass('hide')
   $(`#${configFile.theme}`).text('<div class="checked-colour"></div>')
@@ -109,7 +109,7 @@ function showConfigurations() {
     )
   })
 
-  $('#config-options').append(fragment)
+  $('#config-options').empty().append(fragment)
 
   // Colours options
   const coloursNames = Object.keys(coloursFile);

@@ -33,7 +33,7 @@
         "alerts": {
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
             "newSongsFound": "Agregando nuevas canciones",
-            "searchingResults": ":( Parece que no tienes la canción que andas buscando.",
+            "searchingResults": "Parece que no tienes la canción que andas buscando. &#9785;",
             "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música dando click en esta ventana blanca o en Archivos -> \"Agregar nueva carpeta\"",
             "error_001": "Ha ocurrido un error inesperado. Por favor, ir a: https:\/\/github.com\/DracotMolver\/Soube o enviar un correo a dmolina@soube.diegomolina.cl, y reportar el error. Gracias.",
             "error_002": "No hay archivos para reproducir. Por favor, ir al menú (tres puntos) y dar click en \"Agregar carpeta de música\"",
@@ -75,7 +75,7 @@
         "alerts": {
             "newVersion": "We've got a new version!. Click to download it.",
             "newSongsFound": "Adding new songs ",
-            "searchingResults": ":( It seems the you don't have the song you're searching for.",
+            "searchingResults": "It seems the you don't have the song you're searching for. &#9785;",
             "welcome": "There is no music folder added.<br>Please, add your music folder doing click on this white frame or going to Files -> Add new folder",
             "error_001": "An unexpected error occurred. Please, go to: https:\/\/github.com\/DracotMolver\/Soube or send an e-mail to dmolina@soube.diegomolina.cl, and report the error. Thanks.",
             "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",

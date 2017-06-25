@@ -91,13 +91,13 @@ function editFile(fileName, data, fullPath = false) {
 // lang.json [local project] path
 // listSong.json [.config] path
 function init() {
-  return {
+  return Object.freeze({
     editFile,
     configFile: require(`${remote.app.getPath('userData')}/config.json`),
     listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
     langFile: require('./lang'),
     coloursFile: require('./colours')
-  }
+  })
 }
 
 module.exports = Object.freeze({

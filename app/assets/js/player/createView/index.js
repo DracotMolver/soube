@@ -15,6 +15,10 @@ function playSong(_t, player) {
   player.getMediaControl(player.mediaControl).playSongAtPosition($(_t).data('position'))
 }
 
+function nbspToSpace(value) {
+  return value.replace(/&nbsp;/g, ' ')
+}
+
 // Will create and render the list of songs
 function createView(player) {
   const f = document.createDocumentFragment()
@@ -29,7 +33,10 @@ function createView(player) {
   listSongs.forEach(function (v, i) {
     f.appendChild(
       $(parent.cloneNode(true))
-        .attr({ id: i })
+        .attr({
+          id: i,
+          title: `${nbspToSpace(v.title)} by ${nbspToSpace(v.artist)} from ${nbspToSpace(v.album)}`
+        })
         .text(`
           <div class="grid-33 mobile-grid-33 song-info">${v.title}</div>
           <div class="grid-33 mobile-grid-33 song-info"><span class="miscelaneo">by</span>${v.artist}</div>

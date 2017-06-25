@@ -2,10 +2,15 @@
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  */
+/* --------------------------------- Modules --------------------------------- */
+// ---- nodejs ----
+const path = require('path')
 
-module.exports = function(app) {
+module.exports = function (app) {
+  /* --------------------------------- Modules --------------------------------- */
+  // ---- own ----
   const configFile = require(`${app.getPath('userData')}/config.json`)
-  const menuLang = require('./../config/menuLang')[configFile.lang]
+  const menuLang = require(path.join(__dirname,'../', 'config', 'menuLang'))[configFile.lang]
 
   return [
     {

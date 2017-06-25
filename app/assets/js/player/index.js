@@ -7,19 +7,20 @@
 // and play them.
 const {
   createAlbumView,
-  createView
+  createView,
 } = require('./createView')
-const Controls = require('./controls')
+const controls = require('./controls')
+const search = require('./search')
 
 /** --------------------------------------- Variables --------------------------------------- **/
 let usingMediaControl = 'player'
 
 let mediaControl = {
-  player: new Controls('player'),
-  album: new Controls('album')
+  player: new controls('player'),
+  album: new controls('album')
 }
 
-module.exports = {
+module.exports = Object.freeze({
   setUsingMediaControl: function (media) {
     usingMediaControl = media
   },
@@ -28,5 +29,6 @@ module.exports = {
     return mediaControl[media]
   },
   createAlbumView,
-  createView
-}
+  createView,
+  search
+})

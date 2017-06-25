@@ -62,7 +62,10 @@ _.prototype = {
       ? (el.length ? el.forEach(function (e) { e.innerHTML = str }) : el.innerHTML = str, this) : el.textContent
   },
   removeClass: function (_class) {
-    return el = this.element, el.className = el.className.replace(_class, '').trim(), this
+    el = this.element, el.className = el.className.replace(_class, '').trim()
+    if (el.className === '') el.removeAttribute('class')
+
+    return this
   },
   child: function (pos = -1) {
     return this.element = pos !== -1 ? this.element.children[pos] : Array.from(this.element.children), this
