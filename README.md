@@ -2,54 +2,35 @@
 
 # Soube
 
-Soube is a simple and minimalist music player based on Electronjs.
+Soube is a simple and minimalist music player based on Electronjs. Therefor, you can install it in **Linux**, **Windows** and **Mac**.
+With Soube, you can play the next music files: MP3, WMV, WAV and OGG. Also, you can change the color of the app (Pink, Orange, Blue, Purple, Black and Grey).
 
-#### Install it on Windows, Mac & Linux
+The idea behind Soube is a simple music player but powerful enough, having features like an equalizer panel. So, your music will real sounds good.
 
-[Soube website](http://soube.diegomolina.cl)
+> **Important!:** Soube doesn't and won't play music from stream services like Spotify or Google Play Music.
 
-## Features
- * Notifications showing what song is played.
- * Auto detection of new songs.
- * Idiom. You can change the idiom of the config panel (Do this before anything).
- * Equalizer.
- * Responsive design.
- * Shorcuts to set play/pause,next, prev and disalbe/enable shuffle.
- * Searching by song.
+> **Warning!:** When you are loading your songs and it gets to **100%** and takes too long. Please, be patient and don't close the app. *(There are many aliens working behind)*
 
-## Linux users
- * For Distributions that don't use **rpm** or **deb** extensions, you have to follow the steps below.
+> **Note:** Soube will only play music from local files. But!, I'm working of reading music from a media device (Pendrive, CD  - yes!, CD, and Smartphone) and from a networking.
 
-#### Step 1
+> **Linux** New versions are only aviable for `rpm` and `deb` extensions
 
- ```
- Extract the files and you will see the next folder:
-  * soube-linux-ia32
-   or
-  * soube-linux-x64
- ```
-
-#### Step 2
- * Move the folder using the next command line.
-
- ```
-  sudo mv [Place_where_is_soube_folder]/[soube-linux-ia32 or soube-linux-x64] /opt/soube
- ```
-
-#### step 3 
- * Download the [soube.desktop](https://github.com/DracotMolver/Soube/blob/master/soube.desktop) file for an icon launcher and move it to this location (or your prefer one):
-
- ```
- sudo  [Place_where_is_the_file]/soube.desktop /usr/share/applications
- 
- ```
-
- * Done!. You should be ready to use Soube.
-
-## Shortcuts
-
- * Ctrl + F      // Display the searching option
- * Ctrl + Up     // Set Play/Pause the song
- * Ctrl + Left   // Prev song
- * Ctrl + Right  // Next song
- * Ctrl + Down   // Switch shuffle
+## What Soube offers
+  * **Audio formats:** MP3, WMV, WAV and OGG.
+  * **Shortcuts:**
+    * **Nex song** [Cmd or Ctrl + Right] - *Or using your media button*
+    * **Prev song** [Cmd or Ctrl + Left] - *Or using your media button*
+    * **Shuffle** [Cmd or Ctrl + Down]
+    * **Search** for a song [Cmd or Ctrl + F]
+    * **Equalizer** [Cmd or Ctrl + E]
+    * **Add a folder** [Cmd or Ctrl + N]
+    * **Configurations** [Cmd or Ctrl + O]
+    * **Play an album** [Cmd or Ctrl + Shift + A]
+    * **Play/Pause** Space bar - *Or using your media button*
+    * **Close any modal windows** Esc
+  * **Searching bar**
+  * **Idioms**: Español, English and Deutsch
+  * **Equalizer**
+  * **Notifications**: Showing what songs is played
+  * **Thumbar** *(Windows only)*
+  * **Responsive design**
