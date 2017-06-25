@@ -6,29 +6,55 @@
     "email": "dmolina@soube.diegomolina.cl",
     "name": "Diego Molina Vera"
   },
+  "repository": {
+    "url": "https://github.com/DracotMolver/Soube"
+  },
   "homepage": "http://soube.diegomolina.cl",
   "devDependencies": {
     "electron": "^1.6.10",
     "electron-builder": "^19.8.0"
   },
   "build": {
-    "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
     "asar": true,
+    "productName": "Soube",
+    "compression": "maximum",
+    "copyright": "Copyright © 2016 - 2017. Diego Molina Vera.",
+    "files": "assets/css/main.css",
+    "fileAssociations": [
+      {
+        "ext": [
+          "mp3",
+          "wmv",
+          "wav",
+          "ogg"
+        ],
+        "description": "Music files extensions",
+        "role": "none",
+        "icon": "extIcons"
+      }
+    ],
+    "buildVersion": "2.0.0",
+    "nsis": {
+      "deleteAppDataOnUninstall": true,
+      "uninstallDisplayName": "Soube 2.0.0"
+    },
     "linux": {
+      "description": "Soube — Simple music player",
       "vendor": "Diego Molina Vera",
       "maintainer": "Diego Molina Vera",
       "category": "Audio",
       "packageCategory": "sound",
+      "executableName ": "Soube",
+      "synopsis": "A very simple music player. It's based on HTML, Javascript and CSS. You can play many music files such as MP3, WMV, WAV and OGG.",
       "target": [
         "rpm",
         "deb"
       ],
-      "description": "Soube — Simple music player",
       "desktop": {
         "Type": "Application",
         "Encoding": "UTF-8",
         "Name": "Soube",
-        "Exec": "soube",
+        "Exec": "Soube",
         "Terminal": "false",
         "Version": "2.0.0",
         "Categories": "Audio;Music;Player;AudioVideo"
@@ -43,23 +69,6 @@
       "category": "public.app-category.music",
       "target": "dmg"
     }
-  },
-  "fileAssociations": [
-    {
-      "ext": [
-        ".mp3",
-        ".wmv",
-        ".wav",
-        ".ogg"
-      ],
-      "description": "Music files extensions",
-      "role": "none",
-      "icon": "extIcons"
-    }
-  ],
-  "nsis": {
-    "perMachine": true,
-    "deleteAppDataOnUninstall": true
   },
   "postinstall": "install-app-deps",
   "scripts": {
