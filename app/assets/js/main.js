@@ -129,8 +129,6 @@ function btnActions(action) {
 
 // Add animations to the play, next, prev and shuffle buttons
 function clickBtnControls() {
-  $(this).addClass('click-controls')
-
   listSongs.length ? btnActions(this.id)
     : ipcRenderer.send('display-msg', {
       type: 'info',
@@ -212,15 +210,7 @@ $('.arrow-updown').on({
 })
 
 // Actions over the buttons play, next, prev and shuffle
-$('.btn-controls')
-  .on({ click: clickBtnControls })
-  .each(function (e) {
-    $(e).on({
-      animationend: function () {
-        $(this).removeClass('click-controls')
-      }
-    })
-  })
+$('.btn-controls').on({ click: clickBtnControls })
 
 // Step forward or step back the song using the progress bar
 $('#total-progress-bar').on({
@@ -230,7 +220,7 @@ $('#total-progress-bar').on({
 })
 
 // Close the album player
-$('#close-album').on({
+$('.close-album').on({
   click: function () {
     menu.folders.albumFolder.closeAlbum()
     isModalOpen = false

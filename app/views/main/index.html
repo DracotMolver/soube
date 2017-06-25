@@ -123,9 +123,9 @@
         <!-- Listado de canciones -->
         <div id="list-songs"></div>
         <!-- Albun a tocar -->
-        <div id="album-to-play-container" class="grid-100 border-right border-color-dark-pink hide"> 
-            <div id="album-to-play" class="grid-50 grid-parent"></div>
-            <div id="desc-container-album"  class="grid-50 grid-parent">
+        <div id="album-to-play-container" class="grid-100 grid-parent border-right border-color-dark-pink hide">
+            <div id="album-to-play" class="grid-50 grid-parent mobile-grid-100"></div>
+            <div id="desc-container-album"  class="grid-50 grid-parent hide-on-mobile">
                 <div class="grid-100">
                     <p>
                         You have loaded an album. This is a temporary play list, which means that is not gonna be part of your main list when you close the music player.
@@ -133,7 +133,7 @@
                     </p>
                 </div>
                 <div class="grid-100" style="text-align:center;margin-top:3em">
-                    <button id="close-album">Close album</button>
+                    <button class="close-album">Close album</button>
                 </div>
             </div>
         </div>
@@ -170,10 +170,10 @@
     <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
         <div id="container-add-songs" class="container-config">
             <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
-                <div class="grid-70 grid-parent">
+                <div class="grid-70 grid-parent mobile-grid-70">
                     <div id="_addsongfolder"></div>
                 </div>
-                <div class="grid-30 grid-parent">
+                <div class="grid-30 grid-parent mobile-grid-30">
                     <div class="close"></div>
                 </div>
             </div>
@@ -197,55 +197,47 @@
     <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
         <div id="container-equalizer" class="container-config">
             <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
-                <div class="grid-70 grid-parent">
+                <div class="grid-70 grid-parent mobile-grid-70">
                     <div id="_equalizerSetting"></div>
                 </div>
-                <div class="grid-30 grid-parent">
+                <div class="grid-30 grid-parent mobile-grid-30">
                     <div class="close"></div>
                 </div>
             </div>
             <div class="grid-100 grid-parent" style="margin-bottom:4px">
-                <div class="grid-15 grid-parent">
+                <div class="grid-15 grid-parent mobile-grid-100">
                     <select id="eq-buttons">
                     </select>
                 </div>
-                <div id="add-new-eq" class="grid-85 grid-parent hide">
-                    <div class="grid-15">
+                <div id="add-new-eq" class="grid-85 grid-parent mobile-grid-100 hide">
+                    <div class="grid-15 grid-parent mobile-grid-40">
                         <button type="button" id="_neweq" disabled></button>
                     </div>
-                    <div class="grid-80">
-                        <input type="text" id="name-new-eq" />
+                    <div class="grid-80 grid-parent mobile-grid-60">
+                        <input type="text" id="name-new-eq" class="100%"/>
                     </div>
                 </div>
-                <div id="edit-new-eq" class="grid-85 hide">
-                    <div class="grid-20">
-                        <div class="grid-50">
+                <div id="edit-new-eq" class="grid-85 grid-parent mobile-grid-100 hide">
+                    <div class="grid-20 grid-parent mobile-grid-100">
+                        <div class="grid-50 mobile-grid-50">
                             <button type="button" id="_saveeq"></button>
                         </div>
-                        <div class="grid-50">
+                        <div class="grid-50 mobile-grid-50">
                             <button type="button" id="_canceleq"></button>
                         </div>
                     </div>
-                    <div class="grid-80">
+                    <div class="grid-80 grid-parent mobile-grid-100">
                         <input type="text" id="name-new-eq-edit" />
                     </div>
                 </div>
-                <div id="modify-new-eq" class="grid-85 hide">
-                    <div id="text-new-eq"></div>
-                    <div id="edit-name"></div>
-                    <div id="delete-name"></div>
+                <div id="modify-new-eq" class="grid-85 grid-parent mobile-grid-100 hide">
+                    <div id="text-new-eq" class="grid-33 mobile-grid-33"></div>
+                    <div id="edit-name" class="grid-33 mobile-grid-33"></div>
+                    <div id="delete-name" class="grid-33 mobile-grid-33"></div>
                 </div>
                 <div class="warning"></div>
             </div>
             <div id="equalizer-container">
-                <div class="grid-100 grid-parent">
-                    <div class="grid-50">
-                        <div class="hz">Hz</div>
-                    </div>
-                    <div class="grid-50">
-                        <div class="hz">KHz</div>
-                    </div>
-                </div>
                 <div class="grid-100 grid-parent">
                     <div class="range-container">
                         <div class="grid-100 grid-parent">
@@ -499,24 +491,24 @@
                 </div>
             </div>
             <div class="hide grid-100 grid-parent" id="idiom">
-                <div class="grid-33 mobile-grid-33">
+                <div class="grid-33 grid-parent mobile-grid-33">
                     <div class="idiom-item" id="es">Español</div>
                 </div>
-                <div class="grid-33 mobile-grid-33">
+                <div class="grid-33 grid-parent mobile-grid-33">
                     <div class="idiom-item" id="us">English</div>
                 </div>
-                <div class="grid-33 mobile-grid-33">
+                <div class="grid-33 grid-parent mobile-grid-33">
                     <div class="idiom-item" id="de">Deutsch</div>
                 </div>
             </div>
             <div class="hide grid-100 grid-parent" id="screen-size">
-                <div class="grid-50 mobile-grid-50">
+                <div class="grid-60 grid-parent mobile-grid-60">
                     <label for="enable-screen-size">
                         Show screen size option
                     </label>
                     <input id="enable-screen-size" type="checkbox">
                 </div>
-                <div id="on-top" class="grid-50 mobile-grid-50 hide">
+                <div id="on-top" class="grid-40 grid-parent mobile-grid-40 hide">
                     <label for="always-on-top">
                         Always on top
                     </label>

@@ -393,7 +393,7 @@ Controls.prototype.stopSong = function () {
   $('#artist').child().each(function (v) { $(v).text('') })
   $('#album').child().each(function (v) { $(v).text('') })
 
-  if (!isMovingForward)
+  // if (!isMovingForward)
   if (this.oldFile.length) {
     $(`#${this.oldFile.position}`)
       .child()
