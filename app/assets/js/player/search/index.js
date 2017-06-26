@@ -18,7 +18,10 @@ let list = []
 let oldSearchedValue = []
 let totalCountSlideMoved = 0
 let countSlidedMoved = 0
+let containerResult = 0
+let wrapperWidth = 0
 let totalResults = 0
+let countSlide = 0
 let countItem = 0
 let totalItem = 0
 let stepItem = 0
@@ -50,7 +53,8 @@ function getValuesFromList(value, listSongs) {
 function searchDesktopResults(list, btnActions, lang) {
   $('#wrapper-results').empty()
   $('#leftright').addClass('hide')
-  containerSlider.css(`width:${document.body.clientWidth - 100}px`)
+  console.log(containerResult)
+  containerSlider.css(`width:${containerResult}px`)
 
   if (list.length && list.constructor === Array) {
     // Show possibles results
@@ -62,7 +66,7 @@ function searchDesktopResults(list, btnActions, lang) {
       for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
         itemSlide.appendChild(
           $(parentSlideItem.cloneNode(false))
-            .text(`<div class="search-results">${list[countItem].title}</div>`)
+            .text(`<div class="search-results" title="${list[countItem].title}">${list[countItem].title}</div>`)
             .data({ position: list[countItem].position })
             .on({ click: btnActions }).get()
         )
@@ -82,7 +86,7 @@ function searchDesktopResults(list, btnActions, lang) {
       .empty()
       .append(slideContainer)
       .removeClass('no-searching-found')
-      .css(`width:${countSlide * (document.body.clientWidth - 100)}px`, true)
+      .css(`width:${countSlide * (containerResult)}px`, true)
 
     $('#leftright').removeClass('hide')
   } else if (list.constructor === Array) {
@@ -106,7 +110,6 @@ function searchDesktopResults(list, btnActions, lang) {
 }
 
 function animSlideSongs() {
-  containerResult = parseInt($('#container-results').cssValue('width'))
   wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
 
   if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
@@ -129,6 +132,9 @@ module.exports = {
   getValuesFromList,
   searchDesktopResults,
   animSlideSongs,
+  setWidthContainer: function (width) {
+    containerResult = width
+  },
   reset: function () {
     newList, list = []
     searchValue = oldSearchedValue = ''

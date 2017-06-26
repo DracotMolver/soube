@@ -135,9 +135,8 @@ _.prototype = {
   has: function (s) {
     return this.element.className.indexOf(s) !== -1
   },
-  cssValue: function () {
-    return v = this.element.style.cssText,
-      v.slice(0, v.length - 1).split(';').map(function (v) { return v.replace(/^[\w+\-]+\:\s+/g, '') })
+  cssValue: function (v) {
+    return window.getComputedStyle(this.element).getPropertyValue(v).replace(/em|px|%/g, '')
   }
 }
 

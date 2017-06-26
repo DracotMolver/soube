@@ -31,47 +31,41 @@ let clickedElement = null
 // ---- searching bar ----
 let isSearchDisplayed = false
 let isModalOpen = false
-let containerResult = 0
-let wrapperWidth = 0
-let countSlide = 0
 
 /** --------------------------------------- Functions --------------------------------------- **/
 // Check if there's a new version to download
-function getActualVersion() {
-  require('./version')(remote.net, remote.app.getVersion(), function (response) {
-    console.log(response)
-    if (response === 'major') {
-      $('#pop-up-container')
-        .removeClass('hide')
-        .child(0)
-        .addClass('pop-up-anim')
-        .text(`<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`)
+require('./version')(remote.net, remote.app.getVersion(), function (response) {
+  console.log(response)
+  // if (response === 'major') {
+  //   $('#pop-up-container')
+  //     .removeClass('hide')
+  //     .child(0)
+  //     .addClass('pop-up-anim')
+  //     .text(`<a href="http://soube.diegomolina.cl">${lang.alerts.newVersion}</a>`)
 
-      $(':a').on({
-        click: function (e) {
-          e.preventDefault()
-          shell.openExternal(this.href)
-        }
-      })
+  //   $(':a').on({
+  //     click: function (e) {
+  //       e.preventDefault()
+  //       shell.openExternal(this.href)
+  //     }
+  //   })
 
-      let tout = setTimeout(function () {
-        $('#pop-up-container')
-          .addClass('hide')
-          .child(0)
-          .removeClass('pop-up-anim')
+  //   let tout = setTimeout(function () {
+  //     $('#pop-up-container')
+  //       .addClass('hide')
+  //       .child(0)
+  //       .removeClass('pop-up-anim')
 
-        clearTimeout(tout)
-      }, 4500)
-    }
-  })
-}
+  //     clearTimeout(tout)
+  //   }, 4500)
+  // }
+})
 
 // Main function!!
 // Enable shuffle
 if (configFile.shuffle)
   $('#shuffle-icon').css('fill:var(--whiteColor)')
 
-getActualVersion()
 
 if (Object.keys(listSongs).length) {
   // Render the list of songs
@@ -246,7 +240,7 @@ $('#search')
     animationend: function () {
       this.focus()
     }
-  }).val('').get()
+  })
 
 $('#m-search')
   .on({
@@ -260,7 +254,7 @@ $('#m-search')
     animationend: function () {
       this.focus()
     }
-  }).val('').get()
+  })
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Close the searching bar and all the config modals
@@ -276,14 +270,16 @@ ipcRenderer.on('search-song', function () {
   if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player') {
     $('#search-container').removeClass('hide')
     $('#main-parent-container').css('-webkit-filter:blur(1px)')
+
     player.search.reset()
+    player.search.setWidthContainer(parseInt($('#container-results').cssValue('width')))
 
     if (document.body.clientWidth <= 768) {
       $('#m-search-wrapper').removeClass('hide')
-      $('#m-search').addClass('search-anim')
+      $('#m-search').addClass('search-anim').val('')
     } else {
       $('#search-wrapper').switchClass('hide', 'search-wrapper-anim')
-      $('#search').addClass('search-anim')
+      $('#search').addClass('search-anim').val('')
     }
 
     isSearchDisplayed = true

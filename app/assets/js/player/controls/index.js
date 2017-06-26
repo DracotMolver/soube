@@ -154,55 +154,61 @@ const Controls = function (from) {
   }
 
   // Clean the everything when the ended function is executed
-  this.stopTimer = function (_self) {
-    if (!_self.stopImmediately) {
-      if (!_self.isMovingForward) {
-        if (_self.playedFrom === 'album') {
-          $(`#al-${_self.oldFile.position}`).css('color:var(--blackColor)')
+  this.stopTimer = function () {
+    if (!this.stopImmediately) {
+      if (!this.isMovingForward) {
+        if (this.playedFrom === 'album') {
+          $(`#al-${this.oldFile.position}`).css('color:var(--blackColor)')
         } else {
-          $(`#${_self.oldFile.position}`)
+          $(`#${this.oldFile.position}`)
             .child()
             .each(function (v) {
               $(v).css('color:var(--blackColor)')
             })
         }
 
-        _self.isSongPlaying = false
-        _self.isNextAble = true
-        _self.millisecond = _self.second = _self.minute =
-          _self.percent = _self.lapse = 0
+        this.isSongPlaying = false
+        this.isNextAble = true
+        this.millisecond = this.second = this.minute =
+          this.percent = this.lapse = 0
 
-        cancelAnimationFrame(_self.interval)
+        cancelAnimationFrame(this.interval)
 
-        if (_self.isNextAble && !_self.isMovingForward && !_self.isplayedAtPosition)
-          _self.initSong()
-      } else if (_self.isMovingForward) {
+        if (this.isNextAble && !this.isMovingForward && !this.isplayedAtPosition)
+          this.initSong()
+      } else if (this.isMovingForward) {
         // It must be created a new AudioNode, because the stop function delete the node.
-        _self.setAudioBufferToPlay(_self.poolOfSongs[_self.oldFile.filename])
-        _self.isMovingForward = false
-        _self.isSongPlaying = true
+        this.setAudioBufferToPlay(this.poolOfSongs[this.oldFile.filename])
+        this.isMovingForward = false
+        this.isSongPlaying = true
       }
     }
   }
 
   // Show the data of the selected song
   this.dataSong = function (file) {
-    let _self = this
     $('#time-start').text('00:00')
     $('#progress-bar').css('width:0')
-    $('#song-title').data({ position: _self.file.position })
-    $('#song-title').child().each(function (v) { $(v).text(_self.file.title) })
-    $('#artist').child().each(function (v) { $(v).text(_self.file.artist) })
-    $('#album').child().each(function (v) { $(v).text(_self.file.album) })
+    $('#song-title').data({ position: file.position })
+    $('#song-title').child().each(function (v) { $(v).text(file.title) })
+    $('#artist').child().each(function (v) { $(v).text(file.artist) })
+    $('#album').child().each(function (v) { $(v).text(file.album) })
 
     if (notification !== null)
       notification.close()
 
-    notifi.body = `${nbspToSpace(_self.file.artist)} from ${nbspToSpace(_self.file.album)}`
-    notification = new Notification(nbspToSpace(_self.file.title), notifi)
+    notifi.body = `${nbspToSpace(file.artist)} from ${nbspToSpace(file.album)}`
+    notification = new Notification(nbspToSpace(file.title), notifi)
 
     // Set the name of the song in the top bar
     ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`)
+
+    // Change the color the actual song
+    this.playedFrom === 'album'
+      ? $(`#al-${file.position}`).css('color:var(--pinkColor)')
+      : $(`#${file.position}`).child().each(function (v) {
+        $(v).css('color:var(--pinkColor)')
+      })
   }
 
   this.setBufferInPool = function (filePath, buffer) {
@@ -223,7 +229,7 @@ const Controls = function (from) {
     let _self = this
     this.source = audioContext.createBufferSource()
     this.source.onended = function () {
-      _self.stopTimer(_self)
+      _self.stopTimer()
     }
     this.source.buffer = buffer
 
@@ -270,12 +276,6 @@ const Controls = function (from) {
     this.lapse = 100 / this.duration
 
     $('#time-end').text(`${formatDecimals(this.time.minute)}:${formatDecimals(this.time.second)}`)
-
-    // Change the color the actual song
-    this.playedFrom === 'album'
-      ? $(`#al-${this.file.position}`).css('color:var(--pinkColor)')
-      : $(`#${this.file.position}`).child().each(function (v) { $(v).css('color:var(--pinkColor)') })
-
     this.isSongPlaying = true
   }
 
@@ -303,24 +303,24 @@ const Controls = function (from) {
   }
 
   this.initSong = function () {
-    let _self = this
     animPlayAndPause('play')
 
     // Get the buffer of song if it is in the poolOfSongs
     // Note: The oldFile is an important variable, because is saved into
     // the prevSongsToPlay array, which has all the played songs.
-    if (_self.poolOfSongs[_self.file.filename]) {
+    if (this.poolOfSongs[this.file.filename]) {
       // play the song and save it as an old song (oldFile)
-      _self.setSong(_self.poolOfSongs[_self.file.filename])
-      _self.dataSong((_self.oldFile = _self.file))
-      _self.nextPossibleSong()
+      this.setSong(this.poolOfSongs[this.file.filename])
+      this.dataSong((this.oldFile = this.file))
+      this.nextPossibleSong()
     } else {
       // Get the song to play
-      _self.file = _self.getFile()
+      let _self = this
+      this.file = this.getFile()
 
       $('#main-parent-container').css('-webkit-filter:blur(1px)')
       $('#spinner').switchClass('hide', 'spinner-anim')
-      _self.getBuffer(_self.file.filename, function (data) {
+      this.getBuffer(this.file.filename, function (data) {
         if (!data) throw data
 
         // Save the buffer
@@ -393,7 +393,6 @@ Controls.prototype.stopSong = function () {
   $('#artist').child().each(function (v) { $(v).text('') })
   $('#album').child().each(function (v) { $(v).text('') })
 
-  // if (!isMovingForward)
   if (this.oldFile.length) {
     $(`#${this.oldFile.position}`)
       .child()

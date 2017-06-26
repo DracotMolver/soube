@@ -5,7 +5,7 @@
 /* --------------------------------- Functions --------------------------------- */
 // Check if there's a new version to download.
 // Will return 'major' if there's a new version or 'same' if it's the same version
-module.exports = function getActualVersion(net, version, fn) {
+module.exports = function (net, version, fn) {
   const request = new net.ClientRequest({
     method: 'GET',
     protocol: 'https:',
@@ -16,33 +16,33 @@ module.exports = function getActualVersion(net, version, fn) {
     }
   })
 
-  request.chunkedEncoding = true
+//   request.chunkedEncoding = true
   request.on('response', function (response) {
-    let data = ''
+    var data;
     response.on('data', function (chunk) {
       data += chunk
+    }).on('end', function () {
+      console.log('end', data)
     })
 
-    response.on('end', function () {
-      console.log('end')
-  //     const diff = function (b, c) {
-  //       let val = false
-  //       for (var i = 0, s = c.length; i < s; i++) {
-  //         if (parseInt(c[i]) > parseInt(b[i])) {
-  //           val = true
-  //           break
-  //         }
-  //       }
-
-  //       return val
-  //     }
-  //     console.log(diff)
-  //     fn(diff(version.split('.'), JSON.parse(data).tag_name.split('.')) ? 'major' : 'same')
-    })
-  })
-
-  request.on('error', function (error) {
-    console.error(error)
+//     // var data = ''
+//     // response.on('end', function () {
+//     // console.log(data)
+//     //     const diff = function (b, c) {
+//     //       let val = false
+//     //       for (var i = 0, s = c.length; i < s; i++) {
+//     //         if (parseInt(c[i]) > parseInt(b[i])) {
+//     //           val = true
+//     //           break
+//     //         }
+//     //       }
+//     //       return val
+//     //     }
+//     //     console.log(diff)
+//     //     fn(diff(version.split('.'), JSON.parse(data).tag_name.split('.')) ? 'major' : 'same')
+//     // })
+  }).on('error', function () {
+    console.log('error')
   })
 
   request.end()
