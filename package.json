@@ -44,7 +44,6 @@
       "maintainer": "Diego Molina Vera",
       "category": "Audio",
       "packageCategory": "sound",
-      "executableName ": "Soube",
       "synopsis": "A very simple music player. It's based on HTML, Javascript and CSS. You can play many music files such as MP3, WMV, WAV and OGG.",
       "target": [
         "rpm",
