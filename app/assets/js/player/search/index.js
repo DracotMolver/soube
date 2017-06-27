@@ -53,7 +53,6 @@ function getValuesFromList(value, listSongs) {
 function searchDesktopResults(list, btnActions, lang) {
   $('#wrapper-results').empty()
   $('#leftright').addClass('hide')
-  console.log(containerResult)
   containerSlider.css(`width:${containerResult}px`)
 
   if (list.length && list.constructor === Array) {

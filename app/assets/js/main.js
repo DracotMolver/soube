@@ -277,6 +277,7 @@ ipcRenderer.on('search-song', function () {
     if (document.body.clientWidth <= 768) {
       $('#m-search-wrapper').removeClass('hide')
       $('#m-search').addClass('search-anim').val('')
+      $('#wrapper-results').rmAttr('style')
     } else {
       $('#search-wrapper').switchClass('hide', 'search-wrapper-anim')
       $('#search').addClass('search-anim').val('')

@@ -3,8 +3,8 @@
         "songs": {
             "menu": "Archivos",
             "submenu": [
-                "Agregar nueva carpeta - [Cmd | Ctrl] + N",
-                "Reproducir canciones de una carpeta - [Cmd | Ctrl] + Shift + A",
+                "Agregar nueva carpeta - (Cmd|Ctrl) + N",
+                "Reproducir canciones de una carpeta - (Cmd|Ctrl) + Shift + A",
                 "Reproducir una canción"
             ]
         },
@@ -14,7 +14,7 @@
         "options": {
             "menu": "Preferencias",
             "submenu": [
-                "Configuraciones - [Cmd | Ctrl] + O",
+                "Configuraciones - (Cmd|Ctrl) + O",
                 "Documentación",
                 "Acerca de Soube"
             ]
@@ -24,8 +24,8 @@
         "songs": {
             "menu": "Files",
             "submenu": [
-                "Add a new folder - [Cmd | Ctrl] + N",
-                "Play songs from a folder - [Cmd | Ctrl] + Shift + A",
+                "Add a new folder - (Cmd|Ctrl) + N",
+                "Play songs from a folder - (Cmd|Ctrl) + Shift + A",
                 "Play a single song"
             ]
         },
@@ -35,7 +35,7 @@
         "options": {
             "menu": "Preferences",
             "submenu": [
-                "Configurations - [Cmd | Ctrl] + O",
+                "Configurations - (Cmd|Ctrl) + O",
                 "Documentation",
                 "About Soube"
             ]
