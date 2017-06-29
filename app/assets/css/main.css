@@ -1,3 +1,4 @@
+/* ============================ FONTS ============================ */
 @font-face {
   font-family: Muli-Bold;
   src: url(../files/Muli-Bold.ttf)
@@ -13,6 +14,7 @@
   src: url(../files/Muli-Regular.ttf)
 }
 
+/* ============================ RESET ============================ */
 div,
 h1,
 h2,
@@ -32,7 +34,7 @@ li {
   font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
   font-stretch: condensed;
   font-family: Muli-Regular, sans-serif;
-  text-shadow: 0 0 0 rgba(0, 0, 0, .2);
+  text-shadow: 0 0 0 rgba(0, 0, 0, .2); /* Emulate a soft font and good for make contrast */
   font-weight: 400;
   line-height: 1.35em;
   font-size: 100%;
@@ -558,15 +560,12 @@ button:hover {
   margin: 0 auto
 }
 
-#wrapper-results,
-.results {
-  height: 100%;
-  float: left
-}
-
-#wrapper-results {
-  transition: all .8s cubic-bezier(.41, .97, .74, .94)
-}
+/*#wrapper-results,
+.results {*/
+  /*transition: all .8s cubic-bezier(.41, .97, .74, .94);*/
+  /*height: 100%;*/
+  /*float: left*/
+/*}*/
 
 .no-searching-found {
   text-align: center;
@@ -870,13 +869,12 @@ button:hover {
 }
 
 #path-list {
-  background-color: var(--whiteColor);
   margin-top: 6px;
   border: 1px solid var(--lightGreyColor)
 }
 
-#path-list > ul
-#wrapper-results > ul {
+#path-list > ul {
+  background-color: var(--whiteColor);
   overflow: hidden;
   overflow-y: auto;
   padding: 0;
@@ -1090,6 +1088,19 @@ input[type="checkbox"] {
     margin: 0 auto;
     width: 490px;
     float: none
+  }
+
+   #wrapper-results > ul{
+    background-color: var(--whiteColor);
+    overflow: auto;
+    height: 174px;
+    border: solid 1px var(--lightGreyColor);
+    border-top: 0
+  }
+
+  #wrapper-results > ul > li{
+    padding: .438em;
+    cursor: pointer
   }
 
   #m-search {

@@ -29,6 +29,8 @@ let slide = 0
 
 let parentSlideItem = $(document.createElement('div')).addClass('grid-25 mobile-grid-25').get()
 let containerSlider = $(document.createElement('div')).addClass('results')
+let itemContainer = $(document.createElement('ul')).addClass('mobile-grid-100 grid-parent')
+let items = $(document.createElement('li')).get()
 let slideContainer = document.createDocumentFragment()
 let itemSlide = document.createDocumentFragment()
 
@@ -76,7 +78,6 @@ function searchDesktopResults(list, btnActions, lang) {
           .cloneNode(false))
           .append(itemSlide).get()
       )
-
       itemSlide = document.createDocumentFragment()
     }
 
@@ -123,13 +124,36 @@ function animSlideSongs() {
   }
 }
 
-function searchMobileResults(list, btnAction, lang) {
-  
+function searchMobileResults(list, btnActions, lang) {
+  if (list.length && list.constructor === Array) {
+    itemSlide = document.createDocumentFragment()
+    list.forEach(function (v) {
+      itemSlide.appendChild(
+        $(items.cloneNode(false))
+          .text(`<div class="" title="${v.title}">${v.title}</div>`)
+          .data({ position: v.position })
+          .on({ click: btnActions }).get()
+      )
+    })
+
+    itemContainer.empty().append(itemSlide)
+    $('#wrapper-results').empty().append(itemContainer)
+
+    // If the amout of items is more than 5, it should be display
+    // the scrollbar
+    if (list.length < 5)
+      itemContainer.css('height:auto')
+    else
+      itemContainer.rmAttr('style')
+  } else {
+
+  }
 }
 
 module.exports = {
   getValuesFromList,
   searchDesktopResults,
+  searchMobileResults,
   animSlideSongs,
   setWidthContainer: function (width) {
     containerResult = width
