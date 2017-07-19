@@ -158,12 +158,12 @@ const Controls = function (from) {
     if (!this.stopImmediately) {
       if (!this.isMovingForward) {
         if (this.playedFrom === 'album') {
-          $(`#al-${this.oldFile.position}`).css('color:var(--blackColor)')
+          $(`#al-${this.oldFile.position}`).css('color:var(--blackColor);text-decoration:none')
         } else {
           $(`#${this.oldFile.position}`)
             .child()
             .each(function (v) {
-              $(v).css('color:var(--blackColor)')
+              $(v).css('color:var(--blackColor);text-decoration:none')
             })
         }
 
@@ -205,9 +205,9 @@ const Controls = function (from) {
 
     // Change the color the actual song
     this.playedFrom === 'album'
-      ? $(`#al-${file.position}`).css('color:var(--pinkColor)')
+      ? $(`#al-${file.position}`).css('color:var(--pinkColor);text-decoration:underline')
       : $(`#${file.position}`).child().each(function (v) {
-        $(v).css('color:var(--pinkColor)')
+        $(v).css('color:var(--pinkColor);text-decoration:underline')
       })
   }
 

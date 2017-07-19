@@ -33,19 +33,13 @@ const _ = function () { }
 _.prototype = {
   element: null,
   switchClass: function (from, to) {
-    return el = this.element, el.className = el.className.replace(from, to), this
+    return el = this.element, el.classList.remove(from),el.classList.add(to), this
   },
   addClass: function (str) {
-    const changeClassName = function (e) {
-      if ((className = e.className.trim().split(' ')).indexOf(str) === -1) {
-        className.push(str)
-        e.className = className.join(' ').trim()
-      }
-    }
-
+    str = str.split(';').join(',')
     return this.element.length
-      ? this.element.forEach(function (v) { changeClassName(v) })
-      : changeClassName(this.element), this
+      ? this.element.forEach(function (v) { v.classList.add(str) })
+      : this.element.classList.add(str), this
   },
   rmChild: function (c) {
     return el = this.element, el.removeChild(Array.from(el.children).find(function (v) { return (new RegExp(c)).test(v.outerHTML) })), this
@@ -62,7 +56,7 @@ _.prototype = {
       ? (el.length ? el.forEach(function (e) { e.innerHTML = str }) : el.innerHTML = str, this) : el.textContent
   },
   removeClass: function (_class) {
-    el = this.element, el.className = el.className.replace(_class, '').trim()
+    el = this.element, el.classList.remove(_class)
     if (el.className === '') el.removeAttribute('class')
 
     return this
@@ -133,7 +127,7 @@ _.prototype = {
     return v === null ? this.element.value : (this.element.value = v, this)
   },
   has: function (s) {
-    return this.element.className.indexOf(s) !== -1
+    return this.element.classList.contains(s)
   },
   cssValue: function (v) {
     return window.getComputedStyle(this.element).getPropertyValue(v).replace(/em|px|%/g, '')
