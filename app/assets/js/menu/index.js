@@ -7,63 +7,63 @@
 const path = require('path')
 
 module.exports = function (app) {
-  /* --------------------------------- Modules --------------------------------- */
-  // ---- own ----
-  const configFile = require(`${app.getPath('userData')}/config.json`)
-  const menuLang = require(path.join(__dirname,'../', 'config', 'menuLang'))[configFile.lang]
+    /* --------------------------------- Modules --------------------------------- */
+    // ---- own ----
+    const configFile = require(`${app.getPath('userData')}/config.json`)
+    const menuLang = require(path.join(__dirname, '../', 'config', 'menuLang'))[configFile.lang]
 
-  return [
-    {
-      label: menuLang.songs.menu, // Archivos
-      submenu: [
+    return [
         {
-          label: menuLang.songs.submenu[0], // new folder
-          click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-add-folder')
-          }
+            label: menuLang.songs.menu, // Archivos
+            submenu: [
+                {
+                    label: menuLang.songs.submenu[0], // new folder
+                    click(menuItem, browserWindow, event) {
+                        browserWindow.webContents.send('menu-add-folder')
+                    }
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: menuLang.songs.submenu[1], // play an album from a folder
+                    click(menuItem, browserWindow, event) {
+                        browserWindow.webContents.send('menu-play-album')
+                    }
+                },
+                {
+                    label: menuLang.songs.submenu[2] // play a son - form a folder
+                }
+            ]
         },
         {
-          type: 'separator'
+            label: menuLang.eq.menu, // Equalizer
+            click(menuItem, browserWindow, event) {
+                browserWindow.webContents.send('menu-equalizer')
+            }
         },
         {
-          label: menuLang.songs.submenu[1], // play an album from a folder
-          click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-play-album')
-          }
-        },
-        {
-          label: menuLang.songs.submenu[2] // play a son - form a folder
+            label: menuLang.options.menu, // Preferences
+            submenu: [
+                {
+                    label: menuLang.options.submenu[0], // Configurations
+                    click(menuItem, browserWindow, event) {
+                        browserWindow.webContents.send('menu-configurations')
+                    }
+                },
+                {
+                    label: menuLang.options.submenu[1] // Documentation
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: menuLang.options.submenu[2], // About
+                    click(menuItem, browserWindow, event) {
+                        browserWindow.webContents.send('menu-about')
+                    }
+                }
+            ]
         }
-      ]
-    },
-    {
-      label: menuLang.eq.menu, // Equalizer
-      click(menuItem, browserWindow, event) {
-        browserWindow.webContents.send('menu-equalizer')
-      }
-    },
-    {
-      label: menuLang.options.menu, // Preferences
-      submenu: [
-        {
-          label: menuLang.options.submenu[0], // Configurations
-          click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-configurations')
-          }
-        },
-        {
-          label: menuLang.options.submenu[1] // Documentation
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: menuLang.options.submenu[2], // About
-          click(menuItem, browserWindow, event) {
-            browserWindow.webContents.send('menu-about')
-          }
-        }
-      ]
-    }
-  ]
+    ]
 }

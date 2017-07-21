@@ -13,7 +13,7 @@ const path = require('path')
 const songFolder = require(path.join(__dirname, '../', 'songFolder'))
 const {
   configFile,
-  langFile
+    langFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
 let player = require(path.join(__dirname, '../../../', 'player'))
 const $ = require(path.join(__dirname, '../../../', 'dom'))
@@ -23,42 +23,42 @@ const lang = langFile[configFile.lang]
 
 /* --------------------------------- Functions --------------------------------- */
 function loadFullAlbum() {
-  dialog.showOpenDialog({
-    title: 'Open an album',
-    properties: ['openDirectory']
-  }, function (parentFolder) {
-    if (parentFolder !== undefined)
-      getSongs(parentFolder[0])
-  })
+    dialog.showOpenDialog({
+        title: 'Open an album',
+        properties: ['openDirectory']
+    }, function (parentFolder) {
+        if (parentFolder !== undefined)
+            getSongs(parentFolder[0])
+    })
 }
 
 function getSongs(parentFolder) {
-  songFolder.addSongFolder(parentFolder, function () {
-    $('#album-to-play-container').switchClass('hide', 'album-to-play-anim')
-  }, function (i, maxLength) { // Iterator function
-    $('#album-to-play').text(
-      `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
-    )
+    songFolder.addSongFolder(parentFolder, function () {
+        $('#album-to-play-container').switchClass('hide', 'album-to-play-anim')
+    }, function (i, maxLength) { // Iterator function
+        $('#album-to-play').text(
+            `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
+        )
 
-    if (i === maxLength)
-      createView(parentFolder, songFolder.getAllSongs())
-  }, true)
+        if (i === maxLength)
+            createView(parentFolder, songFolder.getAllSongs())
+    }, true)
 }
 
 function createView(folder, songs) {
-  player.getMediaControl(player.mediaControl).stopSong()
-  player.mediaControl = 'album'
-  player.getMediaControl(player.mediaControl).setSongs(songs)
-  player.createAlbumView(player, folder, songs)
+    player.getMediaControl(player.mediaControl).stopSong()
+    player.mediaControl = 'album'
+    player.getMediaControl(player.mediaControl).setSongs(songs)
+    player.createAlbumView(player, folder, songs)
 }
 
 function closeAlbum() {
-  player.getMediaControl(player.mediaControl).stopSong()
-  player.mediaControl = 'player'
-  $('#album-to-play-container').switchClass('album-to-play-anim', 'hide')
+    player.getMediaControl(player.mediaControl).stopSong()
+    player.mediaControl = 'player'
+    $('#album-to-play-container').switchClass('album-to-play-anim', 'hide')
 }
 
 module.exports = Object.freeze({
-  loadFullAlbum,
-  closeAlbum
+    loadFullAlbum,
+    closeAlbum
 })

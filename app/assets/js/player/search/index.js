@@ -37,129 +37,129 @@ let itemSlide = document.createDocumentFragment()
 
 /* --------------------------------- Functions --------------------------------- */
 function getValuesFromList(value, listSongs) {
-  if ((searchValue = value.trim()) !== '') {
-    regex = new RegExp(searchValue.replace(/\s/g, '&nbsp;').trim(), 'ig')
+    if ((searchValue = value.trim()) !== '') {
+        regex = new RegExp(searchValue.replace(/\s/g, '&nbsp;').trim(), 'ig')
 
-    newList = (newList.length && searchValue.length > oldSearchedValue.length
-      ? newList
-      : oldSearchedValue = searchValue, listSongs).filter(function (v) {
-        return regex.test(v.title)
-      })
+        newList = (newList.length && searchValue.length > oldSearchedValue.length
+            ? newList
+            : oldSearchedValue = searchValue, listSongs).filter(function (v) {
+                return regex.test(v.title)
+            })
 
-    return newList
-  } else {
-    return false
-  }
+        return newList
+    } else {
+        return false
+    }
 }
 
 function searchDesktopResults(list, btnActions, lang) {
-  $('#wrapper-results').empty()
-  $('#leftright').addClass('hide')
-  containerSlider.css(`width:${containerResult}px`)
+    $('#wrapper-results').empty()
+    $('#leftright').addClass('hide')
+    containerSlider.css(`width:${containerResult}px`)
 
-  if (list.length && list.constructor === Array) {
-    // Show possibles results
-    totalResults = list.length
-    countSlide = slide = totalResults > 20 ? Math.round(totalResults / 20) : 1
-    countItem = countSlidedMoved = totalCountSlideMoved = 0
-    while (slide--) {
-      totalItem = totalResults - countItem > 20 ? 20 : totalResults - countItem
-      for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
-        itemSlide.appendChild(
-          $(parentSlideItem.cloneNode(false))
-            .text(`<div class="search-results" title="${list[countItem].title}">${list[countItem].title}</div>`)
-            .data({ position: list[countItem].position })
-            .on({ click: btnActions }).get()
-        )
-      }
+    if (list.length && list.constructor === Array) {
+        // Show possibles results
+        totalResults = list.length
+        countSlide = slide = totalResults > 20 ? Math.round(totalResults / 20) : 1
+        countItem = countSlidedMoved = totalCountSlideMoved = 0
+        while (slide--) {
+            totalItem = totalResults - countItem > 20 ? 20 : totalResults - countItem
+            for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
+                itemSlide.appendChild(
+                    $(parentSlideItem.cloneNode(false))
+                        .text(`<div class="search-results" title="${list[countItem].title}">${list[countItem].title}</div>`)
+                        .data({ position: list[countItem].position })
+                        .on({ click: btnActions }).get()
+                )
+            }
 
-      slideContainer.appendChild(
-        $(containerSlider.get()
-          .cloneNode(false))
-          .append(itemSlide).get()
-      )
-      itemSlide = document.createDocumentFragment()
+            slideContainer.appendChild(
+                $(containerSlider.get()
+                    .cloneNode(false))
+                    .append(itemSlide).get()
+            )
+            itemSlide = document.createDocumentFragment()
+        }
+
+        // Display all the filtered songs
+        $('#wrapper-results')
+            .empty()
+            .append(slideContainer)
+            .removeClass('no-searching-found')
+            .css(`width:${countSlide * (containerResult)}px`, true)
+
+        $('#leftright').removeClass('hide')
+    } else if (list.constructor === Array) {
+        // Clean if there's no coincidence
+        $('#wrapper-results')
+            .text(lang.alerts.searchingResults)
+            .addClass('no-searching-found')
+            .css(`width:${document.body.clientWidth - 100}px`, true)
+
+        $('#leftright').addClass('hide')
+    } else {
+        // Clean if there's no coincidence
+        $('#wrapper-results')
+            .text(lang.alerts.searchingResults)
+            .addClass('no-searching-found')
+            .css(`width:${document.body.clientWidth - 100}px`, true)
+        $('#leftright').addClass('hide')
     }
 
-    // Display all the filtered songs
-    $('#wrapper-results')
-      .empty()
-      .append(slideContainer)
-      .removeClass('no-searching-found')
-      .css(`width:${countSlide * (containerResult)}px`, true)
-
-    $('#leftright').removeClass('hide')
-  } else if (list.constructor === Array) {
-    // Clean if there's no coincidence
-    $('#wrapper-results')
-      .text(lang.alerts.searchingResults)
-      .addClass('no-searching-found')
-      .css(`width:${document.body.clientWidth - 100}px`, true)
-
-    $('#leftright').addClass('hide')
-  } else {
-    // Clean if there's no coincidence
-    $('#wrapper-results')
-      .text(lang.alerts.searchingResults)
-      .addClass('no-searching-found')
-      .css(`width:${document.body.clientWidth - 100}px`, true)
-    $('#leftright').addClass('hide')
-  }
-
-  slideContainer = document.createDocumentFragment()
+    slideContainer = document.createDocumentFragment()
 }
 
 function animSlideSongs() {
-  wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
+    wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
 
-  if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
-    ++countSlidedMoved
-  else if ($(this).data('direction') === 'left' && countSlidedMoved)
-    --countSlidedMoved
+    if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
+        ++countSlidedMoved
+    else if ($(this).data('direction') === 'left' && countSlidedMoved)
+        --countSlidedMoved
 
-  if (countSlidedMoved >= 0) {
-    $("#wrapper-results").css(
-      `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
-    );
-  }
+    if (countSlidedMoved >= 0) {
+        $("#wrapper-results").css(
+            `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
+        );
+    }
 }
 
 function searchMobileResults(list, btnActions, lang) {
-  if (list.length && list.constructor === Array) {
-    itemSlide = document.createDocumentFragment()
-    list.forEach(function (v) {
-      itemSlide.appendChild(
-        $(items.cloneNode(false))
-          .text(`<div class="" title="${v.title}">${v.title}</div>`)
-          .data({ position: v.position })
-          .on({ click: btnActions }).get()
-      )
-    })
+    if (list.length && list.constructor === Array) {
+        itemSlide = document.createDocumentFragment()
+        list.forEach(function (v) {
+            itemSlide.appendChild(
+                $(items.cloneNode(false))
+                    .text(`<div class="" title="${v.title}">${v.title}</div>`)
+                    .data({ position: v.position })
+                    .on({ click: btnActions }).get()
+            )
+        })
 
-    itemContainer.empty().append(itemSlide)
-    $('#wrapper-results').empty().append(itemContainer)
+        itemContainer.empty().append(itemSlide)
+        $('#wrapper-results').empty().append(itemContainer)
 
-    // If the amout of items is more than 5, it should be display
-    // the scrollbar
-    if (list.length < 5)
-      itemContainer.css('height:auto')
-    else
-      itemContainer.rmAttr('style')
-  } else {
+        // If the amout of items is more than 5, it should be display
+        // the scrollbar
+        if (list.length < 5)
+            itemContainer.css('height:auto')
+        else
+            itemContainer.rmAttr('style')
+    } else {
 
-  }
+    }
 }
 
 module.exports = {
-  getValuesFromList,
-  searchDesktopResults,
-  searchMobileResults,
-  animSlideSongs,
-  setWidthContainer: function (width) {
-    containerResult = width
-  },
-  reset: function () {
-    newList, list = []
-    searchValue = oldSearchedValue = ''
-  }
+    getValuesFromList,
+    searchDesktopResults,
+    searchMobileResults,
+    animSlideSongs,
+    setWidthContainer: function (width) {
+        containerResult = width
+    },
+    reset: function () {
+        newList, list = []
+        searchValue = oldSearchedValue = ''
+    }
 }

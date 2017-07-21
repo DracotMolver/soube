@@ -7,7 +7,7 @@
 // and play them.
 const {
   createAlbumView,
-  createView,
+    createView,
 } = require('./createView')
 const controls = require('./controls')
 const search = require('./search')
@@ -16,19 +16,19 @@ const search = require('./search')
 let usingMediaControl = 'player'
 
 let mediaControl = {
-  player: new controls('player'),
-  album: new controls('album')
+    player: new controls('player'),
+    album: new controls('album')
 }
 
 module.exports = Object.freeze({
-  setUsingMediaControl: function (media) {
-    usingMediaControl = media
-  },
-  mediaControl: usingMediaControl,
-  getMediaControl: function (media) {
-    return mediaControl[media]
-  },
-  createAlbumView,
-  createView,
-  search
+    setUsingMediaControl: function (media) {
+        usingMediaControl = media
+    },
+    mediaControl: usingMediaControl,
+    getMediaControl: function (media) {
+        return mediaControl[media]
+    },
+    createAlbumView,
+    createView,
+    search
 })

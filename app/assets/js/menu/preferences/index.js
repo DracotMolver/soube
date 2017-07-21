@@ -7,6 +7,6 @@ const configurations = require('./configurations')
 const about = require('./about')
 
 module.exports = Object.freeze({
-  configurations,
-  about
+    configurations,
+    about
 })

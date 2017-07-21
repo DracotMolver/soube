@@ -9,7 +9,7 @@ const folders = require('./folders')
 
 /** --------------------------------------- Variables --------------------------------------- **/
 module.exports = Object.freeze({
-  preferences,
-  equalizer,
-  folders
+    preferences,
+    equalizer,
+    folders
 })
