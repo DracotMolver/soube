@@ -22,6 +22,7 @@ const $ = require(path.join(__dirname, '../../../', 'dom'))
 /* --------------------------------- Variables --------------------------------- */
 let lang = langFile[configFile.lang]
 let option = null
+let resized = false
 
 /** --------------------------------------- Functions --------------------------------------- **/
 function displayOption() {
@@ -39,7 +40,7 @@ function displayOption() {
 // Change the size of the screen
 function enableScreenSize() {
     // enable the screen sizer
-    if (this.checked) {
+    if ((resized = this.checked)) {
         $('#on-top').removeClass('hide')
         $('#sizer-container')
             .removeClass('hide')
@@ -146,5 +147,8 @@ module.exports = Object.freeze({
     showConfigurations,
     close: function () {
         option = null
+    },
+    isResized: function () {
+        return resized
     }
 })

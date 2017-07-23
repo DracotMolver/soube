@@ -55,7 +55,7 @@ function getValuesFromList(value, listSongs) {
 function searchDesktopResults(list, btnActions, lang) {
     $('#wrapper-results').empty()
     $('#leftright').addClass('hide')
-    containerSlider.css(`width:${containerResult}px`)
+    containerSlider.css(`width:${containerResult}px;float:left`)
 
     if (list.length && list.constructor === Array) {
         // Show possibles results
@@ -118,7 +118,7 @@ function animSlideSongs() {
         --countSlidedMoved
 
     if (countSlidedMoved >= 0) {
-        $("#wrapper-results").css(
+        $('#wrapper-results').css(
             `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
         );
     }

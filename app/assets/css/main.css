@@ -47,7 +47,11 @@ ul {
   color: var(--blackColor)
 }
 
-h5 {
+h5,
+button,
+select,
+.album-title-song,
+#list-songs {
   font-size: .84em
 }
 
@@ -148,11 +152,7 @@ svg {
 }
 
 .parent-container-config {
-  padding-top: 45px;
-  position: absolute;
-  z-index: 3;
-  height: 100%;
-  top: 0
+  position: absolute
 }
 
 .container-config {
@@ -213,7 +213,6 @@ select {
   padding-left: .6em;
   box-sizing: border-box;
   box-shadow: 0 1px 3px 1px rgba(33, 33, 33, .14);
-  font-size: .888em;
   cursor: pointer
 }
 
@@ -279,7 +278,7 @@ button:hover {
 
 #updown {
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   right: 22px
 }
 
@@ -306,7 +305,6 @@ button:hover {
 }
 
 #play-pause {
-  text-align: center;
   margin: 1.25em .9em;
   height: 3em
 }
@@ -338,8 +336,8 @@ button:hover {
   animation: clickControlsEffect .3s ease-out forwards
 }
 
-#progress-bar,
-#total-progress-bar {
+#time + div,
+#time + div > div {
   height: .36em;
   cursor: e-resize
 }
@@ -363,24 +361,22 @@ button:hover {
   cursor: pointer
 }
 
-#song-title > h1 {
+h1 {
   font-family: Muli-Bold;
   font-size: 1.6em
 }
 
-#artist > h2 {
+h2 {
   font-size: 1.3em
 }
 
-#album > h3 {
+h3 {
   font-family: Muli-Light;
   font-size: 1em
 }
 
-#album > h3,
-#artist > h2,
-#song-title > h1,
 .search-results,
+#info-song,
 .m-search-results,
 .album-title-song,
 .song-info {
@@ -404,7 +400,7 @@ button:hover {
 
 #album > h3,
 #artist > h2,
-#song-title > h1,
+h1,
 #time-end,
 #time-start {
   color: var(--whiteColor)
@@ -433,7 +429,8 @@ button:hover {
 
 #album-title-album,
 #album-title-artist,
-.album-title-song {
+.album-title-song,
+.song-info {
   line-height: 2em
 }
 
@@ -446,14 +443,9 @@ button:hover {
   font-size: 1.2em
 }
 
-.album-title-song {
-  font-family: Muli-light;
-  font-size: .86em;
-  cursor: pointer
-}
-
 .album-title-song:hover {
-  background-color: var(--lightGreyColor)
+  background-color: var(--lightGreyColor);
+  cursor: pointer
 }
 
 #desc-container-album {
@@ -481,26 +473,18 @@ button:hover {
 }
 
 #list-songs {
-  overflow-y: scroll
+    overflow-y: scroll;
+    cursor: pointer
 }
 
 #path-list-container > li:nth-child(odd),
 .list-song-container:nth-child(odd) {
-  background-color: var(--lightGreyColor);
-  cursor: pointer
+    background-color: var(--lightGreyColor)
 }
 
 #path-list-container > li:nth-child(even),
 .list-song-container:nth-child(even) {
-  background-color: var(--whiteColor);
-  cursor: pointer
-}
-
-.song-info {
-  padding-left: .6em;
-  font-family: Muli-Regular;
-  line-height: 2em;
-  font-size: .87em
+    background-color: var(--whiteColor)
 }
 
 .miscelaneo {
@@ -518,7 +502,6 @@ button:hover {
 #search-container {
   background-color: rgba(245, 245, 245, .3);
   position: fixed;
-  z-index: 10;
   height: 100%;
   width: 100%;
   top: 0
@@ -555,17 +538,15 @@ button:hover {
 
 #container-results {
   overflow: hidden;
-  position: relative;
+  /* position: relative; */
   height: 370px;
   margin: 0 auto
 }
 
-/*#wrapper-results,
-.results {*/
-  /*transition: all .8s cubic-bezier(.41, .97, .74, .94);*/
-  /*height: 100%;*/
-  /*float: left*/
-/*}*/
+#wrapper-results {
+  transition: all .8s cubic-bezier(.41, .97, .74, .94);
+  height: 100%
+}
 
 .no-searching-found {
   text-align: center;
@@ -632,6 +613,7 @@ button:hover {
   opacity: 0;
   padding: 0 1em;
   width: auto;
+  z-index: 3;
   color: var(--whiteColor)
 }
 
@@ -850,18 +832,16 @@ button:hover {
 }
 
 .checked-colour::before {
-  border-style: solid;
-  border-color: var(--whiteColor);
-  border-right: 3px;
-  border-top: 3px;
-  box-sizing: border-box;
-  transform: rotate(-51deg);
-  position: absolute;
-  z-index: 9;
-  height: 8px;
-  width: 12px;
-  left: 2px;
-  top: 2px
+    border: solid 3px var(--whiteColor);
+    border-top: 0;
+    border-right: 0;
+    box-sizing: border-box;
+    transform: rotate(-51deg);
+    position: absolute;
+    height: 8px;
+    width: 12px;
+    left: 2px;
+    top: 2px
 }
 
 #container-add-songs {
@@ -1060,12 +1040,12 @@ input[type="checkbox"] {
     font-size: .86em
   }
 
-  #song-title > h1 {
+  h1 {
     font-size: 1.3em
   }
 
-  #artist > h2,
-  #album > h3 {
+  h2,
+  h3 {
     font-size: 1em
   }
 
@@ -1182,21 +1162,8 @@ input[type="checkbox"] {
 }
 
 @media only screen and (max-width: 650px) {
-  div,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  span,
-  input,
-  select,
-  button,
-  a,
-  ul,
-  li {
+  body,
+  html {
     font-size: 96.55555%
   }
 
@@ -1244,21 +1211,8 @@ input[type="checkbox"] {
 }
 
 @media only screen and (max-width: 480px) {
-  div,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  span,
-  input,
-  button,
-  select,
-  a,
-  ul,
-  li {
+  body,
+  html {
     font-size: 95.698%
   }
 
@@ -1272,4 +1226,10 @@ input[type="checkbox"] {
   #container-equalizer {
     width: 390px
   }
+}
+
+@media only screen and (max-width: 200px) {
+    #updown {
+        display: none
+    }
 }

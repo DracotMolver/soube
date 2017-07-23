@@ -267,7 +267,8 @@ ipcRenderer.on('close-search-song', function () {
 
 // Display the searching bar [ctrl + F]
 ipcRenderer.on('search-song', function () {
-    if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player') {
+    if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player' &&
+        !menu.preferences.configurations.isResized()) {
         $('#search-container').removeClass('hide')
         $('#main-parent-container').css('-webkit-filter:blur(1px)')
 
@@ -336,25 +337,31 @@ ipcRenderer.on('update-current-time', function () {
 
 // Display the windows to add a musics folders [Ctrl + N]
 ipcRenderer.on('menu-add-folder', function () {
-    isModalOpened(menu.folders.loadFolder)
+    if (!menu.preferences.configurations.isResized())
+        isModalOpened(menu.folders.loadFolder)
 })
 
 // Display the album to be played [Ctrl + Shift + A]
 ipcRenderer.on('menu-play-album', function () {
-    isModalOpened(menu.folders.albumFolder.loadFullAlbum)
+    if (!menu.preferences.configurations.isResized())
+        isModalOpened(menu.folders.albumFolder.loadFullAlbum)
 })
 
 // Display the equalizer [Ctrl + E]
 ipcRenderer.on('menu-equalizer', function () {
-    isModalOpened(menu.equalizer.showEqualizer)
+    if (!menu.preferences.configurations.isResized())
+        isModalOpened(menu.equalizer.showEqualizer)
 })
 
 // Display the configurations panel [Ctrl + O]
 ipcRenderer.on('menu-configurations', function () {
-    isModalOpened(menu.preferences.configurations.showConfigurations)
+    console.log(menu.preferences.configurations.isResized())
+    if (!menu.preferences.configurations.isResized())
+        isModalOpened(menu.preferences.configurations.showConfigurations)
 })
 
 // Display info about Soube
 ipcRenderer.on('menu-about', function () {
-    isModalOpened(menu.preferences.about)
+    if (!menu.preferences.configurations.isResized())
+        isModalOpened(menu.preferences.about)
 })

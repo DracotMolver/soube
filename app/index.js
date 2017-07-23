@@ -183,9 +183,9 @@ ipcMain.on('change-screen-size', function (e, a) {
     mainWindow.setMaximizable(false)
     mainWindow.setResizable(false)
     mainWindow.setContentBounds({
-        x: a.width - 200,
+        x: a.width - 300,
         y: a.height - 90,
-        width: 200,
+        width: 300,
         height: 90
     })
 })
