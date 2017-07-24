@@ -40,7 +40,7 @@ function displayOption() {
 // Change the size of the screen
 function enableScreenSize() {
     // enable the screen sizer
-    if ((resized = this.checked)) {
+    if (this.checked) {
         $('#on-top').removeClass('hide')
         $('#sizer-container')
             .removeClass('hide')
@@ -52,7 +52,16 @@ function enableScreenSize() {
 }
 
 function resizeScreen() {
-    ipcRenderer.send('change-screen-size', electron.screen.getPrimaryDisplay().workArea);
+    $('#sizer-container')
+        .child(0)
+        .attr({
+            src: path.join(__dirname, '../../../../', 'img', (resized = !resized) ? 'sizer02.svg' : 'sizer.svg')
+        })
+
+    ipcRenderer.send('change-screen-size', {
+        screenResize: resized,
+        area: electron.screen.getPrimaryDisplay().workArea
+    });
 }
 
 // Change the idiom of the app
@@ -99,7 +108,7 @@ function choosenColor() {
     $(`#${configFile.theme}`).empty()
     configFile.theme = this.id
     editFile('config', configFile)
-    editFile(path.join(__dirname, '../../../../css', 'color.css'), coloursFile[this.id], true)
+    editFile(path.join(__dirname, '../../../../', 'css', 'color.css'), coloursFile[this.id], true)
     $(`#${this.id}`).text('<div class="checked-colour"></div>')
 }
 
@@ -140,8 +149,8 @@ $('.colour').on({ click: choosenColor })
 
 $('#config-options').on({ click: displayOption })
 
-$('#sizer-container').child(0).on({click: resizeScreen })
-
+$('#sizer-container').child(0)
+    .on({ click: resizeScreen })
 
 module.exports = Object.freeze({
     showConfigurations,

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="26.14094mm"
+   height="24.303518mm"
+   viewBox="0 0 26.14094 24.303518"
+   version="1.1"
+   id="svg8">
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs12" />
+  <g
+     style="fill:#ffffff"
+     id="layer1"
+     transform="rotate(180,57.85087,81.014049)">
+    <g
+       id="g4516"
+       style="fill:#ffffff">
+      <path
+         id="rect3680"
+         d="m 91.5608,139.72458 v 18.8179 h 6.599188 v -1.49887 h -4.961676 v -15.68172 h 15.681528 v 4.42991 h 1.49887 v -6.06722 z"
+         style="opacity:0.98999999;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.07905471;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <g
+         transform="translate(-0.54806543,-1.3796131)"
+         id="g4509"
+         style="fill:#ffffff">
+        <g
+           id="g4502"
+           transform="matrix(0.54037586,0,0,0.48930651,49.113775,80.164276)"
+           style="fill:#ffffff">
+          <path
+             id="rect3684"
+             d="m 118.48629,141.98391 v 21.84218 H 98.221615 v 2.21183 h 22.316765 v -24.05401 z"
+             style="opacity:0.98999999;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32856143;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        </g>
+        <rect
+           style="opacity:0.98999999;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4504"
+           width="19.84375"
+           height="0.94494045"
+           x="172.57869"
+           y="41.181629"
+           transform="rotate(42.509064)" />
+      </g>
+    </g>
+  </g>
+</svg>

@@ -6,15 +6,16 @@ process.env.NODE_ENV = 'production'
 
 /* --------------------------------- Modules --------------------------------- */
 // ---- Electron ----
+const electron = require('electron')
 const {
-  globalShortcut,
+    globalShortcut,
     BrowserWindow,
     nativeImage,
     ipcMain,
     dialog,
     Menu,
     app
-} = require('electron')
+} = electron
 
 // ---- Node ----
 const path = require('path')
@@ -68,8 +69,9 @@ function ready(evt) {
     // }
 
     // fs.writeFileSync(path.join(app.getPath('userData'), 'hola.txt'), JSON.stringify(x), { flag: 'w' });
+    // Get the screen size
+    const workArea = electron.screen.getPrimaryDisplay().workArea
 
-    // Player
     mainWindow = new BrowserWindow({
         backgroundColor: '#fff',
         autoHideMenuBar: true,
@@ -78,10 +80,10 @@ function ready(evt) {
         hasShadow: false,
         minHeight: 600,
         minWidth: 440,
-        height: 680,
+        height: workArea.height,
         center: true,
         title: 'Soube',
-        width: 1240,
+        width: workArea.width,
         show: false,
         icon: makeIcon('icon.png'),
         webPreferences: {
@@ -178,16 +180,22 @@ ipcMain.on('restart-app', function () {
 
 // Change the size of the window
 ipcMain.on('change-screen-size', function (e, a) {
-    mainWindow.setMenuBarVisibility(false)
-    mainWindow.setMinimumSize(200, 90)
-    mainWindow.setMaximizable(false)
-    mainWindow.setResizable(false)
+    mainWindow.setMenuBarVisibility(!a.screenResize)
+    mainWindow.setMinimumSize(a.screenResize ? 300 : 440, a.screenResize ? 90 : 600)
+    mainWindow.setMaximizable(!a.screenResize)
+    mainWindow.setResizable(!a.screenResize)
     mainWindow.setContentBounds({
-        x: a.width - 300,
-        y: a.height - 90,
-        width: 300,
-        height: 90
+        x: a.screenResize ? a.area.width - 300 : a.area.x,
+        y: a.screenResize ? a.area.height - 90 : a.area.y,
+        width: a.screenResize ? 300 : a.area.width,
+        height: a.screenResize ? 90 : a.area.height
     })
+
+    if (!a.screenResize) mainWindow.center()
+})
+
+ipcMain.on('set-on-top', function (e, a) {
+    mainWindow.setAlwaysOnTop(a.onTop, 'normal')
 })
 
 // Unregister and register specific shortkey

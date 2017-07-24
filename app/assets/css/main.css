@@ -239,8 +239,8 @@ button:hover {
 
 ::-webkit-scrollbar {
   background-color: var(--darkGreyColor);
-  height: .8em;
-  width: .8em
+  height: .86em;
+  width: .86cem
 }
 
 ::-webkit-scrollbar-thumb,
@@ -1228,8 +1228,12 @@ input[type="checkbox"] {
   }
 }
 
-@media only screen and (max-width: 200px) {
+@media only screen and (max-width: 320px) {
     #updown {
         display: none
+    }
+
+    #top-nav {
+        height: 90px
     }
 }
