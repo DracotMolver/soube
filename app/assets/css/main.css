@@ -937,14 +937,14 @@ input[type="checkbox"] {
 }
 
 #sizer-container {
-    cursor: pointer;
   position: relative;
   height: 85px;
   width: 100%
 }
 
 #sizer-container > img {
-  position: absolute;
+    position: absolute;
+  cursor: pointer;
   height: 18px;
   margin: auto;
   width: 18px
