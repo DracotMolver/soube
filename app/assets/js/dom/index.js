@@ -131,6 +131,14 @@ _.prototype = {
     },
     cssValue: function (v) {
         return window.getComputedStyle(this.element).getPropertyValue(v).replace(/em|px|%/g, '')
+    },
+    objSize: function (obj) {
+        let i
+        let size = 0
+
+        for (i in obj)++size
+
+        return size
     }
 }
 
@@ -139,7 +147,9 @@ function $(e) {
 
     if (inPool(e)) {
         return obj.element = getElementInPool(e), obj
-    } else {
+    } else if(/^@/.test(e)) {
+        return obj[e.slice(1)]
+    }else {
         if ((r = /^(\.|#|:)/.exec(e))) {
             key = e
             switch (r[0]) {
