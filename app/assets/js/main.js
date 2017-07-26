@@ -1,8 +1,12 @@
 /**
+ * @module assets/main.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * This file acts like a main controller
  */
-/** --------------------------------------- Modules --------------------------------------- **/
+ /** --------------------------------------- Modules --------------------------------------- **/
 // ---- Electron ----
 const {
   ipcRenderer,
@@ -32,10 +36,23 @@ let clickedElement = null
 let isSearchDisplayed = false
 let isModalOpen = false
 
+// Enable shuffle
+if (configFile.shuffle)
+    $('#shuffle-icon').css('fill:var(--whiteColor)')
+
+if ($('@objSize')(listSongs)) { // When the songs are loaded
+    player.createView(player)
+    // checkNewSongs();
+} else { // When there'are no song to load
+    $('#list-songs')
+        .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
+        .on({ click: menu.folders.loadFolder })
+}
+
 /** --------------------------------------- Functions --------------------------------------- **/
-// Check if there's a new version to download
-require('./version')(remote.net, remote.app.getVersion(), function (response) {
-    console.log(response)
+// TODO: Check if there's a new version to download
+// require('./version')(remote.net, remote.app.getVersion(), function (response) {
+//     console.log(response)
     // if (response === 'major') {
     //   $('#pop-up-container')
     //     .removeClass('hide')
@@ -59,25 +76,11 @@ require('./version')(remote.net, remote.app.getVersion(), function (response) {
     //     clearTimeout(tout)
     //   }, 4500)
     // }
-})
+// })
 
-// Main function!!
-// Enable shuffle
-if (configFile.shuffle)
-    $('#shuffle-icon').css('fill:var(--whiteColor)')
-
-
-if (Object.keys(listSongs).length) {
-    // Render the list of songs
-    player.createView(player)
-    // checkNewSongs();
-} else {
-    $('#list-songs')
-        .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
-        .on({ click: menu.folders.loadFolder })
-}
-
-// Hide the searching bar
+/**
+ * Hides the searching bar
+ */
 function hideSearchInputData() {
     $('#search-container').addClass('hide')
     $('#m-search-wrapper').addClass('hide')
@@ -89,13 +92,15 @@ function hideSearchInputData() {
     isSearchDisplayed = false
 }
 
-// Play the song clicked in the search results
+/**
+ * Play the song that has been clicked in the result of searching
+ */
 function btnPlaySong() {
     hideSearchInputData()
     player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'))
 }
 
-// Check if there are new songs to be added
+// TODO: Check if there are new songs to be added
 // function checkNewSongs() {
 // //   player.addSongFolder(configFile.musicFolder, () => {
 // //     // show pop-up
@@ -111,7 +116,10 @@ function btnPlaySong() {
 // //   });
 // }
 
-// Actions over the play, netxt, prev and shuffle buttons
+/**
+ * Actions over the play, netxt, prev and shuffle buttons
+ * @param {string} action - Which button of the player is being clicked. values:[paly-pause|next|prev|shuffle]
+ */
 function btnActions(action) {
     switch (action) {
         case 'play-pause': player.getMediaControl(player.mediaControl).playSong(); break
@@ -121,7 +129,9 @@ function btnActions(action) {
     }
 }
 
-// Add animations to the play, next, prev and shuffle buttons
+/**
+ * Add animations to the play, next, prev and shuffle buttons
+ */
 function clickBtnControls() {
     listSongs.length ? btnActions(this.id)
         : ipcRenderer.send('display-msg', {
@@ -132,7 +142,10 @@ function clickBtnControls() {
         })
 }
 
-// Scroll the list of songs using the arrows
+/**
+ * Scrolling the list of songs using the arrows.
+ * @param {string} direction - The array which is being clicked. values:[up|down]
+ */
 function scrollAnimation(direction) {
     const animation = function () {
         $('#list-songs').get().scrollTop += direction === 'up' ? -(3.6) : 3.6
@@ -142,7 +155,9 @@ function scrollAnimation(direction) {
     interval = requestAnimationFrame(animation)
 }
 
-// Close the config modals
+/**
+ * Closes the config modals
+ */
 function closeModals() {
     ipcRenderer.send('open-specific-key', 'Space')
     $('#main-parent-container').rmAttr('style')
@@ -152,7 +167,7 @@ function closeModals() {
             $(v).child(0).removeClass('container-config-anim')
         })
 
-    // Clean all the used variables by the config panels
+    // Clean all the used variables for all the config modals
     menu.folders.close()
     menu.equalizer.close()
     menu.preferences.configurations.close()
@@ -160,10 +175,13 @@ function closeModals() {
     isModalOpen = false
 }
 
-// Display anay modal from the menu option
+/**
+ * Displays any modal from the option menu.
+ * @param {object} fc - The function to execute and displays the correspond modal
+ */
 function isModalOpened(fc) {
     if (!isModalOpen) {
-        fc()
+        fc() 
         $('.warning').text('')
         isModalOpen = true
         ipcRenderer.send('close-specific-key', {
@@ -174,12 +192,13 @@ function isModalOpened(fc) {
 }
 
 /** --------------------------------------- Events --------------------------------------- **/
+// TODO: this must be change for a better option
 window.onresize = function () {
     if (isSearchDisplayed)
         hideSearchInputData()
 }
 
-// Scrolling the list of songs when click on the song title
+// Takes you till the song is playing now
 $('#song-title').on({
     click: function () {
         if (this.children[0].textContent.trim() !== '') {
@@ -192,8 +211,7 @@ $('#song-title').on({
     }
 })
 
-// Scrolling the list of songs like it was the barscroll
-// of the browser
+// Scrolling the list of songs like it was the scrollbar of the browser
 $('.arrow-updown').on({
     mousedown: function () {
         scrollAnimation($(this).data('direction'))
@@ -206,14 +224,14 @@ $('.arrow-updown').on({
 // Actions over the buttons play, next, prev and shuffle
 $('.btn-controls').on({ click: clickBtnControls })
 
-// Step forward or step back the song using the progress bar
+// Step forward or step back the song using the progress bar (time lapse)
 $('#total-progress-bar').on({
     click: function (e) {
         player.getMediaControl(player.mediaControl).moveForward(e, this)
     }
 })
 
-// Close the album player
+// Closes the album player
 $('.close-album').on({
     click: function () {
         menu.folders.albumFolder.closeAlbum()
@@ -222,42 +240,47 @@ $('.close-album').on({
     }
 })
 
-// Will move the slide of searched songs [Desktop]
+// Slides of searched songs [Desktop]
 $('.arrow-leftright').on({ click: player.search.animSlideSongs })
 
 // Event to close all the config modals
 $('.close').on({ click: closeModals })
 
-$('#search')
-    .on({
-        keyup: function () {
-            player.search.searchDesktopResults(
-                player.search.getValuesFromList(this.value, listSongs),
-                btnPlaySong,
-                lang
-            )
-        },
-        animationend: function () {
-            this.focus()
-        }
-    })
+// The width value to decide if it is mobile or not, are on the unsemantic.css framework
+// The searching bar when the width of the windows is for desktop device
+$('#search').on({
+    keyup: function () {
+        player.search.searchDesktopResults(
+            player.search.getValuesFromList(this.value, listSongs),
+            btnPlaySong,
+            lang
+        )
+    },
+    animationend: function () {
+        this.focus()
+    }
+})
 
-$('#m-search')
-    .on({
-        keyup: function () {
-            player.search.searchMobileResults(
-                player.search.getValuesFromList(this.value, listSongs),
-                btnPlaySong,
-                lang
-            )
-        },
-        animationend: function () {
-            this.focus()
-        }
-    })
+// The searching bar when the width of the windows is for mobile device
+$('#m-search').on({
+    keyup: function () {
+        player.search.searchMobileResults(
+            player.search.getValuesFromList(this.value, listSongs),
+            btnPlaySong,
+            lang
+        )
+    },
+    animationend: function () { this.focus() }
+})
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
+// Somes of the functions below check if the screen has been resized (small one)
+// if so, none of the modal can't be display
+
 // Close the searching bar and all the config modals
+// Just one modal can be displays at a time
+// This function is also for the searching bar, which is not a modal
+// but is displayed like any modal.
 ipcRenderer.on('close-search-song', function () {
     if (isSearchDisplayed)
         hideSearchInputData() // Searching bar
@@ -265,8 +288,10 @@ ipcRenderer.on('close-search-song', function () {
     closeModals()
 })
 
-// Display the searching bar [ctrl + F]
+// Displays the searching bar [ctrl + F]
 ipcRenderer.on('search-song', function () {
+    // Is only displayed when any modal hasn't been displayed and you are playing
+    // your list of songs and you are not using the album player option.
     if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player' &&
         !menu.preferences.configurations.isResized()) {
         $('#search-container').removeClass('hide')
@@ -285,6 +310,9 @@ ipcRenderer.on('search-song', function () {
         }
 
         isSearchDisplayed = true
+        // We unregister the Space keyword beacuase it's register to do play.
+        // But the space bar is needed to type white spaces and not to play,
+        // because we are searching.
         ipcRenderer.send('close-specific-key', {
             keyName: 'Space',
             keepUnregistered: true
@@ -292,12 +320,12 @@ ipcRenderer.on('search-song', function () {
     }
 })
 
-// Send the values from the equalizer to the AudioContext [player/controls/index.js]
+// Sends the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', function (e, a) {
     player.getMediaControl(player.mediaControl).setFilterVal(...a)
 })
 
-// Play or pause song [Space]
+// Plays or pause song [Space]
 ipcRenderer.on('play-and-pause-song', function () {
     if (listSongs.length && $('#spinner').has('hide'))
         player.getMediaControl(player.mediaControl).playSong()
@@ -305,13 +333,13 @@ ipcRenderer.on('play-and-pause-song', function () {
 
 // Next song [Ctrl + Right]
 ipcRenderer.on('next-song', function () {
-    if (listSongs.length)
+    if (listSongs.length && $('#spinner').has('hide'))
         player.getMediaControl(player.mediaControl).nextSong()
 })
 
 // Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', function () {
-    if (listSongs.length)
+    if (listSongs.length && $('#spinner').has('hide'))
         player.getMediaControl(player.mediaControl).prevSong()
 })
 
@@ -325,7 +353,7 @@ ipcRenderer.on('thumbar-controls', function (e, a) {
     btnActions(a)
 })
 
-// Because the requestAnimationFrame is single thread in the window
+// Because the requestAnimationFrame is single thread in the window,
 // We must save the actual time lapse when we minimized the Window
 // and then recalculate the time when we unminimized the window.
 ipcRenderer.on('save-current-time', function () {
@@ -335,32 +363,32 @@ ipcRenderer.on('update-current-time', function () {
     player.getMediaControl(player.mediaControl).updateCurrentTime()
 })
 
-// Display the windows to add a musics folders [Ctrl + N]
+// Displays the windows to add a musics folders [Ctrl + N]
 ipcRenderer.on('menu-add-folder', function () {
     if (!menu.preferences.configurations.isResized())
         isModalOpened(menu.folders.loadFolder)
 })
 
-// Display the album to be played [Ctrl + Shift + A]
+// Displaya the album to be played [Ctrl + Shift + A]
 ipcRenderer.on('menu-play-album', function () {
     if (!menu.preferences.configurations.isResized())
         isModalOpened(menu.folders.albumFolder.loadFullAlbum)
 })
 
-// Display the equalizer [Ctrl + E]
+// Displays the equalizer [Ctrl + E]
 ipcRenderer.on('menu-equalizer', function () {
     if (!menu.preferences.configurations.isResized())
         isModalOpened(menu.equalizer.showEqualizer)
 })
 
-// Display the configurations panel [Ctrl + O]
+// Displays the configurations [Ctrl + O]
 ipcRenderer.on('menu-configurations', function () {
     console.log(menu.preferences.configurations.isResized())
     if (!menu.preferences.configurations.isResized())
         isModalOpened(menu.preferences.configurations.showConfigurations)
 })
 
-// Display info about Soube
+// Displays info about Soube
 ipcRenderer.on('menu-about', function () {
     if (!menu.preferences.configurations.isResized())
         isModalOpened(menu.preferences.about)

@@ -25,6 +25,10 @@ let option = null
 let resized = false
 
 /** --------------------------------------- Functions --------------------------------------- **/
+// Display all the options
+// - Theme colours
+// - Idiom
+// - Screen size
 function displayOption() {
     $('#theme-colours').addClass('hide')
     $('#idiom').addClass('hide')
@@ -62,6 +66,10 @@ function resizeScreen() {
         screenResize: resized,
         area: electron.screen.getPrimaryDisplay().workArea
     });
+}
+
+function alwaysOnTop() {
+    ipcRenderer.send('set-on-top', this.checked)
 }
 
 // Change the idiom of the app
@@ -142,22 +150,25 @@ function showConfigurations() {
 // Screen size
 $('#enable-screen-size').on({ change: enableScreenSize })
 
+// Screen always on top
+$('#always-on-top').on({ change: alwaysOnTop })
+
 // idiom
 $('.idiom-item').on({ click: choosenIdiom })
 
+// Clorous
 $('.colour').on({ click: choosenColor })
 
+// Display all the options
 $('#config-options').on({ click: displayOption })
 
-$('#sizer-container').child(0)
-    .on({ click: resizeScreen })
+// Action on the image to resize the screen
+$('#sizer-container').child(0).on({ click: resizeScreen })
 
 module.exports = Object.freeze({
     showConfigurations,
     close: function () {
         option = null
     },
-    isResized: function () {
-        return resized
-    }
+    isResized: resized
 })

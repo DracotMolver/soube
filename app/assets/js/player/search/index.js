@@ -1,8 +1,9 @@
 /**
+ * @module assets/player/search/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
  */
-
 /** --------------------------------------- Modules --------------------------------------- **/
 // ---- Electron ----
 const path = require('path')
@@ -34,12 +35,21 @@ let items = $(document.createElement('li')).get()
 let slideContainer = document.createDocumentFragment()
 let itemSlide = document.createDocumentFragment()
 
-
 /* --------------------------------- Functions --------------------------------- */
+/**
+ * 
+ * 
+ * @param {string} value - The song you are searching for
+ * @param {object} listSongs - List of songs titles
+ * @return {array|boolean} - It will return false if there's no match
+ */
 function getValuesFromList(value, listSongs) {
     if ((searchValue = value.trim()) !== '') {
         regex = new RegExp(searchValue.replace(/\s/g, '&nbsp;').trim(), 'ig')
 
+        // From the second searched time, it will save all in a newList variable
+        // this variable will has less values than the first one.
+        // TODO: This could be saved and done using locationStorage
         newList = (newList.length && searchValue.length > oldSearchedValue.length
             ? newList
             : oldSearchedValue = searchValue, listSongs).filter(function (v) {
@@ -155,9 +165,15 @@ module.exports = {
     searchDesktopResults,
     searchMobileResults,
     animSlideSongs,
+    /**
+     * @param {number} width - the width of the searching container results
+     */
     setWidthContainer: function (width) {
         containerResult = width
     },
+    /**
+     * Resets all the values
+     */
     reset: function () {
         newList, list = []
         searchValue = oldSearchedValue = ''

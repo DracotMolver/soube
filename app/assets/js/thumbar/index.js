@@ -1,11 +1,20 @@
 /**
+ * @module assets/thumbar/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
  */
 /* --------------------------------- Functions --------------------------------- */
-// Will create the thumbar with three buttons:
-// Play/Pause, Prev, Next.
-// [Windows only!]
+/**
+ * [Windows] Will create the thumbar with three buttons:
+ * - Play/Pause
+ * - Prev
+ * - Next
+ * @param {BrowserWindow} win - BrowserWindows instance which will has the thumbar buttons
+ * @param {any} [imgs={}] - Icons of the thumbar buttons
+ * @return {object} - Returns an object with two arrays which constains the states of the buttons
+ *                    [next|play|shuffle] - [next|pause|shuffle]
+ */
 module.exports = function makeThumBar(win, imgs = {}) {
     const play = {
         icon: imgs.play,
