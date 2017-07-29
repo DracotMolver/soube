@@ -177,11 +177,11 @@ function closeModals() {
 
 /**
  * Displays any modal from the option menu.
- * @param {object} fc - The function to execute and displays the correspond modal
+ * @param {function} fn - The function to execute and displays the correspond modal
  */
-function isModalOpened(fc) {
+function isModalOpened(fn) {
     if (!isModalOpen) {
-        fc() 
+        fn() 
         $('.warning').text('')
         isModalOpen = true
         ipcRenderer.send('close-specific-key', {
@@ -266,8 +266,7 @@ $('#m-search').on({
     keyup: function () {
         player.search.searchMobileResults(
             player.search.getValuesFromList(this.value, listSongs),
-            btnPlaySong,
-            lang
+            btnPlaySong
         )
     },
     animationend: function () { this.focus() }

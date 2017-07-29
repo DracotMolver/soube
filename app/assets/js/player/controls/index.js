@@ -1,6 +1,8 @@
 /**
+ * @module assets/player/control/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 12016 - 2017
+ * @license MIT License
  */
 /* --------------------------------------- Modules ------------------------------------------- */
 // ---- Node ----
@@ -250,7 +252,7 @@ const Controls = function (from) {
     }
 
     // Get the buffer of the song
-    this.getBuffer = function (_path, fnc) {
+    this.getBuffer = function (_path, fn) {
         // Read the file
         xhtr.open('GET', url.format({
             pathname: _path,
@@ -259,9 +261,9 @@ const Controls = function (from) {
         xhtr.responseType = 'arraybuffer'
         xhtr.onload = function () {
             audioContext.decodeAudioData(xhtr.response).then(function (buffer) {
-                fnc(buffer)
+                fn(buffer)
             }, function (reason) {
-                fnc(false)
+                fn(false)
             })
         }
         xhtr.send(null)

@@ -62,9 +62,17 @@ function getValuesFromList(value, listSongs) {
     }
 }
 
+/**
+ * This function will only be executed on deskto and tablet size (>720px of width).
+ * It will display the list of songs that match with the given text
+ * @param {array} list - List of songs
+ * @param {function} btnActions - Function to execute when a song is clicked
+ * @param {string} lang - Language to use to display some text
+ */
 function searchDesktopResults(list, btnActions, lang) {
     $('#wrapper-results').empty()
     $('#leftright').addClass('hide')
+    // Update always the width of the container
     containerSlider.css(`width:${containerResult}px;float:left`)
 
     if (list.length && list.constructor === Array) {
@@ -74,6 +82,7 @@ function searchDesktopResults(list, btnActions, lang) {
         countItem = countSlidedMoved = totalCountSlideMoved = 0
         while (slide--) {
             totalItem = totalResults - countItem > 20 ? 20 : totalResults - countItem
+            // Wrap all the items
             for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
                 itemSlide.appendChild(
                     $(parentSlideItem.cloneNode(false))
@@ -83,6 +92,8 @@ function searchDesktopResults(list, btnActions, lang) {
                 )
             }
 
+            // Appends all the items to its own parent
+            // 20 items per parent slider
             slideContainer.appendChild(
                 $(containerSlider.get()
                     .cloneNode(false))
@@ -119,6 +130,9 @@ function searchDesktopResults(list, btnActions, lang) {
     slideContainer = document.createDocumentFragment()
 }
 
+/**
+ * Slide animation (CSS 3)
+ */
 function animSlideSongs() {
     wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
 
@@ -134,7 +148,13 @@ function animSlideSongs() {
     }
 }
 
-function searchMobileResults(list, btnActions, lang) {
+/**
+ * This function will only be executed on mobile size (720px of width).
+ * It will display the list of songs that match with the given text
+ * @param {array} list - List of songs
+ * @param {function} btnActions - Function to execute when a song is clicked
+ */
+function searchMobileResults(list, btnActions) {
     if (list.length && list.constructor === Array) {
         itemSlide = document.createDocumentFragment()
         list.forEach(function (v) {
@@ -151,12 +171,7 @@ function searchMobileResults(list, btnActions, lang) {
 
         // If the amout of items is more than 5, it should be display
         // the scrollbar
-        if (list.length < 5)
-            itemContainer.css('height:auto')
-        else
-            itemContainer.rmAttr('style')
-    } else {
-
+        list.length < 5 ? itemContainer.css('height:auto') : itemContainer.rmAttr('style')
     }
 }
 
