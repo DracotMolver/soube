@@ -3,6 +3,9 @@
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
+ *
+ * This class is only for Windows. It's creates the thumbar buttons, just to play
+ * music as it was the music media player.
  */
 /* --------------------------------- Functions --------------------------------- */
 /**

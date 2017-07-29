@@ -170,5 +170,7 @@ module.exports = Object.freeze({
     close: function () {
         option = null
     },
-    isResized: resized
+    isResized: function () {
+        return resized
+    }
 })

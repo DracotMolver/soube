@@ -3,10 +3,13 @@
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
+ *
+ * Here it's creates the BrowserWindow, defines the shortkeys and some ipcMain
+ * to communicate the render process with the main process.
+ * This is executed before calling the render processing.
  */
-process.env.NODE_ENV = 'production'
-
 /* --------------------------------- Modules --------------------------------- */
+process.env.NODE_ENV = 'production'
 // ---- Electron ----
 const electron = require('electron')
 const {
@@ -155,7 +158,7 @@ function ready(evt) {
     }).on('focus', registreKeys)
         .on('blur', function () {
             // Needed because the globalShortcut.register take the whole OS.
-            // So if you you are gonna use space without unregister the keyword,
+            // So if we are gonna use space without unregister the keyword,
             // it won't work for any app or propouse
             globalShortcut.unregisterAll()
         }).on('minimize', function () {
@@ -163,7 +166,7 @@ function ready(evt) {
             mainWindow.webContents.send('save-current-time')
         }).on('restore', function () {
             // For the time lapse (progress of the song)
-            // This happens also when you reload the website (refresh)
+            // This happens also when we reload the view (refresh)
             mainWindow.webContents.send('update-current-time')
         })
 
@@ -185,7 +188,7 @@ function ready(evt) {
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
 app.on('window-all-closed', function () {
-    // Close the app no matter which OS are you using
+    // Close the app, it doesn't matter which OS we are using
     app.quit()
 })
 app.disableHardwareAcceleration() // This avoid, for example, animations and the shadows.

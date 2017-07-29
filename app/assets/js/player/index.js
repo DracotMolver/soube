@@ -4,7 +4,11 @@
  * @copyright 2016 - 2017
  * @license MIT License
  *
- * Basically this will load all the needed modules to make the music player works
+ * Basically, this will load all the needed modules to make the music player works.
+ * Modules:
+ * - Controls - All the events over the play, next, prev, shuffle, time lapse, time progress, etc.
+ * - Search - Search the songs we are searching for
+ * - Createview - Creates and renders the HTML for the list of sons as it or for the album view.
  */
 /** --------------------------------------- Modules --------------------------------------- **/
 const {
@@ -24,7 +28,7 @@ let mediaControl = {
 
 module.exports = Object.freeze({
     /**
-     * @param {string} media - Indicate which option you are gonna use,
+     * @param {string} media - Indicates which option we are gonna use,
      *                         the music player as such or to play just an album. values:[player|album]
      */
     setUsingMediaControl: function (media) {
@@ -33,7 +37,9 @@ module.exports = Object.freeze({
     /**
      * @return {string} - Returns [player|album]
      */
-    mediaControl: usingMediaControl,
+    mediaControl: function () {
+        return usingMediaControl
+    },
     /**
      * return the instance of the player as a list player or an album player
      * @param {string} media - The actual media player: value[mediaControl]

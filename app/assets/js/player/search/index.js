@@ -3,6 +3,9 @@
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
+ *
+ * It will search for the song we are searching for. It creates the buttons to play the song
+ * and also the slider with its animation.
  */
 /** --------------------------------------- Modules --------------------------------------- **/
 // ---- Electron ----
@@ -39,7 +42,7 @@ let itemSlide = document.createDocumentFragment()
 /**
  * 
  * 
- * @param {string} value - The song you are searching for
+ * @param {string} value - The song we are searching for
  * @param {object} listSongs - List of songs titles
  * @return {array|boolean} - It will return false if there's no match
  */

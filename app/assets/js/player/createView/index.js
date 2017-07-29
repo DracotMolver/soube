@@ -3,6 +3,14 @@
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
+ *
+ * It will create the HTML and render it. The HTML by default is the music player and the view
+ * is displays as a list view. Also, it creates the album view.
+ *
+ * The list view is to play all the songs avialable from the folder we've loaded.
+ * The album view is to play only the songs from the album (one) we've loaded.
+ * The album view is not going to live for ever, by the other hand the list view is by default.
+ * So it's always created and rendered
  */
 /** --------------------------------------- Modules --------------------------------------- **/
 // ---- Electron ----
@@ -21,7 +29,7 @@ const $ = require(path.join(__dirname, '../../', 'dom'))
 function playSong(_t, player) {
     // It's needed to be passed the player instance because we need to know
     // if the song is gonna be played from the list of song or from the album view
-    player.getMediaControl(player.mediaControl).playSongAtPosition($(_t).data('position'))
+    player.getMediaControl(player.mediaControl()).playSongAtPosition($(_t).data('position'))
 }
 
 /**

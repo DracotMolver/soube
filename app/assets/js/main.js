@@ -4,7 +4,8 @@
  * @copyright 2016 - 2017
  * @license MIT License
  *
- * This file acts like a main controller
+ * This file acts like a main controller where we define events over the music player
+ * and displays all the needed stuffs to makes it work.
  */
  /** --------------------------------------- Modules --------------------------------------- **/
 // ---- Electron ----
@@ -97,7 +98,7 @@ function hideSearchInputData() {
  */
 function btnPlaySong() {
     hideSearchInputData()
-    player.getMediaControl(player.mediaControl).playSongAtPosition($(this).data('position'))
+    player.getMediaControl(player.mediaControl()).playSongAtPosition($(this).data('position'))
 }
 
 // TODO: Check if there are new songs to be added
@@ -122,10 +123,10 @@ function btnPlaySong() {
  */
 function btnActions(action) {
     switch (action) {
-        case 'play-pause': player.getMediaControl(player.mediaControl).playSong(); break
-        case 'next': player.getMediaControl(player.mediaControl).nextSong(); break
-        case 'prev': player.getMediaControl(player.mediaControl).prevSong(); break
-        case 'shuffle': player.getMediaControl(player.mediaControl).setShuffle(); break
+        case 'play-pause': player.getMediaControl(player.mediaControl()).playSong(); break
+        case 'next': player.getMediaControl(player.mediaControl()).nextSong(); break
+        case 'prev': player.getMediaControl(player.mediaControl()).prevSong(); break
+        case 'shuffle': player.getMediaControl(player.mediaControl()).setShuffle(); break
     }
 }
 
@@ -198,7 +199,7 @@ window.onresize = function () {
         hideSearchInputData()
 }
 
-// Takes you till the song is playing now
+// Takes us till the song is playing now
 $('#song-title').on({
     click: function () {
         if (this.children[0].textContent.trim() !== '') {
@@ -227,7 +228,7 @@ $('.btn-controls').on({ click: clickBtnControls })
 // Step forward or step back the song using the progress bar (time lapse)
 $('#total-progress-bar').on({
     click: function (e) {
-        player.getMediaControl(player.mediaControl).moveForward(e, this)
+        player.getMediaControl(player.mediaControl()).moveForward(e, this)
     }
 })
 
@@ -272,6 +273,10 @@ $('#m-search').on({
     animationend: function () { this.focus() }
 })
 
+// $('#toggle-buttons').on({
+//     click:
+// })
+
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Somes of the functions below check if the screen has been resized (small one)
 // if so, none of the modal can't be display
@@ -289,9 +294,9 @@ ipcRenderer.on('close-search-song', function () {
 
 // Displays the searching bar [ctrl + F]
 ipcRenderer.on('search-song', function () {
-    // Is only displayed when any modal hasn't been displayed and you are playing
-    // your list of songs and you are not using the album player option.
-    if (!isSearchDisplayed && !isModalOpen && player.mediaControl === 'player' &&
+    // It is only displayed when any modal hasn't been displayed and we are playing
+    // our list of songs and we are not using the album view option.
+    if (!isSearchDisplayed && !isModalOpen && player.mediaControl() === 'player' &&
         !menu.preferences.configurations.isResized()) {
         $('#search-container').removeClass('hide')
         $('#main-parent-container').css('-webkit-filter:blur(1px)')
@@ -321,30 +326,30 @@ ipcRenderer.on('search-song', function () {
 
 // Sends the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', function (e, a) {
-    player.getMediaControl(player.mediaControl).setFilterVal(...a)
+    player.getMediaControl(player.mediaControl()).setFilterVal(...a)
 })
 
 // Plays or pause song [Space]
 ipcRenderer.on('play-and-pause-song', function () {
     if (listSongs.length && $('#spinner').has('hide'))
-        player.getMediaControl(player.mediaControl).playSong()
+        player.getMediaControl(player.mediaControl()).playSong()
 })
 
 // Next song [Ctrl + Right]
 ipcRenderer.on('next-song', function () {
     if (listSongs.length && $('#spinner').has('hide'))
-        player.getMediaControl(player.mediaControl).nextSong()
+        player.getMediaControl(player.mediaControl()).nextSong()
 })
 
 // Prev song [Ctrl + Left]
 ipcRenderer.on('prev-song', function () {
     if (listSongs.length && $('#spinner').has('hide'))
-        player.getMediaControl(player.mediaControl).prevSong()
+        player.getMediaControl(player.mediaControl()).prevSong()
 })
 
 // Shuffle [Ctrl + Down]
 ipcRenderer.on('shuffle', function () {
-    player.getMediaControl(player.mediaControl).setShuffle()
+    player.getMediaControl(player.mediaControl()).setShuffle()
 })
 
 // ThumbarButtons [Windows]
@@ -356,10 +361,10 @@ ipcRenderer.on('thumbar-controls', function (e, a) {
 // We must save the actual time lapse when we minimized the Window
 // and then recalculate the time when we unminimized the window.
 ipcRenderer.on('save-current-time', function () {
-    player.getMediaControl(player.mediaControl).saveCurrentTime()
+    player.getMediaControl(player.mediaControl()).saveCurrentTime()
 })
 ipcRenderer.on('update-current-time', function () {
-    player.getMediaControl(player.mediaControl).updateCurrentTime()
+    player.getMediaControl(player.mediaControl()).updateCurrentTime()
 })
 
 // Displays the windows to add a musics folders [Ctrl + N]

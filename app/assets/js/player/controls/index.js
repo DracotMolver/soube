@@ -283,7 +283,7 @@ const Controls = function (from) {
 
     // Load the "possible" next song.
     // This is for a faster loading.
-    // It doesn't work if you click on a song of the list
+    // It doesn't work if we click on a song of the list
     // or by choosing one by the filtered song list using
     // the searching bar
     this.nextPossibleSong = function () {
@@ -418,6 +418,15 @@ Controls.prototype.stopSong = function () {
     this.time = {}
 }
 
+/**
+ * Plays the next song.
+ * There's a difference between play the next song with the shuffle enabled (random)
+ * or disabled.
+ * When we have enabled the shuffle, the next song function behavior it could be like this:
+ *
+ * song playing -> * 1 next song [song played saved] -> prev song [play the song saved]
+ * -> next song [is not the next song * 1, it's a new one]
+ */
 Controls.prototype.nextSong = function () {
     // oldFile saved
     if (this.isNextAble) {
@@ -426,6 +435,9 @@ Controls.prototype.nextSong = function () {
     }
 }
 
+/**
+ * Plays the songs that has been played before
+ */
 Controls.prototype.prevSong = function () {
     if (this.prevSongsToPlay.length && this.isNextAble) {
         this.position = (this.file = this.prevSongsToPlay.pop()).position
@@ -433,12 +445,15 @@ Controls.prototype.prevSong = function () {
     }
 }
 
+/**
+ * Play the actual song. If we don't choose a song, it's gonna be played one randomly.
+ */
 Controls.prototype.playSong = function () {
     this.stopImmediately = false
-    if (!this.isSongPlaying && audioContext.state === 'running') { // Reproducción única
+    if (!this.isSongPlaying && audioContext.state === 'running') { // First time played
         this.position = Math.floor(Math.random() * this.listSongs.length)
         this.initSong()
-    } else if (this.isSongPlaying && audioContext.state === 'running') { // Ya reproduciendo
+    } else if (this.isSongPlaying && audioContext.state === 'running') { // Already playing
         let _self = this
         audioContext.suspend().then(function () {
             _self.isSongPlaying = false
@@ -446,7 +461,7 @@ Controls.prototype.playSong = function () {
 
         cancelAnimationFrame(this.interval)
         animPlayAndPause('pause')
-    } else if (!this.isSongPlaying && audioContext.state === 'suspended') { // Pausado
+    } else if (!this.isSongPlaying && audioContext.state === 'suspended') { // Paused
         this.isSongPlaying = true
         this.startTimer()
         audioContext.resume()
@@ -454,6 +469,9 @@ Controls.prototype.playSong = function () {
     }
 }
 
+/**
+ * Sets the shuffle actions. This is saved, it isn't lost when we close the app
+ */
 Controls.prototype.setShuffle = function () {
     if (this.file) this.file = ''
 
@@ -464,26 +482,36 @@ Controls.prototype.setShuffle = function () {
     editFile('config', configFile)
 }
 
+/**
+ * Sets the list of the loaded songs.
+ * It's needed here because we must to use the data to display the info
+ * @param {object} _songs - The list of loaded songs
+ */
 Controls.prototype.setSongs = function (_songs) {
     this.listSongs = _songs
 }
 
-
+/**
+ * It will update the time of the song, the song itself and the progress bar
+ * @param {event} event - The event of the progressbar (onclick)
+ * @param {object} element- The `this` object to get the data from the element
+ */
 Controls.prototype.moveForward = function (event, element) {
     if (this.isSongPlaying) {
         this.isMovingForward = true
+        // Cancel the time lapse
         cancelAnimationFrame(this.interval)
 
         this.forward = this.duration * event.offsetX / element.clientWidth
         this.time = timeParse(this.forward)
-
         // Calculate the new time
         this.minute = this.time.minute
         this.second = this.time.second
         this.millisecond = this.forward * 100
-
         // Calculate the percent of the progress bar
         this.percent = this.forward * (100 / this.duration)
+
+        // The audioNode must be stopped and then it must be started again
         this.source.stop(0)
     }
 }

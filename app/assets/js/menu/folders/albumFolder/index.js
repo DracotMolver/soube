@@ -46,15 +46,15 @@ function getSongs(parentFolder) {
 }
 
 function createView(folder, songs) {
-    player.getMediaControl(player.mediaControl).stopSong()
-    player.mediaControl = 'album'
-    player.getMediaControl(player.mediaControl).setSongs(songs)
+    player.getMediaControl(player.mediaControl()).stopSong()
+    player.setUsingMediaControl('album')
+    player.getMediaControl(player.mediaControl()).setSongs(songs)
     player.createAlbumView(player, folder, songs)
 }
 
 function closeAlbum() {
-    player.getMediaControl(player.mediaControl).stopSong()
-    player.mediaControl = 'player'
+    player.getMediaControl(player.mediaControl()).stopSong()
+    player.setUsingMediaControl('player')
     $('#album-to-play-container').switchClass('album-to-play-anim', 'hide')
 }
 
