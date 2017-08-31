@@ -3,6 +3,11 @@
  * @author Diego Alberto Molina Vera
  * @copyright 12016 - 2017
  * @license MIT License
+ *
+ * This class is one of the most important one.
+ * Here all the data extracted is use to play the song.
+ * Also here everything related to the song such as time, progress bar and data attributes
+ * are executed here, and many other things that affect to the song.
  */
 /* --------------------------------------- Modules ------------------------------------------- */
 // ---- Node ----
@@ -14,7 +19,7 @@ const ipcRenderer = require('electron').ipcRenderer
 
 // ---- Own ----
 let {
-  configFile,
+    configFile,
     listSongs,
     langFile,
     editFile
@@ -39,10 +44,10 @@ const hrz = [
     50, 100, 156, 220, 311, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000
 ]
 
-// Cords to generate the animation
+// Cords to generate the animation.
 // Google Chrome is throwing the next warning message:
 // ** SVG's SMIL animations (<animate>, <set>, etc.) are deprecated and
-// will be removed. Please use CSS animations or Web animations instead.**-
+// will be removed. Please use CSS animations or Web animations instead.**
 // For now all works fine. :P
 const anim = {
     from: [
@@ -57,10 +62,23 @@ const anim = {
 
 
 /* --------------------------------------- Functions ------------------------------------------- */
+/**
+ * Format the numbers from 0 to 9 adding it 0 in front of it
+ * 
+ * @param {number} decimal - Number from 0 - 9
+ * @returns {number} - It will returna formated number
+ */
 function formatDecimals(decimal) {
     return decimal > 9 ? `${decimal}` : `0${decimal}`
 }
 
+/**
+ * It will return the value of minutes and seconds extracted from
+ * the milliseconds of the song.
+ * 
+ * @param {number} _time - milliseconds to parse as minutes/seconds
+ * @returns {object} - Will return an object containing the minutes and seconds
+ */
 function timeParse(_time) {
     _time = (_time / secondU).toString()
 
@@ -70,6 +88,13 @@ function timeParse(_time) {
     }
 }
 
+/**
+ * It will anamiate the play/pause button
+ * 
+ * @param {string} animName - Actual state. It could be:
+ * - play
+ * - pause
+ */
 function animPlayAndPause(animName) {
     if (process.platform === 'win32') {
         animName === 'play'
@@ -85,6 +110,12 @@ function animPlayAndPause(animName) {
     })
 }
 
+/**
+ * Convert from nbsp to white space
+ * 
+ * @param {string} - Text where to replace nbsp with white space
+ * @returns {string} - New text with white spaces
+ */
 function nbspToSpace(value) {
     return value.replace(/&nbsp;/g, ' ')
 }
@@ -121,22 +152,26 @@ const Controls = function (from) {
     this.interval = null
     this.time = {}
 
-    /** --------------------------------------- Functions --------------------------------------- **/
-    let f = null
-    let db = configFile.equalizer[configFile.equalizerConfig]
-        .map(function (v) {
-            return v ? (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)) : 0
-        })
-
+    // let f = null
+    const db = configFile.equalizer[configFile.equalizerConfig]
+    .map(function (v) {
+        return v ? (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)) : 0
+    })
+    
     this.filter = hrz.map(function (v, i) {
         return f = audioContext.createBiquadFilter(),
-            f.type = 'peaking',
-            f.frequency.value = v,
-            f.Q.value = 0,
-            f.gain.value = db[i], f
+        f.type = 'peaking',
+        f.frequency.value = v,
+        f.Q.value = 0,
+        f.gain.value = db[i], f
     })
 
-    // ELapse of time
+    /** --------------------------------------- Functions --------------------------------------- **/
+    /**
+     * Animate the time lapse of the song.
+     * It makes use of the requestAnimationFrame which has better
+     * performance. It suppose do not interfere with the UI, givin almost 60fps.
+     */
     this.startTimer = function () {
         let _self = this
         const update = function () {
@@ -155,7 +190,9 @@ const Controls = function (from) {
         _self.interval = requestAnimationFrame(update)
     }
 
-    // Clean the everything when the ended function is executed
+    /**
+     * Clean the everything when the ended function is executed
+     */
     this.stopTimer = function () {
         if (!this.stopImmediately) {
             if (!this.isMovingForward) {
@@ -172,7 +209,7 @@ const Controls = function (from) {
                 this.isSongPlaying = false
                 this.isNextAble = true
                 this.millisecond = this.second = this.minute =
-                    this.percent = this.lapse = 0
+                this.percent = this.lapse = 0
 
                 cancelAnimationFrame(this.interval)
 
@@ -188,6 +225,11 @@ const Controls = function (from) {
     }
 
     // Show the data of the selected song
+    /**
+     * It will display the data of the songs such as title, artis, album and time.
+     *
+     * @param {object} file - Object that contains some song data
+     */
     this.dataSong = function (file) {
         $('#time-start').text('00:00')
         $('#progress-bar').css('width:0')
@@ -213,10 +255,22 @@ const Controls = function (from) {
             })
     }
 
+    /**
+     * It will save all the arraybuffers already extracted form a song file
+     * so, doing this we save time, because we read the data instead of the file
+     * to extract the data.
+     *
+     * @param {string} filePath - Name of the file
+     * @param {arraybuffer} buffer - Arraybuffer that contains chunks of data
+     */
     this.setBufferInPool = function (filePath, buffer) {
         if (!this.poolOfSongs[filePath]) this.poolOfSongs[filePath] = buffer
     }
 
+    /**
+     * It will return info about the song
+     * @return {array} - Array containing the title, artis and album.
+     */
     this.getFile = function () {
         return this.listSongs[
             this.isplayedAtPosition ? this.position
@@ -225,8 +279,11 @@ const Controls = function (from) {
                 )]
     }
 
-    // This function recive the buffer of the song to be played
-    // Also start the song
+    /**
+     * The arraybuffer is passed to play the song
+     *
+     * @param {arraybuffer} buffer - The buffer that contains chunk of data
+     */
     this.setAudioBufferToPlay = function (buffer) {
         let _self = this
         this.source = audioContext.createBufferSource()
@@ -241,6 +298,14 @@ const Controls = function (from) {
             return p.connect(c)
         }).connect(audioContext.destination)
 
+        // The buffer gives us the song's duration.
+        // The duration is in seconds, therefore we need to convert it to minutes
+        this.time = timeParse((this.duration = buffer.duration))
+        this.lapse = 100 / this.duration
+
+        $('#time-end').text(`${formatDecimals(this.time.minute)}:${formatDecimals(this.time.second)}`)
+        this.isSongPlaying = true
+
         this.startTimer()
         this.isMovingForward ? this.source.start(0, this.forward) : this.source.start(0)
         this.lastCurrentTime = audioContext.currentTime
@@ -251,7 +316,12 @@ const Controls = function (from) {
         }
     }
 
-    // Get the buffer of the song
+    /**
+     * Get the buffer of the song using xhttpRequest
+     *
+     * @param {string} _path - Full path where the song FILE is.
+     * @param {function} fn - Callback to recive the arraybuffer.
+     */
     this.getBuffer = function (_path, fn) {
         // Read the file
         xhtr.open('GET', url.format({
@@ -269,23 +339,11 @@ const Controls = function (from) {
         xhtr.send(null)
     }
 
-    this.setSong = function (buffer) {
-        this.setAudioBufferToPlay(buffer)
-
-        // The buffer gives us the song's duration.
-        // The duration is in seconds, therefore we need to convert it to minutes
-        this.time = timeParse((this.duration = buffer.duration))
-        this.lapse = 100 / this.duration
-
-        $('#time-end').text(`${formatDecimals(this.time.minute)}:${formatDecimals(this.time.second)}`)
-        this.isSongPlaying = true
-    }
-
-    // Load the "possible" next song.
-    // This is for a faster loading.
-    // It doesn't work if we click on a song of the list
-    // or by choosing one by the filtered song list using
-    // the searching bar
+    /**
+     * Load the "possible" next song. This is for a faster loading.
+     * It doesn't work if we click on a new song from the list
+     * or by choosing one from the filtered song list using the searching bar
+     */
     this.nextPossibleSong = function () {
         let _self = this
         _self.isplayedAtPosition = false
@@ -312,7 +370,7 @@ const Controls = function (from) {
         // the prevSongsToPlay array, which has all the played songs.
         if (this.poolOfSongs[this.file.filename]) {
             // play the song and save it as an old song (oldFile)
-            this.setSong(this.poolOfSongs[this.file.filename])
+            this.setAudioBufferToPlay(this.poolOfSongs[this.file.filename])
             this.dataSong((this.oldFile = this.file))
             this.nextPossibleSong()
         } else {
@@ -329,7 +387,7 @@ const Controls = function (from) {
                 _self.setBufferInPool(_self.file.filename, data)
 
                 // Play the song and save it as old (oldFile)
-                _self.setSong(data)
+                _self.setAudioBufferToPlay(data)
                 _self.dataSong((_self.oldFile = _self.file))
                 _self.nextPossibleSong()
             })

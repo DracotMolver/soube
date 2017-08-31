@@ -1,10 +1,13 @@
 /**
+ * @module assets/version/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * Check if there's a new version to download.
+ * Will return 'major' if there's a new version or 'same' if it's the same version
  */
 /* --------------------------------- Functions --------------------------------- */
-// Check if there's a new version to download.
-// Will return 'major' if there's a new version or 'same' if it's the same version
 module.exports = function (net, version, fn) {
     const request = new net.ClientRequest({
         method: 'GET',

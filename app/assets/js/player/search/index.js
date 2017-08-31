@@ -40,8 +40,6 @@ let itemSlide = document.createDocumentFragment()
 
 /* --------------------------------- Functions --------------------------------- */
 /**
- * 
- * 
  * @param {string} value - The song we are searching for
  * @param {object} listSongs - List of songs titles
  * @return {array|boolean} - It will return false if there's no match

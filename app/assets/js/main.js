@@ -10,7 +10,7 @@
  /** --------------------------------------- Modules --------------------------------------- **/
 // ---- Electron ----
 const {
-  ipcRenderer,
+    ipcRenderer,
     remote,
     shell
 } = require('electron')
@@ -19,7 +19,7 @@ const {
 const menu = require('./menu/menu.js')
 const player = require('./player')
 const {
-  configFile,
+    configFile,
     listSongs,
     langFile
 } = require('./config').init()
@@ -30,12 +30,17 @@ let lang = langFile[configFile.lang]
 let interval = 0
 
 // ---- scrolling element ----
+
+// ---- scrolling element ----
 let positionElement = null
 let clickedElement = null
 
 // ---- searching bar ----
 let isSearchDisplayed = false
 let isModalOpen = false
+
+// ---- searching bar ----
+let isToggledButtons = false
 
 // Enable shuffle
 if (configFile.shuffle)
@@ -195,6 +200,12 @@ function isModalOpened(fn) {
 /** --------------------------------------- Events --------------------------------------- **/
 // TODO: this must be change for a better option
 window.onresize = function () {
+    if (document.body.offsetWidth > 580) {
+        const topNav = $('#top-nav').child()
+        $(topNav.element[0]).rmAttr('style')
+        $(topNav.element[1]).rmAttr('style')
+    }
+
     if (isSearchDisplayed)
         hideSearchInputData()
 }
@@ -273,9 +284,22 @@ $('#m-search').on({
     animationend: function () { this.focus() }
 })
 
-// $('#toggle-buttons').on({
-//     click:
-// })
+$('#toggle-buttons').on({
+    click: function () {
+        const topNav = $('#top-nav').child()
+        const w = document.body.offsetWidth
+
+        if (w < 580 && w > 321) {
+            $(topNav.element[0]).css(`margin-left:${isToggledButtons ? -20 : 0}%!important`)
+            $(topNav.element[1]).css(`left:${isToggledButtons ? 1 : 21}%`)
+        } else if (w < 320) {
+            $(topNav.element[0]).css(`margin-left:${isToggledButtons ? -40 : 0}%!important`)
+            $(topNav.element[1]).css(`left:${isToggledButtons ? 2 : 42}%`)
+        }
+
+        isToggledButtons = !isToggledButtons
+    }
+})
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Somes of the functions below check if the screen has been resized (small one)

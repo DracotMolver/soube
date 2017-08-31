@@ -237,8 +237,8 @@ button:hover {
 
 ::-webkit-scrollbar {
     background-color: var(--darkGreyColor);
-    height: .86em;
-    width: .86em
+    height: .9em;
+    width: .9em
 }
 
 ::-webkit-scrollbar-thumb,
@@ -1169,12 +1169,17 @@ input[type="checkbox"] {
 
     #top-nav > div:first-child {
         margin-left: -20%;
+        transform-origin: left center;
+        transform-style: preserve-3d;
+        transition: all .3s ease-in-out;
         width: 20%
     }
 
     #toggle-buttons {
-        display: inherit
-    } 
+        position: absolute;
+        display: inherit;
+        left: 1%
+    }
 
     #sizer-container > img {
         height: 14px;

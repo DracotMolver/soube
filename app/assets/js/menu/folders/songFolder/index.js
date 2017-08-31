@@ -16,12 +16,13 @@ const musicmetadata = require('musicmetadata')
 
 // ---- own ----
 const {
-  configFile,
+    configFile,
     listSongs,
     langFile,
     editFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
 const worker = new Worker(path.join(__dirname, 'workerPaths.js'))
+const $ = require(path.join(__dirname, '../../../', 'dom'))
 
 /* --------------------------------- Variables --------------------------------- */
 // ---- normals ----
@@ -34,7 +35,7 @@ let files = []
 // It will compare if there's more or few songs
 function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
     // Get the object from listsong.json - only if was already created it
-    songs = Object.keys(listSongs).length && newInstance ? [] : listSongs
+    songs = $('@objSize')(listSongs) && newInstance ? [] : listSongs
     const readAllFiles = function (readFiles) {
         if (readFiles.length) { // Add songs
             files = readFiles.map(function (f) {

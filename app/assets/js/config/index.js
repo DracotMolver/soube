@@ -8,7 +8,7 @@ const fs = require('fs')
 
 // ---- electron ----
 const {
-  ipcRenderer,
+    ipcRenderer,
     remote
 } = require('electron')
 
