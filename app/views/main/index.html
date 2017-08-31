@@ -123,18 +123,17 @@
         <!-- Listado de canciones -->
         <div id="list-songs"></div>
         <!-- Albun a tocar -->
-        <div id="album-to-play-container" class="grid-100 grid-parent border-right border-color-dark-pink hide">
-            <div id="album-to-play" class="grid-50 grid-parent mobile-grid-100"></div>
-            <div id="desc-container-album"  class="grid-50 grid-parent hide-on-mobile">
-                <div class="grid-100">
-                    <p>
-                        You have loaded an album. This is a temporary play list, which means that is not gonna be part of your main list when you close the music player.
-                        To get back to your music list, just click on the Close album button.
-                    </p>
+        <div id="album-to-play-container" class="parent-container-config hide">
+            <div id="album-to-play" class="container-config">
+                <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
+                    <div class="grid-70 grid-parent mobile-grid-70">
+                        <div id="_addalbumfolder"></div>
+                    </div>
+                    <div class="grid-30 grid-parent mobile-grid-30">
+                        <div class="close"></div>
+                    </div>
                 </div>
-                <div class="grid-100" style="text-align:center;margin-top:3em">
-                    <button class="close-album">Close album</button>
-                </div>
+                <div style="overflow:hidden;overflow-y:auto;height:90%;"></div>
             </div>
         </div>
     </div>
@@ -167,7 +166,7 @@
         <div id="pop-up"></div>
     </div>
     <!-- Display the menu to add more music folders -->
-    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
+    <div class="parent-container-config hide">
         <div id="container-add-songs" class="container-config">
             <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
                 <div class="grid-70 grid-parent mobile-grid-70">
@@ -194,7 +193,7 @@
         </div>
     </div>
     <!-- Display the equalizer -->
-    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
+    <div class="parent-container-config hide">
         <div id="container-equalizer" class="container-config">
             <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
                 <div class="grid-70 grid-parent mobile-grid-70">
@@ -439,7 +438,7 @@
         </div>
     </div>
     <!-- Display the config options (color theme, screen size, language) -->
-    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
+    <div class="parent-container-config hide">
         <div id="configurations" class="container-config">
             <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
                 <div class="grid-70 grid-parent mobile-grid-70">
@@ -518,7 +517,7 @@
         </div>
     </div>
     <!-- Display the about content-->
-    <div class="grid-100 grid-parent mobile-grid-100 parent-container-config hide">
+    <div class="parent-container-config hide">
         <div id="about" class="container-config">
             <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
                 <div class="close"></div>

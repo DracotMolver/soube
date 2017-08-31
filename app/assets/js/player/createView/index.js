@@ -95,17 +95,8 @@ function createAlbumView(player, folder, listSongs) {
     let div = $(document.createElement('div')).addClass('grid-100').get()
     const fragment = document.createDocumentFragment()
 
-    // Name of the band or artist
-    fragment.appendChild(
-        $(div.cloneNode(true))
-            .attr({ id: 'album-title-artist' })
-            .text(listSongs[0].artist).get())
-
-    // Name of the album
-    fragment.appendChild(
-        $(div.cloneNode(true))
-            .attr({ id: 'album-title-album' })
-            .text(path.basename(folder)).get())
+    // Name of the band or artist and album
+    $('#_addalbumfolder').text(`${listSongs[0].artist} / <small>${path.basename(folder)}</small>`)
 
     // List of songs
     listSongs.forEach(function (s, i) {
@@ -127,7 +118,7 @@ function createAlbumView(player, folder, listSongs) {
                 }).text(s.title).get())
     })
 
-    $('#album-to-play').empty().append(fragment)
+    $('#album-to-play').child(1).empty().append(fragment)
 }
 
 module.exports = Object.freeze({

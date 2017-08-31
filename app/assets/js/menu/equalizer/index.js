@@ -202,7 +202,7 @@ function showEqualizer() {
     $('#_saveeq').text(lang.config.newEQSettingUpdate)
     $('#_canceleq').text(lang.config.newEQSettingCancel)
 
-    $($('.parent-container-config').get(1))
+    $($('.parent-container-config').get(2))
         .removeClass('hide')
         .child(0)
         .addClass('container-config-anim')

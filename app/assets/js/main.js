@@ -177,6 +177,9 @@ function closeModals() {
     menu.folders.close()
     menu.equalizer.close()
     menu.preferences.configurations.close()
+    menu.folders.albumFolder.closeAlbum()
+    // Closes the album player
+    ipcRenderer.send('open-specific-key', 'Space')
 
     isModalOpen = false
 }
@@ -202,8 +205,8 @@ function isModalOpened(fn) {
 window.onresize = function () {
     if (document.body.offsetWidth > 580) {
         const topNav = $('#top-nav').child()
-        $(topNav.element[0]).rmAttr('style')
-        $(topNav.element[1]).rmAttr('style')
+        $(topNav.get(0)).rmAttr('style')
+        $(topNav.get(1)).rmAttr('style')
     }
 
     if (isSearchDisplayed)
@@ -240,15 +243,6 @@ $('.btn-controls').on({ click: clickBtnControls })
 $('#total-progress-bar').on({
     click: function (e) {
         player.getMediaControl(player.mediaControl()).moveForward(e, this)
-    }
-})
-
-// Closes the album player
-$('.close-album').on({
-    click: function () {
-        menu.folders.albumFolder.closeAlbum()
-        isModalOpen = false
-        ipcRenderer.send('open-specific-key', 'Space')
     }
 })
 
@@ -290,11 +284,11 @@ $('#toggle-buttons').on({
         const w = document.body.offsetWidth
 
         if (w < 580 && w > 321) {
-            $(topNav.element[0]).css(`margin-left:${isToggledButtons ? -20 : 0}%!important`)
-            $(topNav.element[1]).css(`left:${isToggledButtons ? 1 : 21}%`)
+            $(topNav.get(0)).css(`margin-left:${isToggledButtons ? -20 : 0}%!important`)
+            $(topNav.get(1)).css(`left:${isToggledButtons ? 1 : 21}%`)
         } else if (w < 320) {
-            $(topNav.element[0]).css(`margin-left:${isToggledButtons ? -40 : 0}%!important`)
-            $(topNav.element[1]).css(`left:${isToggledButtons ? 2 : 42}%`)
+            $(topNav.get(0)).css(`margin-left:${isToggledButtons ? -40 : 0}%!important`)
+            $(topNav.get(1)).css(`left:${isToggledButtons ? 2 : 42}%`)
         }
 
         isToggledButtons = !isToggledButtons

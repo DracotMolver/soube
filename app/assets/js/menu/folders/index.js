@@ -76,7 +76,7 @@ function loadFolder() {
     $('#remove-songs').text(lang.config.removeSongBtn)
 
     // Execute the animation at the end of the code
-    $($('.parent-container-config').get(0))
+    $($('.parent-container-config').get(1))
         .removeClass('hide')
         .child(0)
         .addClass('container-config-anim')

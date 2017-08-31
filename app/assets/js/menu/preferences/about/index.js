@@ -31,7 +31,7 @@ module.exports = function showAbout() {
         }
     })
 
-    $($('.parent-container-config').get(3))
+    $($('.parent-container-config').get(4))
         .removeClass('hide')
         .child(0)
         .addClass('container-config-anim')

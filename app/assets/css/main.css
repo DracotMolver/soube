@@ -33,7 +33,6 @@ span,
 title,
 ul {
     -webkit-font-smoothing: subpixel-antialiased;
-    -webkit-user-select: none;
     font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures;
     font-stretch: condensed;
     user-select: none;
@@ -152,7 +151,11 @@ svg {
 }
 
 .parent-container-config {
-    position: absolute
+    position: absolute;
+    z-index: 3;
+    height: 100%;
+    width: 100%;
+    top: 0
 }
 
 .container-config {
@@ -165,7 +168,8 @@ svg {
     overflow: hidden;
     opacity: 0;
     padding: 0 1em 1em;
-    margin: 0 auto;
+    z-index: 4;
+    margin: 89px auto 0;
     border: .1em solid rgba(245, 245, 245, .3)
 }
 
@@ -405,24 +409,14 @@ h3 {
 }
 
 #album-to-play-container {
-    border-bottom-right-radius: 50%;
-    border-top-right-radius: 50%;
-    transform-origin: center left;
-    padding-left: 1em;
-    background-color: var(--whiteColor);
-    transform: scale(0, 1);
-    opacity: 0;
-    float: none
-}
-
-.album-to-play-anim {
-    animation: showAlbum 1s cubic-bezier(.25,.82,1,.95) forwards
+    background: rgba(0,0,0,.16);
+    top: 89px
 }
 
 #album-to-play {
-    overflow: hidden;
-    overflow-y: scroll;
-    height: 100%
+    margin-top: 0 !important;
+    height: 420px;
+    width: 450px
 }
 
 #album-title-album,
@@ -446,24 +440,13 @@ h3 {
     cursor: pointer
 }
 
-#desc-container-album {
-    padding: 4em 2em
-}
-
-#desc-container-album  >  p {
-    font-weight: Muli-Light;
-    text-align: justify;
-    color: var(--darkGreyColor)
-}
-
 #album-loading {
     padding-left: 2em;
     margin-top: 2em;
     color: var(--pinkColor)
 }
 
-#list-songs,
-#album-to-play-container {
+#list-songs{
     overflow: hidden;
     position: absolute;
     height: calc(100% - 89px);
@@ -897,10 +880,7 @@ h3 {
 }
 
 .spinner-anim > .spinner-container > .spinner-item {
-    animation-name: spinnerAnim;
-    animation-duration: 1.2s;
-    animation-direction: linear;
-    animation-iteration-count: infinite
+    animation: spinnerAnim 1.2s linear infinite
 }
 
 #spinner-item-1 {
@@ -944,18 +924,6 @@ input[type="checkbox"] {
     height: 18px;
     margin: auto;
     width: 18px
-}
-
-@keyframes showAlbum {
-    90% {
-        opacity: 0
-    }
-    100% {
-        border-bottom-right-radius: 0;
-        border-top-right-radius: 0;
-        transform: scale(1, 1);
-        opacity: 1
-    }
 }
 
 @keyframes showToolTip {
@@ -1192,8 +1160,7 @@ input[type="checkbox"] {
         margin-top: 1em
     }
 
-    #list-songs,
-    #album-to-play-container {
+    #list-songs{
         height: calc(100% - 75px)
     }
 }

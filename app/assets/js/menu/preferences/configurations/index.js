@@ -136,7 +136,7 @@ function showConfigurations() {
         $(v).text(coloursNames[i])
     })
 
-    $($('.parent-container-config').get(2))
+    $($('.parent-container-config').get(3))
         .removeClass('hide')
         .child(0)
         .addClass('container-config-anim')

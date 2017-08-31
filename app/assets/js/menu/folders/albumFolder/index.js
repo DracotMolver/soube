@@ -27,6 +27,7 @@ function loadFullAlbum() {
         title: 'Open an album',
         properties: ['openDirectory']
     }, function (parentFolder) {
+        console.log(parentFolder)
         if (parentFolder !== undefined)
             getSongs(parentFolder[0])
     })
@@ -34,9 +35,12 @@ function loadFullAlbum() {
 
 function getSongs(parentFolder) {
     songFolder.addSongFolder(parentFolder, function () {
-        $('#album-to-play-container').switchClass('hide', 'album-to-play-anim')
+        $($('.parent-container-config').get(0))
+            .removeClass('hide')
+            .child(0)
+            .addClass('container-config-anim')
     }, function (i, maxLength) { // Iterator function
-        $('#album-to-play').text(
+        $('#album-to-play').child(1).text(
             `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
         )
 
@@ -55,7 +59,6 @@ function createView(folder, songs) {
 function closeAlbum() {
     player.getMediaControl(player.mediaControl()).stopSong()
     player.setUsingMediaControl('player')
-    $('#album-to-play-container').switchClass('album-to-play-anim', 'hide')
 }
 
 module.exports = Object.freeze({

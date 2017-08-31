@@ -41,7 +41,6 @@ function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
             files = readFiles.map(function (f) {
                 return path.normalize(f)
             })
-
             fnStart()
             extractMetadata(fnIter)
         }
