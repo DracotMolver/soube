@@ -30,8 +30,6 @@ let lang = langFile[configFile.lang]
 let interval = 0
 
 // ---- scrolling element ----
-
-// ---- scrolling element ----
 let positionElement = null
 let clickedElement = null
 
@@ -46,9 +44,10 @@ let isToggledButtons = false
 if (configFile.shuffle)
     $('#shuffle-icon').css('fill:var(--whiteColor)')
 
+console.log(listSongs)
 if ($('@objSize')(listSongs)) { // When the songs are loaded
     player.createView(player)
-    // checkNewSongs();
+    menu.folders.checkListOfSongs()
 } else { // When there'are no song to load
     $('#list-songs')
         .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
@@ -106,22 +105,6 @@ function btnPlaySong() {
     player.getMediaControl(player.mediaControl()).playSongAtPosition($(this).data('position'))
 }
 
-// TODO: Check if there are new songs to be added
-// function checkNewSongs() {
-// //   player.addSongFolder(configFile.musicFolder, () => {
-// //     // show pop-up
-// //     $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim');
-// //   }, (i, maxlength) => {
-// //     $('#pop-up').text(`${langFile[configFile.lang].alerts.newSongsFound}${i} / ${maxlength}`);
-
-// //     if (i === maxlength) {
-// //       // hide pop-up
-// //       $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim');
-// //       // remote.getCurrentWindow().reload();
-// //     }
-// //   });
-// }
-
 /**
  * Actions over the play, netxt, prev and shuffle buttons
  * @param {string} action - Which button of the player is being clicked. values:[paly-pause|next|prev|shuffle]
@@ -177,9 +160,8 @@ function closeModals() {
     menu.folders.close()
     menu.equalizer.close()
     menu.preferences.configurations.close()
-    menu.folders.albumFolder.closeAlbum()
-    // Closes the album player
-    ipcRenderer.send('open-specific-key', 'Space')
+    if (player.mediaControl() === 'album')
+        menu.folders.albumFolder.closeAlbum()
 
     isModalOpen = false
 }
@@ -405,7 +387,6 @@ ipcRenderer.on('menu-equalizer', function () {
 
 // Displays the configurations [Ctrl + O]
 ipcRenderer.on('menu-configurations', function () {
-    console.log(menu.preferences.configurations.isResized())
     if (!menu.preferences.configurations.isResized())
         isModalOpened(menu.preferences.configurations.showConfigurations)
 })

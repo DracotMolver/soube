@@ -45,7 +45,7 @@ function getSongs(parentFolder) {
         )
 
         if (i === maxLength)
-            createView(parentFolder, songFolder.getAllSongs())
+            createView(parentFolder, songFolder.setAlphabeticOrder())
     }, true)
 }
 

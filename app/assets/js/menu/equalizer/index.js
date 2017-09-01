@@ -100,8 +100,9 @@ function saveEQSetting() {
         , ['before', $('#eq-buttons').lastChild().get()]
     )
 
-    setTimeout(function () {
+    const timeOut = setTimeout(function () {
         $('.warning').text('')
+        clearTimeout(timeOut)
     }, 2600)
 }
 
@@ -121,8 +122,9 @@ function deleteSetting() {
             ipcRenderer.send('equalizer-filter', [i, 0])
         }
 
-        setTimeout(function () {
+        const timeOut = setTimeout(function () {
             $('.warning').text('')
+            clearTimeout(timeOut)
         }, 2600)
     }
 }
@@ -145,10 +147,11 @@ function updateEQSeeting() {
     $('#edit-new-eq').addClass('hide')
     $('.warning').text(lang.config.newEQSettingSaved)
 
-    setTimeout(function () {
+    const timeOut = setTimeout(function () {
         $('.warning').text('')
         $('#name-new-eq-edit').val(name)
         $('#modify-new-eq').removeClass('hide')
+        clearTimeout(timeOut)
     }, 2600)
 }
 
