@@ -13,7 +13,7 @@ const path = require('path')
 const albumFolder = require('./albumFolder')
 const songFolder = require('./songFolder')
 const {
-  configFile,
+    configFile,
     langFile,
     editFile
 } = require(path.join(__dirname, '../../', 'config')).init()
@@ -55,7 +55,7 @@ function saveSongList(parentFolder = '') {
         $('#song-progress').css(`width:${(i * 100) / maxLength}%`)
 
         if (i === maxLength)
-            songFolder.updateSongList()
+            editFile('listSong', songFolder.setAlphabeticOrder())
     })
 }
 
@@ -117,6 +117,21 @@ $('#add-songs').on({
 module.exports = Object.freeze({
     albumFolder,
     loadFolder,
+    checkListOfSongs: function () {
+        songFolder.checkSongFolder(configFile.musicFolder, function () {
+            $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim')
+            $('#pop-up').text(langFile[configFile.lang].alerts.checkListOfSongs)
+        }, function (i, maxLength) {
+            if (i === maxLength) {
+                const timeOut = setTimeout(function() {
+                    editFile('listSong', songFolder.setAlphabeticOrder())
+                    $('#pop-up').empty()
+                    $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim')
+                    clearTimeout(timeOut)
+                }, 4600);
+            }
+        })
+    },
     close: function () {
         folderToRemove = ''
         isLoadingSongs = false

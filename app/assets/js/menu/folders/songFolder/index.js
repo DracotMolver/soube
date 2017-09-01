@@ -35,7 +35,8 @@ let files = []
 // It will compare if there's more or few songs
 function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
     // Get the object from listsong.json - only if was already created it
-    songs = $('@objSize')(listSongs) && newInstance ? [] : listSongs
+    songs = $('@objSize')(listSongs) && newInstance ? [] : ($('@objSize')(listSongs) ? listSongs : [])
+    console.log("hola", songs)
     const readAllFiles = function (readFiles) {
         if (readFiles.length) { // Add songs
             files = readFiles.map(function (f) {
@@ -49,9 +50,60 @@ function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
     readParentFolder(folder, readAllFiles)
 }
 
+function removeSongFolder(folder) {
+    // Get the object from listsong.json - only if was already created it
+    const readAllFiles = function (readFiles) {
+        songs = []
+        listSongs.forEach(function (f, i, a) {
+            readFiles.indexOf(f.filename) !== -1 ? delete a[i] : songs.push(f)
+        })
+
+
+        editFile('listSong', setAlphabeticOrder())
+    }
+
+    readParentFolder(folder, readAllFiles)
+}
+
+function checkSongFolder(folder, fnStart, fnIter) {
+    let totalFiles = []
+    let newFiles = []
+    let fileNames = listSongs.map(function (f) { return f.filename })
+    let index = 0
+
+    const readAllFiles = function (readFiles) {
+        totalFiles = totalFiles.concat(readFiles)
+        if (++index === folder.length) {
+            if ($('@objSize')(listSongs) < totalFiles.length) { // Append new songs
+                totalFiles.forEach(function (f) {
+                    if (fileNames.indexOf(f) === -1) newFiles.push(f)
+                })
+                songs = listSongs
+                files = newFiles.map(function (f) {
+                    return path.normalize(f)
+                })
+
+                fnStart()
+                extractMetadata(fnIter)
+            } else if ($('@objSize')(listSongs) > totalFiles.length){
+                songs = []
+                listSongs.forEach(function (f, i, a) {
+                    totalFiles.indexOf(f.filename) === -1 ? delete a[i] : songs.push(f)
+                })
+
+                editFile('listSong', setAlphabeticOrder())
+            }
+        }
+    }
+
+
+    folder.forEach(function (f) { readParentFolder(f, readAllFiles) })
+}
+
 // Will get all the needed metadata from a song file
 function extractMetadata(fnIter) {
     let count = 0
+    console.log(songs)
     files.forEach(function (f) {
         musicmetadata(fs.createReadStream(f), function (error, data) {
             count++
@@ -69,28 +121,10 @@ function extractMetadata(fnIter) {
     })
 }
 
-function updateSongList() {
-    editFile('listSong', getAllSongs())
-}
-
-function removeSongFolder(folder) {
-    // Get the object from listsong.json - only if was already created it
-    const readAllFiles = function (readFiles) {
-        songs = []
-        listSongs.forEach(function (f, i, a) {
-            readFiles.indexOf(f.filename) !== -1 ? delete a[i] : songs.push(f)
-        })
-
-        updateSongList()
-    }
-
-    readParentFolder(folder, readAllFiles)
-}
-
 function readParentFolder(folder, fn) {
     // command line [Linux | Mac]
     if (process.platform === 'darwin' || process.platform === 'linux') {
-        const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wmv|wav|ogg)$\"`
+        const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wav|ogg)$\"`
         exec(command, function (error, stdout, stderr) {
             if (error) {
                 ipcRenderer.send('display-msg', {
@@ -118,7 +152,7 @@ function spaceToNbsp(str) {
     return str.trim().replace(/\s/g, '&nbsp;')
 }
 
-function getAllSongs() {
+function setAlphabeticOrder() {
     return songs.sort(function (a, b) {
         return a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? -1
             : a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
@@ -129,7 +163,7 @@ function getAllSongs() {
 
 module.exports = Object.freeze({
     removeSongFolder,
-    updateSongList,
+    checkSongFolder,
     addSongFolder,
-    getAllSongs
+    setAlphabeticOrder
 })
