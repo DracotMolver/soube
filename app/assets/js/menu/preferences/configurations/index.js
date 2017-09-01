@@ -30,6 +30,10 @@ let resized = false
 // - Idiom
 // - Screen size
 function displayOption() {
+    $('#theme-colours').addClass('hide')
+    $('#idiom').addClass('hide')
+    $('#screen-size').addClass('hide')
+
     switch (this.value) {
         case '1': showColoursTheme(); break
         case '2': showLanguage(); break
