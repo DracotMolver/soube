@@ -21,7 +21,7 @@ function findFiles(dir) {
         baseFolder = path.join(dir, files)
         if (fs.lstatSync(baseFolder).isDirectory())
             folders.push(baseFolder)
-        else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wmv|wav|ogg)$/ig.test(baseFolder.trim()))
+        else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wav|ogg)$/ig.test(baseFolder.trim()))
             allFiles.push(baseFolder)
     })
 
@@ -32,7 +32,7 @@ function findFiles(dir) {
             baseFolder = path.join(folders[foldersSize], files)
             if (fs.lstatSync(baseFolder).isDirectory())
                 tmpFolders.push(baseFolder)
-            else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wmv|wav|ogg)$/ig.test(baseFolder.trim()))
+            else if (fs.lstatSync(baseFolder).isFile() && /\.(mp3|wav|ogg)$/ig.test(baseFolder.trim()))
                 allFiles.push(baseFolder)
         })
 
