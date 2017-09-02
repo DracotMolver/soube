@@ -277,6 +277,12 @@ $('#toggle-buttons').on({
     }
 })
 
+$('#filter-container').on({
+    click: function () {
+        $('#list-songs').addClass('anim-list-song')
+    }
+})
+
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
 // Somes of the functions below check if the screen has been resized (small one)
 // if so, none of the modal can't be display

@@ -193,5 +193,12 @@ module.exports = {
     reset: function () {
         newList, list = []
         searchValue = oldSearchedValue = ''
-    }
+    },
+    // filterBy: function (/*by*/) {
+    //     $('#filter-container').on({
+    //         click: function () {
+    //             $('#list-songs').addClass('.anim-list-song')
+    //         }
+    //     })
+    // }
 }

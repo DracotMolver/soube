@@ -163,8 +163,9 @@ svg {
     border-radius: 50%;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
     background-color: var(--whiteColor);
-    position: relative;
+    transition: all .8s cubic-bezier(.78, .03, .59, .99);
     transform: scale(0);
+    position: relative;
     overflow: hidden;
     opacity: 0;
     padding: 0 1em 1em;
@@ -174,7 +175,9 @@ svg {
 }
 
 .container-config-anim {
-    animation: showModal .8s cubic-bezier(.78, .03, .59, .99) forwards, popups .5s cubic-bezier(1, .02, .66, 1.011) forwards
+    border-radius: 5px;
+    animation: showModal .8s cubic-bezier(.78, .03, .59, .99) forwards;
+    opacity: 1
 }
 
 .title-container {
@@ -447,15 +450,18 @@ h3 {
 }
 
 #list-songs{
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding-top: 0;
+    transition: all .6s;
     position: absolute;
+    cursor: pointer;
     height: calc(100% - 89px);
     width: 100%
 }
 
-#list-songs {
-    overflow-y: scroll;
-    cursor: pointer
+.anim-list-song {
+    padding-top: 2em !important
 }
 
 #path-list-container > li:nth-child(odd),
@@ -466,6 +472,10 @@ h3 {
 #path-list-container > li:nth-child(even),
 .list-song-container:nth-child(even) {
     background-color: var(--whiteColor)
+}
+
+.list-song-container > div:first-child {
+    padding-left: 2em
 }
 
 .miscelaneo {
@@ -493,7 +503,7 @@ h3 {
     padding: 2em 0;
     margin: auto;
     height: auto;
-    width: 11%
+    width: 75%
 }
 
 #search {
@@ -503,6 +513,7 @@ h3 {
     box-shadow: 0 0 5px 0 rgba(33, 33, 33, .14);
     transform: scale(0);
     font-size: 1.6em;
+    transition: all 1s ease-in-out;
     padding: .16em 0 .16em .6em;
     margin: 0;
     cursor: text;
@@ -510,11 +521,7 @@ h3 {
 }
 
 .search-anim {
-    animation: showPopUp .5s ease-in forwards
-}
-
-.search-wrapper-anim {
-    animation: displayInputSearch .5s .6s ease-in-out forwards
+    transform: scale(1) !important;
 }
 
 #container-results {
@@ -552,9 +559,14 @@ h3 {
 
 #pop-up-container > div {
     background: var(--whiteColor);
+    transition: all .3s ease-in-out;
     transform: scale(0);
     display: inline-block;
     color: var(--darkGreyColor) !important
+}
+
+#pop-up-container > div {
+    transform: scale(1) !important
 }
 
 #pop-up-container > a {
@@ -577,10 +589,6 @@ h3 {
     color: var(--whiteColor)
 }
 
-.pop-up-anim {
-    animation: showPopUp .3s ease-in-out forwards
-}
-
 .tooltip {
     transform-origin: center;
     letter-spacing: .14em;
@@ -588,6 +596,7 @@ h3 {
     line-height: 2em;
     text-align: center;
     background-color: hsla(180, 5%, 27%, .8);
+    transition: all .3s ease-in;
     font-size: .8em;
     transform: scale(1, 0);
     position: absolute;
@@ -611,7 +620,8 @@ h3 {
 }
 
 .text-container:hover > .tooltip {
-    animation: showToolTip .3s ease-in forwards
+    transform: scale(1);
+    opacity: 1
 }
 
 #container-equalizer {
@@ -857,6 +867,7 @@ h3 {
 
 #spinner {
     position: absolute;
+    z-index: 10;
     margin: auto;
     height: 80px;
     width: 6.6em
@@ -927,23 +938,18 @@ input[type="checkbox"] {
     width: 18px
 }
 
-@keyframes showToolTip {
-    100% {
-        transform: scale(1);
-        opacity: 1
-    }
-}
-
-@keyframes showPopUp {
-    100% {
-        transform: scale(1)
-    }
-}
-
-@keyframes displayInputSearch {
-    100% {
-        width: 75%
-    }
+#filter-container {
+    border: 1px solid var(--lightGreyColor);
+    border-left: 0;
+    border-top: 0;
+    position: fixed;
+    background-color: var(--whiteColor);
+    border-radius: 0 0 12px 0;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
+    padding: .24em;
+    z-index: 2;
+    height: 1em;
+    width: .9em
 }
 
 @keyframes clickControlsEffect {
@@ -972,13 +978,6 @@ input[type="checkbox"] {
     }
     100% {
         transform: scale(1)
-    }
-}
-
-@keyframes popups {
-    100% {
-        border-radius: 5px;
-        opacity: 1
     }
 }
 
