@@ -36,7 +36,6 @@ let files = []
 function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
     // Get the object from listsong.json - only if was already created it
     songs = $('@objSize')(listSongs) && newInstance ? [] : ($('@objSize')(listSongs) ? listSongs : [])
-    console.log("hola", songs)
     const readAllFiles = function (readFiles) {
         if (readFiles.length) { // Add songs
             files = readFiles.map(function (f) {
@@ -103,7 +102,6 @@ function checkSongFolder(folder, fnStart, fnIter) {
 // Will get all the needed metadata from a song file
 function extractMetadata(fnIter) {
     let count = 0
-    console.log(songs)
     files.forEach(function (f) {
         musicmetadata(fs.createReadStream(f), function (error, data) {
             count++

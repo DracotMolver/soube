@@ -27,7 +27,6 @@ function loadFullAlbum() {
         title: 'Open an album',
         properties: ['openDirectory']
     }, function (parentFolder) {
-        console.log(parentFolder)
         if (parentFolder !== undefined)
             getSongs(parentFolder[0])
     })

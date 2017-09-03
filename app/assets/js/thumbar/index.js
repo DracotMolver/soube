@@ -1,5 +1,5 @@
 /**
- * @module assets/thumbar/index.js
+ * @module thumbar/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
@@ -14,7 +14,7 @@
  * - Prev
  * - Next
  * @param {BrowserWindow} win - BrowserWindows instance which will has the thumbar buttons
- * @param {any} [imgs={}] - Icons of the thumbar buttons
+ * @param {any} [imgs] - Icons of the thumbar buttons. default an empty object "{}"
  * @return {object} - Returns an object with two arrays which constains the states of the buttons
  *                    [next|play|shuffle] - [next|pause|shuffle]
  */

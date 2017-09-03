@@ -1,5 +1,5 @@
 /**
- * @module assets/main.js
+ * @module main.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
@@ -44,7 +44,6 @@ let isToggledButtons = false
 if (configFile.shuffle)
     $('#shuffle-icon').css('fill:var(--whiteColor)')
 
-console.log(listSongs)
 if ($('@objSize')(listSongs)) { // When the songs are loaded
     player.createView(player)
     menu.folders.checkListOfSongs()
@@ -145,7 +144,7 @@ function scrollAnimation(direction) {
 }
 
 /**
- * Closes the config modals
+ * Closes all the config modals
  */
 function closeModals() {
     ipcRenderer.send('open-specific-key', 'Space')
@@ -260,33 +259,36 @@ $('#m-search').on({
     animationend: function () { this.focus() }
 })
 
+// Will hide and show the buttons when the music player is resonsive
 $('#toggle-buttons').on({
     click: function () {
         const topNav = $('#top-nav').child()
         const w = document.body.offsetWidth
+        let mL = 0
+        let l = 0
 
         if (w < 580 && w > 321) {
-            $(topNav.get(0)).css(`margin-left:${isToggledButtons ? -20 : 0}%!important`)
-            $(topNav.get(1)).css(`left:${isToggledButtons ? 1 : 21}%`)
+            ml = isToggledButtons ? -20 : 0
+            l = isToggledButtons ? 1 : 21
         } else if (w < 320) {
-            $(topNav.get(0)).css(`margin-left:${isToggledButtons ? -40 : 0}%!important`)
-            $(topNav.get(1)).css(`left:${isToggledButtons ? 2 : 42}%`)
+            ml = isToggledButtons ? -40 : 0
+            l = isToggledButtons ? 2 : 42
         }
+
+        $(topNav.get(0)).css(`margin-left:${ml}%!important`)
+        $(topNav.get(1)).css(`left:${l}%`)
 
         isToggledButtons = !isToggledButtons
     }
 })
 
-$('#filter-container').on({
-    click: function () {
-        $('#list-songs').addClass('anim-list-song')
-    }
-})
+// $('#filter-container').on({
+//     click: function () {
+//         $('#list-songs').addClass('anim-list-song')
+//     }
+// })
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
-// Somes of the functions below check if the screen has been resized (small one)
-// if so, none of the modal can't be display
-
 // Close the searching bar and all the config modals
 // Just one modal can be displays at a time
 // This function is also for the searching bar, which is not a modal

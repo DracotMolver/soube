@@ -1,5 +1,5 @@
 /**
- * @module assets/player/index.js
+ * @module player/index.js
  * @author Diego Alberto Molina Vera.
  * @copyright 2016 - 2017
  * @license MIT License
@@ -7,7 +7,7 @@
  * Basically, this will load all the needed modules to make the music player works.
  * Modules:
  * - Controls - All the events over the play, next, prev, shuffle, time lapse, time progress, etc.
- * - Search - Search the songs we are searching for
+ * - Search - Search the songs we are searching for or filter by artist, album and song
  * - Createview - Creates and renders the HTML for the list of sons as it or for the album view.
  */
 /** --------------------------------------- Modules --------------------------------------- **/
