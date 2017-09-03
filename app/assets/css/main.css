@@ -453,15 +453,10 @@ h3 {
     overflow-x: hidden;
     overflow-y: scroll;
     padding-top: 0;
-    transition: all .6s;
     position: absolute;
     cursor: pointer;
-    height: calc(100% - 89px);
+    height: calc(100% - 108px);
     width: 100%
-}
-
-.anim-list-song {
-    padding-top: 2em !important
 }
 
 #path-list-container > li:nth-child(odd),
@@ -472,10 +467,6 @@ h3 {
 #path-list-container > li:nth-child(even),
 .list-song-container:nth-child(even) {
     background-color: var(--whiteColor)
-}
-
-.list-song-container > div:first-child {
-    padding-left: 2em
 }
 
 .miscelaneo {
@@ -938,18 +929,13 @@ input[type="checkbox"] {
     width: 18px
 }
 
-#filter-container {
-    border: 1px solid var(--lightGreyColor);
-    border-left: 0;
-    border-top: 0;
-    position: fixed;
+.filter-by {
     background-color: var(--whiteColor);
-    border-radius: 0 0 12px 0;
-    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3);
-    padding: .24em;
-    z-index: 2;
-    height: 1em;
-    width: .9em
+}
+
+.filter-by select{
+    box-shadow: none;
+    height: 1.4em
 }
 
 @keyframes clickControlsEffect {
@@ -1161,7 +1147,7 @@ input[type="checkbox"] {
     }
 
     #list-songs{
-        height: calc(100% - 75px)
+        height: calc(100% - 101px)
     }
 }
 

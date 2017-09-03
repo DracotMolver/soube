@@ -1,5 +1,5 @@
 /**
- * @module assets/player/createView/index.js
+ * @module player/createView/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
@@ -17,7 +17,12 @@
 const path = require('path')
 
 // ---- Own ----
-const listSongs = require(path.join(__dirname, '../../', 'config')).init().listSongs
+const {
+    configFile,
+    listSongs,
+    langFile
+} = require(path.join(__dirname, '../../', 'config')).init()
+
 const $ = require(path.join(__dirname, '../../', 'dom'))
 
 /** --------------------------------------- Functions --------------------------------------- **/
@@ -46,13 +51,24 @@ function nbspToSpace(value) {
  * @param {object} player - The instance of the player
  */
 function createView(player) {
+    const lang = langFile[configFile.lang]
     const f = document.createDocumentFragment()
+    let actualArtist = ''
+    let actualAlbum = ''
+
+    // -- filter --
+    let s = document.createDocumentFragment()
+    let option = document.createElement('option')
+    let select = document.createElement('select')
+        select.className = 'grid-90 mobile-grid-85 grid-parent'
+    
 
     // Building the basic structure of elements.
     // The parent element must be created, because we will attach a function to it.
     // The rest of the elements, the childNodes, are not need to create them.
     // They can be just html text.
-    let parent = $(document.createElement('div')).addClass('list-song-container grid-100 grid-parent').get()
+    let parent = document.createElement('div')
+        parent.className = 'list-song-container grid-100 grid-parent'
 
     listSongs.forEach(function (v, i) {
         f.appendChild(
@@ -63,7 +79,7 @@ function createView(player) {
                 })
                 .text(`
                     <div class="grid-33 mobile-grid-33 song-info">${v.title}</div>
-                    <div class="grid-33 mobile-grid-33 song-info"><span class="miscelaneo">by</span>${v.artist}</div>
+                    <div ${actualArtist !== v.artist ? `id="${v.artist, actualArtist = v.artist}"`: ``} class="grid-33 mobile-grid-33 song-info"><span class="miscelaneo">by</span>${v.artist}</div>
                     <div class="grid-33 mobile-grid-33 song-info"><span class="miscelaneo">from</span>${v.album}</div>
                 `)
                 .data({
@@ -81,6 +97,75 @@ function createView(player) {
     })
 
     $('#list-songs').append(f)
+
+    // Add the artist, album and song name to the filter
+    let child = $('#filter-container').child()
+
+    const artist = [...new Set(listSongs.map(function (a) {
+        return nbspToSpace(a.artist.toLowerCase())
+    }))]
+
+    const album = [...new Set(listSongs.map(function (a) { 
+        return nbspToSpace(a.album.toLowerCase())
+    }))]
+
+    // Song filter
+    s.appendChild(
+        o = option.cloneNode(false),
+        o.text = lang.filterBy.title
+    )
+    listSongs.map(function (s) {
+        return nbspToSpace(s.title.toLowerCase())
+    }).forEach(function (a) {
+        s.appendChild(
+            o = option.cloneNode(false),
+            o.value = a,
+            o.text = a
+        )
+    })
+
+    $(child.element[0]).append(
+        e = select.cloneNode(true),
+        e.appendChild(s)
+    )
+
+    // Artist filter
+    s = document.createDocumentFragment()
+    s.appendChild(
+        o = option.cloneNode(false),
+        o.text = lang.filterBy.artist
+    )
+    artist.forEach(function (a) {
+        s.appendChild(
+            o = option.cloneNode(false),
+            o.value = a,
+            o.text = a
+        )
+    })
+
+    $(child.element[1]).append(
+        e = select.cloneNode(true),
+        e.appendChild(s)
+    )
+
+    // Album filter
+    s = document.createDocumentFragment()
+    s.appendChild(
+        o = option.cloneNode(false),
+        o.text = lang.filterBy.album
+    )
+    album.forEach(function (a) {
+        s.appendChild(
+            o = option.cloneNode(false),
+            o.value = a,
+            o.text = a
+        )
+    })
+
+    $(child.element[2]).append(
+        e = select.cloneNode(true),
+        e.appendChild(s)
+    )
 }
 
 /**

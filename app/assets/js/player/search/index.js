@@ -1,5 +1,5 @@
 /**
- * @module assets/player/search/index.js
+ * @module player/search/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
  * @license MIT License
@@ -194,11 +194,20 @@ module.exports = {
         newList, list = []
         searchValue = oldSearchedValue = ''
     },
-    // filterBy: function (/*by*/) {
+    /**
+     * Will filter the list of songs or reorder it by:
+     * - artist
+     * - song
+     * - album
+     *
+     * @param {string} by - filter by [artist|song|album]
+     */
+    filterBy: function (by) {
+        
     //     $('#filter-container').on({
     //         click: function () {
     //             $('#list-songs').addClass('.anim-list-song')
     //         }
     //     })
-    // }
+    }
 }

@@ -39,6 +39,11 @@
             "error_002": "No hay archivos para reproducir. Por favor, ir al menú (tres puntos) y dar click en \"Agregar carpeta de música\"",
             "error_003": "Se ha producido un error al intentar leer la carpeta: "
         },
+        "filterBy": {
+            "artist": "Artista",
+            "album": "Álbum",
+            "title": "Canción"
+        },
         "aboutContent": "<p>Soube es un reproductor de música construido usando el framework ElectronJS y hace uso de otras APIs y Módulos.</p><p>Soube está bajo la licencia <a href=\"https://github.com/DracotMolver/Soube/blob/master/LICENSE\">MIT</a>.</p><p>Soube fue desarrollado por <a href=\"http://www.diegomolina.cl\">Diego Alberto Molina Vera</a>. Todo el código, con excepción códigos de terceros, pertenecen a <b>Diego Alberto Molina Vera.</b></p><p>El framework <a href=\"http://electron.atom.io/\">ElectronJS</a> pertence al equipo de Github.</p><p>Soube usa el módulo <b>musicmetadata</b> para extraer todos los metadatos de los archivos de audio. Este módulo pertenece a <a href=\"https://www.npmjs.com/~leetreveil\">@leetreveil</a>.</p><p>Todos los iconos fueron diseñados por <b>Diego Alberto Molina Vera</b>. Cualquier similitud con otros iconos propietarios es coincidencia. En ningún momento se ha copiado o usado algún icono propietario como medio de inspiración.</p><p>El nombre <b>Soube</b> es una modificación de <b>Sound be</b>. El nombre no fue copiado de ninguna marca registrada.</p><p>La fuente usada fue descargada desde Google Fonts y pertenece al diseñador <a href=\"https://fonts.google.com/specimen/Muli\">Vernon Adams</a></p>"
     },
     "us": {
@@ -80,6 +85,11 @@
             "error_001": "An unexpected error occurred. Please, go to: https:\/\/github.com\/DracotMolver\/Soube or send an e-mail to dmolina@soube.diegomolina.cl, and report the error. Thanks.",
             "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",
             "error_003": "An error occurred trying to read the folder: "
+        },
+        "filterBy": {
+            "artist": "Artist",
+            "album": "Album",
+            "title": "Song"
         },
         "aboutContent": "<p>Soube is a music player built using ElectronJS framework and does use of others APIs y Modules.</p><p>Soube is under <a href=\"https://github.com/DracotMolver/Soube/blob/master/LICENSE\">MIT</a> license.</p><p>Soube was developed by <a href=\"http://www.diegomolina.cl\">Diego Alberto Molina Vera</a>. All the code, except third-parties, belongs to <b>Diego Alberto Molina Vera.</b></p><p>The <a href=\"http://electron.atom.io/\">ElectronJS</a> framework belongs to Github team.</p><p>Soube use the <b>musicmetadata</b> modules to extract all the metadatos from the audio files. This module belongs to <a href=\"https://www.npmjs.com/~leetreveil\">@leetreveil</a>.</p><p>All the icons were designed by <b>Diego Alberto Molina Vera</b>. Any similarity with other registered icons is just a coincidence. In any moment has been copied or used any registered icons as a way of inspiration.</p><p>The name <b>Soube</b> is a modification of <b>Sound be</b>. The name was not copied from any Trademark.</p><p>The used font was downloaded from Google Fonts and it belongs to de designer <a href=\"https://fonts.google.com/specimen/Muli\">Vernon Adams</a></p>"
     }
