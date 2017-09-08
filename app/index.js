@@ -49,7 +49,7 @@ let keepUnregistered = []
 
 /* --------------------------------- Funciones --------------------------------- */
 // Register the list of keys
-function registreKeys() {
+function registerKeys() {
     // This was using a forEach before. But it has no sense if there's only a few elements
     // that I can typed down. It would look an awful code, a large one, but the performance it's better
     // becuase there's no need of a bucle
@@ -155,7 +155,7 @@ function ready(evt) {
     mainWindow.on('closed', function () {
         globalShortcut.unregisterAll()
         mainWindow = null
-    }).on('focus', registreKeys)
+    }).on('focus', registerKeys)
         .on('blur', function () {
             // Needed because the globalShortcut.register take the whole OS.
             // So if we are gonna use space without unregister the keyword,

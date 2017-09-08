@@ -46,7 +46,7 @@ if (configFile.shuffle)
 
 if ($('@objSize')(listSongs)) { // When the songs are loaded
     player.createView(player)
-    menu.folders.checkListOfSongs()
+    // menu.folders.checkListOfSongs()
 } else { // When there'are no song to load
     $('#list-songs')
         .text(`<div id="init-message">${lang.alerts.welcome}</div>`)
@@ -357,7 +357,8 @@ ipcRenderer.on('prev-song', function () {
 
 // Shuffle [Ctrl + Down]
 ipcRenderer.on('shuffle', function () {
-    player.getMediaControl(player.mediaControl()).setShuffle()
+    if ($('#spinner').has('hide'))
+        player.getMediaControl(player.mediaControl()).setShuffle()
 })
 
 // ThumbarButtons [Windows]
