@@ -10,6 +10,6 @@
   },
   "homepage": "http://soube.diegomolina.cl",
   "dependencies": {
-    "musicmetadata": "^2.0.5"
+    "audio-metadata": "^0.3.0"
   }
 }
