@@ -86,8 +86,8 @@ function createView(player) {
                     position: i,
                     artist: v.artist,
                     title: v.title,
-                    album: v.album,
-                    url: v.filename
+                    album: v.album
+                    // url: v.filename
                 })
                 .on({
                     click: function () {
@@ -193,8 +193,8 @@ function createAlbumView(player, folder, listSongs) {
                     position: i,
                     artist: s.artist,
                     title: s.title,
-                    album: s.album,
-                    url: s.filename
+                    album: s.album
+                    // url: s.filename
                 })
                 .on({
                     click: function () {

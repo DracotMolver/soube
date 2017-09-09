@@ -54,7 +54,7 @@ function saveSongList(parentFolder = '') {
         $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`)
         $('#song-progress').css(`width:${(i * 100) / maxLength}%`)
 
-        if (i === maxLength)
+        if (i === maxLength - 1)
             editFile('listSong', songFolder.setAlphabeticOrder())
     })
 }

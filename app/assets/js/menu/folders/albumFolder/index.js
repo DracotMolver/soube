@@ -43,7 +43,7 @@ function getSongs(parentFolder) {
             `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
         )
 
-        if (i === maxLength)
+        if (i === maxLength - 1)
             createView(parentFolder, songFolder.setAlphabeticOrder())
     }, true)
 }

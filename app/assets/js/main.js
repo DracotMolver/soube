@@ -369,12 +369,12 @@ ipcRenderer.on('thumbar-controls', function (e, a) {
 // Because the requestAnimationFrame is single thread in the window,
 // We must save the actual time lapse when we minimized the Window
 // and then recalculate the time when we unminimized the window.
-ipcRenderer.on('save-current-time', function () {
-    player.getMediaControl(player.mediaControl()).saveCurrentTime()
-})
-ipcRenderer.on('update-current-time', function () {
-    player.getMediaControl(player.mediaControl()).updateCurrentTime()
-})
+// ipcRenderer.on('save-current-time', function () {
+//     player.getMediaControl(player.mediaControl()).saveCurrentTime()
+// })
+// ipcRenderer.on('update-current-time', function () {
+//     player.getMediaControl(player.mediaControl()).updateCurrentTime()
+// })
 
 // Displays the windows to add a musics folders [Ctrl + N]
 ipcRenderer.on('menu-add-folder', function () {
