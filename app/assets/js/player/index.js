@@ -22,8 +22,16 @@ const search = require('./search')
 let usingMediaControl = 'player'
 
 let mediaControl = {
-    player: new controls('player'),
-    album: new controls('album')
+    player: Object.create(controls.prototype, {
+        playedFrom: {
+            writable:true, configurable:true, value: 'player',
+        }
+    }),
+    album:Object.create(controls.prototype, {
+        playedFrom: {
+            writable:true, configurable:true, value: 'album',
+        }
+    })
 }
 
 module.exports = Object.freeze({

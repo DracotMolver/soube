@@ -12,7 +12,9 @@
 /* --------------------------------------- Modules ------------------------------------------- */
 // ---- Node ----
 const path = require('path')
-const url = require('url')
+// // const fs = require('fs')
+// // const url = require('url')
+
 
 // ---- Electron ----
 const ipcRenderer = require('electron').ipcRenderer
@@ -27,7 +29,6 @@ let {
 const $ = require(path.join(__dirname, '../../', 'dom'))
 
 /* --------------------------------------- Variables ------------------------------------------- */
-// ---- Notification ----
 let notification = null
 let notifi = {
     lang: 'US',
@@ -36,10 +37,9 @@ let notifi = {
     icon: path.join(__dirname, '../../../', 'img', 'play.png')
 }
 
-// ---- constants ----
 const secondU = 60
-const audioContext = new window.AudioContext()
-const xhtr = new XMLHttpRequest()
+const audioContext = new AudioContext()
+let audioPlayer = document.getElementById('audio-player')
 const hrz = [
     50, 100, 156, 220, 311, 440, 622, 880, 1250, 1750, 2500, 3500, 5000, 10000, 20000
 ]
@@ -59,42 +59,62 @@ const anim = {
         'm 83.814203,6.9000001 34.109487,0.037583 -0.0839,163.399307 -33.899661,0.16304 z'
     ]
 }
+let file
+let obj
+let forward
 
+/* --------------------------------------- Class ------------------------------------------- */
+let Controls = function () { }
+Controls.prototype = {
+    lang: langFile[configFile.lang],
+    listSongs: listSongs,
+    prevSongsToPlay: [],
+    filter: [],
+    millisecond: 0,
+    position: 0,
+    duration: 0,
+    percent: 0,
+    minute: 0,
+    second: 0,
+    lapse: 0,
+    interval: null,
+    isPlaying: false,
+    isPaused: false,
+    source: audioContext.createMediaElementSource(audioPlayer)
+}
 
 /* --------------------------------------- Functions ------------------------------------------- */
-/**
- * Format the numbers from 0 to 9 adding it 0 in front of it
- * 
- * @param {number} decimal - Number from 0 - 9
- * @returns {number} - It will returna formated number
- */
-function formatDecimals(decimal) {
-    return decimal > 9 ? `${decimal}` : `0${decimal}`
-}
+const _db = configFile.equalizer[configFile.equalizerConfig]
+    .map(function (v) {
+        return v ? (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)) : 0
+    })
 
-/**
- * It will return the value of minutes and seconds extracted from
- * the milliseconds of the song.
- * 
- * @param {number} _time - milliseconds to parse as minutes/seconds
- * @returns {object} - Will return an object containing the minutes and seconds
- */
-function timeParse(_time) {
-    _time = (_time / secondU).toString()
+obj = Controls.prototype
+obj.filter = hrz.map(function (v, i) {
+    return f = audioContext.createBiquadFilter(),
+        f.type = 'peaking',
+        f.frequency.value = v,
+        f.Q.value = 0,
+        f.gain.value = _db[i],
+        f
+})
 
-    return {
-        minute: parseInt(_time.slice(0, _time.lastIndexOf('.'))),
-        second: Math.floor(_time.slice(_time.lastIndexOf('.')) * secondU)
-    }
-}
+// connect all the nodes
+obj.source.connect(obj.filter[0])
+obj.filter.reduce(function (p, c) {
+    return p.connect(c)
+}).connect(audioContext.destination)
 
-/**
- * It will anamiate the play/pause button
- * 
- * @param {string} animName - Actual state. It could be:
- * - play
- * - pause
- */
+audioPlayer.addEventListener('loadeddata', loadDuration.bind(obj))
+audioPlayer.onplay = startTimer.bind(obj)
+audioPlayer.onended = stopTimer.bind(obj)
+audioPlayer.onpause = (function () {
+    console.log("PAUSE")
+    this.isPaused = true
+    this.isPlaying = false
+}).bind(obj)
+
+
 function animPlayAndPause(animName) {
     if (process.platform === 'win32') {
         animName === 'play'
@@ -110,429 +130,108 @@ function animPlayAndPause(animName) {
     })
 }
 
-/**
- * Convert from nbsp to white space
- * 
- * @param {string} - Text where to replace nbsp with white space
- * @returns {string} - New text with white spaces
- */
+function formatDecimals(decimal) {
+    return decimal > 9 ? `${decimal}` : `0${decimal}`
+}
+
+function timeParse(_time) {
+    _time = (_time / secondU).toString()
+
+    return {
+        minute: parseInt(_time.slice(0, _time.lastIndexOf('.'))),
+        second: Math.floor(_time.slice(_time.lastIndexOf('.')) * secondU)
+    }
+}
+
 function nbspToSpace(value) {
     return value.replace(/&nbsp;/g, ' ')
 }
 
-/* --------------------------------------- Class ------------------------------------------- */
-const Controls = function (from) {
-    /* --------------------------------------- Variables ------------------------------------------- */
-    this.poolOfSongs = {}
-    this.lang = langFile[configFile.lang]
-    this.listSongs = listSongs
+function loadDuration() {
+    this.duration = audioPlayer.duration
+    this.time = timeParse(this.duration)
+    this.lapse = 100 / (this.duration * 60)
+    $('#time-end').text(`${formatDecimals(this.time.minute)}:${formatDecimals(this.time.second)}`)
+}
 
-    // ---- Song ----
-    this.isplayedAtPosition = false
-    this.stopImmediately = false
-    this.isMovingForward = false
-    this.isSongPlaying = false
-    this.isNextAble = false
-    this.prevSongsToPlay = []
-    this.filter = []
-    this.oldFile = ''
-    this.file = ''
-    this.position = 0
-    this.duration = 0
-    this.source = null
-    this.playedFrom = from
-
-    // ---- Elapsed time ----
-    this.lastCurrentTime = 0
-    this.millisecond = 0
-    this.percent = 0
-    this.minute = 0
-    this.second = 0
-    this.lapse = 0
-    this.interval = null
-    this.time = {}
-
-    // let f = null
-    const db = configFile.equalizer[configFile.equalizerConfig]
-    .map(function (v) {
-        return v ? (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)) : 0
-    })
-    
-    this.filter = hrz.map(function (v, i) {
-        return f = audioContext.createBiquadFilter(),
-        f.type = 'peaking',
-        f.frequency.value = v,
-        f.Q.value = 0,
-        f.gain.value = db[i], f
-    })
-
-    /** --------------------------------------- Functions --------------------------------------- **/
-    /**
-     * Animate the time lapse of the song.
-     * It makes use of the requestAnimationFrame which has better
-     * performance. It suppose do not interfere with the UI, givin almost 60fps.
-     */
-    this.startTimer = function () {
-        let _self = this
-        const update = function () {
-            if (++_self.millisecond > 59) {
-                _self.millisecond = 0
-                if (++_self.second > 59) {
-                    ++_self.minute
-                    _self.second = 0
-                }
-
-                $('#time-start').text(`${formatDecimals(_self.minute)}:${formatDecimals(_self.second)}`)
-                $('#progress-bar').css(`width:${_self.percent += _self.lapse}%`)
-            }
-            _self.interval = requestAnimationFrame(update)
-        }
-        _self.interval = requestAnimationFrame(update)
-    }
-
-    /**
-     * Clean the everything when the ended function is executed
-     */
-    this.stopTimer = function () {
-        if (!this.stopImmediately) {
-            if (!this.isMovingForward) {
-                if (this.playedFrom === 'album') {
-                    $(`#al-${this.oldFile.position}`).css('color:var(--blackColor);text-decoration:none')
-                } else {
-                    $(`#${this.oldFile.position}`)
-                        .child()
-                        .each(function (v) {
-                            $(v).css('color:var(--blackColor);text-decoration:none')
-                        })
-                }
-
-                this.isSongPlaying = false
-                this.isNextAble = true
-                this.millisecond = this.second = this.minute =
-                this.percent = this.lapse = 0
-
-                cancelAnimationFrame(this.interval)
-
-                if (this.isNextAble && !this.isMovingForward && !this.isplayedAtPosition)
-                    this.initSong()
-            } else if (this.isMovingForward) {
-                // It must be created a new AudioNode, because the stop function delete the node.
-                this.setAudioBufferToPlay(this.poolOfSongs[this.oldFile.filename])
-                this.isMovingForward = false
-                this.isSongPlaying = true
+function startTimer() {
+    const update = function () {
+        if (++this.millisecond > 59) {
+            this.millisecond = 0
+            if (++this.second > 59) {
+                ++this.minute
+                this.second = 0
             }
         }
+
+        $('#time-start').text(`${formatDecimals(this.minute)}:${formatDecimals(this.second)}`)
+        $('#progress-bar').css(`width:${this.percent += this.lapse}%`)
+
+        this.interval = requestAnimationFrame(update.bind(this))
     }
-
-    // Show the data of the selected song
-    /**
-     * It will display the data of the songs such as title, artis, album and time.
-     *
-     * @param {object} file - Object that contains some song data
-     */
-    this.dataSong = function (file) {
-        $('#time-start').text('00:00')
-        $('#progress-bar').css('width:0')
-        $('#song-title').data({ position: file.position })
-        $('#song-title').child().each(function (v) { $(v).text(file.title) })
-        $('#artist').child().each(function (v) { $(v).text(file.artist) })
-        $('#album').child().each(function (v) { $(v).text(file.album) })
-
-        if (notification !== null)
-            notification.close()
-
-        notifi.body = `${nbspToSpace(file.artist)} from ${nbspToSpace(file.album)}`
-        notification = new Notification(nbspToSpace(file.title), notifi)
-
-        // Set the name of the song in the top bar
-        ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`)
-
-        // Change the color the actual song
-        this.playedFrom === 'album'
-            ? $(`#al-${file.position}`).css('color:var(--pinkColor);text-decoration:underline')
-            : $(`#${file.position}`).child().each(function (v) {
-                $(v).css('color:var(--pinkColor);text-decoration:underline')
-            })
-    }
-
-    /**
-     * It will save all the arraybuffers already extracted form a song file
-     * so, doing this we save time, because we read the data instead of the file
-     * to extract the data.
-     *
-     * @param {string} filePath - Name of the file
-     * @param {arraybuffer} buffer - Arraybuffer that contains chunks of data
-     */
-    this.setBufferInPool = function (filePath, buffer) {
-        if (!this.poolOfSongs[filePath]) this.poolOfSongs[filePath] = buffer
-    }
-
-    /**
-     * It will return info about the song
-     * @return {array} - Array containing the title, artis and album.
-     */
-    this.getFile = function () {
-        return this.listSongs[
-            this.isplayedAtPosition ? this.position
-                : (configFile.shuffle ? Math.floor(Math.random() * this.listSongs.length)
-                    : (this.position === this.listSongs.length - 1 ? this.position = 0 : ++this.position)
-                )]
-    }
-
-    /**
-     * The arraybuffer is passed to play the song
-     *
-     * @param {arraybuffer} buffer - The buffer that contains chunk of data
-     */
-    this.setAudioBufferToPlay = function (buffer) {
-        let _self = this
-        this.source = audioContext.createBufferSource()
-        this.source.onended = function () {
-            _self.stopTimer()
-        }
-        this.source.buffer = buffer
-
-        // connect all the nodes
-        this.source.connect(this.filter[0])
-        this.filter.reduce(function (p, c) {
-            return p.connect(c)
-        }).connect(audioContext.destination)
-
-        // The buffer gives us the song's duration.
-        // The duration is in seconds, therefore we need to convert it to minutes
-        this.time = timeParse((this.duration = buffer.duration))
-        this.lapse = 100 / this.duration
-
-        $('#time-end').text(`${formatDecimals(this.time.minute)}:${formatDecimals(this.time.second)}`)
-        this.isSongPlaying = true
-
-        this.startTimer()
-        this.isMovingForward ? this.source.start(0, this.forward) : this.source.start(0)
-        this.lastCurrentTime = audioContext.currentTime
-
-        if ($('#spinner').has('spinner-anim')) {
-            $('#main-parent-container').rmAttr('style')
-            $('#spinner').switchClass('spinner-anim', 'hide')
-        }
-    }
-
-    /**
-     * Get the buffer of the song using xhttpRequest
-     *
-     * @param {string} _path - Full path where the song FILE is.
-     * @param {function} fn - Callback to recive the arraybuffer.
-     */
-    this.getBuffer = function (_path, fn) {
-        // Read the file
-        xhtr.open('GET', url.format({
-            pathname: _path,
-            protocol: 'file:'
-        }), true)
-        xhtr.responseType = 'arraybuffer'
-        xhtr.onload = function () {
-            audioContext.decodeAudioData(xhtr.response).then(function (buffer) {
-                fn(buffer)
-            }, function (reason) {
-                fn(false)
-            })
-        }
-        xhtr.send(null)
-    }
-
-    /**
-     * Load the "possible" next song. This is for a faster loading.
-     * It doesn't work if we click on a new song from the list
-     * or by choosing one from the filtered song list using the searching bar
-     */
-    this.nextPossibleSong = function () {
-        let _self = this
-        _self.isplayedAtPosition = false
-        _self.position = _self.oldFile.position
-
-        // Next (possible) song to play
-        // if it is not saved into the buffer, we have to get it and save it
-        _self.file = _self.getFile()
-        if (!_self.poolOfSongs[_self.file.filename]) {
-            _self.getBuffer(_self.file.filename, function (data) {
-                if (!data) throw data
-
-                _self.isNextAble = true
-                _self.setBufferInPool(_self.file.filename, data)
-            })
-        }
-    }
-
-    this.initSong = function () {
-        animPlayAndPause('play')
-
-        // Get the buffer of song if it is in the poolOfSongs
-        // Note: The oldFile is an important variable, because is saved into
-        // the prevSongsToPlay array, which has all the played songs.
-        if (this.poolOfSongs[this.file.filename]) {
-            // play the song and save it as an old song (oldFile)
-            this.setAudioBufferToPlay(this.poolOfSongs[this.file.filename])
-            this.dataSong((this.oldFile = this.file))
-            this.nextPossibleSong()
-        } else {
-            // Get the song to play
-            let _self = this
-            this.file = this.getFile()
-
-            $('#main-parent-container').css('-webkit-filter:blur(1px)')
-            $('#spinner').switchClass('hide', 'spinner-anim')
-            this.getBuffer(this.file.filename, function (data) {
-                if (!data) throw data
-
-                // Save the buffer
-                _self.setBufferInPool(_self.file.filename, data)
-
-                // Play the song and save it as old (oldFile)
-                _self.setAudioBufferToPlay(data)
-                _self.dataSong((_self.oldFile = _self.file))
-                _self.nextPossibleSong()
-            })
-        }
-    }
-
-    this.checkNextAndPrevSong = function () {
-        if (!this.isSongPlaying && audioContext.state === 'suspended')
-            audioContext.resume()
-
-        if (this.source !== null) {
-            this.source.stop(0)
-            this.source = null
-        }
-
-        this.isNextAble = false
-    }
+    this.interval = requestAnimationFrame(update.bind(this))
 }
 
-Controls.prototype.playSongAtPosition = function (pos = -1) {
-    $('#main-parent-container').css('-webkit-filter:blur(1px)')
-    $('#spinner').switchClass('hide', 'spinner-anim')
-
-    if (this.source !== null) {
-        this.source.stop(0)
-        this.source = null
-    }
-
-    if (this.oldFile !== '') this.prevSongsToPlay.push(this.oldFile)
-
-    this.file = ''
-    this.isplayedAtPosition = true
-    this.stopImmediately = false
-    this.position = pos
-    this.initSong()
-}
-
-Controls.prototype.updateCurrentTime = function () {
-    if ((totalTime = Math.floor(audioContext.currentTime - this.lastCurrentTime)) > secondU) {
-        this.time = timeParse(totalTime)
-        this.minute += this.time.minute
-        this.second += this.time.second
-        this.percent += this.lapse * totalTime
-    }
-}
-
-Controls.prototype.saveCurrentTime = function () {
-    this.lastCurrentTime = audioContext.currentTime
-}
-
-Controls.prototype.setFilterVal = function (a, b) {
+function setFilterVal(a, b) {
     this.filter[a].gain.setValueAtTime(b, audioContext.currentTime)
 }
 
-Controls.prototype.stopSong = function () {
-    this.stopImmediately = true
-    cancelAnimationFrame(this.interval)
-
+function cleanData() {
     $('#time-start').text('00:00')
-    $('#time-end').text('00:00')
     $('#progress-bar').css('width:0')
-    $('#song-title').child().each(function (v) { $(v).text('') })
-    $('#artist').child().each(function (v) { $(v).text('') })
-    $('#album').child().each(function (v) { $(v).text('') })
 
-    if (this.oldFile.length) {
-        $(`#${this.oldFile.position}`)
+    if (notification !== null)
+        notification.close()
+
+    if (this.playedFrom === 'album') {
+        // $(`#al-${this.prevSongsToPlay[this.position ].position}`).css('color:var(--blackColor);text-decoration:none')
+    } else {
+        $(`#${this.prevSongsToPlay[this.prevSongsToPlay.length - 1].position}`)
             .child()
             .each(function (v) {
-                $(v).css('color:var(--blackColor)')
-            })
-    }
-
-    animPlayAndPause('pause')
-    if (this.source !== null) {
-        this.source.stop(0)
-        this.source = null
-    }
-
-    this.isplayedAtPosition = this.isMovingForward = this.isSongPlaying =
-        this.isNextAble = false
-
-    this.duration = this.lastCurrentTime = this.millisecond = this.percent =
-        this.minute = this.second = this.lapse = 0
-
-    this.time = {}
-}
-
-/**
- * Plays the next song.
- * There's a difference between play the next song with the shuffle enabled (random)
- * or disabled.
- * When we have enabled the shuffle, the next song function behavior it could be like this:
- *
- * song playing -> * 1 next song [song played saved] -> prev song [play the song saved]
- * -> next song [is not the next song * 1, it's a new one]
- */
-Controls.prototype.nextSong = function () {
-    // oldFile saved
-    if (this.isNextAble) {
-        this.prevSongsToPlay.push(this.oldFile)
-        this.checkNextAndPrevSong()
-    }
-}
-
-/**
- * Plays the songs that has been played before
- */
-Controls.prototype.prevSong = function () {
-    if (this.prevSongsToPlay.length && this.isNextAble) {
-        this.position = (this.file = this.prevSongsToPlay.pop()).position
-        this.checkNextAndPrevSong()
-    }
-}
-
-/**
- * Play the actual song. If we don't choose a song, it's gonna be played one randomly.
- */
-Controls.prototype.playSong = function () {
-    this.stopImmediately = false
-    if (!this.isSongPlaying && audioContext.state === 'running') { // First time played
-        this.position = Math.floor(Math.random() * this.listSongs.length)
-        this.initSong()
-    } else if (this.isSongPlaying && audioContext.state === 'running') { // Already playing
-        let _self = this
-        audioContext.suspend().then(function () {
-            _self.isSongPlaying = false
+                $(v).css('color:var(--blackColor);text-decoration:none')
         })
-
-        cancelAnimationFrame(this.interval)
-        animPlayAndPause('pause')
-    } else if (!this.isSongPlaying && audioContext.state === 'suspended') { // Paused
-        this.isSongPlaying = true
-        this.startTimer()
-        audioContext.resume()
-        animPlayAndPause('play')
     }
 }
 
-/**
- * Sets the shuffle actions. This is saved, it isn't lost when we close the app
- */
-Controls.prototype.setShuffle = function () {
-    if (this.file) this.file = ''
+function stopTimer() {
+    console.log("STOP")
+    cleanData.call(this)
+    this.millisecond = this.second = this.minute = this.percent = this.lapse = 0
+    cancelAnimationFrame(this.interval)
 
+    getPosition.call(this)
+    initSong.call(this)
+    dataSong.call(this)
+}
+
+function dataSong() {
+    $('#song-title').data({ position: file.position })
+    $('#song-title').child().each(function (v) { $(v).text(file.title) })
+    $('#artist').child().each(function (v) { $(v).text(file.artist) })
+    $('#album').child().each(function (v) { $(v).text(file.album) })
+
+
+    notifi.body = `${nbspToSpace(file.artist)} from ${nbspToSpace(file.album)}`
+    notification = new Notification(nbspToSpace(file.title), notifi)
+
+    // Set the name of the song in the top bar
+    ipcRenderer.send('update-title', `${nbspToSpace(file.title)} - ${nbspToSpace(file.artist)} - Soube`)
+
+    // Change the color the actual song
+    this.playedFrom === 'album'
+        ? $(`#al-${file.position}`).css('color:var(--pinkColor);text-decoration:underline')
+        : $(`#${file.position}`).child().each(function (v) {
+            $(v).css('color:var(--pinkColor);text-decoration:underline')
+        })
+}
+
+function getPosition() {
+    this.position = (configFile.shuffle ? Math.floor(Math.random() * this.listSongs.length)
+        : (this.position === this.listSongs.length - 1 ? 0 : ++this.position))
+}
+
+function setShuffle() {
     $('#shuffle-icon').css(
         `fill:${(configFile.shuffle = !configFile.shuffle) ? '#FBFCFC' : 'var(--lightPinkColor)'}`
     )
@@ -540,38 +239,148 @@ Controls.prototype.setShuffle = function () {
     editFile('config', configFile)
 }
 
-/**
- * Sets the list of the loaded songs.
- * It's needed here because we must to use the data to display the info
- * @param {object} _songs - The list of loaded songs
- */
-Controls.prototype.setSongs = function (_songs) {
-    this.listSongs = _songs
-}
+function promisePlay() {
+    this.isPlaying = true
+    this.isPaused = false
 
-/**
- * It will update the time of the song, the song itself and the progress bar
- * @param {event} event - The event of the progressbar (onclick)
- * @param {object} element- The `this` object to get the data from the element
- */
-Controls.prototype.moveForward = function (event, element) {
-    if (this.isSongPlaying) {
-        this.isMovingForward = true
-        // Cancel the time lapse
-        cancelAnimationFrame(this.interval)
-
-        this.forward = this.duration * event.offsetX / element.clientWidth
-        this.time = timeParse(this.forward)
-        // Calculate the new time
-        this.minute = this.time.minute
-        this.second = this.time.second
-        this.millisecond = this.forward * 100
-        // Calculate the percent of the progress bar
-        this.percent = this.forward * (100 / this.duration)
-
-        // The audioNode must be stopped and then it must be started again
-        this.source.stop(0)
+    if ($('#spinner').has('spinner-anim')) {
+        $('#main-parent-container').rmAttr('style')
+        $('#spinner').switchClass('spinner-anim', 'hide')
     }
 }
+
+function initSong() {
+    animPlayAndPause('play')
+
+    $('#main-parent-container').css('-webkit-filter:blur(1px)')
+    $('#spinner').switchClass('hide', 'spinner-anim')
+
+    file = this.listSongs[this.position]
+    this.prevSongsToPlay.push(file)
+
+    audioPlayer.src = file.filename
+
+    audioPlayer.play().then(promisePlay.bind(this)).catch(function (e) { })
+}
+
+function playSongAtPosition(pos = -1) {
+    $('#main-parent-container').css('-webkit-filter:blur(1px)')
+    $('#spinner').switchClass('hide', 'spinner-anim')
+
+    if (this.isPlaying || this.isPaused) {
+        audioPlayer.pause()
+        audioPlayer.src = ''
+        audioPlayer.load()
+        cleanData.call(this)
+        this.millisecond = this.second = this.minute = this.percent = this.lapse = 0
+        cancelAnimationFrame(this.interval)
+    }
+
+    this.position = pos
+    initSong.call(this)
+    dataSong.call(this)
+}
+
+// Controls.prototype.updateCurrentTime = function () {
+//     if ((totalTime = Math.floor(audioContext.currentTime - this.lastCurrentTime)) > secondU) {
+//         this.time = timeParse(totalTime)
+//         this.minute += this.time.minute
+//         this.second += this.time.second
+//         this.percent += this.lapse * totalTime
+//     }
+// }
+
+// Controls.prototype.saveCurrentTime = function () {
+//     this.lastCurrentTime = audioContext.currentTime
+// }
+
+
+// Controls.prototype.stopSong = function () {
+//     this.stopImmediately = true
+//     cancelAnimationFrame(this.interval)
+
+//     $('#time-start').text('00:00')
+//     $('#time-end').text('00:00')
+//     $('#progress-bar').css('width:0')
+//     $('#song-title').child().each(function (v) { $(v).text('') })
+//     $('#artist').child().each(function (v) { $(v).text('') })
+//     $('#album').child().each(function (v) { $(v).text('') })
+
+//     if (this.oldFile.length) {
+//         $(`#${this.oldFile.position}`)
+//             .child()
+//             .each(function (v) {
+//                 $(v).css('color:var(--blackColor)')
+//             })
+//     }
+
+//     animPlayAndPause('pause')
+//     if (this.source !== null) {
+//         this.source.stop(0)
+//         this.source = null
+//     }
+
+//     this.isplayedAtPosition = this.isMovingForward = this.isSongPlaying =
+//         this.isNextAble = false
+
+//     this.duration = this.lastCurrentTime = this.millisecond = this.percent =
+//         this.minute = this.second = this.lapse = 0
+
+//     this.time = {}
+// }
+
+// Controls.prototype.nextSong = function () {
+//     // oldFile saved
+//     if (this.isNextAble) {
+//         this.prevSongsToPlay.push(this.oldFile)
+//         this.checkNextAndPrevSong()
+//     }
+// }
+
+// Controls.prototype.prevSong = function () {
+//     if (this.prevSongsToPlay.length && this.isNextAble) {
+//         this.position = (this.file = this.prevSongsToPlay.pop()).position
+//         this.checkNextAndPrevSong()
+//     }
+// }
+
+function playSong() {
+    if (!this.isPlaying && !this.isPaused) { // First time
+        getPosition.call(this)
+        initSong.call(this)
+        dataSong.call(this)
+    } else if (this.isPlaying) {
+        animPlayAndPause('pause')
+        cancelAnimationFrame(this.interval)
+        audioPlayer.pause()
+    } else if (this.isPaused) {
+        animPlayAndPause('play')
+        audioPlayer.play().then(promisePlay.bind(this)).catch(function (e) { })
+    }
+}
+
+obj.playSong = playSong.bind(obj)
+obj.setShuffle = setShuffle.bind(obj)
+
+// Controls.prototype.setSongs = function (_songs) {
+//     this.listSongs = _songs
+// }
+
+function moveForward(event, element) {
+    forward = this.duration * event.offsetX / element.clientWidth
+    this.time = timeParse(forward)
+    // Calculate the new time
+    this.minute = this.time.minute
+    this.second = this.time.second
+    this.millisecond = forward * 100
+    // Calculate the percent of the progress bar
+    this.percent = forward * (100 / this.duration)
+    audioPlayer.currentTime = forward
+}
+
+obj.moveForward = moveForward.bind(obj)
+
+obj.playSongAtPosition = playSongAtPosition.bind(obj)
+obj.setFilterVal = setFilterVal.bind(obj)
 
 module.exports = Controls

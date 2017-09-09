@@ -6,13 +6,14 @@
 // ---- nodejs ----
 const exec = require('child_process').exec
 const path = require('path')
+const url = require('url')
 const fs = require('fs')
 
 // ---- electron ----
 const ipcRenderer = require('electron').ipcRenderer
 
 // ---- other ----
-const musicmetadata = require('musicmetadata')
+const audioMetaData = require('audio-metadata')
 
 // ---- own ----
 const {
@@ -21,14 +22,19 @@ const {
     langFile,
     editFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
-const worker = new Worker(path.join(__dirname, 'workerPaths.js'))
 const $ = require(path.join(__dirname, '../../../', 'dom'))
+
+const worker = new Worker(path.join(__dirname, 'workerPaths.js'))
+const workerDB = new Worker(path.join(__dirname, 'workerDB.js'))
 
 /* --------------------------------- Variables --------------------------------- */
 // ---- normals ----
 let lang = langFile[configFile.lang]
 let songs = []
 let files = []
+let count = 0
+let metadata
+let iter
 
 /* --------------------------------- Functions --------------------------------- */
 // Will get all this songs files.
@@ -42,7 +48,8 @@ function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
                 return path.normalize(f)
             })
             fnStart()
-            extractMetadata(fnIter)
+            iter = fnIter
+            extractMetadata()
         }
     }
 
@@ -56,7 +63,6 @@ function removeSongFolder(folder) {
         listSongs.forEach(function (f, i, a) {
             readFiles.indexOf(f.filename) !== -1 ? delete a[i] : songs.push(f)
         })
-
 
         editFile('listSong', setAlphabeticOrder())
     }
@@ -83,7 +89,8 @@ function checkSongFolder(folder, fnStart, fnIter) {
                 })
 
                 fnStart()
-                extractMetadata(fnIter)
+                iter = fnIter
+                extractMetadata()
             } else if ($('@objSize')(listSongs) > totalFiles.length){
                 songs = []
                 listSongs.forEach(function (f, i, a) {
@@ -95,28 +102,53 @@ function checkSongFolder(folder, fnStart, fnIter) {
         }
     }
 
-
     folder.forEach(function (f) { readParentFolder(f, readAllFiles) })
 }
 
 // Will get all the needed metadata from a song file
-function extractMetadata(fnIter) {
-    let count = 0
-    files.forEach(function (f) {
-        musicmetadata(fs.createReadStream(f), function (error, data) {
-            count++
-            // In case of empty data, it will save data using what is inside the lang.json file
-            songs.push(
-                {
-                    artist: spaceToNbsp(data.artist.length ? data.artist[0].trim() : lang.artist),
-                    album: spaceToNbsp(data.album !== '' ? data.album.trim() : lang.album),
-                    title: spaceToNbsp(data.title !== '' ? data.title.trim() : lang.title),
-                    filename: f
-                }
-            )
-            fnIter(count, files.length)
+function extractMetadata() {
+    xhtr = new XMLHttpRequest()
+    xhtr.open('GET', url.format({
+        pathname: files[count],
+        protocol: 'file:'
+    }), true)
+    xhtr.responseType = 'arraybuffer'
+    xhtr.onload = function () {
+        metadata = /\.(mp3|wav)$/ig.test(files[count])
+            ? audioMetaData.id3v1(xhtr.response)
+            : audioMetaData.ogg(xhtr.response)
+
+        if (metadata === null) metadata = audioMetaData.id3v2(xhtr.response)
+
+        songs.push({
+            artist: spaceToNbsp(metadata.artist !== undefined ? metadata.artist.trim() : lang.artist),
+            album: spaceToNbsp(metadata.album !== undefined ? metadata.album.trim() : lang.album),
+            title: spaceToNbsp(metadata.title !== undefined ? metadata.title.trim() : lang.title),
+            filename: files[count]
         })
-    })
+
+        if (count === files.length - 1) {
+            workerDB.postMessage({
+                state: 'done'
+            })
+            iter(count, files.length)
+        } else {
+            workerDB.postMessage({
+                state: 'open'
+            })
+            iter(count, files.length)
+        }
+    }
+    xhtr.send(null)
+
+    workerDB.onmessage = function (e) {
+        if (e.data.state === 'next') {
+            ++count
+            extractMetadata()
+        } else if (e.data.state === 'close') {
+            return true
+        }
+    }
 }
 
 function readParentFolder(folder, fn) {
@@ -147,7 +179,7 @@ function readParentFolder(folder, fn) {
 }
 
 function spaceToNbsp(str) {
-    return str.trim().replace(/\s/g, '&nbsp;')
+    return str.trim().replace(/\s/g, '&nbsp;').replace('ÿþ', '')
 }
 
 function setAlphabeticOrder() {
