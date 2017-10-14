@@ -8,7 +8,7 @@
             "titleConfig": "Configuración",
             "equalizerSetting": "Ecualizador",
             "loadingSongFolder": "Cargando canciones ... ",
-            "loadingAlbumFolder": "Cargando albun ... ",
+            "loadingAlbumFolder": "Cargando álbum ... ",
             "removingSongFolder": "Atención!, Estás intentando remover la carpeta",
             "about": "Sobre",
             "newEQ": "Guardar",
@@ -33,7 +33,6 @@
         "alerts": {
             "newVersion": "Tenemos una nueva versión!. Click para ir descargarlo.",
             "checkListOfSongs": "Revisando lista de canciones...",
-            "searchingResults": "Parece que no tienes la canción que andas buscando. &#9785;",
             "welcome": "No hay una carpeta de música agregada.<br>Por favor, agrega tu carpeta de música dando click en esta ventana blanca o en Archivos -> \"Agregar nueva carpeta\"",
             "error_001": "Ha ocurrido un error inesperado. Por favor, ir a: https:\/\/github.com\/DracotMolver\/Soube o enviar un correo a dmolina@soube.diegomolina.cl, y reportar el error. Gracias.",
             "error_002": "No hay archivos para reproducir. Por favor, ir al menú (tres puntos) y dar click en \"Agregar carpeta de música\"",
@@ -44,7 +43,7 @@
             "album": "Álbum",
             "title": "Canción"
         },
-        "aboutContent": "<p>Soube es un reproductor de música construido usando el framework ElectronJS y hace uso de otras APIs y Módulos.</p><p>Soube está bajo la licencia <a href=\"https://github.com/DracotMolver/Soube/blob/master/LICENSE\">MIT</a>.</p><p>Soube fue desarrollado por <a href=\"http://www.diegomolina.cl\">Diego Alberto Molina Vera</a>. Todo el código, con excepción códigos de terceros, pertenecen a <b>Diego Alberto Molina Vera.</b></p><p>El framework <a href=\"http://electron.atom.io/\">ElectronJS</a> pertence al equipo de Github.</p><p>Soube usa el módulo <b>audio-metadata</b> para extraer todos los metadatos de los archivos de audio. Este módulo pertenece a <a href=\"https://www.npmjs.com/package/audio-metadata\">@leetreveil</a>.</p><p>Todos los iconos fueron diseñados por <b>Diego Alberto Molina Vera</b>. Cualquier similitud con otros iconos propietarios es coincidencia. En ningún momento se ha copiado o usado algún icono propietario como medio de inspiración.</p><p>El nombre <b>Soube</b> es una modificación de <b>Sound be</b>. El nombre no fue copiado de ninguna marca registrada.</p><p>La fuente usada fue descargada desde Google Fonts y pertenece al diseñador <a href=\"https://fonts.google.com/specimen/Muli\">Vernon Adams</a></p>"
+        "aboutContent": "<p>Soube es un reproductor de música construido usando el framework ElectronJS y hace uso de otras APIs y Módulos.</p><p>Soube está bajo la licencia <a href=\"https://github.com/DracotMolver/Soube/blob/master/LICENSE\">MIT</a>.</p><p>Soube fue desarrollado por <a href=\"http://www.diegomolina.cl\">Diego Alberto Molina Vera</a>. Todo el código, a excepción de códigos de terceros, pertenecen a <b>Diego Alberto Molina Vera.</b></p><p>El framework <a href=\"http://electron.atom.io/\">ElectronJS</a> pertence al equipo de Github.</p><p>Soube usa el módulo <b>music-metadata</b> para extraer todos los metadatos de los archivos de audio. Este módulo pertenece a <a href=\"https://www.npmjs.com/package/musicmetadata\">>@borewit</a>.</p><p>Todos los iconos fueron diseñados por <b>Diego Alberto Molina Vera</b>. Cualquier similitud con otros iconos propietarios es coincidencia. En ningún momento se ha copiado o usado algún icono propietario.</p><p>El nombre <b>Soube</b> es una modificación de <b>Sound be</b>. El nombre no fue copiado de ninguna marca registrada.</p><p>La fuente usada fue descargada desde Google Fonts y pertenece al diseñador <a href=\"https://fonts.google.com/specimen/Muli\">Vernon Adams</a></p>"
     },
     "us": {
         "title": "Unknown",
@@ -61,7 +60,7 @@
             "newEQ": "Save",
             "selectEQSetting": "Select an style",
             "addNewEQSetting": "Add other...",
-            "newEQSettingSaved": "Configuration saved. Now it will be part of a available selection.",
+            "newEQSettingSaved": "Configuration saved. Now it will be part of the available selection.",
             "newEQSettingDeleted": "Configuration deleted!",
             "newEQSettingDelete": "Delete",
             "newEQSettingEdit": "Edit",
@@ -80,7 +79,6 @@
         "alerts": {
             "newVersion": "We've got a new version!. Click to download it.",
             "checkListOfSongs": "Checking list of songs...",
-            "searchingResults": "It seems the you don't have the song you're searching for. &#9785;",
             "welcome": "There is no music folder added.<br>Please, add your music folder doing click on this white frame or going to Files -> Add new folder",
             "error_001": "An unexpected error occurred. Please, go to: https:\/\/github.com\/DracotMolver\/Soube or send an e-mail to dmolina@soube.diegomolina.cl, and report the error. Thanks.",
             "error_002": "There are no files to play. Please, click on the config icon to add your music folder.",
@@ -91,6 +89,6 @@
             "album": "Album",
             "title": "Song"
         },
-        "aboutContent": "<p>Soube is a music player built using ElectronJS framework and does use of others APIs y Modules.</p><p>Soube is under <a href=\"https://github.com/DracotMolver/Soube/blob/master/LICENSE\">MIT</a> license.</p><p>Soube was developed by <a href=\"http://www.diegomolina.cl\">Diego Alberto Molina Vera</a>. All the code, except third-parties, belongs to <b>Diego Alberto Molina Vera.</b></p><p>The <a href=\"http://electron.atom.io/\">ElectronJS</a> framework belongs to Github team.</p><p>Soube use the <b>audio-metadata</b> modules to extract all the metadatos from the audio files. This module belongs to <a href=\"https://www.npmjs.com/package/audio-metadata\">@leetreveil</a>.</p><p>All the icons were designed by <b>Diego Alberto Molina Vera</b>. Any similarity with other registered icons is just a coincidence. In any moment has been copied or used any registered icons as a way of inspiration.</p><p>The name <b>Soube</b> is a modification of <b>Sound be</b>. The name was not copied from any Trademark.</p><p>The used font was downloaded from Google Fonts and it belongs to de designer <a href=\"https://fonts.google.com/specimen/Muli\">Vernon Adams</a></p>"
+        "aboutContent": "<p>Soube is a music player built using ElectronJS framework and does use of others APIs y Modules.</p><p>Soube is under <a href=\"https://github.com/DracotMolver/Soube/blob/master/LICENSE\">MIT</a> license.</p><p>Soube was developed by <a href=\"http://www.diegomolina.cl\">Diego Alberto Molina Vera</a>. All the code, except third-parties, belongs to <b>Diego Alberto Molina Vera.</b></p><p>The <a href=\"http://electron.atom.io/\">ElectronJS</a> framework belongs to Github team.</p><p>Soube use the <b>music-metadata</b> modules to extract all the needed metadata from the audio files. This module belongs to <a href=\"https://www.npmjs.com/package/music-metadata\">>@borewit</a>.</p><p>All the icons were designed by <b>Diego Alberto Molina Vera</b>. Any similarity with other registered icons is just a coincidence. At any moment has been copied or used any registered icons.</p><p>The name <b>Soube</b> is a modification of <b>Sound be</b>. The name was not copied from any Trademark.</p><p>The used font was downloaded from Google Fonts and it belongs to de designer <a href=\"https://fonts.google.com/specimen/Muli\">Vernon Adams</a></p>"
     }
 }

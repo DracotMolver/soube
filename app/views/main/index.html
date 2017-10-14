@@ -18,10 +18,9 @@
             </div>
         </div>
         <!--Top nav-->
-        <div id="top-nav" class="grid-100 grid-parent border-bottom border-color-dark-pink">
-            <audio id="audio-player" src=""></audio>
+        <div id="top-nav" class="grid-100 grid-parent">
             <!--controles-->
-            <div class="grid-10 grid-parent mobile-grid-15">
+            <div id="controls" class="grid-10 grid-parent mobile-grid-20">
                 <div class="grid-75 mobile-grid-75">
                     <div class="btn-controls" id="play-pause">
                         <!-- play -->
@@ -86,8 +85,7 @@
                     </div>
                 </div>
             </div>
-            <div id="toggle-buttons" class="hide grid-parent mobile-grid-5">A</div>
-            <div id="info-play" class="grid-85 grid-parent mobile-grid-80">
+            <div id="info-play" class="grid-85 grid-parent mobile-grid-75">
                 <!-- Info de la canción-->
                 <div class="grid-30">
                     <div id="info-song" class="grid-100 grid-parent">
@@ -106,13 +104,7 @@
                     </div>
                 </div>
                 <div class="grid-70 grid-parent">
-                    <div id="time" class="grid-100">
-                            <span id="time-end">00:00</span>&nbsp;<span style="color:white">-</span>&nbsp;<span id="time-start">00:00</span>
-                    </div>
-                    <div id="total-progress-bar" class="mobile-suffix-5 mobile-prefix-5">
-                        <div id="progress-bar">
-                        </div>
-                    </div>
+                    <audio id="audio-player" src="" controls class="grid-100 grid-parent mobile-grid-100"></audio>
                 </div>
             </div>
             <div class="grid-5 grid-parent mobile-grid-5">
@@ -129,7 +121,7 @@
         </div>
         <!-- Listado de canciones -->
         <div id="list-songs"></div>
-        <!-- Albun a tocar -->
+        <!-- Álbum a tocar -->
         <div id="album-to-play-container" class="parent-container-config hide">
             <div id="album-to-play" class="container-config">
                 <div class="title-container border-bottom border-color-light-grey grid-100 grid-parent">
@@ -142,30 +134,6 @@
                 </div>
                 <div style="overflow:hidden;overflow-y:auto;height:90%;"></div>
             </div>
-        </div>
-    </div>
-    <!-- Buscador de canciones-->
-    <div id="search-container" class="hide">
-        <!-- - 768px -->
-        <div id="m-search-wrapper" class="hide">
-            <input id="m-search" type="text" placeholder="Search:" class="mobile-grid-100 grid-parent"/>
-        </div>
-        <!-- + 768px -->
-        <div id="search-wrapper" class="hide">
-            <input id="search" type="text" placeholder="Search:" class="grid-100 grid-parent"/>
-        </div>
-        <div id="leftright" class="hide">
-            <div class="grid-100 grid-parent">
-                <div class="grid-50 grid-parent mobile-grid-50 arrow-leftright" data-direction="left">
-                    &#9664;
-                </div>
-                <div class="grid-50 grid-parent mobile-grid-50 arrow-leftright" data-direction="right">
-                    &#9654;
-                </div>
-            </div>
-        </div>
-        <div id="container-results">
-            <div id="wrapper-results"></div>
         </div>
     </div>
     <!-- Pop up alerta de canciones nuevas -->
@@ -473,13 +441,13 @@
                 </div>
                 <div class="grid-25 mobile-grid-25">
                     <div class="colour-box">
-                        <div class="colour" id="purple-theme"></div>
+                        <div class="colour" id="blue-theme"></div>
                     </div>
                     <div class="colour-name"></div>
                 </div>
                 <div class="grid-25 mobile-grid-25">
                     <div class="colour-box">
-                        <div class="colour" id="blue-theme"></div>
+                        <div class="colour" id="purple-theme"></div>
                     </div>
                     <div class="colour-name"></div>
                 </div>
@@ -535,7 +503,7 @@
                 </div>
             </div>
             <div class="grid-100" style="text-align:center;font-size:.7.6em">
-                <a href="http://soube.diegomolina.cl">Soube Web</a>
+                <a href="http://soube.diegomolina.cl">Soube Web (v2.0)</a>
             </div>
             <div class="grid-100">
                 <div id="_about"></div>

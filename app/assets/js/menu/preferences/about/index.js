@@ -1,8 +1,12 @@
 /**
- * @author Diego Alberto Molina Vera.
+ * @module about/index.js
+ * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * This is a simple module to display some information related to the music player
  */
-/** --------------------------------------- Modules --------------------------------------- **/
+/** -=================================== Modules ===================================- **/
 // ---- Node ----
 const path = require('path')
 
@@ -14,25 +18,30 @@ const {
   configFile,
     langFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
-const $ = require(path.join(__dirname, '../../../', 'dom'))
+const { $ } = require(path.join(__dirname, '../../../', 'dom'))
 
-/* --------------------------------- Variables --------------------------------- */
+/* -=================================== Variables ===================================- */
 let lang = langFile[configFile.lang]
 
-/** --------------------------------------- Functions --------------------------------------- **/
+/** -=================================== Functions ===================================- **/
 module.exports = function showAbout() {
-    $('#main-parent-container').css('-webkit-filter:blur(1px)')
-    $('#_about').text(lang.aboutContent)
+    'use strict'
 
-    $(':a').on({
-        click: function (e) {
-            e.preventDefault()
-            shell.openExternal(this.href)
+    $('#main-parent-container', { css: '-webkit-filter:blur(1px)' })
+    $('#_about', { text: lang.aboutContent })
+
+    $(':a', {
+        on: {
+            click(el, e) {
+                e.preventDefault()
+                shell.openExternal(el.href)
+            }
         }
     })
 
-    $($('.parent-container-config').get(4))
-        .removeClass('hide')
-        .child(0)
-        .addClass('container-config-anim')
+    $($('.parent-container-config')[4], {
+        removeClass: 'hide',
+        child: 0,
+        addClass: 'container-config-anim'
+    })
 }

@@ -1,8 +1,11 @@
 /**
- * @author Diego Alberto Molina Vera.
+ * @module preferences/index.js
+ * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
  */
-/** --------------------------------------- // --------------------------------------- **/
+
+ /** -=================================== // ===================================- **/
 const configurations = require('./configurations')
 const about = require('./about')
 

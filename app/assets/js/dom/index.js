@@ -6,17 +6,16 @@
 /* --------------------------------- Variables --------------------------------- */
 let poolOfElements = {}
 let key = ''
+let e
 
 /* --------------------------------- Functions --------------------------------- */
 function onFunction(el, fn) {
-    Object.keys(fn).forEach(function (v) {
-        /animation/.test(v)
-            ? el.addEventListener(v.toLowerCase(), fn[v])
-            : el[`on${v.toLowerCase()}`] = fn[v]
-    })
+    Object.keys(fn).forEach(v => v.includes('animation')
+        ? el.addEventListener(v.toLowerCase(), fn[v].bind(null, el), { passive: true })
+        : el[`on${v.toLowerCase()}`] = fn[v].bind(null, el))
 }
 
-function saveElementInPool(name, element) {
+function setElementInPool(name, element) {
     poolOfElements[name] = element
 }
 
@@ -29,111 +28,99 @@ function getElementInPool(name) {
 }
 
 /* --------------------------------- Class --------------------------------- */
-const _ = function () { }
-
-_.prototype = {
+const obj = {
     element: null,
-    switchClass: function (from, to) {
-        return el = this.element, el.classList.remove(from), el.classList.add(to), this
+    switchClass(el, classes) {
+        el.classList.remove(classes[0]), el.classList.add(classes[1])
     },
-    addClass: function (str) {
-
-        return el = this.element, el.length
-            ? el.forEach(function (v) { str.split(' ').forEach(function (s) { v.classList.add(s) }) })
-            : str.split(' ').forEach(function (s) { el.classList.add(s) }), this
+    addClass(el, str) {
+        el.length
+            ? el.forEach(v => v.classList.add(...str.split(' ')))
+            : el.classList.add(...str.split(' '))
     },
-    rmChild: function (c) {
-        return el = this.element, el.removeChild(Array.from(el.children).find(function (v) { return (new RegExp(c)).test(v.outerHTML) })), this
+    rmChild(el, c) {
+        console.log('rmChild() - dom', c);
+        // return el = this.element, el.removeChild(Array.from(el.children).find(v => (new RegExp(c)).test(v.outerHTML))), this
     },
-    empty: function () {
-        el = this.element
+    empty(el) {
         while (el.firstChild) el.removeChild(el.firstChild)
+    },
+    text(el, str = null) {
+        str !== null ? (el.length ? el.forEach(e => e.innerHTML = str) : el.innerHTML = str) : e = el.textContent
+    },
+    removeClass(el, _class) {
+        el.classList.remove(_class)
+    },
+    child(el, pos) {
+        e = pos >= 0 ? el.children[pos] : Array.from(el.children)
+    },
+    lastChild(el) {
+        e = el.lastChild
+    },
+    on(el, fn) {
+        el.length && el.nodeName !== 'SELECT'
+            ? el.forEach(e => onFunction(e, fn))
+            : onFunction(el, fn)
+    },
+    data(el, data) {
+        if (data.constructor === String) {
+            let d = el.dataset[data]
 
-        return this
+            e = /^\d+$/.test(d)
+                ? parseInt(d)
+                : (/^\d+\.\d+$/.test(d)
+                    ? parseFloat(d)
+                    : d.toString())
+        } else {
+            Object.keys(data).forEach(v => el.dataset[v] = data[v])
+        }
     },
-    text: function (str = null) {
-        el = this.element
-        return str !== null
-            ? (el.length ? el.forEach(function (e) { e.innerHTML = str }) : el.innerHTML = str, this) : el.textContent
+    each(el, fn) {
+        el.forEach((v, i) => fn.length === 1 ? fn(v) : fn(v, i))
     },
-    removeClass: function (_class) {
-        el = this.element, el.classList.remove(_class)
-        if (el.className === '') el.removeAttribute('class')
-
-        return this
-    },
-    child: function (pos = -1) {
-        return this.element = pos !== -1 ? this.element.children[pos] : Array.from(this.element.children), this
-    },
-    lastChild: function () {
-        return this.element = this.element.lastChild, this
-    },
-    on: function (fn) {
-        el = this.element
-        return el.length && el.nodeName !== 'SELECT'
-            ? el.forEach(function (e) { onFunction(e, fn) }) : onFunction(el, fn), this
-    },
-    data: function (data = null) {
-        return data.constructor === String
-            ? (d = this.element.dataset[data], /^\d+$/.test(d)
-                ? parseInt(d) : (/^\d+\.+\d+$/.test(d)
-                    ? parseFloat(d) : d.toString()))
-            : (el = this.element, Object.keys(data).forEach(function (v) { el.dataset[v] = data[v] }), this)
-    },
-    each: function (fn) {
-        return this.element.forEach(function (v, i) { fn.length === 1 ? fn(v) : fn(v, i) }), this
-    },
-    css: function (str, replace = false) {
-        el = this.element
-        const cssChange = function (e) {
+    css(el, str, replace) {
+        const cssChange = e => {
             if (e.style.cssText.indexOf(str) && !replace)
                 e.style.cssText += `${str};`
-            else if (replace)
+            else if (replace !== '')
                 e.style.cssText = `${str};`
         }
 
-        return el.length
-            ? el.forEach(function (e) { cssChange(e) }) : cssChange(el), this
+        el.length ? el.forEach(e => cssChange(e)) : cssChange(el)
     },
-    get: function (pos = -1) {
-        return pos === -1 ? this.element : this.element[pos]
+    rmAttr(el, attr) {
+        el.removeAttribute(attr)
     },
-    rmAttr: function (attr) {
-        return this.element.removeAttribute(attr), this
-    },
-    attr: function (attr) {
-        el = this.element
+    attr(el, attr) {
         if (attr.constructor === Object)
-            Object.keys(attr).forEach(function (v) { el.setAttribute(v, attr[v]) })
-        else if (attr !== '')
-            return el.getAttribute(attr)
+            Object.keys(attr).forEach(v => el.setAttribute(v, attr[v].toString()))
+        else if (attr)
+            e = el.getAttribute(attr)
+    },
+    append(el, a) {
+        const add = (e, v) => e.appendChild('element' in v ? v.element : v)
 
-        return this
+        if (a.constructor === Array) {
+            let f = document.createDocumentFragment()
+            a.forEach(v => f.appendChild(v))
+            add(el, f)
+        } else {
+            add(el, a)
+        }
     },
-    append: function (a, pos = []) {
-        let _a = []
-        _a.push(a)
-
-        return el = this.element, _a.forEach(function (v) {
-            if (pos.length) {
-                switch (pos[0]) {
-                    case 'before': el.insertBefore('element' in v ? v.element : v, pos[1]); break
-                }
-            } else {
-                el.appendChild('element' in v ? v.element : v)
-            }
-        }), this
+    clearVal(el) {
+        el.value = ''
     },
-    val: function (v = null) {
-        return v === null ? this.element.value : (this.element.value = v, this)
+    val(el, v) {
+        v ? el.value = v : e = el.value
     },
-    has: function (s) {
-        return this.element.classList.contains(s)
+    has(el, s) {
+        e = el.classList.contains(s)
     },
-    cssValue: function (v) {
-        return window.getComputedStyle(this.element).getPropertyValue(v).replace(/em|px|%/g, '')
+    cssValue(el, v) {
+        e = window.getComputedStyle(el).getPropertyValue(v).replace(/em|px|%/g, '')
     },
-    objSize: function (obj) {
+    objSize(obj) {
         let i
         let size = 0
 
@@ -143,27 +130,28 @@ _.prototype = {
     }
 }
 
-function $(e) {
-    const obj = Object.create(_.prototype)
-
-    if (inPool(e)) {
-        return obj.element = getElementInPool(e), obj
-    } else if(/^@/.test(e)) {
-        return obj[e.slice(1)]
-    }else {
+function $(_e, prop) {
+    e = _e
+    if (/^@/.test(e)) {
+        e = obj[e.slice(1)]
+    } else {
         if ((r = /^(\.|#|:)/.exec(e))) {
             key = e
             switch (r[0]) {
-                case '.': e = Array.from(document.getElementsByClassName(e.slice(1, e.length))); break
-                case '#': e = document.getElementById(e.slice(1, e.length)); break
-                case ':': e = Array.from(document.getElementsByTagName(e.slice(1, e.length))); break
+                case '.': e = Array.from(document.getElementsByClassName(e.slice(1))); break
+                case '#': e = document.getElementById(e.slice(1)); break
+                case ':': e = Array.from(document.getElementsByTagName(e.slice(1))); break
             }
-
-            saveElementInPool(key, e)
         }
+        if (prop) Object.keys(prop).forEach(k => obj[k].call(null, e, prop[k]))
     }
-
-    return obj.element = e, obj
+    return e
 }
 
-module.exports = $
+function create(el, prop) {
+    let e = inPool(el) ? getElementInPool(e).cloneNode(false) : document.createElement(el)
+    Object.keys(prop).forEach(k => obj[k].call(null, e, prop[k]))
+    return e
+}
+
+module.exports = { $, create }

@@ -6,11 +6,12 @@
  *
  * Basically, this will load all the needed modules to make the music player works.
  * Modules:
- * - Controls - All the events over the play, next, prev, shuffle, time lapse, time progress, etc.
+ * - Controls - All the events over the play, next, prev, shuffle, etc.
  * - Search - Search the songs we are searching for or filter by artist, album and song
  * - Createview - Creates and renders the HTML for the list of sons as it or for the album view.
  */
-/** --------------------------------------- Modules --------------------------------------- **/
+
+/** -=================================== Modules ===================================- **/
 const {
     createAlbumView,
     createView,
@@ -18,20 +19,18 @@ const {
 const controls = require('./controls')
 const search = require('./search')
 
-/** --------------------------------------- Variables --------------------------------------- **/
+/** -=================================== Variables ===================================- **/
+'use strict'
+
 let usingMediaControl = 'player'
 
-let mediaControl = {
-    player: Object.create(controls.prototype, {
-        playedFrom: {
-            writable:true, configurable:true, value: 'player',
-        }
-    }),
-    album:Object.create(controls.prototype, {
-        playedFrom: {
-            writable:true, configurable:true, value: 'album',
-        }
-    })
+let mediaControlInstance = {
+    player() {
+        return controls.setPlayedFrom('player'), controls
+    },
+    album() {
+        return controls.setPlayedFrom('album'), controls
+    }
 }
 
 module.exports = Object.freeze({
@@ -39,23 +38,17 @@ module.exports = Object.freeze({
      * @param {string} media - Indicates which option we are gonna use,
      *                         the music player as such or to play just an album. values:[player|album]
      */
-    setUsingMediaControl: function (media) {
-        usingMediaControl = media
-    },
+    setUsingMediaControl(media) { usingMediaControl = media },
     /**
      * @return {string} - Returns [player|album]
      */
-    mediaControl: function () {
-        return usingMediaControl
-    },
+    mediaControl() { return usingMediaControl },
     /**
      * return the instance of the player as a list player or an album player
      * @param {string} media - The actual media player: value[mediaControl]
      * @return {object} - Return the instance of the player
      */
-    getMediaControl: function (media) {
-        return mediaControl[media]
-    },
+    getMediaControl(media) { return mediaControlInstance[media]() },
     createAlbumView,
     createView,
     search

@@ -7,207 +7,90 @@
  * It will search for the song we are searching for. It creates the buttons to play the song
  * and also the slider with its animation.
  */
-/** --------------------------------------- Modules --------------------------------------- **/
+
+/** -=================================== Modules ===================================- **/
 // ---- Electron ----
 const path = require('path')
 
 // ---- Own ----
-const $ = require(path.join(__dirname, '../../', 'dom'))
+const { $ } = require(path.join(__dirname, '../../', 'dom'))
 
-/* --------------------------------- Variables --------------------------------- */
-let regex = null
-let searchValue = ''
-let newList = []
-let list = []
-let oldSearchedValue = []
-let totalCountSlideMoved = 0
-let countSlidedMoved = 0
-let containerResult = 0
-let wrapperWidth = 0
-let totalResults = 0
-let countSlide = 0
-let countItem = 0
-let totalItem = 0
-let stepItem = 0
-let slide = 0
+/* -=================================== Variables ===================================- */
+let listOfSongs
+let listOfSongsContent
 
-let parentSlideItem = $(document.createElement('div')).addClass('grid-25 mobile-grid-25').get()
-let containerSlider = $(document.createElement('div')).addClass('results')
-let itemContainer = $(document.createElement('ul')).addClass('mobile-grid-100 grid-parent')
-let items = $(document.createElement('li')).get()
-let slideContainer = document.createDocumentFragment()
-let itemSlide = document.createDocumentFragment()
+window.onload = () => {
+    listOfSongs = $('#list-songs', { child() { } })
+}
 
-/* --------------------------------- Functions --------------------------------- */
+/* -=================================== Functions ===================================- */
 /**
- * @param {string} value - The song we are searching for
- * @param {object} listSongs - List of songs titles
- * @return {array|boolean} - It will return false if there's no match
+ * Replace the &nbsp; values by whitespace
+ * 
+ * @param {string} value
+ * @returns {string} - the new parsed string
  */
-function getValuesFromList(value, listSongs) {
-    if ((searchValue = value.trim()) !== '') {
-        regex = new RegExp(searchValue.replace(/\s/g, '&nbsp;').trim(), 'ig')
-
-        // From the second searched time, it will save all in a newList variable
-        // this variable will has less values than the first one.
-        // TODO: This could be saved and done using locationStorage
-        newList = (newList.length && searchValue.length > oldSearchedValue.length
-            ? newList
-            : oldSearchedValue = searchValue, listSongs).filter(function (v) {
-                return regex.test(v.title)
-            })
-
-        return newList
-    } else {
-        return false
-    }
+function nbspToSpace(value) {
+    return value.replace(/&nbsp;/g, ' ')
 }
 
 /**
- * This function will only be executed on deskto and tablet size (>720px of width).
- * It will display the list of songs that match with the given text
- * @param {array} list - List of songs
- * @param {function} btnActions - Function to execute when a song is clicked
- * @param {string} lang - Language to use to display some text
+ * It will display a select option for title, album and artist
+ * 
+ * @param {string} value - The id of the HTMLElmento
  */
-function searchDesktopResults(list, btnActions, lang) {
-    $('#wrapper-results').empty()
-    $('#leftright').addClass('hide')
-    // Update always the width of the container
-    containerSlider.css(`width:${containerResult}px;float:left`)
+function scroll(value) {
+    clickedElement = $('#list-songs')
+    positionElement = $(`#${value}`)
+    const element = clickedElement.scrollTop
+    const distance = positionElement.offsetTop - Math.round($('#top-nav').offsetHeight) + 89
+    clickedElement.scrollTop += element !== distance ? (distance - element) : -(distance - element)
+}
 
-    if (list.length && list.constructor === Array) {
-        // Show possibles results
-        totalResults = list.length
-        countSlide = slide = totalResults > 20 ? Math.round(totalResults / 20) : 1
-        countItem = countSlidedMoved = totalCountSlideMoved = 0
-        while (slide--) {
-            totalItem = totalResults - countItem > 20 ? 20 : totalResults - countItem
-            // Wrap all the items
-            for (stepItem = 0; stepItem < totalItem; stepItem++ , countItem++) {
-                itemSlide.appendChild(
-                    $(parentSlideItem.cloneNode(false))
-                        .text(`<div class="search-results" title="${list[countItem].title}">${list[countItem].title}</div>`)
-                        .data({ position: list[countItem].position })
-                        .on({ click: btnActions }).get()
-                )
+function orderBy(by, el) {
+    switch (by) {
+        case 'title': sorted(el, 0); break
+        case 'artist': sorted(el, 1); break
+        case 'album': sorted(el, 2); break
+    }
+}
+
+function sorted(el, pos) {
+    let by = $(el, { data: 'by' })
+    let _a = ''
+    let _b = ''
+
+    const list = listOfSongs.sort((a, b) =>
+        (_a = nbspToSpace($(a, { child: pos, text: null }).toLowerCase()).normalize('NFC'),
+        _b = nbspToSpace($(b, { child: pos, text: null }).toLowerCase()).normalize('NFC'),
+        by === 'down' ? (_a < _b ? -1 : _a > _b) : (_a > _b ? -1 : _a < _b))
+    )
+
+    $(el, { data: { 'by': by === 'down' ? 'up' : 'down' } })
+    $('#list-songs', { empty() { }, append: list })
+}
+
+/**
+ * @param {string} by - title, album or artist
+ * @param {object} player - The instance of the music player
+ * @param {HTMLElement} el - The select field
+ */
+function filterBy(by, player, el) {
+    switch (by) {
+        case 'title':
+            if (el.value !== 'all') {
+                scroll(el.value)
+                player.getMediaControl('player').playSongAtPosition(el.value)
             }
-
-            // Appends all the items to its own parent
-            // 20 items per parent slider
-            slideContainer.appendChild(
-                $(containerSlider.get()
-                    .cloneNode(false))
-                    .append(itemSlide).get()
-            )
-            itemSlide = document.createDocumentFragment()
-        }
-
-        // Display all the filtered songs
-        $('#wrapper-results')
-            .empty()
-            .append(slideContainer)
-            .removeClass('no-searching-found')
-            .css(`width:${countSlide * (containerResult)}px`, true)
-
-        $('#leftright').removeClass('hide')
-    } else if (list.constructor === Array) {
-        // Clean if there's no coincidence
-        $('#wrapper-results')
-            .text(lang.alerts.searchingResults)
-            .addClass('no-searching-found')
-            .css(`width:${document.body.clientWidth - 100}px`, true)
-
-        $('#leftright').addClass('hide')
-    } else {
-        // Clean if there's no coincidence
-        $('#wrapper-results')
-            .text(lang.alerts.searchingResults)
-            .addClass('no-searching-found')
-            .css(`width:${document.body.clientWidth - 100}px`, true)
-        $('#leftright').addClass('hide')
+            break
+        case 'artist': if (el.value !== 'all') scroll(el.value); break
+        case 'album': if (el.value !== 'all') scroll(el.value); break
     }
 
-    slideContainer = document.createDocumentFragment()
-}
-
-/**
- * Slide animation (CSS 3)
- */
-function animSlideSongs() {
-    wrapperWidth = parseInt($('#wrapper-results').cssValue('width')) - containerResult
-
-    if ($(this).data('direction') === 'right' && totalCountSlideMoved < wrapperWidth)
-        ++countSlidedMoved
-    else if ($(this).data('direction') === 'left' && countSlidedMoved)
-        --countSlidedMoved
-
-    if (countSlidedMoved >= 0) {
-        $('#wrapper-results').css(
-            `transform:translateX(${-(totalCountSlideMoved = countSlidedMoved * containerResult)}px)`
-        );
-    }
-}
-
-/**
- * This function will only be executed on mobile size (720px of width).
- * It will display the list of songs that match with the given text
- * @param {array} list - List of songs
- * @param {function} btnActions - Function to execute when a song is clicked
- */
-function searchMobileResults(list, btnActions) {
-    if (list.length && list.constructor === Array) {
-        itemSlide = document.createDocumentFragment()
-        list.forEach(function (v) {
-            itemSlide.appendChild(
-                $(items.cloneNode(false))
-                    .text(`<div class="" title="${v.title}">${v.title}</div>`)
-                    .data({ position: v.position })
-                    .on({ click: btnActions }).get()
-            )
-        })
-
-        itemContainer.empty().append(itemSlide)
-        $('#wrapper-results').empty().append(itemContainer)
-
-        // If the amout of items is more than 5, it should be display
-        // the scrollbar
-        list.length < 5 ? itemContainer.css('height:auto') : itemContainer.rmAttr('style')
-    }
+    el.selectedIndex = 0
 }
 
 module.exports = {
-    getValuesFromList,
-    searchDesktopResults,
-    searchMobileResults,
-    animSlideSongs,
-    /**
-     * @param {number} width - the width of the searching container results
-     */
-    setWidthContainer: function (width) {
-        containerResult = width
-    },
-    /**
-     * Resets all the values
-     */
-    reset: function () {
-        newList, list = []
-        searchValue = oldSearchedValue = ''
-    },
-    /**
-     * Will filter the list of songs or reorder it by:
-     * - artist
-     * - song
-     * - album
-     *
-     * @param {string} by - filter by [artist|song|album]
-     */
-    filterBy: function (by) {
-        
-    //     $('#filter-container').on({
-    //         click: function () {
-    //             $('#list-songs').addClass('.anim-list-song')
-    //         }
-    //     })
-    }
+    filterBy,
+    orderBy
 }

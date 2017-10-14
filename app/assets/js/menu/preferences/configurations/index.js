@@ -1,8 +1,11 @@
 /**
+ * @module configurations/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
  */
-/** --------------------------------------- Modules --------------------------------------- **/
+
+/** -=================================== Modules ===================================- **/
 // ---- Electron ----
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
@@ -17,50 +20,59 @@ const {
     langFile,
     editFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
-const $ = require(path.join(__dirname, '../../../', 'dom'))
+const { $, create } = require(path.join(__dirname, '../../../', 'dom'))
 
-/* --------------------------------- Variables --------------------------------- */
+/* ===================================- Variables ===================================- */
 let lang = langFile[configFile.lang]
 let option = null
 let resized = false
 
-/** --------------------------------------- Functions --------------------------------------- **/
-// Display all the options
-// - Theme colours
-// - Idiom
-// - Screen size
-function displayOption() {
-    $('#theme-colours').addClass('hide')
-    $('#idiom').addClass('hide')
-    $('#screen-size').addClass('hide')
+/** ===================================- Functions ===================================- **/
+'use strict'
+/**
+ * Display all the options
+ * - Theme colours
+ * - Idiom
+ * - Screen size
+ * 
+ * @param {HTMLElement} el - The selected option element
+ */
+function displayOption(el) {
+    $('#theme-colours', { addClass: 'hide' })
 
-    switch (this.value) {
+    $('#idiom', { addClass: 'hide' })
+    $('#screen-size', { addClass: 'hide' })
+
+    switch (el.value) {
         case '1': showColoursTheme(); break
         case '2': showLanguage(); break
-        case '3': $('#screen-size').removeClass('hide'); break
+        case '3': $('#screen-size', { removeClass: 'hide' }); break
     }
 }
 
-// Change the size of the screen
-function enableScreenSize() {
+/**
+ * Change the size of the screen
+ * 
+ * @param {HTMLElement} el
+ */
+function enableScreenSize(el) {
     // enable the screen sizer
-    if (this.checked) {
-        $('#on-top').removeClass('hide')
-        $('#sizer-container')
-            .removeClass('hide')
-    } else {
-        $('#on-top').addClass('hide')
-        $('#sizer-container').addClass('hide')
-    }
-
+    $('#on-top', el.checked ? { removeClass: 'hide' } : { addClass: 'hide' })
+    $('#sizer-container', el.checked ? { removeClass: 'hide' } : { addClass: 'hide' })
 }
 
-function resizeScreen() {
-    $('#sizer-container')
-        .child(0)
-        .attr({
+/**
+ * Display the option to make an small music player
+ * 
+ * @param {HTMlElement} el
+ */
+function resizeScreen(el) {
+    $('#sizer-container', {
+        child: 0,
+        attr: {
             src: path.join(__dirname, '../../../../', 'img', (resized = !resized) ? 'sizer02.svg' : 'sizer.svg')
-        })
+        }
+    })
 
     ipcRenderer.send('change-screen-size', {
         screenResize: resized,
@@ -68,13 +80,20 @@ function resizeScreen() {
     });
 }
 
-function alwaysOnTop() {
-    ipcRenderer.send('set-on-top', this.checked)
+/**
+ * Have the option to keep the music player always on top
+ * 
+ * @param {HTMLElement} el
+ */
+function alwaysOnTop(el) {
+    ipcRenderer.send('set-on-top', el.checked)
 }
 
-// Change the idiom of the app
+/**
+ * Change the idiom of the app
+ */
 function showLanguage() {
-    $('#idiom').removeClass('hide')
+    $('#idiom', { removeClass: 'hide' })
     let i = ''
     switch (configFile.lang) {
         case 'es': i = 'Español<div class="checked-colour"></div>'; break
@@ -82,11 +101,19 @@ function showLanguage() {
         case 'de': i = 'Deutsch<div class="checked-colour"></div>'; break
     }
 
-    $(`#${configFile.lang}`).text(i).css('background:#fcfcfc')
+    $(`#${configFile.lang}`, {
+        text: i,
+        css: 'background:#fcfcfc'
+    })
 }
 
-function choosenIdiom() {
-    configFile.lang = this.id
+/**
+ * Set the selected idiom
+ * 
+ * @param {HTMLElement} el
+ */
+function choosenIdiom(el) {
+    configFile.lang = el.id
     editFile('config', configFile)
 
     let i = ''
@@ -96,84 +123,104 @@ function choosenIdiom() {
         case 'de': i = 'Deutsch'; break
     }
 
-    $(`#${configFile.lang}`).text(i).rmAttr('style')
-
-    $(`#${this.id}`).text(`${i}<div class="checked-colour"></div>`)
-        .css('background:#fcfcfc')
-
-    setTimeout(function () {
-        ipcRenderer.send('restart-app')
-    }, 460)
-}
-
-// Change the colour of the app
-function showColoursTheme() {
-    $('#theme-colours').removeClass('hide')
-    $(`#${configFile.theme}`).text('<div class="checked-colour"></div>')
-}
-
-function choosenColor() {
-    $(`#${configFile.theme}`).empty()
-    configFile.theme = this.id
-    editFile('config', configFile)
-    editFile(path.join(__dirname, '../../../../', 'css', 'color.css'), coloursFile[this.id], true)
-    $(`#${this.id}`).text('<div class="checked-colour"></div>')
-}
-
-function showConfigurations() {
-    $('#main-parent-container').css('-webkit-filter:blur(1px)')
-    $('#_configurations').text(lang.config.configurations)
-
-    const fragment = document.createDocumentFragment()
-    option = document.createElement('option')
-    lang.config.configurationsOpt.forEach(function (o, i) {
-        fragment.appendChild(
-            $(option.cloneNode(false)).val(i).text(o).get()
-        )
+    $(`#${configFile.lang}`, {
+        text: i,
+        rmAttr: 'style'
     })
 
-    $('#config-options').empty().append(fragment)
+    $(`#${el.id}`, {
+        text: `${i}<div class="checked-colour"></div>`,
+        css: 'background:#fcfcfc'
+    })
+
+    setTimeout(() => ipcRenderer.send('restart-app'), 460)
+}
+
+/**
+ * Change the colour of the app
+ */
+function showColoursTheme() {
+    $('#theme-colours', { removeClass: 'hide' })
+    $(`#${configFile.theme}`, { text: '<div class="checked-colour"></div>' })
+}
+
+/**
+ * Save the choosen colour
+ *
+ * @param {HTMLELement} el
+ */
+function choosenColor(el) {
+    $(`#${configFile.theme}`, { empty() { } })
+    configFile.theme = el.id
+    editFile('config', configFile)
+    editFile(path.join(__dirname, '../../../../', 'css', 'color.css'), coloursFile[el.id], true)
+    $(`#${el.id}`, { text: '<div class="checked-colour"></div>' })
+}
+
+/**
+ * Show the whole config panel and makes all the needed items
+ */
+function showConfigurations() {
+    $('#main-parent-container', { css: '-webkit-filter:blur(1px)' })
+    $('#_configurations', { text: lang.config.configurations })
+
+    let f = document.createDocumentFragment()
+    lang.config.configurationsOpt.forEach((o, i) =>
+        f.appendChild(create('option', {
+            val: i,
+            text: o
+        }))
+    )
+
+    $('#config-options', {
+        empty() { },
+        append: f
+    })
 
     // Colours options
     const coloursNames = Object.keys(coloursFile);
-    $('.colour-name').each(function (v, i) {
-        $(v).text(coloursNames[i])
+    $('.colour-name', {
+        each(v, i) {
+            $(v, { text: coloursNames[i] })
+        }
     })
 
-    $($('.parent-container-config').get(3))
-        .removeClass('hide')
-        .child(0)
-        .addClass('container-config-anim')
+    $($('.parent-container-config')[3], {
+        removeClass: 'hide',
+        child: 0,
+        addClass: 'container-config-anim'
+    })
 }
 
-/** --------------------------------------- Events --------------------------------------- **/
+/** -=================================== Events ===================================- **/
 // Screen size
-$('#enable-screen-size').on({ change: enableScreenSize })
+$('#enable-screen-size', { on: { change: enableScreenSize } })
 
 // Screen always on top
-$('#always-on-top').on({ change: alwaysOnTop })
+$('#always-on-top', { on: { change: alwaysOnTop } })
 
 // idiom
-$('.idiom-item').on({ click: choosenIdiom })
+$('.idiom-item', { on: { click: choosenIdiom } })
 
 // Clorous
-$('.colour').on({ click: choosenColor })
+$('.colour', { on: { click: choosenColor } })
 
 // Display all the options
-$('#config-options').on({ click: displayOption })
+$('#config-options', { on: { click: displayOption } })
 
 // Action on the image to resize the screen
-$('#sizer-container').child(0).on({ click: resizeScreen })
+$('#sizer-container', {
+    child: 0,
+    on: { click: resizeScreen }
+})
 
 module.exports = Object.freeze({
     showConfigurations,
-    close: function () {
-        $('#theme-colours').addClass('hide')
-        $('#idiom').addClass('hide')
-        $('#screen-size').addClass('hide')
+    close() {
+        $('#theme-colours', { addClass: 'hide' })
+        $('#idiom', { addClass: 'hide' })
+        $('#screen-size', { addClass: 'hide' })
         option = null
     },
-    isResized: function () {
-        return resized
-    }
+    isResized() { return resized }
 })

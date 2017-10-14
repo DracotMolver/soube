@@ -1,13 +1,18 @@
 /**
+ * @module menu/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * This module will load the nav menu of the music player
  */
-/* --------------------------------- Modules --------------------------------- */
+
+ /* -=================================== Modules ===================================- */
 // ---- nodejs ----
 const path = require('path')
 
 module.exports = function (app) {
-    /* --------------------------------- Modules --------------------------------- */
+    /* -=================================== Modules ===================================- */
     // ---- own ----
     const configFile = require(`${app.getPath('userData')}/config.json`)
     const menuLang = require(path.join(__dirname, '../', 'config', 'menuLang'))[configFile.lang]

@@ -1,19 +1,23 @@
 /**
+ * @module songFolder/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * This is the main module to extract all the song files loaded in the music player
  */
-/* --------------------------------- Modules --------------------------------- */
+
+/* -=================================== Modules ===================================- */
 // ---- nodejs ----
 const exec = require('child_process').exec
 const path = require('path')
-const url = require('url')
-const fs = require('fs')
+const util = require('util')
 
 // ---- electron ----
 const ipcRenderer = require('electron').ipcRenderer
 
 // ---- other ----
-const audioMetaData = require('audio-metadata')
+const mm = require('music-metadata');
 
 // ---- own ----
 const {
@@ -22,140 +26,174 @@ const {
     langFile,
     editFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
-const $ = require(path.join(__dirname, '../../../', 'dom'))
-
+const { $ } = require(path.join(__dirname, '../../../', 'dom'))
 const worker = new Worker(path.join(__dirname, 'workerPaths.js'))
 const workerDB = new Worker(path.join(__dirname, 'workerDB.js'))
 
-/* --------------------------------- Variables --------------------------------- */
-// ---- normals ----
+/* -=================================== Variables ===================================- */
 let lang = langFile[configFile.lang]
 let songs = []
 let files = []
 let count = 0
-let metadata
+let artist = ''
+let title = ''
+let album = ''
+let keys = {}
 let iter
 
-/* --------------------------------- Functions --------------------------------- */
-// Will get all this songs files.
-// It will compare if there's more or few songs
+/* -=================================== Functions ===================================- */
+/**
+ * It will read all the folder from a root folder.
+ * 
+ * @param {string} folder - Root folder or parent folder
+ * @param {function} fnStart - A callback function when start extracting the metadata
+ * @param {function} fnIter - A loop callback called for every song file
+ * @param {boolean} [newInstance=false] - If true, it will extract metadata by without saving the data
+ */
 function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
     // Get the object from listsong.json - only if was already created it
     songs = $('@objSize')(listSongs) && newInstance ? [] : ($('@objSize')(listSongs) ? listSongs : [])
-    const readAllFiles = function (readFiles) {
+    function readAllFiles(readFiles) {
         if (readFiles.length) { // Add songs
-            files = readFiles.map(function (f) {
-                return path.normalize(f)
-            })
+            files = readFiles.map(f => path.normalize(f))
             fnStart()
             iter = fnIter
             extractMetadata()
         }
     }
-
     readParentFolder(folder, readAllFiles)
 }
 
+/**
+ * Remove any added folder
+ * 
+ * @param {string} folder - The path of the parent folder to remove
+ */
 function removeSongFolder(folder) {
-    // Get the object from listsong.json - only if was already created it
-    const readAllFiles = function (readFiles) {
-        songs = []
-        listSongs.forEach(function (f, i, a) {
-            readFiles.indexOf(f.filename) !== -1 ? delete a[i] : songs.push(f)
-        })
-
-        editFile('listSong', setAlphabeticOrder())
+    function readAllFiles(readFiles) {
+        songs = listSongs.filter(f => readFiles.indexOf(f.filename) === -1)
+        editFile('listSong', songs.length ? setAlphabeticOrder() : {})
     }
-
     readParentFolder(folder, readAllFiles)
 }
 
+/**
+ * It will compare if there was deleted or added any new song file.
+ * If a song was added, it will extract its metadata. By the other hand
+ * it will be remove the metadata from the music player
+ * 
+ * @param {any} folder - The root folder or parent folder
+ * @param {any} fnStart - A callback to execute when beggining checking
+ * @param {any} fnIter - A loop callback when any song file was added or delted
+ */
 function checkSongFolder(folder, fnStart, fnIter) {
     let totalFiles = []
     let newFiles = []
-    let fileNames = listSongs.map(function (f) { return f.filename })
+    let fileNames = listSongs.map(f => f.filename)
     let index = 0
 
-    const readAllFiles = function (readFiles) {
+    function readAllFiles(readFiles) {
         totalFiles = totalFiles.concat(readFiles)
         if (++index === folder.length) {
             if ($('@objSize')(listSongs) < totalFiles.length) { // Append new songs
-                totalFiles.forEach(function (f) {
-                    if (fileNames.indexOf(f) === -1) newFiles.push(f)
+                totalFiles.forEach(f => {
+                    if (!fileNames.includes(f)) newFiles.push(f)
                 })
                 songs = listSongs
-                files = newFiles.map(function (f) {
-                    return path.normalize(f)
-                })
+                files = newFiles.map(f => path.normalize(f))
 
                 fnStart()
                 iter = fnIter
                 extractMetadata()
-            } else if ($('@objSize')(listSongs) > totalFiles.length){
+            } else if ($('@objSize')(listSongs) > totalFiles.length) { // Delete a song
                 songs = []
-                listSongs.forEach(function (f, i, a) {
-                    totalFiles.indexOf(f.filename) === -1 ? delete a[i] : songs.push(f)
-                })
+                listSongs.forEach((f, i, a) => !totalFiles.includes(f.filename) ? delete a[i] : songs.push(f))
 
                 editFile('listSong', setAlphabeticOrder())
             }
         }
     }
 
-    folder.forEach(function (f) { readParentFolder(f, readAllFiles) })
+    folder.forEach(f => readParentFolder(f, readAllFiles))
 }
 
-// Will get all the needed metadata from a song file
+/**
+ * It will extract all the needed metadata
+ */
 function extractMetadata() {
-    xhtr = new XMLHttpRequest()
-    xhtr.open('GET', url.format({
-        pathname: files[count],
-        protocol: 'file:'
-    }), true)
-    xhtr.responseType = 'arraybuffer'
-    xhtr.onload = function () {
-        metadata = /\.(mp3|wav)$/ig.test(files[count])
-            ? audioMetaData.id3v1(xhtr.response)
-            : audioMetaData.ogg(xhtr.response)
+    mm.parseFile(files[count], { native: true })
+        .then(metadata => {
+            keys = Object.keys(metadata.native)
 
-        if (metadata === null) metadata = audioMetaData.id3v2(xhtr.response)
+            artist = 'artist' in metadata.common
+                ? metadata.common.artist
+                : (keys.includes('ID3v1.1')
+                    ? (metadata.native['ID3v1.1'][1].id === 'artist'
+                        ? metadata.native['ID3v1.1'][1].value
+                        : lang.artist)
+                    : lang.artist)
 
-        songs.push({
-            artist: spaceToNbsp(metadata.artist !== undefined ? metadata.artist.trim() : lang.artist),
-            album: spaceToNbsp(metadata.album !== undefined ? metadata.album.trim() : lang.album),
-            title: spaceToNbsp(metadata.title !== undefined ? metadata.title.trim() : lang.title),
-            filename: files[count]
+            album = 'album' in metadata.common
+                ? metadata.common.album
+                : (album = keys.includes('ID3v1.1')
+                    ? (metadata.native['ID3v1.1'][2].id === 'album'
+                        ? metadata.native['ID3v1.1'][2].value
+                        : lang.album)
+                    : lang.album)
+
+            title = 'title' in metadata.common
+                ? metadata.common.title
+                : (title = keys.includes('ID3v1.1')
+                    ? (metadata.native['ID3v1.1'][0].id === 'title'
+                        ? metadata.native['ID3v1.1'][0].value
+                        : lang.title)
+                    : lang.title)
+
+            songs.push({
+                'artist': spaceToNbsp(artist),
+                'album': spaceToNbsp(album),
+                'title': spaceToNbsp(title),
+                'filename': files[count]
+            })
+
+            if (count === files.length - 1) {
+                workerDB.postMessage({ state: 'done' })
+                iter(count, files.length)
+                songs = files = []
+                count = 0
+            } else {
+                workerDB.postMessage({ state: 'open' })
+                iter(count, files.length)
+            }
         })
+        .catch(function (err) {
+            console.error(err.message);
+        });
 
-        if (count === files.length - 1) {
-            workerDB.postMessage({
-                state: 'done'
-            })
-            iter(count, files.length)
-        } else {
-            workerDB.postMessage({
-                state: 'open'
-            })
-            iter(count, files.length)
-        }
-    }
-    xhtr.send(null)
-
-    workerDB.onmessage = function (e) {
+    // Using workers is a cool way to avoid stackoverflow
+    workerDB.onmessage = e => {
         if (e.data.state === 'next') {
             ++count
             extractMetadata()
-        } else if (e.data.state === 'close') {
-            return true
         }
     }
 }
 
+/**
+ * Will read all the folders [1...N] from the parent folder.
+ * For Linux and Mac, It makes use of command lines
+ *
+ * Due the window limitation reading from console, I did this function to
+ * read all the folders
+ * 
+ * @param {string} folder - Root or parent folder
+ * @param {function} fn - A callback function to pass all the path folders
+ */
 function readParentFolder(folder, fn) {
     // command line [Linux | Mac]
     if (process.platform === 'darwin' || process.platform === 'linux') {
         const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wav|ogg)$\"`
-        exec(command, function (error, stdout, stderr) {
+        exec(command, (error, stdout, stderr) => {
             if (error) {
                 ipcRenderer.send('display-msg', {
                     type: 'info',
@@ -170,25 +208,34 @@ function readParentFolder(folder, fn) {
             fn(stdout.trim().split('\n'))
         })
     } else if (process.platform === 'win32') {
-        // // Only for windows
+        // Only for windows
         worker.postMessage({ 'folder': folder })
-        worker.onmessage = function (e) {
-            fn(e.data.files.split('|'))
-        }
+        worker.onmessage = e => fn(e.data.files.split('|'))
     }
 }
 
+/**
+ * Parse an string, replacing the whitespaces by &nbsp;
+ * @param {any} str - The string to Parase
+ * @returns {string} - The new string
+ */
 function spaceToNbsp(str) {
     return str.trim().replace(/\s/g, '&nbsp;').replace('ÿþ', '')
 }
 
+/**
+ * Sort all the extracted song files based on the song title
+ * @returns {array} - A new array holding the sorted songs
+ */
 function setAlphabeticOrder() {
-    return songs.sort(function (a, b) {
-        return a.artist.toLowerCase().normalize('NFC') < b.artist.toLowerCase().normalize('NFC') ? -1
-            : a.artist.toLowerCase().normalize('NFC') > b.artist.toLowerCase().normalize('NFC')
-    }).map(function (v, i) {
-        return v.position = i, v
-    })
+    let a_artist = ''
+    let b_artist = ''
+
+    return songs.sort((a, b) =>
+        (a_artist = a.artist.toLowerCase().normalize('NFC'),
+            b_artist = b.artist.toLowerCase().normalize('NFC'),
+            a_artist < b_artist ? -1 : a_artist > b_artist)
+    ).map((v, i) => (v.position = i, v))
 }
 
 module.exports = Object.freeze({

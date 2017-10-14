@@ -1,6 +1,6 @@
-this.onmessage = function (e) {
+this.onmessage = e => {
     if (e.data.state === 'open')
         postMessage({ state: 'next' })
-    else (e.data.state === 'done')
+    else if (e.data.state === 'done')
         postMessage({ state: 'stop' })
 }

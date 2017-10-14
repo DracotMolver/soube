@@ -1,14 +1,21 @@
 /**
+ * @module songFolder/workerPaths.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * This module will get all the folders or subforlders from a parent/root folder
  */
-/* --------------------------------------- Modules ------------------------------------------- */
+/* -=================================== Modules ===================================- */
 const path = require('path')
 const fs = require('fs')
 
-/* --------------------------------------- Functions ------------------------------------------- */
-// List of files and sub-files
-// In this way, we avoid to use recursion
+/* -=================================== Functions ===================================- */
+/**
+ * Get all without recursion
+ *
+ * @param {string} dir - Root or parent folder
+ */
 function findFiles(dir) {
     let tmpFolders = []
     let allFiles = []
@@ -16,7 +23,7 @@ function findFiles(dir) {
     let foldersSize = 0
     let baseFolder = ''
 
-    fs.readdirSync(dir).forEach(function (files) {
+    fs.readdirSync(dir).forEach(files => {
         // Based folders
         baseFolder = path.join(dir, files)
         if (fs.lstatSync(baseFolder).isDirectory())
@@ -37,14 +44,10 @@ function findFiles(dir) {
         })
 
         folders.pop()
-        folders = folders.concat(tmpFolders)
-        foldersSize = folders.length - 1
+        foldersSize = (folders = folders.concat(tmpFolders)).length - 1
     }
 
     postMessage({ files: allFiles.join('|') })
 }
 
-
-this.onmessage = function (e) {
-    findFiles(e.data.folder)
-}
+this.onmessage = e => findFiles(e.data.folder)

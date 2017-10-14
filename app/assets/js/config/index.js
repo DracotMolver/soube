@@ -43,24 +43,6 @@ function createFiles(app) {
 
         fs.openSync(configPath, 'w')
         fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' })
-    } else {
-        //   // ONLY TO UPDATE THE CONFIG FILE
-        //   var actualVersion = app.getVersion().toString();
-        //   if (response === 'major') {
-        // let config = JSON.parse(fs.readFileSync(configPath).toString());
-        // if (typeof config.musicFolder === 'string') {
-        //       config.equalizer = {
-        //         reset: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        // rock: [50, 70, 94, 160, 160, 160, 146, 146, 135, 133, 126, 126, 105, 100, 70],
-        // electro: [40, 84, 110, 160, 160, 175, 188, 104, 110, 110, 126, 135, 110, 110, 70],
-        // acustic: [86, 94, 132, 156, 132, 115, 110, 110, 104, 110, 115, 115, 120, 126, 146]
-        //       };
-        //     config.theme: 'pink-theme';
-        // config.equalizerConfig: 'reset';
-        //       config.musicFolder = [config.musicFolder];
-        //       fs.writeFileSync(configPath, JSON.stringify(config, null), { flag: 'w' });
-        //     }
-        // }
     }
 
     /* --------------------------------- File of songs --------------------------------- */
@@ -73,15 +55,14 @@ function createFiles(app) {
 // Will save the files config.json and listSong.json if needed.
 function editFile(fileName, data, fullPath = false) {
     if (fullPath) {
-        fs.writeFile(fileName, data, function (err) {
+        fs.writeFile(fileName, data, err => {
             ipcRenderer.send('open-specific-key', 'Space')
             ipcRenderer.send('update-browser')
         })
     } else {
-        fs.writeFile(
-            `${remote.app.getPath('userData')}/${fileName}.json`,
+        fs.writeFile(`${remote.app.getPath('userData')}/${fileName}.json`,
             JSON.stringify(data, null),
-            function (err) {
+            err => {
                 if (fileName === 'listSong') {
                     ipcRenderer.send('open-specific-key', 'Space')
                     ipcRenderer.send('update-browser')

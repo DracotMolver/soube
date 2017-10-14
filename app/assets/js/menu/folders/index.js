@@ -1,8 +1,13 @@
 /**
+ * @module about/index.js
  * @author Diego Alberto Molina Vera
  * @copyright 2016 - 2017
+ * @license MIT License
+ *
+ * It will load all the songs, add new ones and delete them.
  */
-/* --------------------------------- Modules --------------------------------- */
+
+/** -=================================== Modules ===================================- **/
 // ---- Electron ----
 const remote = require('electron').remote
 
@@ -17,99 +22,102 @@ const {
     langFile,
     editFile
 } = require(path.join(__dirname, '../../', 'config')).init()
-const $ = require(path.join(__dirname, '../../', 'dom'))
+const { $, create } = require(path.join(__dirname, '../../', 'dom'))
 
-/* --------------------------------- Variables --------------------------------- */
+/** -=================================== Variables ===================================- **/
 let lang = langFile[configFile.lang]
 let folderToRemove = ''
 let isLoadingSongs = false
 let itemToRemove
 let li = document.createElement('li')
 
-/* --------------------------------- Functions --------------------------------- */
-function removeItem() {
-    $('#remove-songs').removeClass('hide')
-    itemToRemove = this
-    folderToRemove = itemToRemove.textContent
-    $('.warning').text(`${lang.config.removingSongFolder} ${folderToRemove}`)
+/** -=================================== Functions ===================================- **/
+function removeItem(el) {
+    $('#remove-songs', { removeClass: 'hide' })
+    $('.warning', { text: `${lang.config.removingSongFolder} ${(folderToRemove = el.textContent)}` })
 }
 
 // Get the path song
 function saveSongList(parentFolder = '') {
-    $('#add-songs').attr({ disabled: true })
+    $('#add-songs', { attr: { disabled: true } })
     isLoadingSongs = true
     configFile.musicFolder.push(parentFolder)
     editFile('config', configFile)
 
-    $('#path-list-container')
-        .append($(li.cloneNode(true))
-            .text(parentFolder)
-            .on({ click: removeItem }))
+    $('#path-list-container', {
+        append: create('li', {
+            text: parentFolder,
+            on: { click: removeItem }
+        })
+    })
 
     // Show a loading
     // Read the content of the parent folder
-    songFolder.addSongFolder(parentFolder, function () {
-        $('#add-songs').text(lang.config.loadingSongFolder)
-    }, function (i, maxLength) { // Iterator function
-        $('#add-songs').text(`${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`)
-        $('#song-progress').css(`width:${(i * 100) / maxLength}%`)
+    songFolder.addSongFolder(parentFolder, () => $('#add-songs', { text: lang.config.loadingSongFolder }),
+        (i, maxLength) => { // Iterator function
+            $('#add-songs', {
+                text: `${lang.config.loadingSongFolder}${Math.floor((i * 100) / maxLength)}%`
+            })
+            $('#song-progress', { css: `width:${(i * 100) / maxLength}%` })
 
-        if (i === maxLength - 1)
-            editFile('listSong', songFolder.setAlphabeticOrder())
-    })
+            if (i === maxLength - 1)
+                editFile('listSong', songFolder.setAlphabeticOrder())
+        })
 }
 
 function loadFolder() {
-    $('#main-parent-container').css('-webkit-filter:blur(1px)')
-    $('#_addsongfolder').text(lang.config.addSongFolder)
-    $('#path-list-container').empty()
+    $('#main-parent-container', { css: '-webkit-filter:blur(1px)' })
+    $('#_addsongfolder', { text: lang.config.addSongFolder })
+    $('#path-list-container', { empty() { } })
 
-    configFile.musicFolder.forEach(function (v) {
-        $('#path-list-container').append(
-            $(li.cloneNode(true))
-                .text(v)
-                .on({ click: removeItem })
-        )
-    })
 
-    $('#add-songs').text(lang.config.addSongBtn)
-    $('#remove-songs').text(lang.config.removeSongBtn)
+    configFile.musicFolder.forEach(v =>
+        $('#path-list-container', {
+            append: create('li', {
+                text: v,
+                on: { click: removeItem }
+            })
+        })
+    )
+
+    $('#add-songs', { text: lang.config.addSongBtn })
+    $('#remove-songs', { text: lang.config.removeSongBtn })
 
     // Execute the animation at the end of the code
-    $($('.parent-container-config').get(1))
-        .removeClass('hide')
-        .child(0)
-        .addClass('container-config-anim')
+    $($('.parent-container-config')[1], {
+        removeClass: 'hide',
+        child: 0,
+        addClass: 'container-config-anim'
+    })
 }
 
 /* --------------------------------- Events --------------------------------- */
-$('#remove-songs').on({
-    click: function () {
-        configFile.musicFolder = configFile.musicFolder.filter(function (v) {
-            return folderToRemove !== v
-        })
+$('#remove-songs', {
+    on: {
+        click(el) {
+            configFile.musicFolder = configFile.musicFolder.filter(v => folderToRemove !== v)
+            editFile('config', configFile)
 
-        editFile('config', configFile)
+            el.remove()
+            songFolder.removeSongFolder(folderToRemove)
 
-        itemToRemove.remove()
-        songFolder.removeSongFolder(folderToRemove)
-
-        $('#remove-songs').addClass('hide')
+            $('#remove-songs', { addClass: 'hide' })
+        }
     }
 })
 
-$('#add-songs').on({
-    click: function () {
-        if (!isLoadingSongs) {
-            // Action to add the songs
-            remote.dialog.showOpenDialog({
-                title: 'Add music folder',
-                properties: ['openDirectory']
-            }, function (parentFolder) {
-                // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
-                if (parentFolder !== undefined)
-                    saveSongList(parentFolder[0])
-            })
+$('#add-songs', {
+    on: {
+        click(el) {
+            !isLoadingSongs ||
+                // Action to add the songs
+                remote.dialog.showOpenDialog({
+                    title: 'Add music folder',
+                    properties: ['openDirectory']
+                }, parentFolder => {
+                    // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
+                    if (parentFolder) saveSongList(parentFolder[0])
+                })
         }
     }
 })
@@ -117,22 +125,30 @@ $('#add-songs').on({
 module.exports = Object.freeze({
     albumFolder,
     loadFolder,
-    checkListOfSongs: function () {
-        songFolder.checkSongFolder(configFile.musicFolder, function () {
-            $('#pop-up-container').removeClass('hide').child(0).addClass('pop-up-anim')
-            $('#pop-up').text(langFile[configFile.lang].alerts.checkListOfSongs)
-        }, function (i, maxLength) {
+    checkListOfSongs() {
+        songFolder.checkSongFolder(configFile.musicFolder, () => {
+            $('#pop-up-container', {
+                removeClass: 'hide',
+                child: 0,
+                addClass: 'pop-up-anim'
+            })
+            $('#pop-up', { text: langFile[configFile.lang].alerts.checkListOfSongs })
+        }, (i, maxLength) => {
             if (i === maxLength) {
-                const timeOut = setTimeout(function() {
+                const timeOut = setTimeout(() => {
                     editFile('listSong', songFolder.setAlphabeticOrder())
-                    $('#pop-up').empty()
-                    $('#pop-up-container').addClass('hide').child(0).removeClass('pop-up-anim')
+                    $('#pop-up', { empty() { } })
+                    $('#pop-up-container', {
+                        addClass: 'hide',
+                        child: 0,
+                        removeClass: 'pop-up-anim'
+                    })
                     clearTimeout(timeOut)
                 }, 4600);
             }
         })
     },
-    close: function () {
+    close() {
         folderToRemove = ''
         isLoadingSongs = false
         itemToRemove = null

@@ -10,6 +10,7 @@
  */
 /* --------------------------------- Modules --------------------------------- */
 process.env.NODE_ENV = 'production'
+
 // ---- Electron ----
 const electron = require('electron')
 const {
@@ -33,7 +34,6 @@ const shortKeys = {
     'CommandOrControl+Right': 'next-song',
     'CommandOrControl+Left': 'prev-song',
     'CommandOrControl+Down': 'shuffle',
-    'CommandOrControl+F': 'search-song',
     'MediaPreviousTrack': 'prev-song',
     'CommandOrControl+E': 'menu-equalizer',
     'CommandOrControl+N': 'menu-add-folder',
@@ -50,57 +50,10 @@ let keepUnregistered = []
 /* --------------------------------- Funciones --------------------------------- */
 // Register the list of keys
 function registerKeys() {
-    // This was using a forEach before. But it has no sense if there's only a few elements
-    // that I can typed down. It would look an awful code, a large one, but the performance it's better
-    // becuase there's no need of a bucle
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+Right']) === -1)
-        globalShortcut.register('CommandOrControl+Right', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+Right'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+Down']) === -1)
-        globalShortcut.register('CommandOrControl+Down', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+Down'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+F']) === -1)
-        globalShortcut.register('CommandOrControl+F', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+F'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['MediaPreviousTrack']) === -1)
-        globalShortcut.register('MediaPreviousTrack', function () {
-            mainWindow.webContents.send(shortKeys['MediaPreviousTrack'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+E']) === -1)
-        globalShortcut.register('CommandOrControl+E', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+E'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+N']) === -1)
-        globalShortcut.register('CommandOrControl+N', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+N'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+O']) === -1)
-        globalShortcut.register('CommandOrControl+O', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+O'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['CommandOrControl+Shift+A']) === -1)
-        globalShortcut.register('CommandOrControl+Shift+A', function () {
-            mainWindow.webContents.send(shortKeys['CommandOrControl+Shift+A'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['MediaNextTrack']) === -1)
-        globalShortcut.register('MediaNextTrack', function () {
-            mainWindow.webContents.send(shortKeys['MediaNextTrack'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['MediaPlayPause']) === -1)
-        globalShortcut.register('MediaPlayPause', function () {
-            mainWindow.webContents.send(shortKeys['MediaPlayPause'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['Space']) === -1)
-        globalShortcut.register('Space', function () {
-            mainWindow.webContents.send(shortKeys['Space'])
-        })
-    if (keepUnregistered.indexOf(shortKeys['Esc']) === -1)
-        globalShortcut.register('Esc', function () {
-            mainWindow.webContents.send(shortKeys['Esc'])
-        })
+    Object.keys(shortKeys).forEach(k => {
+        if(!keepUnregistered.includes(shortKeys[k]))
+            globalShortcut.register(k, () => mainWindow.webContents.send(shortKeys[k]))
+    })
 }
 
 // Makes some needed icons
@@ -152,25 +105,18 @@ function ready(evt) {
             protocol: 'file:'
         })
     )
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', () => {
         globalShortcut.unregisterAll()
         mainWindow = null
-    }).on('focus', registerKeys)
-        .on('blur', function () {
-            // Needed because the globalShortcut.register take the whole OS.
-            // So if we are gonna use space without unregister the keyword,
-            // it won't work for any app or propouse
-            globalShortcut.unregisterAll()
-        }).on('minimize', function () {
-            // For the time lapse (progress of the song)
-            mainWindow.webContents.send('save-current-time')
-        }).on('restore', function () {
-            // For the time lapse (progress of the song)
-            // This happens also when we reload the view (refresh)
-            mainWindow.webContents.send('update-current-time')
-        })
+    })
+    .on('focus', registerKeys)
+    // Needed because the globalShortcut.register take the whole OS.
+    // So if we are gonna use space without unregister the keyword,
+    // it won't work for any app or propouse
+    .on('blur', () => globalShortcut.unregisterAll())
+    .on('restore', () => globalShortcut.unregisterAll())
 
-    mainWindow.once('ready-to-show', function () {
+    mainWindow.once('ready-to-show', () => {
         mainWindow.show()
         // Thumbar-button [Windows]
         if (process.platform === 'win32') {
@@ -187,84 +133,67 @@ function ready(evt) {
 }
 
 /* --------------------------------- Electronjs O_o --------------------------------- */
-app.on('window-all-closed', function () {
-    // Close the app, it doesn't matter which OS we are using
-    app.quit()
-})
+// Close the app, it doesn't matter which OS we are using
+app.on('window-all-closed', () => app.quit())
 app.disableHardwareAcceleration() // This avoid, for example, animations and the shadows.
 app.on('ready', ready)
 
 /* --------------------------------- Ipc Main --------------------------------- */
 // Sending data from the EQ to the AudioContext
-ipcMain.on('equalizer-filter', function (e, a) {
-    mainWindow.webContents.send('get-equalizer-filter', a)
-})
+ipcMain.on('equalizer-filter', (e, a) => mainWindow.webContents.send('get-equalizer-filter', a))
 
 // Updating of the thumbar buttons
-ipcMain.on('thumb-bar-update', function (e, a) {
-    mainWindow.setThumbarButtons(thumbarButtons[a])
-})
+ipcMain.on('thumb-bar-update', (e, a) => mainWindow.setThumbarButtons(thumbarButtons[a]))
 
 // Displays messages dialogs
 // types of messages: none, info, error, question or warning.
-ipcMain.on('display-msg', function (e, a) {
-    dialog.showMessageBox({
-        type: a.type,
-        message: a.message,
-        detail: a.detail,
-        buttons: a.buttons
-    })
-})
+ipcMain.on('display-msg', (e, a) => dialog.showMessageBox({
+    type: a.type,
+    message: a.message,
+    detail: a.detail,
+    buttons: a.buttons
+}))
 
 // Reloads the main window
-ipcMain.on('update-browser', function () {
-    mainWindow.reload()
-})
+ipcMain.on('update-browser', () => mainWindow.reload())
 
 // Changes the title of the window for any song
-ipcMain.on('update-title', function (e, a) {
-    mainWindow.setTitle(a)
-})
+ipcMain.on('update-title', (e, a) => mainWindow.setTitle(a))
 
 // Restarts the app after have had changed the idiom
-ipcMain.on('restart-app', function () {
+ipcMain.on('restart-app', () => {
     app.relaunch()
     app.exit()
 })
 
 // Changes the size of the window. Like an small mucis player
-ipcMain.on('change-screen-size', function (e, a) {
+ipcMain.on('change-screen-size', (e, a) => {
     mainWindow.setMenuBarVisibility(!a.screenResize)
-    mainWindow.setMinimumSize(a.screenResize ? 300 : 440, a.screenResize ? 90 : 600)
+    mainWindow.setMinimumSize(a.screenResize ? 360 : 440, a.screenResize ? 82 : 600)
     mainWindow.setMaximizable(!a.screenResize)
     mainWindow.setResizable(!a.screenResize)
     mainWindow.setContentBounds({
-        x: a.screenResize ? a.area.width - 300 : a.area.x,
-        y: a.screenResize ? a.area.height - 90 : a.area.y,
-        width: a.screenResize ? 300 : a.area.width,
-        height: a.screenResize ? 90 : a.area.height
+        x: a.screenResize ? a.area.width - 360 : a.area.x,
+        y: a.screenResize ? a.area.height - 82 : a.area.y,
+        width: a.screenResize ? 360 : a.area.width,
+        height: a.screenResize ? 82 : a.area.height
     })
 
     if (!a.screenResize) mainWindow.center()
 })
 
 // Set the window always on top, no matter which app are you using
-ipcMain.on('set-on-top', function (e, a) {
-    mainWindow.setAlwaysOnTop(a, 'normal')
-})
+ipcMain.on('set-on-top', (e, a) => mainWindow.setAlwaysOnTop(a, 'normal'))
 
-// Unregister and register specific shortkeys
-ipcMain.on('close-specific-key', function (e, a) {
+ipcMain.on('close-specific-key', (e, a) => {
     if (a.keepUnregistered)
         keepUnregistered.push(a.keyName)
 
     globalShortcut.unregister(a.keyName)
 })
-ipcMain.on('open-specific-key', function (e, a) {
+ipcMain.on('open-specific-key', (e, a) => {
     if (keepUnregistered.indexOf(a) !== -1)
         keepUnregistered.splice(keepUnregistered.indexOf(a), 1)
 
-    globalShortcut.register(a, function () {
-        mainWindow.webContents.send(shortKeys[a])
-    })
+    globalShortcut.register(a, () => mainWindow.webContents.send(shortKeys[a]))
 })
