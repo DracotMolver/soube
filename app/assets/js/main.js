@@ -201,6 +201,9 @@ $('.btn-controls', { on: { click: clickBtnControls } })
 $('.close', { on: { click: closeModals } })
 
 /** --------------------------------------- Ipc Renderers --------------------------------------- **/
+// Close all the config modals [ESC]
+ipcRenderer.on('close-search-song', () => closeModals())
+
 // Sends the values from the equalizer to the AudioContext [player/controls/index.js]
 ipcRenderer.on('get-equalizer-filter', (e, a) =>
     player.getMediaControl(player.mediaControl()).setFilterVal(a)
@@ -234,26 +237,26 @@ ipcRenderer.on('shuffle', () => {
 ipcRenderer.on('thumbar-controls', (e, a) => btnActions(a))
 
 // Displays the windows to add a musics folders [Ctrl + N]
-ipcRenderer.on('menu-add-folder', () => {
-    !menu.preferences.configurations.isResized() || isModalOpened(menu.folders.loadFolder)
-})
+ipcRenderer.on('menu-add-folder', () =>
+    menu.preferences.configurations.isResized() || isModalOpened(menu.folders.loadFolder)
+)
 
 // Displaya the album to be played [Ctrl + Shift + A]
-ipcRenderer.on('menu-play-album', () => {
-    !menu.preferences.configurations.isResized() || menu.folders.albumFolder.loadFullAlbum()
-})
+ipcRenderer.on('menu-play-album', () =>
+    menu.preferences.configurations.isResized() || menu.folders.albumFolder.loadFullAlbum()
+)
 
 // Displays the equalizer [Ctrl + E]
-ipcRenderer.on('menu-equalizer', () => {
-    !menu.preferences.configurations.isResized() || isModalOpened(menu.equalizer.showEqualizer)
-})
+ipcRenderer.on('menu-equalizer', () =>
+    menu.preferences.configurations.isResized() || isModalOpened(menu.equalizer.showEqualizer)
+)
 
 // Displays the configurations [Ctrl + O]
-ipcRenderer.on('menu-configurations', () => {
-    !menu.preferences.configurations.isResized() || isModalOpened(menu.preferences.configurations.showConfigurations)
-})
+ipcRenderer.on('menu-configurations', () =>
+    menu.preferences.configurations.isResized() || isModalOpened(menu.preferences.configurations.showConfigurations)
+)
 
 // Displays info about Soube
-ipcRenderer.on('menu-about', () => {
-    !menu.preferences.configurations.isResized() || isModalOpened(menu.preferences.about)
-})
+ipcRenderer.on('menu-about', () =>
+    menu.preferences.configurations.isResized() || isModalOpened(menu.preferences.about)
+)

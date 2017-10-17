@@ -109,7 +109,7 @@ $('#remove-songs', {
 $('#add-songs', {
     on: {
         click(el) {
-            !isLoadingSongs ||
+            isLoadingSongs ||
                 // Action to add the songs
                 remote.dialog.showOpenDialog({
                     title: 'Add music folder',

@@ -79,7 +79,7 @@ function init() {
     return Object.freeze({
         editFile,
         configFile: require(`${remote.app.getPath('userData')}/config.json`),
-        listSongs: require(`${remote.app.getPath('userData')}/listSong.json`),
+        listSongs: require(`${remote.app.getPath('userData')}/listSong.json`).slice(),
         langFile: require('./lang'),
         coloursFile: require('./colours')
     })

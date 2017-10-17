@@ -10,8 +10,6 @@
   },
   "homepage": "http://soube.diegomolina.cl",
   "dependencies": {
-    "install": "^0.10.1",
-    "music-metadata": "^0.8.6",
-    "npm": "^5.4.2"
+    "music-metadata": "^0.8.6"
   }
 }

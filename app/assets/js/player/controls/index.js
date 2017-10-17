@@ -206,7 +206,7 @@ Controls = {
     setFilterVal(a) {
         a.length === 2
             ? this.filter[a[0]].gain.setValueAtTime(a[1], audioPlayer.currentTime)
-            : a.forEach((function () {
+            : a.forEach((function (e) {
                 this.filter[e[0]].gain.setValueAtTime(e[1], audioPlayer.currentTime)
             }).bind(this))
     },
@@ -246,6 +246,7 @@ Controls = {
     stopSong() {
         if (notification) notification.close()
 
+        console.log(this.prevSongsToPlay.length);
         if (this.prevSongsToPlay.length) {
             if (this.playedFrom === 'album') {
                 $(`#al-${this.prevSongsToPlay[this.prevSongsToPlay.length - 1].position}`, {
@@ -299,7 +300,8 @@ Controls = {
      * Check if it is possible to play a prev song
      */
     prevSong() {
-        if (this.prevSongsToPlay.length && this.isNext) {
+        if (this.prevSongsToPlay.length > 1 && this.isNext) {
+            this.stopSong()
             this.prevSongsToPlay.pop()
             this.position = (this.file = this.prevSongsToPlay.pop()).position
             this.initSong()

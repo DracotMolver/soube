@@ -17,7 +17,6 @@ const { $ } = require(path.join(__dirname, '../../', 'dom'))
 
 /* -=================================== Variables ===================================- */
 let listOfSongs
-let listOfSongsContent
 
 window.onload = () => {
     listOfSongs = $('#list-songs', { child() { } })
