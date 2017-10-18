@@ -39,8 +39,7 @@ const obj = {
             : el.classList.add(...str.split(' '))
     },
     rmChild(el, c) {
-        console.log('rmChild() - dom', c);
-        // return el = this.element, el.removeChild(Array.from(el.children).find(v => (new RegExp(c)).test(v.outerHTML))), this
+        el.removeChild(Array.from(el.children).find(v => v.innerText === c ))
     },
     empty(el) {
         while (el.firstChild) el.removeChild(el.firstChild)

@@ -66,7 +66,7 @@ function setBtnOptions(option) {
 }
 
 /**
- * Set the specific value a single element.
+ * Set the specific value of a single element.
  * The element is the one that holds the DB values
  * 
  * @param {HTMLElement} el - El HTMLElement holding the DB values
@@ -127,13 +127,15 @@ function saveEQSetting() {
 
     $('#eq-buttons', {
         append: [
-            $('#eq-buttons', { lastChild() { } }),
             create('option', {
                 val: name,
                 text: name,
-            })
+            }),
+            $('#eq-buttons', { lastChild() { } })
         ]
     })
+
+    $('#name-new-eq', { clearVal() { } })
 
     const timeOut = setTimeout(() => {
         $('.warning', { text: '' })
