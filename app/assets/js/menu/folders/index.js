@@ -60,8 +60,7 @@ function saveSongList(parentFolder = '') {
             })
             $('#song-progress', { css: `width:${(i * 100) / maxLength}%` })
 
-            if (i === maxLength - 1)
-                editFile('listSong', songFolder.setAlphabeticOrder())
+            i === maxLength - 1 && editFile('listSong', songFolder.setAlphabeticOrder());
         })
 }
 
@@ -116,8 +115,8 @@ $('#add-songs', {
                     properties: ['openDirectory']
                 }, parentFolder => {
                     // console.log(url.parse(parentFolder[0], true), parentFolder[0]);
-                    if (parentFolder) saveSongList(parentFolder[0])
-                })
+                    parentFolder && saveSongList(parentFolder[0]);
+                });
         }
     }
 })

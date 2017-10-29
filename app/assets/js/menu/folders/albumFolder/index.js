@@ -37,7 +37,7 @@ function loadFullAlbum() {
         title: 'Open an album',
         properties: ['openDirectory']
     }, parentFolder => {
-        if (parentFolder) getSongs(parentFolder[0])
+        parentFolder && getSongs(parentFolder[0]);
     })
 }
 
@@ -60,8 +60,7 @@ function getSongs(parentFolder) {
                 `<div id="album-loading">${lang.config.loadingAlbumFolder}${Math.floor((i * 100) / maxLength)}%</div>`
             })
 
-            if (i === maxLength - 1)
-                createView(parentFolder, songFolder.setAlphabeticOrder())
+            i === maxLength - 1 && createView(parentFolder, songFolder.setAlphabeticOrder());
         }, true)
 }
 

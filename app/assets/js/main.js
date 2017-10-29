@@ -175,7 +175,7 @@ function isModalOpened(fn) {
 $('#song-title', {
     on: {
         click(el) {
-            if (el.children[0].textContent.trim()) {
+            if (el.children[0].textContent.trim() && player.mediaControl() === 'player') {
                 clickedElement = $('#list-songs')
                 positionElement = $(`#${$(el, { data: 'position' })}`)
                 const element = clickedElement.scrollTop

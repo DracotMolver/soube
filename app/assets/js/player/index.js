@@ -24,14 +24,7 @@ const search = require('./search')
 
 let usingMediaControl = 'player'
 
-let mediaControlInstance = {
-    player() {
-        return controls.setPlayedFrom('player'), controls
-    },
-    album() {
-        return controls.setPlayedFrom('album'), controls
-    }
-}
+let getMediaControlInstance = control => (controls.setPlayedFrom(control), controls);
 
 module.exports = Object.freeze({
     /**
@@ -48,7 +41,7 @@ module.exports = Object.freeze({
      * @param {string} media - The actual media player: value[mediaControl]
      * @return {object} - Return the instance of the player
      */
-    getMediaControl(media) { return mediaControlInstance[media]() },
+    getMediaControl(media) { return getMediaControlInstance(media) },
     createAlbumView,
     createView,
     search

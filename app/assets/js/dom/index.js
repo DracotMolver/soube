@@ -39,7 +39,7 @@ const obj = {
             : el.classList.add(...str.split(' '))
     },
     rmChild(el, c) {
-        el.removeChild(Array.from(el.children).find(v => v.innerText === c ))
+        el.removeChild(Array.from(el.children).find(v => v.innerText === c))
     },
     empty(el) {
         while (el.firstChild) el.removeChild(el.firstChild)
@@ -62,17 +62,14 @@ const obj = {
             : onFunction(el, fn)
     },
     data(el, data) {
-        if (data.constructor === String) {
-            let d = el.dataset[data]
-
-            e = /^\d+$/.test(d)
-                ? parseInt(d)
-                : (/^\d+\.\d+$/.test(d)
-                    ? parseFloat(d)
-                    : d.toString())
-        } else {
-            Object.keys(data).forEach(v => el.dataset[v] = data[v])
-        }
+        data.constructor === String
+            ? (d = el.dataset[data],
+                e = /^\d+$/.test(d)
+                    ? parseInt(d)
+                    : (/^\d+\.\d+$/.test(d)
+                        ? parseFloat(d)
+                        : d.toString()))
+            : Object.keys(data).forEach(v => el.dataset[v] = data[v])
     },
     each(el, fn) {
         el.forEach((v, i) => fn.length === 1 ? fn(v) : fn(v, i))
@@ -142,7 +139,7 @@ function $(_e, prop) {
                 case ':': e = Array.from(document.getElementsByTagName(e.slice(1))); break
             }
         }
-        if (prop) Object.keys(prop).forEach(k => obj[k].call(null, e, prop[k]))
+        prop && Object.keys(prop).forEach(k => obj[k].call(null, e, prop[k]));
     }
     return e
 }

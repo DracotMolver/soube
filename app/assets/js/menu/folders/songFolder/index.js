@@ -53,7 +53,7 @@ let iter
 function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
     // Get the object from listsong.json - only if was already created it
     songs = $('@objSize')(listSongs) && newInstance ? [] : ($('@objSize')(listSongs) ? listSongs : [])
-    function readAllFiles(readFiles) {
+    const readAllFiles = readFiles => {
         if (readFiles.length) { // Add songs
             files = readFiles.map(f => path.normalize(f))
             fnStart()
@@ -70,7 +70,7 @@ function addSongFolder(folder, fnStart, fnIter, newInstance = false) {
  * @param {string} folder - The path of the parent folder to remove
  */
 function removeSongFolder(folder) {
-    function readAllFiles(readFiles) {
+    const readAllFiles = readFiles => {
         songs = listSongs.filter(f => readFiles.indexOf(f.filename) === -1)
         editFile('listSong', songs.length ? setAlphabeticOrder() : {})
     }
@@ -97,7 +97,7 @@ function checkSongFolder(folder, fnStart, fnIter) {
         if (++index === folder.length) {
             if ($('@objSize')(listSongs) < totalFiles.length) { // Append new songs
                 totalFiles.forEach(f => {
-                    if (!fileNames.includes(f)) newFiles.push(f)
+                    fileNames.includes(f) || newFiles.push(f);
                 })
                 songs = listSongs
                 files = newFiles.map(f => path.normalize(f))
@@ -194,16 +194,12 @@ function readParentFolder(folder, fn) {
     if (process.platform === 'darwin' || process.platform === 'linux') {
         const command = `find ${path.normalize(folder.replace(/\b\s{1}/g, '\\ '))} -type f | grep -E \"\.(mp3|wav|ogg)$\"`
         exec(command, (error, stdout, stderr) => {
-            if (error) {
-                ipcRenderer.send('display-msg', {
-                    type: 'info',
-                    message: lang.alerts.error_003,
-                    detail: stderr,
-                    buttons: ['Ok']
-                })
-
-                return
-            }
+            error && ipcRenderer.send('display-msg', {
+                type: 'info',
+                message: lang.alerts.error_003,
+                detail: stderr,
+                buttons: ['Ok']
+            });
 
             fn(stdout.trim().split('\n'))
         })

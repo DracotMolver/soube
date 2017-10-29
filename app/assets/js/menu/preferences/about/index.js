@@ -15,7 +15,7 @@ const shell = require('electron').shell
 
 // ---- Own ----
 const {
-  configFile,
+    configFile,
     langFile
 } = require(path.join(__dirname, '../../../', 'config')).init()
 const { $ } = require(path.join(__dirname, '../../../', 'dom'))

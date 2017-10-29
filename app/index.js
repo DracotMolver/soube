@@ -51,8 +51,7 @@ let keepUnregistered = []
 // Register the list of keys
 function registerKeys() {
     Object.keys(shortKeys).forEach(k => {
-        if(!keepUnregistered.includes(shortKeys[k]))
-            globalShortcut.register(k, () => mainWindow.webContents.send(shortKeys[k]))
+        keepUnregistered.includes(k) || globalShortcut.register(k, () => mainWindow.webContents.send(shortKeys[k]));
     })
 }
 
@@ -179,21 +178,17 @@ ipcMain.on('change-screen-size', (e, a) => {
         height: a.screenResize ? 82 : a.area.height
     })
 
-    if (!a.screenResize) mainWindow.center()
+    a.screenResize || mainWindow.center();
 })
 
 // Set the window always on top, no matter which app are you using
 ipcMain.on('set-on-top', (e, a) => mainWindow.setAlwaysOnTop(a, 'normal'))
 
 ipcMain.on('close-specific-key', (e, a) => {
-    if (a.keepUnregistered)
-        keepUnregistered.push(a.keyName)
-
+    a.keepUnregistered && keepUnregistered.push(a.keyName);
     globalShortcut.unregister(a.keyName)
 })
 ipcMain.on('open-specific-key', (e, a) => {
-    if (keepUnregistered.indexOf(a) !== -1)
-        keepUnregistered.splice(keepUnregistered.indexOf(a), 1)
-
+    keepUnregistered.includes(a) && keepUnregistered.splice(keepUnregistered.indexOf(a), 1);
     globalShortcut.register(a, () => mainWindow.webContents.send(shortKeys[a]))
 })

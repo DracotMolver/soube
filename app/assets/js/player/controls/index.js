@@ -215,8 +215,7 @@ Controls = {
      */
     setShuffle() {
         $('#shuffle-icon', {
-            css:
-            `fill:${(configFile.shuffle = !configFile.shuffle) ? '#FBFCFC' : 'var(--lightPinkColor)'}`
+            css: `fill:${(configFile.shuffle = !configFile.shuffle) ? '#FBFCFC' : 'var(--lightPinkColor)'}`
         })
         editFile('config', configFile)
     },
@@ -244,22 +243,21 @@ Controls = {
      * properties ready to play another song
      */
     stopSong() {
-        if (notification) notification.close()
+        notification && notification.close();
 
-        console.log(this.prevSongsToPlay.length);
         if (this.prevSongsToPlay.length) {
-            if (this.playedFrom === 'album') {
+            this.playedFrom === 'album' &&
                 $(`#al-${this.prevSongsToPlay[this.prevSongsToPlay.length - 1].position}`, {
                     css: 'color:var(--blackColor);text-decoration:none'
-                })
-            } else if (this.playedFrom === 'player') {
+                });
+
+            this.playedFrom === 'player' &&
                 $(`#${this.prevSongsToPlay[this.prevSongsToPlay.length - 1].position}`, {
                     child() { },
                     each(v) {
                         $(v, { css: 'color:var(--blackColor);text-decoration:none' })
                     }
-                })
-            }
+                });
         }
 
         $('#song-title', {
@@ -292,8 +290,7 @@ Controls = {
      * Check if it is possible to play a next song
      */
     nextSong() {
-        if (this.isNext) this.stopSong()
-
+        this.isNext && this.stopSong();
         this.getPosition()
     },
     /**
@@ -351,11 +348,9 @@ audioPlayer.onpause = Controls.setPause.bind(Controls)
  * @param {string} animName - play or pause
  */
 function animPlayAndPause(animName) {
-    if (process.platform === 'win32') {
-        animName === 'play'
-            ? ipcRenderer.send('thumb-bar-update', 'pauseMomment')
-            : ipcRenderer.send('thumb-bar-update', 'playMomment')
-    }
+    process.platform === 'win32' && (animName === 'play'
+        ? ipcRenderer.send('thumb-bar-update', 'pauseMomment')
+        : ipcRenderer.send('thumb-bar-update', 'playMomment'));
 
     $('.anim-play', {
         each(v, i) {

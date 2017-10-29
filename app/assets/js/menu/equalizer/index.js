@@ -33,6 +33,7 @@ let eqHrz = 0
 let pos = 0
 let eqF = []
 let predefinedSettings = ['rock', 'acustic', 'electro', 'reset']
+let selectedOption
 
 /* -=================================== Functions ===================================- */
 /**
@@ -73,8 +74,9 @@ function setBtnOptions(option) {
  */
 function setEQ(el) {
     eqF = []
+    selectedOption = el.options[el.selectedIndex]
     switch ((settingName = el.value)) {
-        case 'new':
+        case 'n':
             $('#add-new-eq', { removeClass: 'hide' })
             $('#edit-new-eq', { addClass: 'hide' })
             $('#modify-new-eq', { addClass: 'hide' })
@@ -107,7 +109,7 @@ function setEQ(el) {
 }
 
 /**
- * Save a new configuration
+ * Add (save) a new configuration
  */
 function saveEQSetting() {
     let newSetting = []
@@ -184,14 +186,16 @@ function updateEQSeeting() {
     })
 
     delete configFile.equalizer[settingName]
-    configFile.equalizer[name] = newSetting
-    if (configFile.equalizerConfig === settingName)
-        configFile.equalizerConfig = name
+    configFile.equalizer[(settingName = name)] = newSetting
+    configFile.equalizerConfig = settingName
+    selectedOption.value = settingName
+    selectedOption.textContent = settingName
 
     editFile('config', configFile)
 
     $('#edit-new-eq', { addClass: 'hide' })
     $('.warning', { text: lang.config.newEQSettingSaved })
+    $('#text-new-eq', { text: name })
 
     const timeOut = setTimeout(() => {
         $('.warning', { text: '' })
@@ -219,15 +223,16 @@ function showEqualizer() {
             attr: configFile.equalizerConfig === v ? { selected: 'selected' } : ''
         }))
 
-        if (configFile.equalizerConfig === v) setBtnOptions(v)
+        configFile.equalizerConfig === v && setBtnOptions(v);
     })
 
     // Option to add a new EQ setting
     f.appendChild(create('option', {
-        val: 'new',
+        val: 'n',
         text: lang.config.addNewEQSetting
     }))
     $('#eq-buttons', { empty() { }, append: f })
+    selectedOption = $('#eq-buttons').options[$('#eq-buttons').selectedIndex]
 
     eqHrz = configFile.equalizer[configFile.equalizerConfig]
     for (var i = 0; i < 15; i++) {
@@ -260,14 +265,15 @@ function dbSetting(el) {
     percent = parseInt($(`#range-${pos}`, { cssValue: 'top' }))
 
     const animation = () => {
-        if (orientation === 'up' && percent)
+        console.log(percent);
+        if (orientation === 'up' && percent > -1)
             $(`#range-${pos}`, { css: `top:${--percent}px` })
-        else if (orientation === 'down' && percent)
+        else if (orientation === 'down' && (percent >= -1 && percent < 241))
             $(`#range-${pos}`, { css: `top:${++percent}px` })
 
-        if (percent) {
-            $(`#db-${pos}`, { text: `${getDB(percent)} dB` })
-            ipcRenderer.send('equalizer-filter', [pos, getDB(percent)])
+        if (percent > -1 && percent < 241) {
+            $(`#db-${pos}`, { text: `${getDB(percent ? percent : 12)} dB` })
+            ipcRenderer.send('equalizer-filter', [pos, getDB(percent ? percent : 12)])
             interval = setTimeout(animation, 80)
         } else {
             clearTimeout(interval)
@@ -320,8 +326,9 @@ $('#delete-name', { on: { click: deleteSetting } })
 $('#edit-name', {
     on: {
         click(el) {
+            console.log(settingName)
             $('#name-new-eq-edit', {
-                val: (settingName = $('#text-new-eq', { text: '' }))
+                val: $('#text-new-eq', { text: null })
             })
             $('#modify-new-eq', { addClass: 'hide' })
             $('#edit-new-eq', { removeClass: 'hide' })

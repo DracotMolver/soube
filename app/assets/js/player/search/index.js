@@ -82,8 +82,8 @@ function filterBy(by, player, el) {
                 player.getMediaControl('player').playSongAtPosition(el.value)
             }
             break
-        case 'artist': if (el.value !== 'all') scroll(el.value); break
-        case 'album': if (el.value !== 'all') scroll(el.value); break
+        case 'artist': el.value !== 'all' && scroll(el.value); break
+        case 'album': el.value !== 'all' && scroll(el.value); break
     }
 
     el.selectedIndex = 0
