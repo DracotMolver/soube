@@ -451,6 +451,10 @@ audio::-webkit-media-controls-panel {
     height: 83px
 }
 
+audio::-webkit-media-controls-timeline {
+    display: none
+}
+
 audio::-webkit-media-controls-panel {
     background-color: transparent
 }
@@ -461,12 +465,7 @@ audio::-webkit-media-controls-current-time-display {
     position: relative;
     color: var(--whiteColor);
     left: 50%;
-    top:-12px
-}
-
-audio::-webkit-media-controls-timeline {
-    margin-bottom: 1.6em;
-    margin-top: 4em;
+    top: -20px
 }
 
 #init-message {
@@ -1034,5 +1033,21 @@ input[type="checkbox"] {
 
     #controls {
         width: 25%
+    }
+
+    audio,
+    audio::-webkit-media-controls-enclosure,
+    audio::-webkit-media-controls-panel {
+        height: 32px
+    }
+
+    audio::-webkit-media-controls-time-remaining-display,
+    audio::-webkit-media-controls-current-time-display {
+        font-size: 1em;
+        margin-top: 8px;
+        margin-left: 8px;
+        position: initial;
+        left: 0;
+        top: 0
     }
 }
