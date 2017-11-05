@@ -133,16 +133,17 @@ module.exports = Object.freeze({
             })
             $('#pop-up', { text: langFile[configFile.lang].alerts.checkListOfSongs })
         }, (i, maxLength) => {
-            if (i === maxLength) {
-                const timeOut = setTimeout(() => {
-                    editFile('listSong', songFolder.setAlphabeticOrder())
-                    $('#pop-up', { empty() { } })
+            if (i === maxLength - 1) {
+                $('#pop-up', { text: langFile[configFile.lang].alerts.newSongFound })
+
+                setTimeout(() => {
                     $('#pop-up-container', {
                         addClass: 'hide',
                         child: 0,
                         removeClass: 'pop-up-anim'
                     })
-                    clearTimeout(timeOut)
+
+                    editFile('listSong', songFolder.setAlphabeticOrder())
                 }, 4600);
             }
         })

@@ -44,7 +44,6 @@ if (configFile.shuffle)
 
 if ($('@objSize')(listSongs)) { // When the songs are loaded
     player.createView(player)
-    // menu.folders.checkListOfSongs()
 } else { // When there'are no song to load
     $('#list-songs', {
         text: `<div id="init-message">${lang.alerts.welcome}</div>`,
@@ -85,8 +84,11 @@ worker.onmessage = e => {
                 removeClass: 'pop-up-anim'
             })
 
+            menu.folders.checkListOfSongs()
             clearTimeout(tout)
         }, 4500)
+    } else {
+        menu.folders.checkListOfSongs()
     }
 }
 
@@ -171,6 +173,14 @@ function isModalOpened(fn) {
 }
 
 /** --------------------------------------- Events --------------------------------------- **/
+$('#progress-bar', {
+    on: {
+        click(el, evt) {
+            player.getMediaControl(player.mediaControl()).setProgressTime(evt.offsetX / el.clientWidth);
+        }
+    }
+})
+
 // Takes us toward the song that is playing now
 $('#song-title', {
     on: {

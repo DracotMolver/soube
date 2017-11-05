@@ -56,8 +56,9 @@ select,
     font-size: .84em
 }
 
-button:focus,
-input:focus {
+audio,
+button,
+input {
     outline-width: 0
 }
 
@@ -436,6 +437,10 @@ h3 {
     color: var(--darkGreyColor)
 }
 
+audio {
+    width: 100%;
+    float:left
+}
 
 audio::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-volume-slider-container,
@@ -443,12 +448,6 @@ audio::-webkit-media-controls-volume-slider,
 audio::-webkit-media-controls-fullscreen-button,
 audio::-webkit-media-controls-mute-button {
     display: none
-}
-
-audio,
-audio::-webkit-media-controls-enclosure,
-audio::-webkit-media-controls-panel {
-    height: 83px
 }
 
 audio::-webkit-media-controls-timeline {
@@ -463,9 +462,29 @@ audio::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-current-time-display {
     font-size: 1.4em;
     position: relative;
+    display: initial !important;
     color: var(--whiteColor);
     left: 50%;
-    top: -20px
+    top: 10px
+}
+
+/* Progress bar */
+#progress-bar {
+    border-radius: 3px;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    height: 4px;
+    border: none;
+    cursor: e-resize;
+    width: 100%;
+    float: left
+}
+
+progress::-webkit-progress-bar {
+    background: var(--darkPinkColor);
+}
+progress::-webkit-progress-value {
+    background-color: var(--whiteColor);
 }
 
 #init-message {
@@ -916,28 +935,10 @@ input[type="checkbox"] {
     }
 }
 
-@media only screen and (max-width:768px) {
-    h1 {
-        font-size: 1.3em
-    }
-
-    h2,
-    h3 {
-        font-size: 1em
-    }
-
-    .container-config {
-        width: 600px
-    }
-
-    #sizer-container {
-        height: 72px
-    }
-}
-
+/* Media queries */
 @media only screen and (max-width: 1240px) {
     .container-config {
-        width: 1100px !important
+        width: 1150px !important
     }
 
     #equalizer-container > div {
@@ -953,72 +954,70 @@ input[type="checkbox"] {
 
 @media only screen and (max-width: 1024px) {
     .container-config {
-        width: 950px !important
+        width: 934px !important
     }
 }
 
-@media only screen and (max-width: 820px) {
-    .container-config {
-        width: 850px !important
+@media only screen and (max-width:768px) {
+    h1 {
+        font-size: 1.3em
     }
-}
 
-@media only screen and (max-width: 768px) {
-    .container-config {
-        width: 610px !important
-    }
-}
-
-@media only screen and (max-width: 650px) {
-    body,
-    html {
-        font-size: 96.55555%
+    h2,
+    h3 {
+        font-size: 1em
     }
 
     .container-config {
-        width: 540px !important
+        width: 678px !important
+    }
+
+    #sizer-container {
+        height: 72px
+    }
+
+    #top-nav > .grid-85 {
+        width: 80%
+    }
+
+    #top-nav > .grid-10 {
+        width: 15%
     }
 }
 
-@media only screen and (max-width: 580px) {
-    input,
-    select,
-    button {
-        width: 100%
-    }
-
-    #sizer-container > img {
-        height: 14px;
-        width: 14px
-    }
-
-    #add-new-eq,
-    #edit-new-eq,
-    #modify-new-eq{
-        margin-top: 1em
-    }
-
-    #list-songs{
-        height: calc(100% - 101px)
-    }
-}
-
-@media only screen and (max-width: 480px) {
-    body,
-    html {
-        font-size: 95.698%
-    }
-
-    #name-new-eq {
-        font-size: 1.07em
-    }
-
+@media only screen and (max-width: 736px) {
     .container-config {
-        width: 390px !important
+        width: 646px !important
+    }
+
+    audio {
+        height: 36px
+    }
+
+    audio::-webkit-media-controls-time-remaining-display,
+    audio::-webkit-media-controls-current-time-display{
+        font-size: 1.1em;
+        left: 25%;
+        top: 6px
+    }
+
+    /* audio::-webkit-media-controls-current-time-display{
+        margin-left: 10px
+    } */
+}
+
+@media only screen and (max-width: 640px) {
+    .container-config {
+        width: 550px !important
     }
 }
 
-@media only screen and (max-width: 360px) {
+@media only screen and (max-width: 540px) {
+    .container-config {
+        width: 450px !important
+    }
+}
+/* @media only screen and (max-width: 360px) {
     #updown {
         display: none
     }
@@ -1050,4 +1049,4 @@ input[type="checkbox"] {
         left: 0;
         top: 0
     }
-}
+} */

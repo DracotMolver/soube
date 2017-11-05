@@ -59,6 +59,7 @@ const anim = {
     ]
 }
 let file
+let lapse = 0.0
 const _db = configFile.equalizer[configFile.equalizerConfig]
     .map(v => v ? (v === 12 ? 12 : (12 - (v / 10)).toFixed(1)) : 0)
 
@@ -323,6 +324,27 @@ Controls = {
         this.listSongs = _songs
     },
     /**
+     * Update the progress of the song
+     */
+    updateTime() {
+        $('#progress-bar', {
+            attr: {
+                value: audioPlayer.currentTime / audioPlayer.duration
+            }
+        })
+    },
+    /**
+     * Update the song time, the time lapse and the progress bard
+     *
+     * @param {float} percent The porcent according to the clicked position
+     */
+    setProgressTime(percent) {
+        isNaN(audioPlayer.duration) || (
+            audioPlayer.currentTime = audioPlayer.duration * percent,
+            $('#progress-bar', { attr: { value: percent } })
+        );
+    },
+    /**
      * Clean all the data when pass form the album view to the music player and
      * vice versa
      */
@@ -340,6 +362,7 @@ Controls.filter.reduce((p, c) => p.connect(c)).connect(audioContext.destination)
 
 audioPlayer.onended = Controls.stopTimer.bind(Controls)
 audioPlayer.onpause = Controls.setPause.bind(Controls)
+audioPlayer.ontimeupdate = Controls.updateTime.bind(Controls)
 
 /* -=================================== Functions ===================================- */
 /**

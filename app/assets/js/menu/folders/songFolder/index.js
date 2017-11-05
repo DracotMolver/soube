@@ -78,7 +78,7 @@ function removeSongFolder(folder) {
 }
 
 /**
- * It will compare if there was deleted or added any new song file.
+ * It will compare either was deleted or added any new song file.
  * If a song was added, it will extract its metadata. By the other hand
  * it will be remove the metadata from the music player
  * 
@@ -87,34 +87,36 @@ function removeSongFolder(folder) {
  * @param {any} fnIter - A loop callback when any song file was added or delted
  */
 function checkSongFolder(folder, fnStart, fnIter) {
-    let totalFiles = []
-    let newFiles = []
-    let fileNames = listSongs.map(f => f.filename)
-    let index = 0
-
-    function readAllFiles(readFiles) {
-        totalFiles = totalFiles.concat(readFiles)
-        if (++index === folder.length) {
-            if ($('@objSize')(listSongs) < totalFiles.length) { // Append new songs
-                totalFiles.forEach(f => {
-                    fileNames.includes(f) || newFiles.push(f);
-                })
-                songs = listSongs
-                files = newFiles.map(f => path.normalize(f))
-
-                fnStart()
-                iter = fnIter
-                extractMetadata()
-            } else if ($('@objSize')(listSongs) > totalFiles.length) { // Delete a song
-                songs = []
-                listSongs.forEach((f, i, a) => !totalFiles.includes(f.filename) ? delete a[i] : songs.push(f))
-
-                editFile('listSong', setAlphabeticOrder())
+    if (folder.length) {
+        let totalFiles = []
+        let newFiles = []
+        let fileNames = listSongs.map(f => f.filename)
+        let index = 0
+    
+        function readAllFiles(readFiles) {
+            totalFiles = totalFiles.concat(readFiles)
+            if (++index === folder.length) {
+                if ($('@objSize')(listSongs) < totalFiles.length) { // Append new songs
+                    totalFiles.forEach(f => {
+                        fileNames.includes(f) || newFiles.push(f);
+                    })
+                    songs = listSongs
+                    files = newFiles.map(f => path.normalize(f))
+    
+                    fnStart()
+                    iter = fnIter
+                    extractMetadata()
+                } else if ($('@objSize')(listSongs) > totalFiles.length) { // Delete a song
+                    songs = []
+                    listSongs.forEach((f, i, a) => !totalFiles.includes(f.filename) ? delete a[i] : songs.push(f))
+    
+                    editFile('listSong', setAlphabeticOrder())
+                }
             }
         }
+    
+        folder.forEach(f => readParentFolder(f, readAllFiles))
     }
-
-    folder.forEach(f => readParentFolder(f, readAllFiles))
 }
 
 /**
@@ -158,6 +160,7 @@ function extractMetadata() {
 
             if (count === files.length - 1) {
                 workerDB.postMessage({ state: 'done' })
+                workerDB.terminate()
                 iter(count, files.length)
                 songs = files = []
                 count = 0
@@ -206,7 +209,9 @@ function readParentFolder(folder, fn) {
     } else if (process.platform === 'win32') {
         // Only for windows
         worker.postMessage({ 'folder': folder })
-        worker.onmessage = e => fn(e.data.files.split('|'))
+        worker.onmessage = e => {
+            fn(e.data.files.split('|'))
+        }
     }
 }
 

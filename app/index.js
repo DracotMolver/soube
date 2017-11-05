@@ -81,7 +81,7 @@ function ready(evt) {
         useContentSize: true,
         hasShadow: false,
         minHeight: 600,
-        minWidth: 440,
+        minWidth: 540,
         height: workArea.height,
         center: true,
         title: 'Soube',
