@@ -2,7 +2,7 @@
 
 # Soube
 
-### This project is not longer mantained
+### This project is not longer maintained
 
 Thanks to all the people who downloaded the application and gave me feedback to improve it. Also, thanks to those who forked the project and those who gave me an start.
 
