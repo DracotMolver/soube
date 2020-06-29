@@ -2,6 +2,12 @@
 
 # Soube
 
+### This project is not longer mantained
+
+Thanks to all the people who downloaded the application and gave me feedback to improve it. Also, thanks to those who forked the project and those who gave me an start.
+
+Soube was a nice project where I learned a lot from my mistakes, but for others reason I stopped working on it for years. I wanted to improve the code of course with a better folder structure, following JS best practices and coding in a clean way, and I think you might see that intention on the development branch. But this is not the end, throw those years I didn't work on Soube I was growing up as a developer, specially with JavaScript and some other importants things like Data Structure. Now, I have a little bit more of knowledge that will help me to bring Soube again but powerful and not only focused on local music file. This new Soube version won't be public until I decide it is stable and good enough to be share it with you all. I won't close this repository, so you are free to use it. Thanks you all!
+
 Soube is a simple and minimalist music player based on Electronjs.
 
 #### Install it on Windows, Mac & Linux
