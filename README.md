@@ -4,9 +4,9 @@
 
 ### This project is not longer maintained
 
-Thanks to all the people who downloaded the application and gave me feedback to improve it. Also, thanks to those who forked the project and those who gave me an start.
+Thanks to all the people who downloaded the application and gave me feedback to improve it. Also, thanks to those who forked the project and those who gave me an star.
 
-Soube was a nice project from where I learned a lot from my mistakes, but for others reasons I stopped working on it for years. I wanted to improve the code, have a better folder structure, following JS best practices, and coding in a clean way (I think you can see that intention on the development branch). But this is not the end. The past years that I didn't work on Soube I was growing up as a developer, specially with JavaScript and some other importants Knowledge like Data Structure. Now I have a little bit of more knowledge that it will help me to bring Soube again but powerful and not only focused on local music file. This new Soube version won't be public until I decide it is stable and good enough to be share it with you all. I won't close this repository, so you are free to use it. Thanks you all!
+Soube was a nice project from where I learned a lot from my mistakes. I stopped working on it for years. I wanted to improve the code, have a better folder structure, following JS best practices, and coding in a clean way. I was growing up as a developer at that time, specially in JavaScript. I won't close this repository, so you are free to use it. Thanks you all!
 
 Soube is a simple and minimalist music player based on Electronjs.
 
@@ -15,7 +15,7 @@ Soube is a simple and minimalist music player based on Electronjs.
 [Soube website](http://soube.diegomolina.cl)
 
 ## Features
- * Notifications showing what song is played.
+ * Notifications showing what song is be playing.
  * Auto detection of new songs.
  * Idiom. You can change the idiom of the config panel (Do this before anything).
  * Equalizer.
